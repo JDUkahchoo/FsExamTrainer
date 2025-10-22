@@ -1,11 +1,11 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2 } from 'lucide-react';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
-import type { Domain } from '@shared/schema';
+import type { Domain, QuizSession } from '@shared/schema';
 
 export default function ProgressPage() {
   const { data: stats, isLoading } = useQuery<{
@@ -27,6 +27,10 @@ export default function ProgressPage() {
     accuracy: number;
     domainStats: Record<string, { answered: number; correct: number; accuracy: number }>;
   }>({ queryKey: ['/api/quiz/stats'] });
+
+  const { data: quizSessions } = useQuery<QuizSession[]>({
+    queryKey: ['/api/quiz/sessions']
+  });
 
   if (isLoading) {
     return (
@@ -178,10 +182,7 @@ export default function ProgressPage() {
               <div key={domain} className="space-y-2" data-testid={`domain-${domain.toLowerCase().replace(/\s+/g, '-')}`}>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: config.color }}
-                    />
+                    <div className={`w-3 h-3 rounded-full ${config.bgColor}`} />
                     <span className="font-medium text-foreground">{domain}</span>
                   </div>
                   <div className="flex items-center gap-4">
@@ -202,6 +203,68 @@ export default function ProgressPage() {
           })}
         </div>
       </Card>
+
+      {/* Quiz Session History */}
+      {quizSessions && quizSessions.length > 0 && (
+        <Card className="p-6 mt-6">
+          <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+            <CheckCircle className="h-5 w-5" />
+            Recent Quiz Sessions
+          </h2>
+          <div className="space-y-4">
+            {quizSessions.slice(0, 10).map((session, index) => {
+              const accuracy = session.totalQuestions > 0 
+                ? (session.correctAnswers / session.totalQuestions) * 100 
+                : 0;
+              const passed = accuracy >= 70;
+              const date = new Date(session.completedAt);
+              const formattedDate = date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+              });
+              const minutes = Math.floor(session.timeSpentSeconds / 60);
+              const seconds = session.timeSpentSeconds % 60;
+
+              return (
+                <div 
+                  key={session.id} 
+                  className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+                  data-testid={`session-${index}`}
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Badge variant="outline" className="text-sm">
+                        {session.domain === 'all' ? 'All Domains' : session.domain}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">{formattedDate}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="text-muted-foreground">
+                        {session.correctAnswers}/{session.totalQuestions} correct
+                      </span>
+                      <span className="flex items-center gap-1 text-muted-foreground">
+                        <Clock className="w-3 h-3" />
+                        {minutes}m {seconds}s
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge 
+                      variant={passed ? "default" : "secondary"}
+                      className="min-w-[60px] justify-center"
+                    >
+                      {Math.round(accuracy)}%
+                    </Badge>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
 
       {/* Recommendations */}
       {stats && stats.questionsAnswered > 0 && (

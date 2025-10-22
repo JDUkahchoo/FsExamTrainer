@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle2, XCircle, RotateCcw, Lightbulb } from 'lucide-react';
+import { CheckCircle2, XCircle, RotateCcw, Lightbulb, Clock, Play, Trophy } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { useMutation } from '@tanstack/react-query';
@@ -12,12 +12,38 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { DOMAINS } from '@shared/schema';
 import type { Domain } from '@shared/schema';
 
+type QuizState = 'setup' | 'active' | 'completed';
+
 export default function PracticeQuizPage() {
+  const [quizState, setQuizState] = useState<QuizState>('setup');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<Record<number, { selected: number; correct: boolean }>>({});
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  // Mutation to save individual quiz result (for stats/analytics)
+  const saveResultMutation = useMutation({
+    mutationFn: (result: { questionId: string; domain: string; selectedAnswer: number; isCorrect: boolean }) =>
+      apiRequest('POST', '/api/quiz/results', result),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/results'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
+    }
+  });
+
+  // Timer effect
+  useEffect(() => {
+    if (quizState !== 'active' || !startTime) return;
+    
+    const interval = setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [quizState, startTime]);
 
   const filteredQuestions = selectedDomain === 'all'
     ? QUIZ_QUESTIONS
@@ -28,34 +54,31 @@ export default function PracticeQuizPage() {
   const answeredCount = Object.keys(answeredQuestions).length;
   const correctCount = Object.values(answeredQuestions).filter(a => a.correct).length;
 
-  if (!currentQuestion) {
-    return (
-      <div className="p-8 max-w-4xl mx-auto">
-        <Card className="p-12 text-center">
-          <h2 className="text-2xl font-bold mb-4">No Questions Available</h2>
-          <p className="text-muted-foreground mb-6">
-            Please select a different domain or check back later.
-          </p>
-        </Card>
-      </div>
-    );
-  }
+  // Mutation to save quiz session
+  const saveSessionMutation = useMutation({
+    mutationFn: (session: { domain: string; totalQuestions: number; correctAnswers: number; timeSpentSeconds: number }) =>
+      apiRequest('POST', '/api/quiz/sessions', session),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+    }
+  });
+
+  const handleStartQuiz = () => {
+    setQuizState('active');
+    setStartTime(Date.now());
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setShowExplanation(false);
+    setAnsweredQuestions({});
+    setElapsedSeconds(0);
+  };
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (showExplanation) return;
     setSelectedAnswer(answerIndex);
   };
-
-  // Mutation to save quiz result
-  const saveResultMutation = useMutation({
-    mutationFn: (result: { questionId: string; domain: string; selectedAnswer: number; isCorrect: boolean; completedAt: Date }) =>
-      apiRequest('POST', '/api/quiz/results', result),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/quiz/results'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
-    }
-  });
 
   const handleSubmit = () => {
     if (selectedAnswer === null) return;
@@ -66,13 +89,12 @@ export default function PracticeQuizPage() {
     });
     setShowExplanation(true);
 
-    // Save quiz result to database
+    // Save individual question result for stats/analytics
     saveResultMutation.mutate({
-      questionId: `q-${currentQuestionIndex}`,
+      questionId: `q-${currentQuestionIndex}-${Date.now()}`,
       domain: currentQuestion.domain,
       selectedAnswer,
-      isCorrect,
-      completedAt: new Date()
+      isCorrect
     });
   };
 
@@ -92,12 +114,162 @@ export default function PracticeQuizPage() {
     }
   };
 
-  const handleReset = () => {
+  const handleFinishQuiz = () => {
+    // Save the complete quiz session
+    saveSessionMutation.mutate({
+      domain: selectedDomain,
+      totalQuestions: answeredCount,
+      correctAnswers: correctCount,
+      timeSpentSeconds: elapsedSeconds
+    });
+    setQuizState('completed');
+  };
+
+  const handleRestart = () => {
+    setQuizState('setup');
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setShowExplanation(false);
     setAnsweredQuestions({});
+    setStartTime(null);
+    setElapsedSeconds(0);
   };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Setup screen
+  if (quizState === 'setup') {
+    return (
+      <div className="p-8 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-practice-quiz">Practice Quiz</h1>
+        
+        <Card className="p-8">
+          <div className="text-center mb-8">
+            <Play className="w-16 h-16 mx-auto mb-4 text-primary" />
+            <h2 className="text-2xl font-bold mb-2">Start a Practice Quiz</h2>
+            <p className="text-muted-foreground">
+              Answer questions to test your knowledge. Your session will be saved when you finish.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Select Domain</label>
+              <Select value={selectedDomain} onValueChange={(value) => setSelectedDomain(value as Domain | 'all')}>
+                <SelectTrigger className="w-full" data-testid="select-domain">
+                  <SelectValue placeholder="Select domain" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Domains ({QUIZ_QUESTIONS.length} questions)</SelectItem>
+                  {DOMAINS.map(domain => {
+                    const count = QUIZ_QUESTIONS.filter(q => q.domain === domain).length;
+                    return (
+                      <SelectItem key={domain} value={domain}>
+                        {domain} ({count} questions)
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {filteredQuestions.length > 0 && (
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  <strong className="text-foreground">{filteredQuestions.length} questions</strong> available in this selection
+                </p>
+              </div>
+            )}
+
+            <Button
+              onClick={handleStartQuiz}
+              disabled={filteredQuestions.length === 0}
+              className="w-full"
+              size="lg"
+              data-testid="button-start-quiz"
+            >
+              <Play className="w-5 h-5 mr-2" />
+              Start Quiz
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Completion screen
+  if (quizState === 'completed') {
+    const accuracy = answeredCount > 0 ? (correctCount / answeredCount) * 100 : 0;
+    const passed = accuracy >= 70;
+
+    return (
+      <div className="p-8 max-w-4xl mx-auto">
+        <Card className="p-8">
+          <div className="text-center mb-8">
+            <Trophy className={`w-16 h-16 mx-auto mb-4 ${passed ? 'text-success' : 'text-muted-foreground'}`} />
+            <h2 className="text-3xl font-bold mb-2">Quiz Complete!</h2>
+            <p className="text-muted-foreground">
+              {passed ? 'Great job! You passed this quiz.' : 'Keep practicing to improve your score.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-muted/50 p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-primary">{answeredCount}</div>
+              <div className="text-sm text-muted-foreground">Questions</div>
+            </div>
+            <div className="bg-muted/50 p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-success">{correctCount}</div>
+              <div className="text-sm text-muted-foreground">Correct</div>
+            </div>
+            <div className="bg-muted/50 p-4 rounded-lg text-center">
+              <div className={`text-2xl font-bold ${passed ? 'text-success' : 'text-destructive'}`}>
+                {Math.round(accuracy)}%
+              </div>
+              <div className="text-sm text-muted-foreground">Accuracy</div>
+            </div>
+            <div className="bg-muted/50 p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-foreground">{formatTime(elapsedSeconds)}</div>
+              <div className="text-sm text-muted-foreground">Time</div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Button
+              onClick={handleRestart}
+              className="w-full"
+              size="lg"
+              data-testid="button-restart"
+            >
+              <RotateCcw className="w-5 h-5 mr-2" />
+              Start New Quiz
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Active quiz screen
+  if (!currentQuestion) {
+    return (
+      <div className="p-8 max-w-4xl mx-auto">
+        <Card className="p-12 text-center">
+          <h2 className="text-2xl font-bold mb-4">No Questions Available</h2>
+          <p className="text-muted-foreground mb-6">
+            Please select a different domain or check back later.
+          </p>
+          <Button onClick={handleRestart} data-testid="button-back">
+            Back to Setup
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   const domainConfig = getDomainConfig(currentQuestion.domain);
   const Icon = domainConfig.icon;
@@ -106,31 +278,26 @@ export default function PracticeQuizPage() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-4" data-testid="heading-practice-quiz">Practice Quiz</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold text-foreground" data-testid="heading-practice-quiz">Practice Quiz</h1>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-muted-foreground" data-testid="text-timer">
+              <Clock className="w-4 h-4" />
+              <span className="font-mono text-lg">{formatTime(elapsedSeconds)}</span>
+            </div>
+          </div>
+        </div>
+        
         <div className="flex flex-wrap items-center gap-4">
-          <Select value={selectedDomain} onValueChange={(value) => {
-            setSelectedDomain(value as Domain | 'all');
-            setCurrentQuestionIndex(0);
-            setSelectedAnswer(null);
-            setShowExplanation(false);
-            setAnsweredQuestions({});
-          }}>
-            <SelectTrigger className="w-64" data-testid="select-domain">
-              <SelectValue placeholder="Select domain" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Domains</SelectItem>
-              {DOMAINS.map(domain => (
-                <SelectItem key={domain} value={domain}>{domain}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Badge variant="outline" className="text-sm">
+            {selectedDomain === 'all' ? 'All Domains' : selectedDomain}
+          </Badge>
           
           <div className="flex gap-4 text-sm text-muted-foreground">
-            <span>Progress: {answeredCount}/{totalQuestions}</span>
-            <span>Correct: {correctCount}/{answeredCount || 0}</span>
+            <span data-testid="text-progress">Progress: {answeredCount}/{totalQuestions}</span>
+            <span data-testid="text-correct">Correct: {correctCount}/{answeredCount || 0}</span>
             {answeredCount > 0 && (
-              <span className="font-medium">
+              <span className="font-medium" data-testid="text-accuracy">
                 Accuracy: {Math.round((correctCount / answeredCount) * 100)}%
               </span>
             )}
@@ -139,12 +306,12 @@ export default function PracticeQuizPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={handleReset}
+            onClick={handleFinishQuiz}
             className="ml-auto"
-            data-testid="button-reset"
+            data-testid="button-finish"
           >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
+            <Trophy className="w-4 h-4 mr-2" />
+            Finish Quiz
           </Button>
         </div>
       </div>
@@ -155,7 +322,7 @@ export default function PracticeQuizPage() {
             <Icon className="w-3 h-3 mr-1" />
             {currentQuestion.domain}
           </Badge>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground" data-testid="text-question-number">
             Question {currentQuestionIndex + 1} of {totalQuestions}
           </span>
         </div>

@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -134,6 +134,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch quiz statistics" });
+    }
+  });
+
+  // Quiz Session routes
+  app.get("/api/quiz/sessions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const sessions = await storage.getQuizSessions(userId);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch quiz sessions" });
+    }
+  });
+
+  app.get("/api/quiz/sessions/domain/:domain", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const domain = decodeURIComponent(req.params.domain);
+      const sessions = await storage.getQuizSessionsByDomain(userId, domain);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch quiz sessions by domain" });
+    }
+  });
+
+  app.post("/api/quiz/sessions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertQuizSessionSchema.parse({ ...req.body, userId });
+      const session = await storage.createQuizSession(data);
+      res.json(session);
+    } catch (error) {
+      console.error("Error saving quiz session:", error);
+      res.status(400).json({ error: "Invalid quiz session data" });
     }
   });
 

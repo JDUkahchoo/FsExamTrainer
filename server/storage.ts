@@ -3,6 +3,8 @@ import type {
   InsertWeekProgress,
   QuizResult,
   InsertQuizResult,
+  QuizSession,
+  InsertQuizSession,
   FlashcardMastery,
   InsertFlashcardMastery,
   PracticeExam,
@@ -17,6 +19,7 @@ import {
   users,
   weekProgress,
   quizResults,
+  quizSessions,
   flashcardMastery,
   practiceExams,
   studyNotes
@@ -38,6 +41,11 @@ export interface IStorage {
   getQuizResultsByDomain(userId: string, domain: string): Promise<QuizResult[]>;
   createQuizResult(result: InsertQuizResult): Promise<QuizResult>;
   deleteAllQuizResults(userId: string): Promise<void>;
+
+  // Quiz Session methods
+  getQuizSessions(userId: string): Promise<QuizSession[]>;
+  getQuizSessionsByDomain(userId: string, domain: string): Promise<QuizSession[]>;
+  createQuizSession(session: InsertQuizSession): Promise<QuizSession>;
 
   // Flashcard Mastery methods
   getFlashcardMastery(userId: string, flashcardId: string): Promise<FlashcardMastery | undefined>;
@@ -141,6 +149,31 @@ export class DatabaseStorage implements IStorage {
 
   async deleteAllQuizResults(userId: string): Promise<void> {
     await db.delete(quizResults).where(eq(quizResults.userId, userId));
+  }
+
+  // Quiz Session methods
+  async getQuizSessions(userId: string): Promise<QuizSession[]> {
+    return await db
+      .select()
+      .from(quizSessions)
+      .where(eq(quizSessions.userId, userId))
+      .orderBy(desc(quizSessions.completedAt));
+  }
+
+  async getQuizSessionsByDomain(userId: string, domain: string): Promise<QuizSession[]> {
+    return await db
+      .select()
+      .from(quizSessions)
+      .where(and(eq(quizSessions.userId, userId), eq(quizSessions.domain, domain)))
+      .orderBy(desc(quizSessions.completedAt));
+  }
+
+  async createQuizSession(session: InsertQuizSession): Promise<QuizSession> {
+    const [created] = await db
+      .insert(quizSessions)
+      .values({ ...session, completedAt: new Date() })
+      .returning();
+    return created;
   }
 
   // Flashcard Mastery methods
