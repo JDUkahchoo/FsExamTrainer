@@ -8,7 +8,7 @@ import { STUDY_PLAN } from '@shared/data/studyPlan';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import type { StudyNoteSelect } from '@shared/schema';
+import type { StudyNote } from '@shared/schema';
 
 export default function NotesPage() {
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
@@ -16,7 +16,7 @@ export default function NotesPage() {
   const { toast } = useToast();
 
   // Fetch all notes
-  const { data: allNotes, isLoading } = useQuery<StudyNoteSelect[]>({
+  const { data: allNotes, isLoading } = useQuery<StudyNote[]>({
     queryKey: ['/api/notes']
   });
 
@@ -36,6 +36,12 @@ export default function NotesPage() {
   const currentWeekPlan = STUDY_PLAN.find(plan => plan.week === selectedWeek);
   const currentNote = allNotes?.find(n => n.week === selectedWeek);
   const currentNotes = currentNote?.content || '';
+
+  // Create a lookup object for notes
+  const notesLookup = allNotes?.reduce((acc, note) => {
+    acc[note.week] = note.content;
+    return acc;
+  }, {} as Record<number, string>) || {};
 
   // Update local editing state when week changes or data loads
   useEffect(() => {
@@ -180,7 +186,7 @@ export default function NotesPage() {
         <h3 className="font-semibold text-foreground mb-4">Your Notes Progress</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
           {STUDY_PLAN.map(plan => {
-            const hasNotes = notes[plan.week] && notes[plan.week].length > 0;
+            const hasNotes = notesLookup[plan.week] && notesLookup[plan.week].length > 0;
             return (
               <button
                 key={plan.week}
@@ -194,7 +200,7 @@ export default function NotesPage() {
               >
                 <div className="text-lg font-bold text-foreground">W{plan.week}</div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  {hasNotes ? `${notes[plan.week].length} chars` : 'No notes'}
+                  {hasNotes ? `${notesLookup[plan.week].length} chars` : 'No notes'}
                 </div>
               </button>
             );
