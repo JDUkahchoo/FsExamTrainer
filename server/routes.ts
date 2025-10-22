@@ -1,72 +1,98 @@
+// From blueprint:javascript_log_in_with_replit
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertWeekProgressSchema, insertQuizResultSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Week Progress routes
-  app.get("/api/progress/weeks", async (_req, res) => {
+  // Auth middleware
+  await setupAuth(app);
+
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const progress = await storage.getAllWeekProgress();
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Week Progress routes
+  app.get("/api/progress/weeks", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getAllWeekProgress(userId);
       res.json(progress);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch week progress" });
     }
   });
 
-  app.get("/api/progress/weeks/:week", async (req, res) => {
+  app.get("/api/progress/weeks/:week", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const week = parseInt(req.params.week);
-      const progress = await storage.getWeekProgress(week);
+      const progress = await storage.getWeekProgress(userId, week);
       res.json(progress || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch week progress" });
     }
   });
 
-  app.post("/api/progress/weeks", async (req, res) => {
+  app.post("/api/progress/weeks", isAuthenticated, async (req: any, res) => {
     try {
-      const data = insertWeekProgressSchema.parse(req.body);
+      const userId = req.user.claims.sub;
+      const data = insertWeekProgressSchema.parse({ ...req.body, userId });
       const progress = await storage.upsertWeekProgress(data);
       res.json(progress);
     } catch (error) {
+      console.error("Error saving progress:", error);
       res.status(400).json({ error: "Invalid week progress data" });
     }
   });
 
   // Quiz Results routes
-  app.get("/api/quiz/results", async (_req, res) => {
+  app.get("/api/quiz/results", isAuthenticated, async (req: any, res) => {
     try {
-      const results = await storage.getQuizResults();
+      const userId = req.user.claims.sub;
+      const results = await storage.getQuizResults(userId);
       res.json(results);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch quiz results" });
     }
   });
 
-  app.get("/api/quiz/results/domain/:domain", async (req, res) => {
+  app.get("/api/quiz/results/domain/:domain", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const domain = decodeURIComponent(req.params.domain);
-      const results = await storage.getQuizResultsByDomain(domain);
+      const results = await storage.getQuizResultsByDomain(userId, domain);
       res.json(results);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch quiz results by domain" });
     }
   });
 
-  app.post("/api/quiz/results", async (req, res) => {
+  app.post("/api/quiz/results", isAuthenticated, async (req: any, res) => {
     try {
-      const data = insertQuizResultSchema.parse(req.body);
+      const userId = req.user.claims.sub;
+      const data = insertQuizResultSchema.parse({ ...req.body, userId });
       const result = await storage.createQuizResult(data);
       res.json(result);
     } catch (error) {
+      console.error("Error saving quiz result:", error);
       res.status(400).json({ error: "Invalid quiz result data" });
     }
   });
 
-  app.delete("/api/quiz/results", async (_req, res) => {
+  app.delete("/api/quiz/results", isAuthenticated, async (req: any, res) => {
     try {
-      await storage.deleteAllQuizResults();
+      const userId = req.user.claims.sub;
+      await storage.deleteAllQuizResults(userId);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete quiz results" });
@@ -74,9 +100,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Quiz Statistics route
-  app.get("/api/quiz/stats", async (_req, res) => {
+  app.get("/api/quiz/stats", isAuthenticated, async (req: any, res) => {
     try {
-      const results = await storage.getQuizResults();
+      const userId = req.user.claims.sub;
+      const results = await storage.getQuizResults(userId);
       const totalAnswered = results.length;
       const totalCorrect = results.filter(r => r.isCorrect).length;
       const accuracy = totalAnswered > 0 ? (totalCorrect / totalAnswered) * 100 : 0;
@@ -111,37 +138,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Flashcard Mastery routes
-  app.get("/api/flashcards/mastery", async (_req, res) => {
+  app.get("/api/flashcards/mastery", isAuthenticated, async (req: any, res) => {
     try {
-      const mastery = await storage.getAllFlashcardMastery();
+      const userId = req.user.claims.sub;
+      const mastery = await storage.getAllFlashcardMastery(userId);
       res.json(mastery);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch flashcard mastery" });
     }
   });
 
-  app.get("/api/flashcards/mastery/:flashcardId", async (req, res) => {
+  app.get("/api/flashcards/mastery/:flashcardId", isAuthenticated, async (req: any, res) => {
     try {
-      const mastery = await storage.getFlashcardMastery(req.params.flashcardId);
+      const userId = req.user.claims.sub;
+      const mastery = await storage.getFlashcardMastery(userId, req.params.flashcardId);
       res.json(mastery || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch flashcard mastery" });
     }
   });
 
-  app.post("/api/flashcards/mastery", async (req, res) => {
+  app.post("/api/flashcards/mastery", isAuthenticated, async (req: any, res) => {
     try {
-      const data = insertFlashcardMasterySchema.parse(req.body);
+      const userId = req.user.claims.sub;
+      const data = insertFlashcardMasterySchema.parse({ ...req.body, userId });
       const mastery = await storage.upsertFlashcardMastery(data);
       res.json(mastery);
     } catch (error) {
+      console.error("Error saving flashcard mastery:", error);
       res.status(400).json({ error: "Invalid flashcard mastery data" });
     }
   });
 
-  app.delete("/api/flashcards/mastery", async (_req, res) => {
+  app.delete("/api/flashcards/mastery", isAuthenticated, async (req: any, res) => {
     try {
-      await storage.deleteAllFlashcardMastery();
+      const userId = req.user.claims.sub;
+      await storage.deleteAllFlashcardMastery(userId);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete flashcard mastery" });
@@ -149,9 +181,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Flashcard Statistics route
-  app.get("/api/flashcards/stats", async (_req, res) => {
+  app.get("/api/flashcards/stats", isAuthenticated, async (req: any, res) => {
     try {
-      const mastery = await storage.getAllFlashcardMastery();
+      const userId = req.user.claims.sub;
+      const mastery = await storage.getAllFlashcardMastery(userId);
       const totalReviewed = mastery.length;
       const totalMastered = mastery.filter(m => m.masteryLevel >= 4).length;
       const masteryPercentage = totalReviewed > 0 ? (totalMastered / totalReviewed) * 100 : 0;
@@ -167,72 +200,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Practice Exam routes
-  app.get("/api/exams", async (_req, res) => {
+  app.get("/api/exams", isAuthenticated, async (req: any, res) => {
     try {
-      const exams = await storage.getPracticeExams();
+      const userId = req.user.claims.sub;
+      const exams = await storage.getPracticeExams(userId);
       res.json(exams);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch practice exams" });
     }
   });
 
-  app.get("/api/exams/latest", async (_req, res) => {
+  app.get("/api/exams/latest", isAuthenticated, async (req: any, res) => {
     try {
-      const exam = await storage.getLatestPracticeExam();
+      const userId = req.user.claims.sub;
+      const exam = await storage.getLatestPracticeExam(userId);
       res.json(exam || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch latest exam" });
     }
   });
 
-  app.post("/api/exams", async (req, res) => {
+  app.post("/api/exams", isAuthenticated, async (req: any, res) => {
     try {
-      const data = insertPracticeExamSchema.parse(req.body);
+      const userId = req.user.claims.sub;
+      const data = insertPracticeExamSchema.parse({ ...req.body, userId });
       const exam = await storage.createPracticeExam(data);
       res.json(exam);
     } catch (error) {
+      console.error("Error saving exam:", error);
       res.status(400).json({ error: "Invalid practice exam data" });
     }
   });
 
   // Study Notes routes
-  app.get("/api/notes", async (_req, res) => {
+  app.get("/api/notes", isAuthenticated, async (req: any, res) => {
     try {
-      const notes = await storage.getAllStudyNotes();
+      const userId = req.user.claims.sub;
+      const notes = await storage.getAllStudyNotes(userId);
       res.json(notes);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch study notes" });
     }
   });
 
-  app.get("/api/notes/:week", async (req, res) => {
+  app.get("/api/notes/:week", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const week = parseInt(req.params.week);
-      const note = await storage.getStudyNote(week);
+      const note = await storage.getStudyNote(userId, week);
       res.json(note || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch study note" });
     }
   });
 
-  app.post("/api/notes", async (req, res) => {
+  app.post("/api/notes", isAuthenticated, async (req: any, res) => {
     try {
-      const data = insertStudyNoteSchema.parse(req.body);
+      const userId = req.user.claims.sub;
+      const data = insertStudyNoteSchema.parse({ ...req.body, userId });
       const note = await storage.upsertStudyNote(data);
       res.json(note);
     } catch (error) {
+      console.error("Error saving note:", error);
       res.status(400).json({ error: "Invalid study note data" });
     }
   });
 
   // Overall Progress/Statistics route
-  app.get("/api/progress/stats", async (_req, res) => {
+  app.get("/api/progress/stats", isAuthenticated, async (req: any, res) => {
     try {
-      const weekProgress = await storage.getAllWeekProgress();
-      const quizResults = await storage.getQuizResults();
-      const flashcardMastery = await storage.getAllFlashcardMastery();
-      const practiceExams = await storage.getPracticeExams();
-      const studyNotes = await storage.getAllStudyNotes();
+      const userId = req.user.claims.sub;
+      const weekProgress = await storage.getAllWeekProgress(userId);
+      const quizResults = await storage.getQuizResults(userId);
+      const flashcardMastery = await storage.getAllFlashcardMastery(userId);
+      const practiceExams = await storage.getPracticeExams(userId);
 
       // Calculate weeks completed
       const weeksCompleted = weekProgress.filter(wp => {
@@ -279,11 +320,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastExamScore
       });
     } catch (error) {
+      console.error("Error fetching stats:", error);
       res.status(500).json({ error: "Failed to fetch progress statistics" });
     }
   });
 
   const httpServer = createServer(app);
-
   return httpServer;
 }
