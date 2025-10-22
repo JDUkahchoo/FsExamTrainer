@@ -876,301 +876,301 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
 
   // Domain 4: Mapping, GIS & CAD (151-200)
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'GIS (Definition)',
     back: 'Geographic Information System\n\nIntegrates spatial data with attributes',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Raster Data',
     back: 'Pixel-based; represents continuous surfaces\n\nElevation, imagery, temperature',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Vector Data',
     back: 'Point, line, polygon format\n\nDiscrete features (boundaries, roads)',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Raster Cell Value',
     back: 'Represents average attribute over that area\n\nOr center point value',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Resolution (Raster)',
     back: 'Size of pixel\n\nSmaller = higher resolution',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Attribute Table',
     back: 'Database storing non-spatial information\n\nLinked to geometry',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Shapefile (.shp)',
     back: 'Common vector data format\n\nIncludes .shx, .dbf support files',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'DEM (Digital Elevation Model)',
     back: 'Raster dataset representing elevation values\n\nBare earth or surface',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Orthophoto',
     back: 'Aerial photo corrected for distortion and scale\n\nTrue map projection',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Topology (GIS)',
     back: 'Spatial relationships\n\nConnectivity, adjacency, containment',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Coordinate Reference System (CRS)',
     back: 'Defines how map data relate to Earth\'s surface\n\nIncludes datum and projection',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Geographic Coordinate System (GCS)',
     back: 'Uses latitude & longitude on a spheroid\n\nAngular units (degrees)',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Projected Coordinate System (PCS)',
     back: '2D map projection of 3D Earth\n\nLinear units (feet, meters)',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Common PCS Examples',
     back: 'State Plane, UTM, Lambert Conformal Conic, Transverse Mercator',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'UTM Zone Width',
     back: '6° of longitude per zone\n\n60 zones total worldwide',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'UTM Origin',
     back: 'False easting = 500,000 m\nNorthing = 0 (N hemisphere) or 10,000,000 m (S hemisphere)',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'State Plane Coordinate System (SPCS)',
     back: 'High accuracy local mapping system used in the U.S.\n\nState-specific zones',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Lambert Conformal Conic Projection',
     back: 'Used for wide east–west areas\n\nExample: Texas',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Transverse Mercator Projection',
     back: 'Used for north–south regions\n\nMinimal distortion along meridian',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Scale Factor (Grid)',
     back: 'Ratio between grid and ground distances\n\nTypically near 1.0',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Elevation Factor (m)',
     back: 'm = R / (R + h)\n\nR ≈ 20,906,000 ft\nh = elevation',
     category: 'formula'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Combined Factor (k)',
     back: 'k = m × k₀\n\nElevation factor × Grid scale factor',
     category: 'formula'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Grid Distance from Ground',
     back: 'Grid = Ground × k\n\nk = combined factor',
     category: 'formula'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Ground Distance from Grid',
     back: 'Ground = Grid / k\n\nk = combined factor',
     category: 'formula'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Map Scale Definition',
     back: '1 unit on map = X units on ground\n\nExample: 1" = 100\'',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Graphic Scale (Bar Scale)',
     back: 'Remains correct when map resized\n\nPreferred over numeric scale',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Large Scale Map',
     back: 'Shows small area with great detail\n\nExample: 1"=100\'',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Small Scale Map',
     back: 'Shows large area with less detail\n\nExample: 1"=1 mile',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Metadata (GIS)',
     back: '"Data about data"\n\nDocuments source, accuracy, date',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Datum (Definition)',
     back: 'Mathematical model of Earth\'s size, shape, and origin\n\nReference framework',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Horizontal Datum Example',
     back: 'NAD83 (North American Datum 1983)\n\nBased on GRS80 ellipsoid',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Vertical Datum Example',
     back: 'NAVD88 (North American Vertical Datum 1988)\n\nMean sea level reference',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'NAD27 vs NAD83 Difference',
     back: 'NAD83 is Earth-centered\nNAD27 based on Meades Ranch, KS\n\nShifts up to 100m',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Grid Convergence Angle',
     back: 'Difference between True North and Grid North\n\nVaries by location',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Ellipsoid Example',
     back: 'GRS80, WGS84\n\nMathematical approximations of Earth',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'False Easting / Northing Purpose',
     back: 'Avoid negative coordinates\n\nShift origin westward and southward',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Orthometric Height (H)',
     back: 'Elevation above geoid\n\nMean sea level reference',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Ellipsoidal Height (h)',
     back: 'GPS-measured height above ellipsoid\n\nDiffers from orthometric',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Geoid Height (N)',
     back: 'Difference between ellipsoid and geoid surfaces\n\n-100m to +100m globally',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Height Relationship Formula',
     back: 'h = H + N\n\nEllipsoidal = Orthometric + Geoid separation',
     category: 'formula'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Map Projection Distortion Types',
     back: 'Shape, area, distance, direction\n\nCannot preserve all simultaneously',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Equal-Area Projection',
     back: 'Preserves area\n\nUsed for statistical maps',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Conformal Projection',
     back: 'Preserves shape and angles\n\nUsed for surveying',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Azimuthal Projection',
     back: 'Projects points onto a plane from Earth\'s center\n\nPreserves direction from center',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'CAD (Definition)',
     back: 'Computer-Aided Design\n\nUsed to create survey drawings',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Coordinate Import in CAD',
     back: 'CSV or TXT file with:\nPoint#, Northing, Easting, Elevation, Description',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Layer Control in CAD',
     back: 'Organizes data by type\n\nExample: topo, boundary, text',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Common CAD File Types',
     back: '.DWG, .DXF, .DGN\n\nAutodesk and Bentley formats',
     category: 'definition'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Raster Overlay in CAD',
     back: 'Used for georeferencing aerial imagery to linework\n\nBackground reference',
     category: 'concept'
   },
   {
-    domain: 'Mapping, GIS & CAD',
+    domain: 'Mapping, GIS, and CAD',
     front: 'Coordinate Scaling in CAD',
     back: 'Apply scale factor to convert grid ↔ ground\n\nEssential for accurate mapping',
     category: 'concept'
@@ -1480,301 +1480,301 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
 
   // Domain 6: Geodesy, GPS & Photogrammetry (251-300)
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Geodesy (Definition)',
     back: 'Science of measuring Earth\'s size, shape, and gravitational field',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Ellipsoid (Definition)',
     back: 'Mathematical model approximating Earth\'s shape\n\nFlattened sphere',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Common Ellipsoids',
     back: 'GRS80 (NAD83), WGS84 (GPS), Clarke 1866 (NAD27)',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Datum (Definition)',
     back: 'Reference system for defining positions on Earth\n\nOrigin + ellipsoid + orientation',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'NAD27 Reference',
     back: 'Based on Clarke 1866 ellipsoid\nMeades Ranch, Kansas origin',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'NAD83 Reference',
     back: 'Based on GRS80\nEarth-centered origin',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'WGS84 Reference',
     back: 'Used by GPS\nNearly identical to NAD83 in North America',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Datum Shift',
     back: 'Offset caused by using different ellipsoids\nCan be 100+ meters',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Local Datum',
     back: 'Optimized for one region\nExample: NAD27',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Geocentric Datum',
     back: 'Earth-centered reference\nNAD83, WGS84',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Geoid (Definition)',
     back: 'Surface of equal gravity\nApproximates mean sea level',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Orthometric Height (H)',
     back: 'Height above geoid\nMeasured by leveling',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Ellipsoidal Height (h)',
     back: 'GPS-derived height above ellipsoid\nDiffers from orthometric',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Geoid Height (N)',
     back: 'Separation between ellipsoid and geoid\n-100m to +100m globally',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Height Relationship Formula',
     back: 'h = H + N\n\nEllipsoidal = Orthometric + Geoid separation',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Gravity Anomaly',
     back: 'Difference between observed and theoretical gravity\nCauses geoid undulation',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Deflection of the Vertical',
     back: 'Angle between plumb line and ellipsoid normal\nCaused by mass irregularities',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Level Surface',
     back: 'Surface of equal potential energy (gravity)\nEquipotential surface',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Map Projection Distortion',
     back: 'Shape, area, distance, or direction errors\nCannot preserve all',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Conformal Projection',
     back: 'Preserves shape\nTransverse Mercator, Lambert Conformal',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Equal-Area Projection',
     back: 'Preserves area\nAlbers Equal Area',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Equidistant Projection',
     back: 'Preserves distance along certain lines\nNot all distances',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Azimuthal Projection',
     back: 'Projects surface onto plane\nFrom Earth\'s center',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'UTM System',
     back: '60 zones, each 6° wide\nBased on Transverse Mercator',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'UTM Scale Factor at Central Meridian',
     back: '0.9996\n\nSlightly smaller than 1.0',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'State Plane Coordinate System (SPCS)',
     back: 'High-accuracy local grid system for U.S.\nState-specific zones',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Lambert Conformal Conic Use',
     back: 'For east–west states like Texas\nTwo standard parallels',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Transverse Mercator Use',
     back: 'For north–south oriented states\nCentral meridian',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Grid-to-Ground Conversion',
     back: 'Ground = Grid / Combined Factor\n\nCombined Factor = m × k₀',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Combined Factor (CF)',
     back: 'CF = Elevation Factor × Scale Factor\n\nk = m × k₀',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'GNSS (Definition)',
     back: 'Global Navigation Satellite System\nGPS, GLONASS, Galileo, BeiDou',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'GPS (Definition)',
     back: 'U.S.-based GNSS\nProviding 3D positioning',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'GPS Observable Types',
     back: 'Code phase, carrier phase, Doppler shift\n\nCarrier most accurate',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'GPS Error Sources',
     back: 'Ionospheric delay, tropospheric delay, multipath, satellite clock error',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Differential GPS (DGPS)',
     back: 'Corrects GPS error using known base station\n\nSub-meter accuracy',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'RTK GPS (Real-Time Kinematic)',
     back: 'Uses carrier phase corrections\nCentimeter accuracy',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'PDOP / GDOP',
     back: 'Dilution of Precision\nSatellite geometry quality - lower is better',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Minimum Satellites for 3D Fix',
     back: '4 satellites\n\nx, y, z, and time',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Orthophoto (Definition)',
     back: 'Aerial photo corrected for tilt and scale\nTrue map projection',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Photogrammetry (Definition)',
     back: 'Measurement and mapping from photographs\nAerial or terrestrial',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Photo Scale Formula',
     back: 'Scale = f / H\n\nf = focal length\nH = flying height above ground',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Ground Distance from Photo',
     back: 'D_g = D_p × (H / f)\n\nPhoto distance × scale factor',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Relief Displacement (d)',
     back: 'd = (r × h) / H\n\nr = radial distance\nh = height diff\nH = flying height',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'End Lap Requirement',
     back: '60% overlap between successive photos\n\nStereoscopic coverage',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Side Lap Requirement',
     back: '20–30% between flight lines\n\nEnsures coverage',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Stereoscopic Coverage',
     back: 'Overlapping photos viewed in 3D\n\n60% overlap needed',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Base-Height Ratio (B/H)',
     back: 'Determines vertical exaggeration\n\nTypically 0.6',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Parallax (p)',
     back: 'Apparent shift between photo positions\nFor the same point',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Height Difference from Parallax',
     back: 'Δh = (H × Δp) / (p₁ – p₂)\n\nStereoscopic measurement',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS & Astronomy',
+    domain: 'Geodesy, GPS, Astronomy',
     front: 'Aerial Triangulation',
     back: 'Process of extending control through overlapping photos\n\nDensifies control',
     category: 'concept'
