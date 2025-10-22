@@ -29,11 +29,21 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Accuracy tracking and statistics
 
 ### 🎴 Flashcard System
-- 50+ flashcards covering formulas, definitions, and concepts
+- **Two comprehensive decks**: Original curated deck (50 cards) and Comprehensive deck (350 cards)
+- Toggle between decks to customize study depth
 - Card flip animations for active recall
-- Spaced repetition tracking
-- Mark cards as mastered
+- Spaced repetition tracking with 1-5 mastery levels
+- Mark cards as mastered (level ≥ 4)
 - Shuffle and domain filtering
+- Separate mastery tracking for each deck
+- All 7 NCEES domains covered with detailed explanations
+
+### 📚 Study Resources
+- **Formula Sheets** - Essential surveying formulas organized by category
+- **Memory Techniques** - Mnemonics and visualization strategies for key concepts
+- **Exam Day Playbook** - Time management, calculator tips, and test-taking strategies  
+- **Study Methods** - Active recall, Cornell notes, and effective review techniques
+- Content extracted from comprehensive FS exam study materials
 
 ### 🎓 Practice Exam Simulator
 - Full 110-question practice exam
@@ -92,7 +102,8 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 │   │   │   ├── flashcards.tsx
 │   │   │   ├── practice-exam.tsx
 │   │   │   ├── notes.tsx
-│   │   │   └── progress.tsx
+│   │   │   ├── progress.tsx
+│   │   │   └── resources.tsx
 │   │   ├── lib/
 │   │   │   └── domains.ts
 │   │   └── App.tsx
@@ -101,7 +112,8 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 │   └── data/
 │       ├── studyPlan.ts
 │       ├── quizQuestions.ts
-│       └── flashcards.ts
+│       ├── flashcards.ts              # Original 50-card deck
+│       └── flashcardsComprehensive.ts  # Comprehensive 350-card deck
 ├── server/
 │   ├── routes.ts            # API endpoints
 │   └── storage.ts           # Data storage interface
@@ -125,7 +137,7 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Cloud sync ready
 
 **Phase 3: Data Migration & Sync** ✅ Complete
-- All 6 pages migrated to PostgreSQL API (Progress, Study Plan, Quiz, Exam, Flashcards, Notes)
+- All 7 pages migrated to PostgreSQL API (Progress, Study Plan, Quiz, Exam, Flashcards, Notes, Resources)
 - TanStack Query integration with useQuery/useMutation pattern
 - Proper cache invalidation on all mutations
 - Loading states and error handling
@@ -133,6 +145,14 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Stable flashcard IDs for mastery tracking
 - Study plan Set→Array conversion for database storage
 - Practice quiz includes full answer tracking
+
+**Phase 3.5: Comprehensive Content Expansion** ✅ Complete
+- Expanded flashcard system to 350 cards across all 7 domains
+- Dual deck system: Original (50 cards) and Comprehensive (350 cards)
+- Separate mastery tracking per deck using deck-prefixed IDs (`card-X` vs `comp-card-X`)
+- New Resources page with formula sheets, memory techniques, exam strategies
+- Content extracted from professional FS exam study materials
+- Deck switching UI with seamless toggle between collections
 
 **Phase 4: Enhanced Features** 📋 Planned
 - AI Study Assistant (OpenAI integration)
@@ -168,9 +188,12 @@ Both run on the same port with automatic hot-reload.
 
 ### Flashcard Mastery
 - Tracks mastery level (1-5 scale) for each flashcard
-- `flashcardId` uses stable IDs: `card-0`, `card-1`, etc.
+- **Dual ID system for deck separation**:
+  - Original deck: `card-0`, `card-1`, ... `card-49` (50 cards)
+  - Comprehensive deck: `comp-card-0`, `comp-card-1`, ... `comp-card-349` (350 cards)
 - Mastery level ≥ 4 = card is marked as mastered
 - `lastReviewed` timestamp for spaced repetition
+- Separate mastery progress tracked per deck
 
 ### Practice Exams
 - Stores complete exam attempts with 110 questions
