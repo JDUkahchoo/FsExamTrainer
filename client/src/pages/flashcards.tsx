@@ -11,7 +11,7 @@ import { COMPREHENSIVE_FLASHCARDS } from '@shared/data/flashcardsComprehensive';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { DOMAINS } from '@shared/schema';
-import type { Domain, FlashcardMasterySelect } from '@shared/schema';
+import type { Domain, FlashcardMastery } from '@shared/schema';
 
 type FlashcardDeck = 'original' | 'comprehensive';
 
@@ -23,7 +23,7 @@ export default function FlashcardsPage() {
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
 
   // Fetch flashcard mastery from database
-  const { data: masteryData } = useQuery<FlashcardMasterySelect[]>({
+  const { data: masteryData } = useQuery<FlashcardMastery[]>({
     queryKey: ['/api/flashcards/mastery']
   });
 

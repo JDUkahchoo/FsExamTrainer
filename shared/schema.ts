@@ -106,6 +106,33 @@ export const insertQuizResultSchema = createInsertSchema(quizResults).omit({
 export type InsertQuizResult = z.infer<typeof insertQuizResultSchema>;
 export type QuizResult = typeof quizResults.$inferSelect;
 
+// --- Quiz Sessions ---
+
+export const quizSessions = pgTable("quiz_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  domain: text("domain").notNull(), // Domain filter used, or "all" for mixed
+  totalQuestions: integer("total_questions").notNull(),
+  correctAnswers: integer("correct_answers").notNull(),
+  timeSpentSeconds: integer("time_spent_seconds").notNull(),
+  completedAt: timestamp("completed_at").notNull().defaultNow(),
+});
+
+export const quizSessionsRelations = relations(quizSessions, ({ one }) => ({
+  user: one(users, {
+    fields: [quizSessions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertQuizSessionSchema = createInsertSchema(quizSessions).omit({
+  id: true,
+  completedAt: true,
+});
+
+export type InsertQuizSession = z.infer<typeof insertQuizSessionSchema>;
+export type QuizSession = typeof quizSessions.$inferSelect;
+
 // --- Flashcard Mastery ---
 
 export const flashcardMastery = pgTable("flashcard_mastery", {
@@ -189,6 +216,7 @@ export type StudyNote = typeof studyNotes.$inferSelect;
 export const usersRelations = relations(users, ({ many }) => ({
   weekProgress: many(weekProgress),
   quizResults: many(quizResults),
+  quizSessions: many(quizSessions),
   flashcardMastery: many(flashcardMastery),
   practiceExams: many(practiceExams),
   studyNotes: many(studyNotes),
