@@ -14,6 +14,7 @@ import FlashcardsPage from "@/pages/flashcards";
 import PracticeExamPage from "@/pages/practice-exam";
 import NotesPage from "@/pages/notes";
 import ProgressPage from "@/pages/progress";
+import ResourcesPage from "@/pages/resources";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -39,6 +40,7 @@ function Router() {
           <Route path="/exam" component={PracticeExamPage} />
           <Route path="/notes" component={NotesPage} />
           <Route path="/progress" component={ProgressPage} />
+          <Route path="/resources" component={ResourcesPage} />
         </>
       )}
       <Route component={NotFound} />

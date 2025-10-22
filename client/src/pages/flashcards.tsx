@@ -7,12 +7,16 @@ import { Progress } from '@/components/ui/progress';
 import { RotateCcw, Shuffle, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { FLASHCARDS } from '@shared/data/flashcards';
+import { COMPREHENSIVE_FLASHCARDS } from '@shared/data/flashcardsComprehensive';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { DOMAINS } from '@shared/schema';
 import type { Domain, FlashcardMasterySelect } from '@shared/schema';
 
+type FlashcardDeck = 'original' | 'comprehensive';
+
 export default function FlashcardsPage() {
+  const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>('comprehensive');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -34,25 +38,29 @@ export default function FlashcardsPage() {
     }
   });
 
-  // Convert database mastery to Set - use card.id from FLASHCARDS
+  // Convert database mastery to Set
   const masteredCards = new Set((masteryData || []).filter(m => m.masteryLevel >= 4).map(m => m.flashcardId));
 
+  // Select the active deck
+  const activeFlashcards = selectedDeck === 'comprehensive' ? COMPREHENSIVE_FLASHCARDS : FLASHCARDS;
+
   const filteredCards = selectedDomain === 'all'
-    ? FLASHCARDS
-    : FLASHCARDS.filter(card => card.domain === selectedDomain);
+    ? activeFlashcards
+    : activeFlashcards.filter(card => card.domain === selectedDomain);
 
   useEffect(() => {
     setShuffledIndices(filteredCards.map((_, i) => i));
     setCurrentIndex(0);
     setIsFlipped(false);
-  }, [selectedDomain, filteredCards.length]);
+  }, [selectedDomain, selectedDeck, filteredCards.length]);
 
   const currentCard = filteredCards[shuffledIndices[currentIndex]];
   const totalCards = filteredCards.length;
   // Count how many of the currently filtered cards are mastered
   const masteredCount = filteredCards.filter(card => {
-    const stableIndex = FLASHCARDS.indexOf(card);
-    const cardId = `card-${stableIndex}`;
+    const stableIndex = activeFlashcards.indexOf(card);
+    const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
+    const cardId = `${deckPrefix}${stableIndex}`;
     return masteredCards.has(cardId);
   }).length;
 
@@ -101,9 +109,10 @@ export default function FlashcardsPage() {
   const handleToggleMastered = () => {
     const cardIndex = shuffledIndices[currentIndex];
     const card = filteredCards[cardIndex];
-    // Use stable ID based on position in original FLASHCARDS array
-    const stableIndex = FLASHCARDS.indexOf(card);
-    const cardId = `card-${stableIndex}`;
+    // Use stable ID based on position in active deck array
+    const stableIndex = activeFlashcards.indexOf(card);
+    const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
+    const cardId = `${deckPrefix}${stableIndex}`;
     const wasMastered = masteredCards.has(cardId);
     const newMasteryLevel = wasMastered ? 2 : 5; // 5 = mastered, 2 = reviewed but not mastered
     
@@ -124,9 +133,10 @@ export default function FlashcardsPage() {
 
   const domainConfig = getDomainConfig(currentCard.domain);
   const Icon = domainConfig.icon;
-  // Use stable ID based on position in original FLASHCARDS array
-  const stableIndex = FLASHCARDS.indexOf(currentCard);
-  const currentCardId = `card-${stableIndex}`;
+  // Use stable ID based on position in active deck array
+  const stableIndex = activeFlashcards.indexOf(currentCard);
+  const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
+  const currentCardId = `${deckPrefix}${stableIndex}`;
   const isMastered = masteredCards.has(currentCardId);
   const progress = totalCards > 0 ? ((currentIndex + 1) / totalCards) * 100 : 0;
 
@@ -135,6 +145,16 @@ export default function FlashcardsPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-foreground mb-4" data-testid="heading-flashcards">Flashcards</h1>
         <div className="flex flex-wrap items-center gap-4 mb-4">
+          <Select value={selectedDeck} onValueChange={(value) => setSelectedDeck(value as FlashcardDeck)}>
+            <SelectTrigger className="w-64" data-testid="select-deck">
+              <SelectValue placeholder="Select deck" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="comprehensive">Comprehensive (350 cards)</SelectItem>
+              <SelectItem value="original">Original (50 cards)</SelectItem>
+            </SelectContent>
+          </Select>
+
           <Select value={selectedDomain} onValueChange={(value) => setSelectedDomain(value as Domain | 'all')}>
             <SelectTrigger className="w-64" data-testid="select-domain">
               <SelectValue placeholder="Select domain" />

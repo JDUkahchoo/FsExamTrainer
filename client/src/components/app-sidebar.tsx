@@ -1,4 +1,4 @@
-import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import {
   Sidebar,
@@ -19,6 +19,7 @@ const menuItems = [
   { id: '/exam', icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam' },
   { id: '/notes', icon: FileText, label: 'Study Notes', testId: 'nav-notes' },
   { id: '/progress', icon: BarChart3, label: 'Progress', testId: 'nav-progress' },
+  { id: '/resources', icon: BookMarked, label: 'Resources', testId: 'nav-resources' },
 ];
 
 export function AppSidebar() {

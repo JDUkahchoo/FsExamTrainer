@@ -196,6 +196,13 @@ export const usersRelations = relations(users, ({ many }) => ({
 
 // --- Frontend-only Types (for UI state management) ---
 
+export type Flashcard = {
+  domain: Domain;
+  front: string;
+  back: string;
+  category: 'formula' | 'definition' | 'concept';
+};
+
 export type WeekPlan = {
   week: number;
   title: string;
