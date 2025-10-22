@@ -67,8 +67,8 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 
 ### Backend
 - **Express.js** server
-- **In-memory storage** (MemStorage) for development
-- **Drizzle ORM** for schema definitions
+- **PostgreSQL** database with Drizzle ORM
+- **Replit Auth** for user authentication
 - **Zod** for validation
 
 ### Design System
@@ -110,10 +110,10 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 
 ## Development Status
 
-**MVP Features** ✅ Complete (localStorage)
+**MVP Features** ✅ Complete
 - All frontend components fully functional
 - Complete API layer implemented
-- localStorage persistence working
+- Initial localStorage persistence working
 
 **Phase 2: Authentication & Database** ✅ Complete
 - PostgreSQL database with Drizzle ORM
@@ -124,10 +124,15 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Landing page for logged-out users
 - Cloud sync ready
 
-**Phase 3: Data Migration & Sync** 🚧 Current
-- Migrate localStorage data to database
-- Update frontend to use API calls
-- Remove localStorage dependencies
+**Phase 3: Data Migration & Sync** ✅ Complete
+- All 6 pages migrated to PostgreSQL API (Progress, Study Plan, Quiz, Exam, Flashcards, Notes)
+- TanStack Query integration with useQuery/useMutation pattern
+- Proper cache invalidation on all mutations
+- Loading states and error handling
+- Auto-save functionality (Notes with 2s debounce)
+- Stable flashcard IDs for mastery tracking
+- Study plan Set→Array conversion for database storage
+- Practice quiz includes full answer tracking
 
 **Phase 4: Enhanced Features** 📋 Planned
 - AI Study Assistant (OpenAI integration)
@@ -142,13 +147,47 @@ The workflow "Start application" runs `npm run dev` which starts:
 
 Both run on the same port with automatic hot-reload.
 
+## Data Model
+
+### Users
+- `id` (serial) - Primary key
+- `replitUserId` - Replit auth user ID
+- `email` - User email
+- `firstName`, `lastName` - User name
+- `createdAt` - Account creation timestamp
+
+### Week Progress
+- Tracks completion status for each week's activities (READ, FOCUS, APPLY, REINFORCE)
+- Arrays store completed item indices for each category
+- User-scoped via `userId` foreign key
+
+### Quiz Results
+- Records every quiz question attempted
+- Includes `questionId`, `domain`, `selectedAnswer`, `isCorrect`, `completedAt`
+- Used for accuracy tracking and domain performance
+
+### Flashcard Mastery
+- Tracks mastery level (1-5 scale) for each flashcard
+- `flashcardId` uses stable IDs: `card-0`, `card-1`, etc.
+- Mastery level ≥ 4 = card is marked as mastered
+- `lastReviewed` timestamp for spaced repetition
+
+### Practice Exams
+- Stores complete exam attempts with 110 questions
+- Records `totalQuestions`, `correctAnswers`, `timeSpent`, `domainScores`
+- Enables retakes and progress tracking
+
+### Study Notes
+- Week-by-week note storage
+- Auto-saves with 2-second debounce
+- Supports rich text content
+
 ## Future Enhancements
 
-- User authentication (Replit Auth)
-- PostgreSQL database for persistence
-- Cloud sync across devices
-- AI-powered study assistant
-- Collaborative study groups
-- Advanced analytics and insights
-- Additional practice questions
-- Video explanations
+- AI-powered study assistant with chat interface
+- Collaborative study groups with shared notes
+- Advanced analytics with trend charts
+- Performance predictions and weak area identification
+- Additional practice questions and explanations
+- Video content integration
+- Mobile app version
