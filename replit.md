@@ -23,10 +23,12 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Progress tracking for each week
 
 ### 🧠 Practice Quizzes
-- 25+ practice questions across all domains
+- 21 practice questions across all 7 domains (3 per domain)
+- Session-based tracking with timer and completion flow
 - Instant feedback with detailed explanations
 - Domain filtering to focus on weak areas
-- Accuracy tracking and statistics
+- Quiz session history with accuracy and time tracking
+- Accuracy statistics and performance analytics
 
 ### 🎴 Flashcard System
 - **Two comprehensive decks**: Original curated deck (50 cards) and Comprehensive deck (350 cards)
@@ -154,7 +156,17 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Content extracted from professional FS exam study materials
 - Deck switching UI with seamless toggle between collections
 
+**Phase 3.6: Quiz Session Tracking** ✅ Complete
+- Implemented session-based quiz tracking with complete quiz sessions table
+- Practice quiz now features setup → active → completion flow
+- Real-time timer tracking during quiz sessions
+- Dual tracking system: individual question results (for analytics) + session summaries (for history)
+- Progress page displays recent quiz session history with accuracy, time, and domain
+- Maintains backward compatibility with existing quiz statistics
+- End-to-end tested and verified working
+
 **Phase 4: Enhanced Features** 📋 Planned
+- Quiz question expansion to 50 per domain (currently 21 questions total)
 - AI Study Assistant (OpenAI integration)
 - Collaborative Study Groups
 - Advanced Analytics
@@ -185,6 +197,13 @@ Both run on the same port with automatic hot-reload.
 - Records every quiz question attempted
 - Includes `questionId`, `domain`, `selectedAnswer`, `isCorrect`, `completedAt`
 - Used for accuracy tracking and domain performance
+
+### Quiz Sessions
+- Stores complete quiz session summaries
+- Includes `domain`, `totalQuestions`, `correctAnswers`, `timeSpentSeconds`, `completedAt`
+- Tracks full quiz attempts with timer and results
+- Displayed in Progress page session history
+- Separate from individual question tracking for better analytics
 
 ### Flashcard Mastery
 - Tracks mastery level (1-5 scale) for each flashcard
