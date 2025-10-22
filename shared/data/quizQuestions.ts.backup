@@ -182,8 +182,4 @@ export const QUIZ_QUESTIONS: Omit<QuizQuestion, 'id'>[] = [
     explanation: 'An easement appurtenant benefits a specific parcel (dominant estate) and runs with the land. An easement in gross benefits an individual or entity, not a particular parcel.',
     difficulty: 'medium'
   },
-
-  // Additional questions coming in future updates - Current total: 21 questions
-  // Foundation established for all 7 domains with key concepts
-  // Quiz session tracking will work with current question set
 ];
