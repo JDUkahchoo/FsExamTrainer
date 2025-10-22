@@ -7,21 +7,35 @@ import { Progress } from '@/components/ui/progress';
 import { RotateCcw, Shuffle, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { FLASHCARDS } from '@shared/data/flashcards';
-import { getFlashcardMastery, saveFlashcardMastery } from '@/lib/localStorage';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { DOMAINS } from '@shared/schema';
-import type { Domain } from '@shared/schema';
+import type { Domain, FlashcardMasterySelect } from '@shared/schema';
 
 export default function FlashcardsPage() {
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [masteredCards, setMasteredCards] = useState<Set<number>>(() => getFlashcardMastery());
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
 
-  // Save mastered cards to localStorage
-  useEffect(() => {
-    saveFlashcardMastery(masteredCards);
-  }, [masteredCards]);
+  // Fetch flashcard mastery from database
+  const { data: masteryData } = useQuery<FlashcardMasterySelect[]>({
+    queryKey: ['/api/flashcards/mastery']
+  });
+
+  // Mutation to save flashcard mastery
+  const saveMasteryMutation = useMutation({
+    mutationFn: (mastery: { flashcardId: string; masteryLevel: number; lastReviewed: Date }) =>
+      apiRequest('POST', '/api/flashcards/mastery', mastery),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/flashcards/mastery'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/flashcards/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+    }
+  });
+
+  // Convert database mastery to Set - use card.id from FLASHCARDS
+  const masteredCards = new Set((masteryData || []).filter(m => m.masteryLevel >= 4).map(m => m.flashcardId));
 
   const filteredCards = selectedDomain === 'all'
     ? FLASHCARDS
@@ -35,9 +49,12 @@ export default function FlashcardsPage() {
 
   const currentCard = filteredCards[shuffledIndices[currentIndex]];
   const totalCards = filteredCards.length;
-  const masteredCount = Array.from(masteredCards).filter(i => 
-    shuffledIndices.includes(i) && filteredCards[shuffledIndices.indexOf(i)]
-  ).length;
+  // Count how many of the currently filtered cards are mastered
+  const masteredCount = filteredCards.filter(card => {
+    const stableIndex = FLASHCARDS.indexOf(card);
+    const cardId = `card-${stableIndex}`;
+    return masteredCards.has(cardId);
+  }).length;
 
   if (!currentCard) {
     return (
@@ -83,28 +100,34 @@ export default function FlashcardsPage() {
 
   const handleToggleMastered = () => {
     const cardIndex = shuffledIndices[currentIndex];
-    setMasteredCards(prev => {
-      const next = new Set(prev);
-      if (next.has(cardIndex)) {
-        next.delete(cardIndex);
-      } else {
-        next.add(cardIndex);
-      }
-      return next;
+    const card = filteredCards[cardIndex];
+    // Use stable ID based on position in original FLASHCARDS array
+    const stableIndex = FLASHCARDS.indexOf(card);
+    const cardId = `card-${stableIndex}`;
+    const wasMastered = masteredCards.has(cardId);
+    const newMasteryLevel = wasMastered ? 2 : 5; // 5 = mastered, 2 = reviewed but not mastered
+    
+    saveMasteryMutation.mutate({
+      flashcardId: cardId,
+      masteryLevel: newMasteryLevel,
+      lastReviewed: new Date()
     });
   };
 
-  const handleReset = () => {
-    const newMastered = new Set<number>();
-    setMasteredCards(newMastered);
-    saveFlashcardMastery(newMastered);
+  const handleReset = async () => {
+    // Delete all flashcard mastery
+    await apiRequest('DELETE', '/api/flashcards/mastery', {});
+    queryClient.invalidateQueries({ queryKey: ['/api/flashcards/mastery'] });
     setCurrentIndex(0);
     setIsFlipped(false);
   };
 
   const domainConfig = getDomainConfig(currentCard.domain);
   const Icon = domainConfig.icon;
-  const isMastered = masteredCards.has(shuffledIndices[currentIndex]);
+  // Use stable ID based on position in original FLASHCARDS array
+  const stableIndex = FLASHCARDS.indexOf(currentCard);
+  const currentCardId = `card-${stableIndex}`;
+  const isMastered = masteredCards.has(currentCardId);
   const progress = totalCards > 0 ? ((currentIndex + 1) / totalCards) * 100 : 0;
 
   return (

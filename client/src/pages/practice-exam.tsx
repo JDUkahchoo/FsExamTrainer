@@ -7,7 +7,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
-import { savePracticeExam } from '@/lib/localStorage';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import type { Domain } from '@shared/schema';
 
 const EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
@@ -55,6 +56,17 @@ export default function PracticeExamPage() {
     setAnswers(prev => ({ ...prev, [questionIndex]: answerIndex }));
   };
 
+  // Mutation to save practice exam
+  const saveExamMutation = useMutation({
+    mutationFn: (exam: { totalQuestions: number; correctAnswers: number; timeSpent: number; domainScores: any; completedAt: Date }) =>
+      apiRequest('POST', '/api/exams', exam),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/exams'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/exams/latest'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+    }
+  });
+
   const handleSubmitExam = () => {
     setExamCompleted(true);
     
@@ -62,12 +74,12 @@ export default function PracticeExamPage() {
     const results = calculateResults();
     const timeSpent = Math.floor((EXAM_DURATION_MINUTES * 60 - timeRemaining) / 60);
     
-    savePracticeExam({
+    saveExamMutation.mutate({
       totalQuestions: results.total,
       correctAnswers: results.correct,
-      timeSpentMinutes: timeSpent,
-      domainScores: results.domainScores as any,
-      completedAt: new Date().toISOString()
+      timeSpent,
+      domainScores: results.domainScores,
+      completedAt: new Date()
     });
   };
 

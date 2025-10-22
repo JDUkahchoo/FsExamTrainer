@@ -1,35 +1,91 @@
-import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { getDomainConfig } from '@/lib/domains';
 import { STUDY_PLAN } from '@shared/data/studyPlan';
-import { getWeekProgress, saveWeekProgress } from '@/lib/localStorage';
-import type { WeekPlan } from '@shared/schema';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
+import type { WeekPlan, WeekProgressSelect } from '@shared/schema';
 
 export default function StudyPlanPage() {
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
-  const [completedItems, setCompletedItems] = useState<Record<string, Set<string>>>(() => getWeekProgress());
 
-  // Save to localStorage whenever completedItems changes
-  useEffect(() => {
-    saveWeekProgress(completedItems);
-  }, [completedItems]);
+  // Fetch all week progress from database
+  const { data: weekProgressData, isLoading } = useQuery<WeekProgressSelect[]>({
+    queryKey: ['/api/progress/weeks']
+  });
+
+  // Convert database format to UI format (Set-based)
+  const completedItems = useMemo(() => {
+    if (!weekProgressData) return {};
+    
+    const result: Record<string, Set<string>> = {};
+    weekProgressData.forEach(wp => {
+      const weekKey = `week-${wp.week}`;
+      const items = new Set<string>();
+      
+      wp.readCompleted.forEach(i => items.add(`read-${i}`));
+      wp.focusCompleted.forEach(i => items.add(`focus-${i}`));
+      wp.applyCompleted.forEach(i => items.add(`apply-${i}`));
+      wp.reinforceCompleted.forEach(i => items.add(`reinforce-${i}`));
+      
+      result[weekKey] = items;
+    });
+    
+    return result;
+  }, [weekProgressData]);
+
+  // Mutation to save week progress
+  const saveProgressMutation = useMutation({
+    mutationFn: async ({ week, completed }: { week: number; completed: Set<string> }) => {
+      // Convert Set back to database format
+      const readCompleted: number[] = [];
+      const focusCompleted: number[] = [];
+      const applyCompleted: number[] = [];
+      const reinforceCompleted: number[] = [];
+      
+      completed.forEach(item => {
+        const match = item.match(/^(read|focus|apply|reinforce)-(\d+)$/);
+        if (match) {
+          const [, category, index] = match;
+          const idx = parseInt(index);
+          if (category === 'read') readCompleted.push(idx);
+          else if (category === 'focus') focusCompleted.push(idx);
+          else if (category === 'apply') applyCompleted.push(idx);
+          else if (category === 'reinforce') reinforceCompleted.push(idx);
+        }
+      });
+      
+      return apiRequest('POST', '/api/progress/weeks', {
+        week,
+        readCompleted,
+        focusCompleted,
+        applyCompleted,
+        reinforceCompleted
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+    }
+  });
 
   const toggleItem = (week: number, itemId: string) => {
-    setCompletedItems(prev => {
-      const weekKey = `week-${week}`;
-      const current = prev[weekKey] || new Set();
-      const next = new Set(current);
-      if (next.has(itemId)) {
-        next.delete(itemId);
-      } else {
-        next.add(itemId);
-      }
-      return { ...prev, [weekKey]: next };
-    });
+    const weekKey = `week-${week}`;
+    const current = completedItems[weekKey] || new Set();
+    const next = new Set(current);
+    
+    if (next.has(itemId)) {
+      next.delete(itemId);
+    } else {
+      next.add(itemId);
+    }
+    
+    // Save to database
+    saveProgressMutation.mutate({ week, completed: next });
   };
 
   const calculateWeekProgress = (week: number, plan: WeekPlan) => {
@@ -38,6 +94,14 @@ export default function StudyPlanPage() {
     const total = plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length;
     return Math.round((completed.size / total) * 100) || 0;
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -177,24 +241,27 @@ function ChecklistSection({
         {title}
       </div>
       <div className="space-y-2">
-        {items.map((item, i) => {
-          const itemId = `${prefix}-${i}`;
+        {items.map((item, index) => {
+          const itemId = `${prefix}-${index}`;
           const isChecked = completed.has(itemId);
           return (
-            <label
-              key={i}
-              className="flex items-start gap-3 p-3 rounded-md border border-border cursor-pointer transition-all hover-elevate group"
-              data-testid={`checkbox-${prefix}-${i}`}
-            >
+            <div key={itemId} className="flex items-start gap-3 group">
               <Checkbox
+                id={itemId}
                 checked={isChecked}
-                onCheckedChange={() => onToggle(i)}
-                className="mt-0.5"
+                onCheckedChange={() => onToggle(index)}
+                className="mt-0.5 flex-shrink-0"
+                data-testid={`checkbox-${itemId}`}
               />
-              <span className={`text-sm leading-relaxed ${isChecked ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+              <label
+                htmlFor={itemId}
+                className={`text-sm cursor-pointer flex-1 leading-relaxed ${
+                  isChecked ? 'text-muted-foreground line-through' : 'text-foreground'
+                }`}
+              >
                 {item}
-              </span>
-            </label>
+              </label>
+            </div>
           );
         })}
       </div>

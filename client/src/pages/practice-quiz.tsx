@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CheckCircle2, XCircle, RotateCcw, Lightbulb } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
-import { saveQuizResult } from '@/lib/localStorage';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { DOMAINS } from '@shared/schema';
 import type { Domain } from '@shared/schema';
 
@@ -45,6 +46,17 @@ export default function PracticeQuizPage() {
     setSelectedAnswer(answerIndex);
   };
 
+  // Mutation to save quiz result
+  const saveResultMutation = useMutation({
+    mutationFn: (result: { questionId: string; domain: string; selectedAnswer: number; isCorrect: boolean; completedAt: Date }) =>
+      apiRequest('POST', '/api/quiz/results', result),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/results'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+    }
+  });
+
   const handleSubmit = () => {
     if (selectedAnswer === null) return;
     const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
@@ -54,13 +66,13 @@ export default function PracticeQuizPage() {
     });
     setShowExplanation(true);
 
-    // Save quiz result to localStorage
-    saveQuizResult({
+    // Save quiz result to database
+    saveResultMutation.mutate({
       questionId: `q-${currentQuestionIndex}`,
       domain: currentQuestion.domain,
       selectedAnswer,
       isCorrect,
-      completedAt: new Date().toISOString()
+      completedAt: new Date()
     });
   };
 

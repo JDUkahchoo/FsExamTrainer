@@ -1,84 +1,50 @@
-import { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award } from 'lucide-react';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2 } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
-import { getWeekProgress, getQuizResults, getFlashcardMastery, getPracticeExams } from '@/lib/localStorage';
+import { useQuery } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
 import type { Domain } from '@shared/schema';
 
 export default function ProgressPage() {
-  // Calculate real stats from localStorage
-  const stats = useMemo(() => {
-    const weekProgress = getWeekProgress();
-    const quizResults = getQuizResults();
-    const flashcardMastery = getFlashcardMastery();
-    const practiceExams = getPracticeExams();
+  const { data: stats, isLoading } = useQuery<{
+    totalStudyDays: number;
+    currentStreak: number;
+    longestStreak: number;
+    weeksCompleted: number;
+    questionsAnswered: number;
+    questionsCorrect: number;
+    flashcardsReviewed: number;
+    flashcardsMastered: number;
+    practiceExamsTaken: number;
+    lastExamScore: number;
+  }>({ queryKey: ['/api/progress/stats'] });
 
-    // Weeks completed
-    const weeksCompleted = Object.keys(weekProgress).length;
+  const { data: quizStats } = useQuery<{
+    totalAnswered: number;
+    totalCorrect: number;
+    accuracy: number;
+    domainStats: Record<string, { answered: number; correct: number; accuracy: number }>;
+  }>({ queryKey: ['/api/quiz/stats'] });
 
-    // Quiz stats
-    const questionsAnswered = quizResults.length;
-    const questionsCorrect = quizResults.filter(r => r.isCorrect).length;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
-    // Flashcard stats
-    const flashcardsReviewed = flashcardMastery.size;
-    const flashcardsMastered = flashcardMastery.size; // All in set are considered mastered
-
-    // Practice exams
-    const practiceExamsTaken = practiceExams.length;
-    const lastExam = practiceExams[practiceExams.length - 1];
-    const lastExamScore = lastExam
-      ? Math.round((lastExam.correctAnswers / lastExam.totalQuestions) * 100)
-      : 0;
-
-    // Domain-specific stats
-    const domainProgress: Record<string, { questionsAnswered: number; questionsCorrect: number; cardsReviewed: number }> = {};
-    
-    quizResults.forEach(result => {
-      if (!domainProgress[result.domain]) {
-        domainProgress[result.domain] = { questionsAnswered: 0, questionsCorrect: 0, cardsReviewed: 0 };
-      }
-      domainProgress[result.domain].questionsAnswered++;
-      if (result.isCorrect) {
-        domainProgress[result.domain].questionsCorrect++;
-      }
-    });
-
-    // Ensure all domains have entries
-    DOMAINS.forEach(domain => {
-      if (!domainProgress[domain]) {
-        domainProgress[domain] = { questionsAnswered: 0, questionsCorrect: 0, cardsReviewed: 0 };
-      }
-    });
-
-    return {
-      totalStudyDays: weeksCompleted * 7, // Approximate
-      currentStreak: weeksCompleted > 0 ? Math.min(weeksCompleted, 7) : 0,
-      longestStreak: weeksCompleted * 2, // Approximate
-      weeksCompleted,
-      questionsAnswered,
-      questionsCorrect,
-      flashcardsReviewed,
-      flashcardsMastered,
-      practiceExamsTaken,
-      lastExamScore,
-      domainProgress
-    };
-  }, []);
-
-  const mockStats = stats;
-  const mockDomainProgress = stats.domainProgress as Record<Domain, { questionsAnswered: number; questionsCorrect: number; cardsReviewed: number }>;
-
-  const overallAccuracy = mockStats.questionsAnswered > 0
-    ? Math.round((mockStats.questionsCorrect / mockStats.questionsAnswered) * 100)
+  const overallAccuracy = stats && stats.questionsAnswered > 0
+    ? Math.round((stats.questionsCorrect / stats.questionsAnswered) * 100)
     : 0;
 
-  const flashcardMastery = mockStats.flashcardsReviewed > 0
-    ? Math.round((mockStats.flashcardsMastered / mockStats.flashcardsReviewed) * 100)
+  const flashcardMastery = stats && stats.flashcardsReviewed > 0
+    ? Math.round((stats.flashcardsMastered / stats.flashcardsReviewed) * 100)
     : 0;
+
+  const domainProgress = quizStats?.domainStats || {};
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -97,7 +63,7 @@ export default function ProgressPage() {
               <Calendar className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground">{mockStats.currentStreak}</p>
+              <p className="text-3xl font-bold text-foreground" data-testid="stat-streak">{stats?.currentStreak || 0}</p>
               <p className="text-sm text-muted-foreground">Day Streak</p>
             </div>
           </div>
@@ -109,7 +75,7 @@ export default function ProgressPage() {
               <Target className="h-6 w-6 text-success" />
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground">{overallAccuracy}%</p>
+              <p className="text-3xl font-bold text-foreground" data-testid="stat-accuracy">{overallAccuracy}%</p>
               <p className="text-sm text-muted-foreground">Quiz Accuracy</p>
             </div>
           </div>
@@ -121,7 +87,7 @@ export default function ProgressPage() {
               <Brain className="h-6 w-6 text-domain-computations-fg" />
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground">{flashcardMastery}%</p>
+              <p className="text-3xl font-bold text-foreground" data-testid="stat-mastery">{flashcardMastery}%</p>
               <p className="text-sm text-muted-foreground">Cards Mastered</p>
             </div>
           </div>
@@ -133,114 +99,101 @@ export default function ProgressPage() {
               <Award className="h-6 w-6 text-domain-boundary-fg" />
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground">{mockStats.lastExamScore}%</p>
-              <p className="text-sm text-muted-foreground">Last Exam</p>
+              <p className="text-3xl font-bold text-foreground" data-testid="stat-weeks">{stats?.weeksCompleted || 0}</p>
+              <p className="text-sm text-muted-foreground">Weeks Completed</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Study Activity */}
+      {/* Detailed Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
             Study Activity
           </h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Total Study Days</span>
-              <span className="text-lg font-semibold text-foreground">{mockStats.totalStudyDays}</span>
+              <span className="text-lg font-semibold text-foreground">{stats?.totalStudyDays || 0}</span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Current Streak</span>
+              <span className="text-lg font-semibold text-foreground">{stats?.currentStreak || 0} days</span>
+            </div>
+            <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Longest Streak</span>
-              <span className="text-lg font-semibold text-foreground">{mockStats.longestStreak} days</span>
+              <span className="text-lg font-semibold text-foreground">{stats?.longestStreak || 0} days</span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Weeks Completed</span>
-              <span className="text-lg font-semibold text-foreground">{mockStats.weeksCompleted}/16</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Questions Answered</span>
-              <span className="text-lg font-semibold text-foreground">{mockStats.questionsAnswered}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Flashcards Reviewed</span>
-              <span className="text-lg font-semibold text-foreground">{mockStats.flashcardsReviewed}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Practice Exams Taken</span>
-              <span className="text-lg font-semibold text-foreground">{mockStats.practiceExamsTaken}</span>
+              <span className="text-lg font-semibold text-foreground">{stats?.weeksCompleted || 0} / 16</span>
             </div>
           </div>
         </Card>
 
-        {/* Overall Performance */}
         <Card className="p-6">
-          <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            Overall Performance
+            Performance Overview
           </h2>
-          <div className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">Quiz Accuracy</span>
-                <span className="text-sm font-semibold text-foreground">{overallAccuracy}%</span>
-              </div>
-              <Progress value={overallAccuracy} className="h-3" />
-              <p className="text-xs text-muted-foreground mt-1">
-                {mockStats.questionsCorrect} correct out of {mockStats.questionsAnswered} answered
-              </p>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Questions Answered</span>
+              <span className="text-lg font-semibold text-foreground">{stats?.questionsAnswered || 0}</span>
             </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">Flashcard Mastery</span>
-                <span className="text-sm font-semibold text-foreground">{flashcardMastery}%</span>
-              </div>
-              <Progress value={flashcardMastery} className="h-3" />
-              <p className="text-xs text-muted-foreground mt-1">
-                {mockStats.flashcardsMastered} mastered out of {mockStats.flashcardsReviewed} reviewed
-              </p>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Correct Answers</span>
+              <span className="text-lg font-semibold text-success">{stats?.questionsCorrect || 0}</span>
             </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">Study Plan Progress</span>
-                <span className="text-sm font-semibold text-foreground">{Math.round((mockStats.weeksCompleted / 16) * 100)}%</span>
-              </div>
-              <Progress value={(mockStats.weeksCompleted / 16) * 100} className="h-3" />
-              <p className="text-xs text-muted-foreground mt-1">
-                {mockStats.weeksCompleted} weeks completed out of 16
-              </p>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Flashcards Reviewed</span>
+              <span className="text-lg font-semibold text-foreground">{stats?.flashcardsReviewed || 0}</span>
             </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Practice Exams Taken</span>
+              <span className="text-lg font-semibold text-foreground">{stats?.practiceExamsTaken || 0}</span>
+            </div>
+            {(stats?.practiceExamsTaken || 0) > 0 && (
+              <div className="flex justify-between items-center pt-2 border-t border-border">
+                <span className="text-sm text-muted-foreground">Last Exam Score</span>
+                <span className="text-lg font-semibold text-primary">{stats?.lastExamScore || 0}%</span>
+              </div>
+            )}
           </div>
         </Card>
       </div>
 
-      {/* Domain Mastery */}
+      {/* Domain Performance */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-foreground mb-6">Domain Mastery</h2>
-        <div className="space-y-4">
-          {DOMAINS.map(domain => {
-            const stats = mockDomainProgress[domain];
-            const accuracy = stats.questionsAnswered > 0
-              ? Math.round((stats.questionsCorrect / stats.questionsAnswered) * 100)
-              : 0;
-            const domainConfig = getDomainConfig(domain);
-            const Icon = domainConfig.icon;
+        <h2 className="text-xl font-semibold text-foreground mb-6">Domain Performance</h2>
+        <div className="space-y-6">
+          {DOMAINS.map((domain) => {
+            const config = getDomainConfig(domain as Domain);
+            const domainData = domainProgress[domain] || { answered: 0, correct: 0, accuracy: 0 };
+            const accuracy = domainData.accuracy;
 
             return (
-              <div key={domain} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className={`${domainConfig.bgColor} ${domainConfig.textColor} border-transparent`}>
-                    <Icon className="w-3 h-3 mr-1" />
-                    {domain}
-                  </Badge>
-                  <div className="flex gap-4 text-sm text-muted-foreground">
-                    <span>{stats.questionsAnswered} questions</span>
-                    <span>{stats.cardsReviewed} cards</span>
-                    <span className="font-semibold text-foreground">{accuracy}%</span>
+              <div key={domain} className="space-y-2" data-testid={`domain-${domain.toLowerCase().replace(/\s+/g, '-')}`}>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: config.color }}
+                    />
+                    <span className="font-medium text-foreground">{domain}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-muted-foreground">
+                      {domainData.answered} questions
+                    </span>
+                    <Badge
+                      variant={accuracy >= 80 ? "default" : accuracy >= 60 ? "secondary" : "destructive"}
+                      className="min-w-[60px] justify-center"
+                    >
+                      {Math.round(accuracy)}%
+                    </Badge>
                   </div>
                 </div>
                 <Progress value={accuracy} className="h-2" />
@@ -251,23 +204,41 @@ export default function ProgressPage() {
       </Card>
 
       {/* Recommendations */}
-      <Card className="mt-6 p-6 bg-primary/5 border-primary/20">
-        <h3 className="font-semibold text-foreground mb-3">Recommendations</h3>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li className="flex items-start gap-2">
-            <span className="text-primary">•</span>
-            <span>Focus on <strong className="text-foreground">Geodesy, GPS, Astronomy</strong> - only 4 questions answered. Review Week 7-8 materials.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">•</span>
-            <span>Great progress on study streak! Keep it up to maintain consistency.</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-primary">•</span>
-            <span>Consider taking another practice exam to track improvement.</span>
-          </li>
-        </ul>
-      </Card>
+      {stats && stats.questionsAnswered > 0 && (
+        <Card className="p-6 mt-6 bg-primary/5 border-primary/20">
+          <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Target className="h-5 w-5" />
+            Personalized Recommendations
+          </h2>
+          <div className="space-y-2">
+            {overallAccuracy < 70 && (
+              <p className="text-sm text-muted-foreground">
+                • Your overall accuracy is {overallAccuracy}%. Focus on reviewing explanations after each quiz.
+              </p>
+            )}
+            {flashcardMastery < 50 && stats.flashcardsReviewed > 0 && (
+              <p className="text-sm text-muted-foreground">
+                • Review flashcards daily to improve your mastery percentage.
+              </p>
+            )}
+            {(stats.practiceExamsTaken || 0) === 0 && (stats.weeksCompleted || 0) >= 4 && (
+              <p className="text-sm text-muted-foreground">
+                • You've completed {stats.weeksCompleted} weeks! Consider taking a practice exam to assess your readiness.
+              </p>
+            )}
+            {Object.entries(domainProgress).some(([_, data]) => data.accuracy < 60 && data.answered >= 3) && (
+              <p className="text-sm text-muted-foreground">
+                • Focus on domains where your accuracy is below 60% for better exam preparation.
+              </p>
+            )}
+            {stats.currentStreak === 0 && stats.questionsAnswered > 0 && (
+              <p className="text-sm text-muted-foreground">
+                • Build a study streak by practicing daily for consistent progress.
+              </p>
+            )}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

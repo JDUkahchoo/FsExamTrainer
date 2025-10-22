@@ -3,40 +3,77 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, Save } from 'lucide-react';
+import { FileText, Save, Loader2 } from 'lucide-react';
 import { STUDY_PLAN } from '@shared/data/studyPlan';
-import { getStudyNotes, saveStudyNote } from '@/lib/localStorage';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import type { StudyNoteSelect } from '@shared/schema';
 
 export default function NotesPage() {
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
-  const [notes, setNotes] = useState<Record<number, string>>(() => getStudyNotes());
+  const [editingNotes, setEditingNotes] = useState<string>('');
   const { toast } = useToast();
 
+  // Fetch all notes
+  const { data: allNotes, isLoading } = useQuery<StudyNoteSelect[]>({
+    queryKey: ['/api/notes']
+  });
+
+  // Mutation to save note
+  const saveNoteMutation = useMutation({
+    mutationFn: (note: { week: number; content: string }) =>
+      apiRequest('POST', '/api/notes', note),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/notes'] });
+      toast({
+        title: 'Notes saved',
+        description: `Your notes for Week ${selectedWeek} have been saved.`,
+      });
+    }
+  });
+
   const currentWeekPlan = STUDY_PLAN.find(plan => plan.week === selectedWeek);
-  const currentNotes = notes[selectedWeek] || '';
+  const currentNote = allNotes?.find(n => n.week === selectedWeek);
+  const currentNotes = currentNote?.content || '';
+
+  // Update local editing state when week changes or data loads
+  useEffect(() => {
+    setEditingNotes(currentNotes);
+  }, [currentNotes, selectedWeek]);
 
   const handleSaveNotes = () => {
-    saveStudyNote(selectedWeek, currentNotes);
-    toast({
-      title: 'Notes saved',
-      description: `Your notes for Week ${selectedWeek} have been saved.`,
+    saveNoteMutation.mutate({
+      week: selectedWeek,
+      content: editingNotes
     });
   };
 
   const handleNotesChange = (value: string) => {
-    setNotes(prev => ({ ...prev, [selectedWeek]: value }));
+    setEditingNotes(value);
   };
 
   // Auto-save on change with debounce
   useEffect(() => {
+    if (editingNotes === currentNotes) return; // No changes
+    
     const timer = setTimeout(() => {
-      if (currentNotes !== (getStudyNotes()[selectedWeek] || '')) {
-        saveStudyNote(selectedWeek, currentNotes);
-      }
-    }, 1000);
+      saveNoteMutation.mutate({
+        week: selectedWeek,
+        content: editingNotes
+      });
+    }, 2000); // 2 second debounce
+    
     return () => clearTimeout(timer);
-  }, [currentNotes, selectedWeek]);
+  }, [editingNotes, selectedWeek]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -77,7 +114,7 @@ export default function NotesPage() {
           </div>
           
           <Textarea
-            value={currentNotes}
+            value={editingNotes}
             onChange={(e) => handleNotesChange(e.target.value)}
             placeholder="Start taking notes... You can include key concepts, formulas, practice problems, questions, or anything else you want to remember."
             className="min-h-[500px] font-mono text-sm resize-none"
