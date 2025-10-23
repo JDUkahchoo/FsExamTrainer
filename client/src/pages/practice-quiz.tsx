@@ -435,11 +435,11 @@ export default function PracticeQuizPage() {
         {!showExplanation && (
           <Button
             onClick={handleSubmit}
-            disabled={selectedAnswer === null}
+            disabled={selectedAnswer === null || saveResultMutation.isPending || !!answeredQuestions[currentQuestionIndex]}
             className="w-full mt-6"
             data-testid="button-submit"
           >
-            Submit Answer
+            {saveResultMutation.isPending ? 'Submitting...' : 'Submit Answer'}
           </Button>
         )}
       </Card>
