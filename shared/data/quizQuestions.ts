@@ -1,6 +1,13 @@
-import type { QuizQuestion } from '../schema';
+export interface QuizQuestion {
+  domain: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
 
-export const QUIZ_QUESTIONS: Omit<QuizQuestion, 'id'>[] = [
+export const QUIZ_QUESTIONS: QuizQuestion[] = [
   // Math & Basic Science
   {
     domain: 'Math & Basic Science',
@@ -420,7 +427,414 @@ export const QUIZ_QUESTIONS: Omit<QuizQuestion, 'id'>[] = [
     explanation: 'Surveying licensure is state-specific. You must be licensed/registered in each state where you practice surveying.',
     difficulty: 'easy'
   },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The coefficient of thermal expansion for steel is approximately:',
+    options: ['6.5 × 10⁻⁶ per °F', '6.5 × 10⁻³ per °F', '6.5 × 10⁻⁹ per °F', '6.5 per °F'],
+    correctAnswer: 0,
+    explanation: 'Steel expands/contracts at approximately 6.5 × 10⁻⁶ per degree Fahrenheit. This is used to calculate temperature corrections for steel tapes.',
+    difficulty: 'medium'
+  },
 
-  // TOTAL: 50 questions (7 domains × 7 questions + 1 extra)
-  // Domain distribution: Math(7), Field(7), Computations(7), Mapping(7), Boundary(7), Geodesy(7), Professional(8)
+  // Additional Math & Basic Science questions (continuing to expand pool)
+  {
+    domain: 'Math & Basic Science',
+    question: 'If the standard error of a distance measurement is ±0.02 ft, what is the standard error for a distance measured 4 times?',
+    options: ['±0.02 ft', '±0.01 ft', '±0.04 ft', '±0.08 ft'],
+    correctAnswer: 1,
+    explanation: 'Standard error decreases with multiple measurements: SE = σ/√n = 0.02/√4 = 0.02/2 = ±0.01 ft',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Convert 5280 feet to meters (1 meter = 3.28084 feet):',
+    options: ['1609.3 m', '1760.0 m', '1000.0 m', '1524.0 m'],
+    correctAnswer: 0,
+    explanation: '5280 ft ÷ 3.28084 = 1609.3 m (exactly 1 mile)',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The probable error (PE) is related to standard deviation by:',
+    options: ['PE = 0.6745σ', 'PE = 2σ', 'PE = σ/2', 'PE = 3σ'],
+    correctAnswer: 0,
+    explanation: 'Probable Error = 0.6745 × standard deviation. This represents 50% confidence interval.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'What is the area of a triangle with base 200 ft and height 150 ft?',
+    options: ['15,000 sq ft', '30,000 sq ft', '7,500 sq ft', '20,000 sq ft'],
+    correctAnswer: 0,
+    explanation: 'Area = (base × height) / 2 = (200 × 150) / 2 = 15,000 sq ft',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The variance of a dataset with values 10, 12, 14, 16 is:',
+    options: ['5.0', '2.5', '6.0', '4.0'],
+    correctAnswer: 0,
+    explanation: 'Mean = 13. Deviations: -3, -1, 1, 3. Squared: 9, 1, 1, 9. Variance = (9+1+1+9)/4 = 5.0',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'How many square feet are in one square chain?',
+    options: ['4,356 sq ft', '43,560 sq ft', '435.6 sq ft', '4,840 sq ft'],
+    correctAnswer: 0,
+    explanation: '1 chain = 66 ft, so 1 square chain = 66² = 4,356 sq ft',
+    difficulty: 'medium'
+  },
+
+  // Additional Field Data Acquisition questions
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The sag correction for a 100-ft tape suspended with 15 lbs tension is (w = 0.1 lb/ft):',
+    options: ['-0.03 ft', '-0.15 ft', '-0.01 ft', '+0.03 ft'],
+    correctAnswer: 0,
+    explanation: 'Sag correction = -(w²L³)/(24P²). With w=0.1, L=100, P=15: ≈ -0.03 ft. Always negative.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In differential leveling, what is a turning point (TP)?',
+    options: ['Point where instrument is set up', 'Point with both BS and FS readings', 'Benchmark', 'Point to be elevated'],
+    correctAnswer: 1,
+    explanation: 'A turning point (TP) is a temporary point where both a foresight (from old instrument position) and backsight (to new position) are taken.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'EDM instruments measure distance by:',
+    options: ['Electromagnetic wave travel time', 'Laser triangulation', 'Ultrasonic reflection', 'Magnetic field strength'],
+    correctAnswer: 0,
+    explanation: 'Electronic Distance Measurement (EDM) devices measure the time for electromagnetic waves (light/infrared) to travel to a reflector and back.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The error in leveling that increases with distance is:',
+    options: ['Random error', 'Curvature and refraction', 'Instrument settlement', 'Parallax error'],
+    correctAnswer: 1,
+    explanation: 'Curvature and refraction error increases with the square of the distance. Random errors and settlement are not distance-dependent in the same way.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A total station can directly measure all EXCEPT:',
+    options: ['Horizontal angle', 'Vertical angle', 'Slope distance', 'Elevation'],
+    correctAnswer: 3,
+    explanation: 'Total stations directly measure horizontal angle, vertical angle, and slope distance. Elevation is computed from these measurements.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The standard tension for a 100-ft steel tape is typically:',
+    options: ['10 lbs', '15 lbs', '20 lbs', '25 lbs'],
+    correctAnswer: 0,
+    explanation: 'Standard tension for a 100-ft steel tape is typically 10 pounds under normal use.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Atmospheric refraction causes a line of sight to:',
+    options: ['Bend downward', 'Bend upward', 'Remain straight', 'Oscillate'],
+    correctAnswer: 1,
+    explanation: 'Atmospheric refraction bends light rays upward due to density variations. This partially offsets Earth\'s curvature (which bends the level surface downward).',
+    difficulty: 'medium'
+  },
+
+  // Additional Plane Survey Computations questions
+  {
+    domain: 'Plane Survey Computations',
+    question: 'The tangent distance (T) for a horizontal curve with radius 500 ft and central angle 60° is:',
+    options: ['288.68 ft', '500.00 ft', '433.01 ft', '250.00 ft'],
+    correctAnswer: 0,
+    explanation: 'T = R × tan(Δ/2) = 500 × tan(30°) = 500 × 0.5774 = 288.68 ft',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'A line has a bearing of S 30° W. What is its azimuth from north?',
+    options: ['210°', '150°', '330°', '30°'],
+    correctAnswer: 0,
+    explanation: 'S 30° W means 30° west of south. Azimuth from north = 180° + 30° = 210°',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'The Latitude of a 300 ft line with azimuth 270° is:',
+    options: ['0 ft', '-300 ft', '+300 ft', 'Cannot determine'],
+    correctAnswer: 0,
+    explanation: 'Latitude = Distance × cos(Azimuth) = 300 × cos(270°) = 300 × 0 = 0 ft. Line runs due west (no N/S component).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'In the compass rule for traverse adjustment, corrections are proportional to:',
+    options: ['The length of each course', 'The angle at each point', 'The error magnitude', 'The number of sides'],
+    correctAnswer: 0,
+    explanation: 'The compass (Bowditch) rule distributes closure errors proportionally to the length of each course. Longer lines get larger corrections.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'The exterior angle of a closed traverse equals:',
+    options: ['(n+2) × 180°', '(n-2) × 180°', 'n × 360°', '(n+2) × 360°'],
+    correctAnswer: 0,
+    explanation: 'Sum of exterior angles = (n+2) × 180°, where n is the number of sides.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'For a circular curve, the degree of curve (arc definition) is the central angle subtended by:',
+    options: ['100 ft arc', '50 ft arc', '1 ft arc', '1 station arc'],
+    correctAnswer: 0,
+    explanation: 'For arc definition, degree of curve (D) is the central angle subtended by a 100-ft arc. For chord definition, it\'s a 100-ft chord.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'If Point A has coordinates (1000, 2000) and the azimuth to Point B is 45°, and distance is 141.42 ft, what are the coordinates of B?',
+    options: ['(1100, 2100)', '(1141.42, 2000)', '(1000, 2141.42)', '(900, 1900)'],
+    correctAnswer: 0,
+    explanation: 'ΔE = 141.42 × sin(45°) = 100, ΔN = 141.42 × cos(45°) = 100. Coordinates B = (1000+100, 2000+100) = (1100, 2100)',
+    difficulty: 'hard'
+  },
+
+  // Additional Mapping, GIS, and CAD questions
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On a 1:2400 scale map, 1 inch represents:',
+    options: ['200 feet', '240 feet', '2,400 feet', '24 feet'],
+    correctAnswer: 0,
+    explanation: '1:2400 means 1 inch = 2,400 inches = 200 feet (2,400/12)',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A V-shaped contour pattern indicates:',
+    options: ['A valley or stream', 'A ridge', 'A depression', 'Flat terrain'],
+    correctAnswer: 0,
+    explanation: 'V-shaped contours pointing uphill indicate a valley or drainage. V-shapes pointing downhill indicate a ridge.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'UTM zones are each how many degrees wide?',
+    options: ['6°', '3°', '10°', '15°'],
+    correctAnswer: 0,
+    explanation: 'Universal Transverse Mercator (UTM) zones are 6° of longitude wide, numbered 1-60 around the globe.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A DEM is best described as:',
+    options: ['Digital Elevation Model', 'Direct Electronic Measurement', 'Datum Elevation Map', 'Distance Error Method'],
+    correctAnswer: 0,
+    explanation: 'DEM = Digital Elevation Model, a 3D representation of terrain surface stored as raster data with elevation values.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In photogrammetry, relief displacement is greatest for objects that are:',
+    options: ['Tall and far from photo center', 'Short and near photo center', 'At any height at photo center', 'Tall and near photo center'],
+    correctAnswer: 0,
+    explanation: 'Relief displacement increases with object height and distance from photo nadir (center). Tall buildings at photo edges show maximum displacement.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The contour interval on a map should be:',
+    options: ['Uniform throughout', 'Larger in flat areas', 'Smaller in steep areas', 'Variable by quadrant'],
+    correctAnswer: 0,
+    explanation: 'Contour interval must be uniform throughout a map to maintain consistent elevation representation.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Which map projection preserves shapes (is conformal)?',
+    options: ['Mercator', 'Equal-area', 'Azimuthal equidistant', 'Cylindrical equal-area'],
+    correctAnswer: 0,
+    explanation: 'Mercator projection is conformal (preserves angles/shapes) but distorts area. Equal-area projections distort shapes to preserve area.',
+    difficulty: 'medium'
+  },
+
+  // Additional Boundary Law & PLSS questions
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Senior rights in boundary determination typically belong to:',
+    options: ['The earlier grant or deed', 'The larger parcel', 'The more accurate survey', 'The recorded deed'],
+    correctAnswer: 0,
+    explanation: 'Senior rights doctrine: earlier (senior) grants take priority over later (junior) grants when there are conflicts.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In PLSS, the SE 1/4 of the NW 1/4 of Section 10 contains:',
+    options: ['40 acres', '20 acres', '80 acres', '160 acres'],
+    correctAnswer: 0,
+    explanation: '1/4 of 1/4 of a section = 1/16 of 640 acres = 40 acres (quarter-quarter section)',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'A metes and bounds description typically begins at:',
+    options: ['Point of beginning (POB)', 'Northeast corner', 'Highest elevation', 'Nearest benchmark'],
+    correctAnswer: 0,
+    explanation: 'Metes and bounds descriptions start and end at the Point of Beginning (POB), describing the perimeter.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Riparian rights refer to:',
+    options: ['Water boundaries and usage', 'Mining rights', 'Timber harvesting', 'Airspace rights'],
+    correctAnswer: 0,
+    explanation: 'Riparian rights govern ownership and use of water along streams, rivers, and lakes adjacent to property.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In PLSS, fractional sections typically occur:',
+    options: ['Along township boundaries', 'In the center of townships', 'Only in error', 'Every sixth section'],
+    correctAnswer: 0,
+    explanation: 'Fractional (irregular) sections occur along township and range boundaries due to convergence of meridians and survey errors.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'A prescriptive easement requires all EXCEPT:',
+    options: ['Written agreement', 'Open and notorious use', 'Continuous use', 'Hostile/adverse use'],
+    correctAnswer: 0,
+    explanation: 'Prescriptive easements are acquired WITHOUT permission or written agreement, through continuous, open, and adverse use over the statutory period.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The doctrine of "found property controls" means:',
+    options: ['Original monuments govern over measurements', 'Newer surveys are more accurate', 'Larger parcels have priority', 'Recorded deeds control'],
+    correctAnswer: 0,
+    explanation: 'Original monuments (found evidence) control over recorded distances and directions. Physical evidence trumps paper descriptions.',
+    difficulty: 'medium'
+  },
+
+  // Additional Geodesy, GPS, Astronomy questions
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'WGS 84 is primarily used for:',
+    options: ['GPS positioning', 'State Plane Coordinates', 'Local site surveys', 'Building layout'],
+    correctAnswer: 0,
+    explanation: 'WGS 84 (World Geodetic System 1984) is the global reference system used by GPS satellites.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'CORS stations provide:',
+    options: ['Reference data for GPS corrections', 'Weather information', 'Satellite imagery', 'Topographic maps'],
+    correctAnswer: 0,
+    explanation: 'Continuously Operating Reference Stations (CORS) provide GPS/GNSS data for high-accuracy positioning and corrections.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'The semi-major axis of the GRS 80 ellipsoid is approximately:',
+    options: ['6,378,137 meters', '6,356,752 meters', '6,371,000 meters', '6,400,000 meters'],
+    correctAnswer: 0,
+    explanation: 'GRS 80 semi-major axis (equatorial radius) = 6,378,137 meters. Used by NAD 83.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'Multipath error in GPS is caused by:',
+    options: ['Signal reflections', 'Satellite geometry', 'Atmospheric delay', 'Clock errors'],
+    correctAnswer: 0,
+    explanation: 'Multipath occurs when GPS signals reflect off surfaces (buildings, ground, water) before reaching the antenna, causing position errors.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'The flattening of the Earth ellipsoid is approximately:',
+    options: ['1/298', '1/500', '1/100', '1/1000'],
+    correctAnswer: 0,
+    explanation: 'Earth\'s flattening ≈ 1/298.25 for GRS 80/WGS 84. This means the difference between equatorial and polar radius is about 21 km.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'Static GPS surveying typically requires occupation times of:',
+    options: ['30+ minutes', '30 seconds', '5 minutes', '2 hours minimum'],
+    correctAnswer: 0,
+    explanation: 'Static GPS requires extended occupation (typically 30+ minutes to hours) to achieve high accuracy through carrier phase processing.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'NAVD 88 is a:',
+    options: ['Vertical datum', 'Horizontal datum', 'Combined datum', 'Coordinate system'],
+    correctAnswer: 0,
+    explanation: 'North American Vertical Datum of 1988 (NAVD 88) is the vertical reference system for elevations in North America.',
+    difficulty: 'easy'
+  },
+
+  // Additional Professional Practice questions
+  {
+    domain: 'Professional Practice',
+    question: 'Standard of care for professional surveyors requires:',
+    options: ['Reasonable skill expected of competent practitioners', 'Perfect accuracy', 'Lowest possible cost', 'Fastest completion time'],
+    correctAnswer: 0,
+    explanation: 'Standard of care is the level of skill, diligence, and judgment reasonably expected of a competent professional surveyor under similar circumstances.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A professional surveyor must maintain records for at least:',
+    options: ['Varies by state law', '1 year', '5 years', '25 years'],
+    correctAnswer: 0,
+    explanation: 'Record retention requirements vary by state, typically ranging from 5-10 years, though many surveyors retain records permanently.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Monumentation of property corners is:',
+    options: ['Often required by law or practice', 'Optional', 'Only for large parcels', 'Prohibited in some states'],
+    correctAnswer: 0,
+    explanation: 'Setting monuments at property corners is typically required by state law or standard practice to perpetuate boundaries.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor discovers a significant error in a filed map. The surveyor should:',
+    options: ['File an amended map and notify affected parties', 'Do nothing if no one complains', 'Wait for the next survey', 'Only correct if hired to do so'],
+    correctAnswer: 0,
+    explanation: 'Professional ethics require prompt correction of discovered errors through amended maps and notification of affected parties.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The purpose of continuing education for licensed surveyors is to:',
+    options: ['Maintain competency in evolving practices', 'Generate revenue for associations', 'Satisfy insurance requirements', 'Limit competition'],
+    correctAnswer: 0,
+    explanation: 'Continuing education ensures surveyors stay current with new technology, regulations, and best practices to serve the public effectively.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A survey plat must typically include all EXCEPT:',
+    options: ['Property owner\'s financial information', 'Boundary dimensions', 'Monument descriptions', 'Surveyor\'s seal'],
+    correctAnswer: 0,
+    explanation: 'Survey plats show technical boundary information, monuments, and surveyor certification. Financial information is not required or appropriate.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Accepting work outside your area of competence is:',
+    options: ['Unethical without proper education/training', 'Acceptable with supervision', 'Required to grow', 'Legal if licensed'],
+    correctAnswer: 0,
+    explanation: 'Professional ethics prohibit accepting assignments outside your competence unless you acquire the necessary knowledge or work with qualified individuals.',
+    difficulty: 'medium'
+  },
+
+  // EXPANDED POOL: Now ~100+ questions total
+  // This provides enough variety for 50-question random quizzes with good domain coverage
+  // Further expansion to ~350 questions can be done incrementally as needed
 ];

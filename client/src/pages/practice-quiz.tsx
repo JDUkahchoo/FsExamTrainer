@@ -136,9 +136,11 @@ export default function PracticeQuizPage() {
 
   const handleFinishQuiz = () => {
     // Save the complete quiz session
+    // totalQuestions = actual quiz length (e.g., 50 for mixed exam)
+    // answeredCount = how many questions were actually answered
     saveSessionMutation.mutate({
       domain: selectedDomain,
-      totalQuestions: answeredCount,
+      totalQuestions: quizQuestions.length,
       correctAnswers: correctCount,
       timeSpentSeconds: elapsedSeconds
     });
@@ -368,7 +370,7 @@ export default function PracticeQuizPage() {
         </h2>
 
         <div className="space-y-3">
-          {currentQuestion.options.map((option, index) => {
+          {currentQuestion.options.map((option: string, index: number) => {
             const isSelected = selectedAnswer === index;
             const isCorrectAnswer = index === currentQuestion.correctAnswer;
             const showCorrectIndicator = showExplanation && isCorrectAnswer;
