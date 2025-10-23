@@ -23,6 +23,7 @@ export default function PracticeQuizPage() {
   const [answeredQuestions, setAnsweredQuestions] = useState<Record<number, { selected: number; correct: boolean }>>({});
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [quizQuestions, setQuizQuestions] = useState<typeof QUIZ_QUESTIONS>([]);
 
   // Mutation to save individual quiz result (for stats/analytics)
   const saveResultMutation = useMutation({
@@ -45,12 +46,18 @@ export default function PracticeQuizPage() {
     return () => clearInterval(interval);
   }, [quizState, startTime]);
 
-  const filteredQuestions = selectedDomain === 'all'
-    ? QUIZ_QUESTIONS
-    : QUIZ_QUESTIONS.filter(q => q.domain === selectedDomain);
+  // Shuffle array helper
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
-  const currentQuestion = filteredQuestions[currentQuestionIndex];
-  const totalQuestions = filteredQuestions.length;
+  const currentQuestion = quizQuestions[currentQuestionIndex];
+  const totalQuestions = quizQuestions.length;
   const answeredCount = Object.keys(answeredQuestions).length;
   const correctCount = Object.values(answeredQuestions).filter(a => a.correct).length;
 
@@ -66,6 +73,19 @@ export default function PracticeQuizPage() {
   });
 
   const handleStartQuiz = () => {
+    // Prepare quiz questions based on selected domain
+    let questionsForQuiz: typeof QUIZ_QUESTIONS;
+    
+    if (selectedDomain === 'all') {
+      // Mixed exam mode: randomly select 50 questions from all domains and shuffle
+      const shuffled = shuffleArray(QUIZ_QUESTIONS);
+      questionsForQuiz = shuffled.slice(0, 50);
+    } else {
+      // Domain-specific practice: show all questions from selected domain
+      questionsForQuiz = QUIZ_QUESTIONS.filter(q => q.domain === selectedDomain);
+    }
+    
+    setQuizQuestions(questionsForQuiz);
     setQuizState('active');
     setStartTime(Date.now());
     setCurrentQuestionIndex(0);
@@ -164,7 +184,7 @@ export default function PracticeQuizPage() {
                   <SelectValue placeholder="Select domain" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Domains ({QUIZ_QUESTIONS.length} questions)</SelectItem>
+                  <SelectItem value="all">All Domains - Mixed Exam (50 questions)</SelectItem>
                   {DOMAINS.map(domain => {
                     const count = QUIZ_QUESTIONS.filter(q => q.domain === domain).length;
                     return (
@@ -177,17 +197,33 @@ export default function PracticeQuizPage() {
               </Select>
             </div>
 
-            {filteredQuestions.length > 0 && (
-              <div className="bg-muted/50 p-4 rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  <strong className="text-foreground">{filteredQuestions.length} questions</strong> available in this selection
-                </p>
-              </div>
-            )}
+            <div className="bg-muted/50 p-4 rounded-lg">
+              {selectedDomain === 'all' ? (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-foreground">
+                    📝 Mixed Exam Mode
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    You'll answer <strong className="text-foreground">50 randomly selected questions</strong> from all 7 domains. 
+                    This simulates the real exam experience with mixed topics.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-foreground">
+                    📚 Domain Practice Mode
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Practice all <strong className="text-foreground">
+                      {QUIZ_QUESTIONS.filter(q => q.domain === selectedDomain).length} questions
+                    </strong> from the {selectedDomain} domain.
+                  </p>
+                </div>
+              )}
+            </div>
 
             <Button
               onClick={handleStartQuiz}
-              disabled={filteredQuestions.length === 0}
               className="w-full"
               size="lg"
               data-testid="button-start-quiz"
