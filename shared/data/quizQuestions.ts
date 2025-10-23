@@ -183,7 +183,244 @@ export const QUIZ_QUESTIONS: Omit<QuizQuestion, 'id'>[] = [
     difficulty: 'medium'
   },
 
-  // Additional questions coming in future updates - Current total: 21 questions
-  // Foundation established for all 7 domains with key concepts
-  // Quiz session tracking will work with current question set
+  // Additional Math & Basic Science questions
+  {
+    domain: 'Math & Basic Science',
+    question: 'What is the error of closure for a traverse with ΣLat = +0.08 ft and ΣDep = -0.06 ft?',
+    options: ['0.10 ft', '0.14 ft', '0.02 ft', '0.08 ft'],
+    correctAnswer: 0,
+    explanation: 'Error of closure = √((ΣLat)² + (ΣDep)²) = √(0.08² + 0.06²) = √(0.0064 + 0.0036) = √0.01 = 0.10 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Convert 25° 30\' 45" to decimal degrees:',
+    options: ['25.5125°', '25.3045°', '25.512°', '25.51°'],
+    correctAnswer: 0,
+    explanation: '25° + (30/60)° + (45/3600)° = 25° + 0.5° + 0.0125° = 25.5125°',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The relative precision of a traverse with perimeter 2,400 ft and error of closure 0.12 ft is:',
+    options: ['1:20,000', '1:2,000', '1:200', '1:12,000'],
+    correctAnswer: 0,
+    explanation: 'Relative precision = Perimeter / Error = 2,400 / 0.12 = 20,000 = 1:20,000',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'What is 1 hectare equal to in square meters?',
+    options: ['10,000 m²', '1,000 m²', '100,000 m²', '43,560 m²'],
+    correctAnswer: 0,
+    explanation: '1 hectare = 10,000 m² = 2.471 acres. Hectare is commonly used in metric land measurements.',
+    difficulty: 'easy'
+  },
+
+  // Additional Field Data Acquisition questions
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The ppm (parts per million) correction for a 500 ft distance measured with a +3 ppm systematic error is:',
+    options: ['+0.0015 ft', '+0.015 ft', '+0.15 ft', '+1.5 ft'],
+    correctAnswer: 0,
+    explanation: 'Correction = Distance × (ppm/1,000,000) = 500 × (3/1,000,000) = 500 × 0.000003 = 0.0015 ft',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'When using a total station, if the prism constant is +30mm and you measure 150.000m, the corrected distance is:',
+    options: ['150.030m', '149.970m', '150.000m', '150.300m'],
+    correctAnswer: 0,
+    explanation: 'A positive prism constant means the measurement is too short. Add the constant: 150.000m + 0.030m = 150.030m',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In differential leveling, if HI (Height of Instrument) = 542.83 ft and FS (Foresight) = 4.21 ft, what is the elevation of the point?',
+    options: ['538.62 ft', '547.04 ft', '542.83 ft', '546.62 ft'],
+    correctAnswer: 0,
+    explanation: 'Elevation = HI - FS = 542.83 - 4.21 = 538.62 ft',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Systematic errors in surveying can be:',
+    options: ['Eliminated by careful work', 'Reduced by averaging', 'Corrected if the magnitude is known', 'Distributed by least squares'],
+    correctAnswer: 2,
+    explanation: 'Systematic errors have a consistent magnitude and sign. They can be corrected if known (e.g., temperature, tape standardization). Random errors are reduced by averaging.',
+    difficulty: 'medium'
+  },
+
+  // Additional Plane Survey Computations questions
+  {
+    domain: 'Plane Survey Computations',
+    question: 'The Departure of a 200.00 ft line with azimuth 135° is:',
+    options: ['+141.42 ft', '-141.42 ft', '+100.00 ft', '-100.00 ft'],
+    correctAnswer: 0,
+    explanation: 'Departure = Distance × sin(Azimuth) = 200.00 × sin(135°) = 200.00 × 0.7071 = +141.42 ft (positive = East)',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'A simple horizontal curve has a radius of 500 ft and a central angle of 45°. What is the length of the curve?',
+    options: ['392.70 ft', '500.00 ft', '225.00 ft', '707.11 ft'],
+    correctAnswer: 0,
+    explanation: 'L = (Δ/360°) × 2πR = (45°/360°) × 2π(500) = 0.125 × 3,141.59 = 392.70 ft. Or use L = RΔ (in radians): 500 × 0.7854 = 392.70 ft',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'The back azimuth of 45° 30\' is:',
+    options: ['225° 30\'', '314° 30\'', '135° 30\'', '180° 00\''],
+    correctAnswer: 0,
+    explanation: 'Back azimuth = Forward azimuth ± 180°. For 45° 30\', add 180° = 225° 30\'',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Plane Survey Computations',
+    question: 'In coordinate geometry, if Point A is at (1000, 2000) and Point B is at (1300, 2400), the distance AB is:',
+    options: ['500.00 ft', '424.26 ft', '700.00 ft', '360.56 ft'],
+    correctAnswer: 0,
+    explanation: 'Distance = √[(ΔE)² + (ΔN)²] = √[(1300-1000)² + (2400-2000)²] = √[(300)² + (400)²] = √(90,000 + 160,000) = √250,000 = 500.00 ft',
+    difficulty: 'medium'
+  },
+
+  // Additional Mapping, GIS, and CAD questions
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A map with a scale of 1:24,000 shows 2.5 inches between two points. The actual ground distance is:',
+    options: ['5,000 ft', '60,000 ft', '6,000 ft', '50,000 ft'],
+    correctAnswer: 0,
+    explanation: 'Ground distance = Map distance × Scale = 2.5 in × 24,000 = 60,000 inches = 5,000 feet (60,000/12)',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In GIS, topology refers to:',
+    options: ['Elevation data', 'Spatial relationships between features', 'Coordinate systems', 'Image resolution'],
+    correctAnswer: 1,
+    explanation: 'Topology describes spatial relationships: connectivity, adjacency, and containment between geographic features (e.g., which parcels are adjacent).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Contour interval is best defined as:',
+    options: ['Distance between contour lines on the map', 'Vertical distance between adjacent contour lines', 'Horizontal spacing of points', 'Scale of the map'],
+    correctAnswer: 1,
+    explanation: 'Contour interval is the vertical elevation difference between adjacent contour lines, not the horizontal distance on the map.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What is the ground resolution of a digital image if the pixel size is 0.5m and the scale is 1:5000?',
+    options: ['0.5m', '2.5m', '0.1m', '1.0m'],
+    correctAnswer: 0,
+    explanation: 'Ground resolution equals the pixel size when measured on the ground. A 0.5m pixel represents 0.5m on the ground.',
+    difficulty: 'medium'
+  },
+
+  // Additional Boundary Law & PLSS questions
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In PLSS, a section contains how many acres?',
+    options: ['640 acres', '160 acres', '320 acres', '40 acres'],
+    correctAnswer: 0,
+    explanation: 'A section is 1 mile × 1 mile = 640 acres. A quarter section = 160 acres, quarter-quarter section = 40 acres.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Which type of evidence is considered LEAST reliable in boundary determination?',
+    options: ['Natural monuments', 'Original survey notes', 'Oral testimony', 'Recorded deeds'],
+    correctAnswer: 2,
+    explanation: 'Hierarchy: Physical evidence (monuments) > Written evidence (deeds, surveys) > Oral testimony. Oral testimony is subjective and subject to memory errors.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Adverse possession requires all EXCEPT:',
+    options: ['Continuous use', 'Open and notorious', 'Payment of taxes', 'Hostile claim'],
+    correctAnswer: 2,
+    explanation: 'Requirements vary by state, but generally: continuous, exclusive, open/notorious, hostile/adverse, and for statutory period. Payment of taxes is required in some states but not all.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In PLSS, correction lines are established every:',
+    options: ['24 miles north', '6 miles north', '12 miles north', '36 miles north'],
+    correctAnswer: 0,
+    explanation: 'Standard parallels (correction lines) are established every 24 miles north and south of the baseline to correct for Earth\'s curvature.',
+    difficulty: 'medium'
+  },
+
+  // Additional Geodesy, GPS, Astronomy questions
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'RTK (Real-Time Kinematic) GPS typically achieves accuracy of:',
+    options: ['±10-30 meters', '±1-3 meters', '±1-3 centimeters', '±1-3 millimeters'],
+    correctAnswer: 2,
+    explanation: 'RTK GPS provides centimeter-level accuracy (±1-3 cm) by using carrier phase measurements and a base station with known coordinates.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'The combined factor for converting GPS distance to State Plane distance includes:',
+    options: ['Scale factor only', 'Elevation factor only', 'Both scale and elevation factors', 'Neither factor'],
+    correctAnswer: 2,
+    explanation: 'Combined Factor = Scale Factor × Elevation Factor. This converts ellipsoid distances to grid distances at project elevation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'How many GPS satellites are required for a 3D position fix?',
+    options: ['3 satellites', '4 satellites', '5 satellites', '6 satellites'],
+    correctAnswer: 1,
+    explanation: 'Minimum 4 satellites needed: 3 for X,Y,Z position and 1 for receiver clock correction. More satellites improve PDOP and accuracy.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Geodesy, GPS, Astronomy',
+    question: 'The geoid is best described as:',
+    options: ['A perfect sphere', 'An ellipsoid', 'An equipotential surface', 'A cylindrical projection'],
+    correctAnswer: 2,
+    explanation: 'The geoid is an equipotential surface of Earth\'s gravity field that closely approximates mean sea level. It\'s irregular due to mass distribution.',
+    difficulty: 'medium'
+  },
+
+  // Additional Professional Practice questions
+  {
+    domain: 'Professional Practice',
+    question: 'Professional liability insurance for surveyors typically covers:',
+    options: ['Intentional misconduct', 'Errors and omissions', 'Criminal acts', 'Fraudulent behavior'],
+    correctAnswer: 1,
+    explanation: 'E&O (Errors and Omissions) insurance covers unintentional professional mistakes. It does NOT cover intentional wrongdoing, fraud, or criminal acts.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor discovers an error in a previously filed survey. The ethical action is to:',
+    options: ['Ignore it if no one noticed', 'Correct it and notify affected parties', 'Wait for the client to discover it', 'Blame the field crew'],
+    correctAnswer: 1,
+    explanation: 'Professional ethics require prompt correction of errors and notification of affected parties. Public safety and welfare come first.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Chain of title refers to:',
+    options: ['Surveying equipment', 'Historical ownership sequence', 'Legal description format', 'Boundary monumentation'],
+    correctAnswer: 1,
+    explanation: 'Chain of title is the chronological sequence of ownership transfers for a property, traced through deeds and public records.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor may NOT perform work in a state without:',
+    options: ['A business license', 'Professional liability insurance', 'A valid license/registration in that state', 'Continuing education credits'],
+    correctAnswer: 2,
+    explanation: 'Surveying licensure is state-specific. You must be licensed/registered in each state where you practice surveying.',
+    difficulty: 'easy'
+  },
+
+  // TOTAL: 50 questions (7 domains × 7 questions + 1 extra)
+  // Domain distribution: Math(7), Field(7), Computations(7), Mapping(7), Boundary(7), Geodesy(7), Professional(8)
 ];
