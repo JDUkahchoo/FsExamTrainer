@@ -23,12 +23,16 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Progress tracking for each week
 
 ### 🧠 Practice Quizzes
-- 21 practice questions across all 7 domains (3 per domain)
+- **Question Pool**: ~100 questions across all 7 domains (~14 per domain)
+  - Expandable to ~350 questions for comprehensive exam prep
+- **Two Quiz Modes**:
+  - **Mixed Exam Mode**: 50 randomly selected questions from all domains
+  - **Domain Practice**: Practice all questions from a specific domain
 - Session-based tracking with timer and completion flow
 - Instant feedback with detailed explanations
-- Domain filtering to focus on weak areas
 - Quiz session history with accuracy and time tracking
-- Accuracy statistics and performance analytics
+- Domain-specific performance analytics across all attempts
+- Accuracy statistics and progress tracking
 
 ### 🎴 Flashcard System
 - **Two comprehensive decks**: Original curated deck (50 cards) and Comprehensive deck (350 cards)
@@ -165,11 +169,19 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Maintains backward compatibility with existing quiz statistics
 - End-to-end tested and verified working
 
+**Phase 3.7: 50-Question Mixed Exam System** ✅ Complete
+- Expanded question pool to ~100 questions across all domains
+- Implemented two quiz modes: Mixed Exam (50 random questions) and Domain Practice
+- Random question selection ensures variety in each mixed exam attempt
+- Domain-specific analytics automatically track performance across all quiz attempts
+- Progress page shows comprehensive domain breakdown
+- System ready for further expansion to ~350 questions
+
 **Phase 4: Enhanced Features** 📋 Planned
-- Quiz question expansion to 50 per domain (currently 21 questions total)
+- Question pool expansion to ~350 questions (50 per domain) for production readiness
 - AI Study Assistant (OpenAI integration)
 - Collaborative Study Groups
-- Advanced Analytics
+- Advanced Analytics with trend charts
 
 ## Running the Application
 
