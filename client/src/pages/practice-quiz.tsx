@@ -102,6 +102,12 @@ export default function PracticeQuizPage() {
 
   const handleSubmit = () => {
     if (selectedAnswer === null) return;
+    
+    // Prevent duplicate submissions for already answered questions
+    if (answeredQuestions[currentQuestionIndex]) {
+      return;
+    }
+    
     const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
     setAnsweredQuestions({
       ...answeredQuestions,
@@ -109,7 +115,7 @@ export default function PracticeQuizPage() {
     });
     setShowExplanation(true);
 
-    // Save individual question result for stats/analytics
+    // Save individual question result for stats/analytics (only once per question)
     saveResultMutation.mutate({
       questionId: `q-${currentQuestionIndex}-${Date.now()}`,
       domain: currentQuestion.domain,
@@ -120,17 +126,35 @@ export default function PracticeQuizPage() {
 
   const handleNext = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedAnswer(null);
-      setShowExplanation(false);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      
+      // If the next question was already answered, restore its state
+      const existingAnswer = answeredQuestions[nextIndex];
+      if (existingAnswer) {
+        setSelectedAnswer(existingAnswer.selected);
+        setShowExplanation(true);
+      } else {
+        setSelectedAnswer(null);
+        setShowExplanation(false);
+      }
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-      setSelectedAnswer(null);
-      setShowExplanation(false);
+      const prevIndex = currentQuestionIndex - 1;
+      setCurrentQuestionIndex(prevIndex);
+      
+      // If the previous question was already answered, restore its state
+      const existingAnswer = answeredQuestions[prevIndex];
+      if (existingAnswer) {
+        setSelectedAnswer(existingAnswer.selected);
+        setShowExplanation(true);
+      } else {
+        setSelectedAnswer(null);
+        setShowExplanation(false);
+      }
     }
   };
 
