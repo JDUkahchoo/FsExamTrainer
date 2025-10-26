@@ -10,6 +10,7 @@ import { FLASHCARDS } from '@shared/data/flashcards';
 import { COMPREHENSIVE_FLASHCARDS } from '@shared/data/flashcardsComprehensive';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
 import type { Domain, FlashcardMastery } from '@shared/schema';
 
@@ -21,6 +22,7 @@ export default function FlashcardsPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
+  const { logActivity } = useActivityLogger();
 
   // Fetch flashcard mastery from database
   const { data: masteryData } = useQuery<FlashcardMastery[]>({
@@ -32,9 +34,11 @@ export default function FlashcardsPage() {
     mutationFn: (mastery: { flashcardId: string; masteryLevel: number; lastReviewed: Date }) =>
       apiRequest('POST', '/api/flashcards/mastery', mastery),
     onSuccess: () => {
+      logActivity('flashcard_review');
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/mastery'] });
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
     }
   });
 

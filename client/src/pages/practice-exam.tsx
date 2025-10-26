@@ -9,6 +9,7 @@ import { getDomainConfig } from '@/lib/domains';
 import { EXAM_QUESTIONS } from '@shared/data/examQuestions';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useActivityLogger } from '@/hooks/use-activity-logger';
 import type { Domain } from '@shared/schema';
 
 const EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
@@ -21,6 +22,7 @@ export default function PracticeExamPage() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [timeRemaining, setTimeRemaining] = useState(EXAM_DURATION_MINUTES * 60); // in seconds
   const [examQuestions, setExamQuestions] = useState<typeof EXAM_QUESTIONS>([]);
+  const { logActivity } = useActivityLogger();
 
   // Generate exam questions when starting
   const startExam = () => {
@@ -61,9 +63,11 @@ export default function PracticeExamPage() {
     mutationFn: (exam: { totalQuestions: number; correctAnswers: number; timeSpentMinutes: number; domainScores: any }) =>
       apiRequest('POST', '/api/exams', exam),
     onSuccess: () => {
+      logActivity('exam_completion');
       queryClient.invalidateQueries({ queryKey: ['/api/exams'] });
       queryClient.invalidateQueries({ queryKey: ['/api/exams/latest'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
     }
   });
 

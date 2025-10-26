@@ -28,6 +28,7 @@ import { STUDY_PLAN } from '@shared/data/studyPlan';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain } from '@shared/schema';
 
@@ -41,6 +42,7 @@ export default function StudyPlanPage() {
   const [applyActivities, setApplyActivities] = useState('');
   const [reinforceActivities, setReinforceActivities] = useState('');
   const { toast } = useToast();
+  const { logActivity } = useActivityLogger();
 
   // Fetch all week progress from database
   const { data: weekProgressData, isLoading } = useQuery<WeekProgress[]>({
@@ -189,10 +191,13 @@ export default function StudyPlanPage() {
     const current = completedItems[weekKey] || new Set();
     const next = new Set(current);
     
-    if (next.has(itemId)) {
+    const wasChecked = next.has(itemId);
+    if (wasChecked) {
       next.delete(itemId);
     } else {
       next.add(itemId);
+      // Log activity when checking off an item
+      logActivity('week_progress');
     }
     
     // Save to database

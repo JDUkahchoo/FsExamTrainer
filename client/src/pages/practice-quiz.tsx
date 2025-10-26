@@ -9,6 +9,7 @@ import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
 import type { Domain } from '@shared/schema';
 
@@ -24,6 +25,7 @@ export default function PracticeQuizPage() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState<typeof QUIZ_QUESTIONS>([]);
+  const { logActivity } = useActivityLogger();
 
   // Mutation to save individual quiz result (for stats/analytics)
   const saveResultMutation = useMutation({
@@ -66,9 +68,11 @@ export default function PracticeQuizPage() {
     mutationFn: (session: { domain: string; totalQuestions: number; correctAnswers: number; timeSpentSeconds: number }) =>
       apiRequest('POST', '/api/quiz/sessions', session),
     onSuccess: () => {
+      logActivity('quiz_completion');
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/sessions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
     }
   });
 
