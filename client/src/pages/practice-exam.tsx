@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
-import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
+import { EXAM_QUESTIONS } from '@shared/data/examQuestions';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import type { Domain } from '@shared/schema';
@@ -20,12 +20,12 @@ export default function PracticeExamPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [timeRemaining, setTimeRemaining] = useState(EXAM_DURATION_MINUTES * 60); // in seconds
-  const [examQuestions, setExamQuestions] = useState<typeof QUIZ_QUESTIONS>([]);
+  const [examQuestions, setExamQuestions] = useState<typeof EXAM_QUESTIONS>([]);
 
   // Generate exam questions when starting
   const startExam = () => {
-    // Shuffle and select 110 questions
-    const shuffled = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5);
+    // Shuffle and select 110 questions from exam pool
+    const shuffled = [...EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
     setExamQuestions(selected);
     setExamStarted(true);

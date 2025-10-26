@@ -1,11 +1,12 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
-import type { Domain, QuizSession } from '@shared/schema';
+import type { Domain, QuizSession, PracticeExam } from '@shared/schema';
 
 export default function ProgressPage() {
   const { data: stats, isLoading } = useQuery<{
@@ -30,6 +31,10 @@ export default function ProgressPage() {
 
   const { data: quizSessions } = useQuery<QuizSession[]>({
     queryKey: ['/api/quiz/sessions']
+  });
+
+  const { data: examHistory } = useQuery<PracticeExam[]>({
+    queryKey: ['/api/exams']
   });
 
   if (isLoading) {
@@ -110,161 +115,205 @@ export default function ProgressPage() {
         </Card>
       </div>
 
-      {/* Detailed Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            Study Activity
-          </h2>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Total Study Days</span>
-              <span className="text-lg font-semibold text-foreground">{stats?.totalStudyDays || 0}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Current Streak</span>
-              <span className="text-lg font-semibold text-foreground">{stats?.currentStreak || 0} days</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Longest Streak</span>
-              <span className="text-lg font-semibold text-foreground">{stats?.longestStreak || 0} days</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Weeks Completed</span>
-              <span className="text-lg font-semibold text-foreground">{stats?.weeksCompleted || 0} / 16</span>
-            </div>
-          </div>
-        </Card>
+      {/* Tabbed Interface */}
+      <Tabs defaultValue="quiz" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="quiz" className="flex items-center gap-2" data-testid="tab-quiz-history">
+            <FileText className="h-4 w-4" />
+            Quiz History
+          </TabsTrigger>
+          <TabsTrigger value="exam" className="flex items-center gap-2" data-testid="tab-exam-history">
+            <GraduationCap className="h-4 w-4" />
+            Exam History
+          </TabsTrigger>
+          <TabsTrigger value="domain" className="flex items-center gap-2" data-testid="tab-domain-mastery">
+            <BarChart3 className="h-4 w-4" />
+            Domain Mastery
+          </TabsTrigger>
+        </TabsList>
 
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Performance Overview
-          </h2>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Questions Answered</span>
-              <span className="text-lg font-semibold text-foreground">{stats?.questionsAnswered || 0}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Correct Answers</span>
-              <span className="text-lg font-semibold text-success">{stats?.questionsCorrect || 0}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Flashcards Reviewed</span>
-              <span className="text-lg font-semibold text-foreground">{stats?.flashcardsReviewed || 0}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Practice Exams Taken</span>
-              <span className="text-lg font-semibold text-foreground">{stats?.practiceExamsTaken || 0}</span>
-            </div>
-            {(stats?.practiceExamsTaken || 0) > 0 && (
-              <div className="flex justify-between items-center pt-2 border-t border-border">
-                <span className="text-sm text-muted-foreground">Last Exam Score</span>
-                <span className="text-lg font-semibold text-primary">{stats?.lastExamScore || 0}%</span>
+        {/* Quiz History Tab */}
+        <TabsContent value="quiz" className="space-y-4">
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              All Quiz Sessions
+            </h2>
+            {quizSessions && quizSessions.length > 0 ? (
+              <div className="space-y-3">
+                {quizSessions.map((session, index) => {
+                  const accuracy = session.totalQuestions > 0 
+                    ? (session.correctAnswers / session.totalQuestions) * 100 
+                    : 0;
+                  const passed = accuracy >= 70;
+                  const date = new Date(session.completedAt);
+                  const formattedDate = date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  });
+                  const minutes = Math.floor(session.timeSpentSeconds / 60);
+                  const seconds = session.timeSpentSeconds % 60;
+
+                  return (
+                    <div 
+                      key={session.id} 
+                      className="flex items-center justify-between p-4 rounded-lg border border-border hover-elevate"
+                      data-testid={`quiz-session-${index}`}
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Badge variant="outline" className="text-sm">
+                            {session.domain === 'all' ? 'All Domains' : session.domain}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">{formattedDate}</span>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm">
+                          <span className="text-muted-foreground">
+                            {session.correctAnswers}/{session.totalQuestions} correct
+                          </span>
+                          <span className="flex items-center gap-1 text-muted-foreground">
+                            <Clock className="w-3 h-3" />
+                            {minutes}m {seconds}s
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge 
+                          variant={passed ? "default" : "secondary"}
+                          className="min-w-[60px] justify-center"
+                        >
+                          {Math.round(accuracy)}%
+                        </Badge>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
+            ) : (
+              <p className="text-muted-foreground text-center py-8">
+                No quiz sessions yet. Start practicing to track your progress!
+              </p>
             )}
-          </div>
-        </Card>
-      </div>
+          </Card>
+        </TabsContent>
 
-      {/* Domain Performance */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-foreground mb-6">Domain Performance</h2>
-        <div className="space-y-6">
-          {DOMAINS.map((domain) => {
-            const config = getDomainConfig(domain as Domain);
-            const domainData = domainProgress[domain] || { answered: 0, correct: 0, accuracy: 0 };
-            const accuracy = domainData.accuracy;
+        {/* Exam History Tab */}
+        <TabsContent value="exam" className="space-y-4">
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+              <GraduationCap className="h-5 w-5" />
+              Practice Exam Results
+            </h2>
+            {examHistory && examHistory.length > 0 ? (
+              <div className="space-y-3">
+                {examHistory.map((exam, index) => {
+                  const accuracy = exam.totalQuestions > 0 
+                    ? (exam.correctAnswers / exam.totalQuestions) * 100 
+                    : 0;
+                  const passed = accuracy >= 70;
+                  const date = new Date(exam.completedAt);
+                  const formattedDate = date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  });
 
-            return (
-              <div key={domain} className="space-y-2" data-testid={`domain-${domain.toLowerCase().replace(/\s+/g, '-')}`}>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${config.bgColor}`} />
-                    <span className="font-medium text-foreground">{domain}</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground">
-                      {domainData.answered} questions
-                    </span>
-                    <Badge
-                      variant={accuracy >= 80 ? "default" : accuracy >= 60 ? "secondary" : "destructive"}
-                      className="min-w-[60px] justify-center"
+                  return (
+                    <div 
+                      key={exam.id} 
+                      className="p-4 rounded-lg border border-border hover-elevate"
+                      data-testid={`exam-${index}`}
                     >
-                      {Math.round(accuracy)}%
-                    </Badge>
-                  </div>
-                </div>
-                <Progress value={accuracy} className="h-2" />
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline" className="text-sm">
+                            Practice Exam
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">{formattedDate}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm text-muted-foreground">
+                            {exam.correctAnswers}/{exam.totalQuestions} correct
+                          </span>
+                          <Badge 
+                            variant={passed ? "default" : "secondary"}
+                            className="min-w-[60px] justify-center"
+                          >
+                            {Math.round(accuracy)}%
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      {/* Domain Breakdown */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-3">
+                        {Object.entries(exam.domainScores as Record<string, {correct: number, total: number}>).map(([domain, scores]) => {
+                          const domainAccuracy = scores.total > 0 ? (scores.correct / scores.total) * 100 : 0;
+                          return (
+                            <div key={domain} className="text-xs p-2 rounded bg-muted/50">
+                              <div className="font-medium truncate" title={domain}>{domain}</div>
+                              <div className="text-muted-foreground">{scores.correct}/{scores.total} ({Math.round(domainAccuracy)}%)</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
-      </Card>
+            ) : (
+              <p className="text-muted-foreground text-center py-8">
+                No practice exams completed yet. Take a full 110-question exam to assess your readiness!
+              </p>
+            )}
+          </Card>
+        </TabsContent>
 
-      {/* Quiz Session History */}
-      {quizSessions && quizSessions.length > 0 && (
-        <Card className="p-6 mt-6">
-          <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
-            <CheckCircle className="h-5 w-5" />
-            Recent Quiz Sessions
-          </h2>
-          <div className="space-y-4">
-            {quizSessions.slice(0, 10).map((session, index) => {
-              const accuracy = session.totalQuestions > 0 
-                ? (session.correctAnswers / session.totalQuestions) * 100 
-                : 0;
-              const passed = accuracy >= 70;
-              const date = new Date(session.completedAt);
-              const formattedDate = date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-              });
-              const minutes = Math.floor(session.timeSpentSeconds / 60);
-              const seconds = session.timeSpentSeconds % 60;
+        {/* Domain Mastery Tab */}
+        <TabsContent value="domain" className="space-y-4">
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Performance by Domain
+            </h2>
+            <div className="space-y-6">
+              {DOMAINS.map((domain) => {
+                const config = getDomainConfig(domain as Domain);
+                const domainData = domainProgress[domain] || { answered: 0, correct: 0, accuracy: 0 };
+                const accuracy = domainData.accuracy;
 
-              return (
-                <div 
-                  key={session.id} 
-                  className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors"
-                  data-testid={`session-${index}`}
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Badge variant="outline" className="text-sm">
-                        {session.domain === 'all' ? 'All Domains' : session.domain}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground">{formattedDate}</span>
+                return (
+                  <div key={domain} className="space-y-3" data-testid={`domain-${domain.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${config.bgColor}`} />
+                        <span className="font-semibold text-foreground">{domain}</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Badge
+                          variant={accuracy >= 80 ? "default" : accuracy >= 60 ? "secondary" : "destructive"}
+                          className="min-w-[60px] justify-center"
+                        >
+                          {Math.round(accuracy)}%
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm">
-                      <span className="text-muted-foreground">
-                        {session.correctAnswers}/{session.totalQuestions} correct
-                      </span>
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        {minutes}m {seconds}s
-                      </span>
+                    <Progress value={accuracy} className="h-2" />
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{domainData.answered} questions answered</span>
+                      <span>{domainData.correct} correct</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge 
-                      variant={passed ? "default" : "secondary"}
-                      className="min-w-[60px] justify-center"
-                    >
-                      {Math.round(accuracy)}%
-                    </Badge>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </Card>
-      )}
+                );
+              })}
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Recommendations */}
       {stats && stats.questionsAnswered > 0 && (
