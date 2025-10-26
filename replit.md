@@ -216,15 +216,21 @@ Comprehensive resource library with seven organized sections:
 
 **Phase 3.9: Gamification & Progress Tracking** ✅ Complete
 - Implemented circular progress ring with weighted metrics (40% weeks, 30% quiz, 30% flashcards)
-- Created study streak tracking system with consecutive day calculation
+- Created study streak tracking system with consecutive day calculation and calendar heatmap
 - Built achievement badge system with 10 professional achievement types
 - Added automatic daily activity logging across all user actions
 - Integrated ProgressHeader component with real-time progress updates
-- Developed flexible custom week system allowing study plan extension
+- Developed flexible custom week system allowing study plan extension beyond 16 weeks
 - Achievement toast notifications for positive reinforcement
 - Database schema: dailyActivity, achievements, customWeeks tables
 - API endpoints for activity tracking, streak calculation, and achievement checking
 - Subtle, professional gamification appropriate for surveying professionals
+- **Critical bugs fixed during development:**
+  - Fixed flashcard mastery reviewCount NaN error (fallback to 0 added)
+  - Fixed flashcard upsert returning undefined (empty array [] was truthy causing wrong branch)
+  - Fixed custom week creation crashes (added missing readItems, focusItems, applyItems, reinforceItems columns)
+  - Fixed frontend mapping for custom weeks (corrected property names from database schema)
+- All features end-to-end tested and verified working correctly
 
 **Phase 4: Enhanced Features** 📋 Planned
 - Question pool expansion to ~350 questions (50 per domain) for production readiness
