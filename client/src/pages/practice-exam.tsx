@@ -58,7 +58,7 @@ export default function PracticeExamPage() {
 
   // Mutation to save practice exam
   const saveExamMutation = useMutation({
-    mutationFn: (exam: { totalQuestions: number; correctAnswers: number; timeSpent: number; domainScores: any; completedAt: Date }) =>
+    mutationFn: (exam: { totalQuestions: number; correctAnswers: number; timeSpentMinutes: number; domainScores: any }) =>
       apiRequest('POST', '/api/exams', exam),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/exams'] });
@@ -72,14 +72,13 @@ export default function PracticeExamPage() {
     
     // Calculate and save exam results
     const results = calculateResults();
-    const timeSpent = Math.floor((EXAM_DURATION_MINUTES * 60 - timeRemaining) / 60);
+    const timeSpentMinutes = Math.floor((EXAM_DURATION_MINUTES * 60 - timeRemaining) / 60);
     
     saveExamMutation.mutate({
       totalQuestions: results.total,
       correctAnswers: results.correct,
-      timeSpent,
-      domainScores: results.domainScores,
-      completedAt: new Date()
+      timeSpentMinutes,
+      domainScores: results.domainScores
     });
   };
 
