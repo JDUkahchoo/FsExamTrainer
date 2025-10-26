@@ -23,8 +23,10 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Progress tracking for each week
 
 ### 🧠 Practice Quizzes
-- **Question Pool**: ~100 questions across all 7 domains (~14 per domain)
-  - Expandable to ~350 questions for comprehensive exam prep
+- **Question Pool**: 99 questions from dedicated QUIZ_QUESTIONS pool
+  - Separate from exam questions to prevent overlap and repetition
+  - Includes difficulty levels (easy/medium/hard) across all 7 domains
+  - Expandable to 200+ questions for comprehensive practice
 - **Two Quiz Modes**:
   - **Mixed Exam Mode**: 50 randomly selected questions from all domains
   - **Domain Practice**: Practice all questions from a specific domain
@@ -52,11 +54,15 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Content extracted from comprehensive FS exam study materials
 
 ### 🎓 Practice Exam Simulator
+- **Question Pool**: 155 questions from dedicated EXAM_QUESTIONS pool
+  - Completely separate from quiz questions to eliminate repetition
+  - Ensures fresh questions for exam simulation
+  - Sufficient variety for multiple exam attempts
 - Full 110-question practice exam
 - 6-hour timer (simulates actual exam)
-- Domain-based score breakdown
-- Performance analytics
-- Retake capability
+- Domain-based score breakdown with per-domain accuracy
+- Performance analytics and exam history tracking
+- Retake capability with new random question selection
 
 ### 📝 Study Notes
 - Rich text note-taking for each week
@@ -65,10 +71,13 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Character count tracking
 
 ### 📊 Progress Dashboard
+- **Three-tab interface for organized progress tracking**:
+  - **Quiz History**: All quiz session attempts with domain, accuracy, time
+  - **Exam History**: Practice exam results with domain breakdown
+  - **Domain Mastery**: Performance analytics per domain across all quiz/exam attempts
 - Study streak tracking
 - Overall quiz accuracy
 - Flashcard mastery percentages
-- Domain-specific performance metrics
 - Personalized recommendations
 
 ## Technology Stack
@@ -117,7 +126,8 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 │   ├── schema.ts            # Type definitions
 │   └── data/
 │       ├── studyPlan.ts
-│       ├── quizQuestions.ts
+│       ├── quizQuestions.ts           # 99 quiz questions (separate pool)
+│       ├── examQuestions.ts           # 155 exam questions (separate pool)
 │       ├── flashcards.ts              # Original 50-card deck
 │       └── flashcardsComprehensive.ts  # Comprehensive 350-card deck
 ├── server/
@@ -169,13 +179,13 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Maintains backward compatibility with existing quiz statistics
 - End-to-end tested and verified working
 
-**Phase 3.7: 50-Question Mixed Exam System** ✅ Complete
-- Expanded question pool to ~100 questions across all domains
-- Implemented two quiz modes: Mixed Exam (50 random questions) and Domain Practice
-- Random question selection ensures variety in each mixed exam attempt
-- Domain-specific analytics automatically track performance across all quiz attempts
-- Progress page shows comprehensive domain breakdown
-- System ready for further expansion to ~350 questions
+**Phase 3.7: Separate Question Pools & Tabbed Progress** ✅ Complete
+- Expanded total question pool to 254 questions: 99 quiz questions + 155 exam questions with zero overlap
+- Created separate question pools (QUIZ_QUESTIONS vs EXAM_QUESTIONS) to eliminate repetitive questions
+- Added difficulty levels (easy/medium/hard) to all questions across both pools
+- Restructured progress page with tabbed interface: Quiz History | Exam History | Domain Mastery
+- Fixed practice exam cap issue - now properly displays 110 questions from dedicated exam pool
+- Question pools ready for incremental expansion - current 254 is functional baseline toward 350+ goal
 
 **Phase 4: Enhanced Features** 📋 Planned
 - Question pool expansion to ~350 questions (50 per domain) for production readiness
