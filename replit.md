@@ -47,11 +47,14 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - All 7 NCEES domains covered with detailed explanations
 
 ### 📚 Study Resources
+Comprehensive resource library with seven organized sections:
 - **Formula Sheets** - Essential surveying formulas organized by category
 - **Memory Techniques** - Mnemonics and visualization strategies for key concepts
 - **Exam Day Playbook** - Time management, calculator tips, and test-taking strategies  
 - **Study Methods** - Active recall, Cornell notes, and effective review techniques
-- Content extracted from comprehensive FS exam study materials
+- **Surveying Solved Problems** - 17 PPI problem topics mapped to 7 NCEES domains
+- **Math for Surveyors** - 15 core topics from trigonometry to vertical curves
+- **Professional Reference** - Safety Handbook, TSPS Manual, ALTA Table A, Minimum Standards
 
 ### 🎓 Practice Exam Simulator
 - **Question Pool**: 155 questions from dedicated EXAM_QUESTIONS pool
@@ -186,6 +189,14 @@ The FS exam is the first step toward becoming a professional licensed surveyor (
 - Restructured progress page with tabbed interface: Quiz History | Exam History | Domain Mastery
 - Fixed practice exam cap issue - now properly displays 110 questions from dedicated exam pool
 - Question pools ready for incremental expansion - current 254 is functional baseline toward 350+ goal
+
+**Phase 3.8: Professional Resources Expansion** ✅ Complete
+- Expanded Resources page from 4 tabs to 7 comprehensive tabs
+- Added Surveying Solved Problems section with 17 PPI topics mapped to 7 NCEES domains
+- Added Math for Surveyors review covering 15 essential calculation topics
+- Created Professional Reference section with Safety Handbook, TSPS Manual, ALTA Table A, Minimum Standards
+- Organized all content by NCEES domain with color-coded visual hierarchy
+- Professional materials noted as reference (Texas-specific but exemplify national standards)
 
 **Phase 4: Enhanced Features** 📋 Planned
 - Question pool expansion to ~350 questions (50 per domain) for production readiness
