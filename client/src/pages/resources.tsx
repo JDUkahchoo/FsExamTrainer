@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Book, Brain, Calculator, CheckCircle, Clock, Target } from "lucide-react";
+import { Book, Brain, Calculator, CheckCircle, Clock, Target, GraduationCap, BookOpen, FileText } from "lucide-react";
 
 export default function Resources() {
   return (
@@ -19,14 +19,14 @@ export default function Resources() {
       <ScrollArea className="flex-1">
         <div className="p-6">
           <Tabs defaultValue="formulas" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsList className="grid w-full grid-cols-7 mb-6">
               <TabsTrigger value="formulas" data-testid="tab-formulas">
                 <Calculator className="w-4 h-4 mr-2" />
-                Formula Sheet
+                Formulas
               </TabsTrigger>
               <TabsTrigger value="memory" data-testid="tab-memory">
                 <Brain className="w-4 h-4 mr-2" />
-                Memory Techniques
+                Memory
               </TabsTrigger>
               <TabsTrigger value="exam" data-testid="tab-exam">
                 <Clock className="w-4 h-4 mr-2" />
@@ -34,7 +34,19 @@ export default function Resources() {
               </TabsTrigger>
               <TabsTrigger value="strategies" data-testid="tab-strategies">
                 <Target className="w-4 h-4 mr-2" />
-                Study Strategies
+                Strategies
+              </TabsTrigger>
+              <TabsTrigger value="problems" data-testid="tab-problems">
+                <GraduationCap className="w-4 h-4 mr-2" />
+                Problems
+              </TabsTrigger>
+              <TabsTrigger value="math" data-testid="tab-math">
+                <BookOpen className="w-4 h-4 mr-2" />
+                Math Review
+              </TabsTrigger>
+              <TabsTrigger value="reference" data-testid="tab-reference">
+                <FileText className="w-4 h-4 mr-2" />
+                Reference
               </TabsTrigger>
             </TabsList>
 
@@ -505,10 +517,473 @@ export default function Resources() {
                 </Card>
               </div>
             </TabsContent>
+
+            <TabsContent value="problems" data-testid="content-problems">
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle>Surveying Solved Problems by Domain</CardTitle>
+                  <CardDescription>
+                    17 comprehensive topics from PPI's Surveying Solved Problems organized by the 7 NCEES exam domains
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <div className="space-y-6">
+                {/* Domain 1: Math & Basic Science */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-math))]" />
+                      Domain 1: Math & Basic Science
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <ProblemTopic topic="I: Surveying Mathematics" pages="Problems 1-1 to 1-25, Solutions 1-25" />
+                      <ProblemTopic topic="II: Advanced Mathematics" pages="Problems 2-1 to 2-11, Solutions 2-11" />
+                      <ProblemTopic topic="XVII: Basic Sciences" pages="Problems 17-1 to 17-5, Solutions 17-5" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Domain 2: Field Data Acquisition */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-field))]" />
+                      Domain 2: Field Data Acquisition
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <ProblemTopic topic="VI: Surveying Instruments and Procedures" pages="Problems 6-1 to 6-20, Solutions 6-20" />
+                      <ProblemTopic topic="XIII: Hydrography" pages="Problems 13-1 to 13-8, Solutions 13-8" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Domain 3: Plane Survey Computations */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-plane))]" />
+                      Domain 3: Plane Survey Computations
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <ProblemTopic topic="VII: Legal Descriptions" pages="Problems 7-1 to 7-13, Solutions 7-13" />
+                      <ProblemTopic topic="X: Plats and Mapping" pages="Problems 10-1 to 10-9, Solutions 10-9" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Domain 4: Mapping, GIS, and CAD */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-mapping))]" />
+                      Domain 4: Mapping, GIS, and CAD
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <ProblemTopic topic="VIII: Photogrammetry" pages="Problems 8-1 to 8-13, Solutions 8-13" />
+                      <ProblemTopic topic="XIV: Geographic Information System (GIS)" pages="Problems 14-1 to 14-5, Solutions 14-5" />
+                      <ProblemTopic topic="XVI: Computer Operations" pages="Problems 16-1 to 16-4, Solutions 16-4" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Domain 5: Boundary Law & PLSS */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-boundary))]" />
+                      Domain 5: Boundary Law & PLSS
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <ProblemTopic topic="III: Land Boundary Law" pages="Problems 3-1 to 3-29, Solutions 3-29" />
+                      <ProblemTopic topic="V: Public Land Surveying System" pages="Problems 5-1 to 5-30, Solutions 5-30" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Domain 6: Geodesy, GPS, Astronomy */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-geodesy))]" />
+                      Domain 6: Geodesy, GPS, Astronomy
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <ProblemTopic topic="IV: Surveying Astronomy" pages="Problems 4-1 to 4-14, Solutions 4-14" />
+                      <ProblemTopic topic="IX: Geodetic and Control Surveys" pages="Problems 9-1 to 9-17, Solutions 9-17" />
+                      <ProblemTopic topic="XI: Global Positioning System (GPS)" pages="Problems 11-1 to 11-6, Solutions 11-6" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Domain 7: Professional Practice */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-professional))]" />
+                      Domain 7: Professional Practice
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <ProblemTopic topic="XII: Project Management" pages="Problems 12-1 to 12-11, Solutions 12-11" />
+                      <ProblemTopic topic="XV: Written Communication" pages="Problems 15-1 to 15-5, Solutions 15-5" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-muted/50">
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground">
+                      <strong>Note:</strong> Surveying Solved Problems (PPI) provides step-by-step solutions to representative exam-style questions. 
+                      Use this resource alongside the practice quizzes and exams to reinforce problem-solving skills in each domain.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="math" data-testid="content-math">
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle>Math for Surveyors Review</CardTitle>
+                  <CardDescription>
+                    Comprehensive mathematics reference covering 15 essential topics for surveying calculations
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <div className="space-y-6">
+                {/* Trigonometry Fundamentals */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-math))]" />
+                      Trigonometry Fundamentals
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <MathTopic topic="1. The Right Triangle" description="SOH-CAH-TOA, trigonometric functions, solving for unknowns" />
+                      <MathTopic topic="2. Oblique Triangles" description="Triangles without right angles, multiple solution scenarios" />
+                      <MathTopic topic="5. Law of Sines" description="Solving triangles using ratio of sides to angles" />
+                      <MathTopic topic="8. Law of Cosines" description="Finding unknown sides and angles in any triangle" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Azimuth & Bearing Systems */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-plane))]" />
+                      Azimuth & Bearing Systems
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <MathTopic topic="3. Azimuths, Angles, & Bearings" description="Conversions between quadrant bearings and azimuths" />
+                      <MathTopic topic="6. Bearing-Bearing Intersections" description="Finding point locations using two bearing lines" />
+                      <MathTopic topic="7. Bearing-Distance Intersections" description="Solving intersections with mixed bearing and distance data" />
+                      <MathTopic topic="9. Distance-Distance Intersections" description="Locating points from two known distance measurements" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Coordinate Geometry */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-plane))]" />
+                      Coordinate Geometry (COGO)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <MathTopic topic="4. Coordinate Geometry" description="Northing/Easting calculations, inverse and forward computations" />
+                      <MathTopic topic="11. The Compass Rule" description="Traverse adjustment, distributing error proportionally" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Curves & Vertical Control */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-plane))]" />
+                      Curves & Vertical Control
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <MathTopic topic="12. Horizontal Curves" description="Radius, tangent, external, chord calculations" />
+                      <MathTopic topic="13. Grades and Slopes" description="Percent grade, rise/run calculations" />
+                      <MathTopic topic="14. Intersection of Two Grades" description="Finding PI points and elevations" />
+                      <MathTopic topic="15. Vertical Curves" description="Parabolic curves, grade changes, offsets" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Advanced Topics */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-math))]" />
+                      Advanced Calculations
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <MathTopic topic="10. Interpolation" description="Finding intermediate values, linear and proportional methods" />
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-muted/50">
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      <strong>How to Use This Resource:</strong>
+                    </p>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Start with right triangles and work through oblique triangles before tackling COGO</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Master bearing/azimuth conversions early - they appear in every domain</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Practice coordinate geometry calculations until they become automatic</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Review curve formulas alongside the formula sheet for reinforcement</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="reference" data-testid="content-reference">
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle>Professional Reference Materials</CardTitle>
+                  <CardDescription>
+                    Safety standards, professional practice guidelines, and technical specifications for surveying practice
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-lg">
+                    <p className="text-sm text-amber-900 dark:text-amber-200">
+                      <strong>Note:</strong> These are professional reference materials for surveying practice. 
+                      While not directly tested on the FS exam, they provide valuable context for professional practice and ethics questions.
+                      The TSPS Manual and ALTA standards are Texas-specific but exemplify national best practices.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="space-y-6">
+                {/* Safety Handbook */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-professional))]" />
+                      TSPS Safety Handbook (2021)
+                    </CardTitle>
+                    <CardDescription>Comprehensive field and office safety guidelines</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm">Key Sections:</h4>
+                      <ul className="space-y-2">
+                        <RefTopic topic="General Safety Guidelines" description="Situational awareness, horseplay prevention, reporting procedures" />
+                        <RefTopic topic="Field Safety" description="Traffic control, utility locates, railroad crossings, water operations" />
+                        <RefTopic topic="Environmental Hazards" description="Snakes, insects, poisonous plants, temperature extremes" />
+                        <RefTopic topic="Equipment Safety" description="Hand tools, power tools, vehicles, ATVs/UTVs" />
+                        <RefTopic topic="Emergency Procedures" description="First aid, CPR, allergic reactions, calling 911" />
+                        <RefTopic topic="PPE Requirements" description="Eye protection, hard hats, visibility vests, footwear" />
+                      </ul>
+                      <div className="mt-4 p-3 bg-muted rounded">
+                        <p className="text-sm text-muted-foreground">
+                          Emphasizes the shared responsibility of employers, supervisors, and employees for maintaining safe work environments.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* TSPS Manual of Practice */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-professional))]" />
+                      TSPS Manual of Practice (2021)
+                    </CardTitle>
+                    <CardDescription>Standards for land surveying in Texas</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm">11 Survey Categories:</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <RefTopic topic="1A: Land Title Survey" description="For title insurance, ALTA standards" />
+                        <RefTopic topic="1B: Standard Land Survey" description="Boundary surveys not for title insurance" />
+                        <RefTopic topic="2: Route Survey" description="Linear projects, ROW definition" />
+                        <RefTopic topic="5: Construction Survey" description="Staking, as-built documentation" />
+                        <RefTopic topic="6: Topographic Survey" description="Contours, features, elevations" />
+                        <RefTopic topic="7: Horizontal Control" description="Coordinate network establishment" />
+                        <RefTopic topic="8: Vertical Control" description="Benchmark networks" />
+                        <RefTopic topic="9: Investigative Survey" description="Research and field investigation" />
+                        <RefTopic topic="10: GIS Products" description="Survey-grade GIS deliverables" />
+                        <RefTopic topic="11: 3D Control Survey" description="Three-dimensional networks" />
+                      </div>
+                      <div className="mt-4 p-3 bg-muted rounded">
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Key Concepts:</strong> Standard of care, boundary determination (footsteps doctrine, dignity of calls), 
+                          measurement tolerances, and professional responsibilities.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* ALTA Table A */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-boundary))]" />
+                      ALTA/NSPS Table A (2021)
+                    </CardTitle>
+                    <CardDescription>Optional survey responsibilities for land title surveys</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm">19 Standard Optional Items:</h4>
+                      <ul className="space-y-2 text-sm">
+                        <RefTopic topic="Item 1: Monuments" description="Placement at boundary corners" />
+                        <RefTopic topic="Item 2: Addresses" description="Street addresses if available" />
+                        <RefTopic topic="Item 3: Flood Zones" description="FEMA classification and mapping" />
+                        <RefTopic topic="Item 4: Gross Land Area" description="Acreage calculations" />
+                        <RefTopic topic="Item 5: Vertical Relief" description="Contours and topography" />
+                        <RefTopic topic="Item 6: Zoning" description="Classification and setbacks" />
+                        <RefTopic topic="Item 7: Building Dimensions" description="Exterior footprint and square footage" />
+                        <RefTopic topic="Item 8: Substantial Features" description="Parking, pools, landscaping" />
+                        <RefTopic topic="Item 11: Underground Utilities" description="Location evidence from plans/markings" />
+                      </ul>
+                      <div className="mt-4 p-3 bg-muted rounded">
+                        <p className="text-sm text-muted-foreground">
+                          Table A items are negotiated between surveyor and client. Each selected item adds specific deliverables to the base ALTA survey requirements.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Minimum Standards */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-professional))]" />
+                      Texas Minimum Standards
+                    </CardTitle>
+                    <CardDescription>TBPELS rules for professional practice</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        Texas Board of Professional Engineers and Land Surveyors (TBPELS) establishes mandatory minimum 
+                        standards for professional surveying practice in Texas.
+                      </p>
+                      <h4 className="font-semibold text-sm">Key Requirements:</h4>
+                      <ul className="space-y-2">
+                        <RefTopic topic="Professional Seal" description="Proper application and responsibility" />
+                        <RefTopic topic="Boundary Surveys" description="Research, fieldwork, and documentation requirements" />
+                        <RefTopic topic="Monumentation" description="Setting and referencing boundary markers" />
+                        <RefTopic topic="Plat Requirements" description="Content, format, and filing standards" />
+                        <RefTopic topic="Record Research" description="Extent and documentation of title research" />
+                        <RefTopic topic="Measurement Standards" description="Accuracy requirements and error tolerances" />
+                      </ul>
+                      <div className="mt-4 p-3 bg-muted rounded">
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Relationship to TSPS Manual:</strong> TBPELS rules are mandatory law. 
+                          The TSPS Manual of Practice prescribes more stringent voluntary standards building on these legal minimums.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900">
+                  <CardContent className="pt-6">
+                    <h4 className="font-semibold text-sm mb-3">Study Approach for Professional Practice Questions:</h4>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Focus on ethics, standard of care, and professional responsibilities</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Understand boundary law principles (monuments over measurements, dignity of calls)</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Know basic safety requirements and field procedures</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>While Texas-specific, these materials exemplify national professional standards</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
       </ScrollArea>
     </div>
+  );
+}
+
+function ProblemTopic({ topic, pages }: { topic: string; pages: string }) {
+  return (
+    <li className="flex justify-between items-start gap-4 text-sm">
+      <span className="font-medium">{topic}</span>
+      <span className="text-muted-foreground text-right flex-shrink-0">{pages}</span>
+    </li>
+  );
+}
+
+function MathTopic({ topic, description }: { topic: string; description: string }) {
+  return (
+    <li className="flex flex-col gap-1 text-sm">
+      <span className="font-medium">{topic}</span>
+      <span className="text-muted-foreground">{description}</span>
+    </li>
+  );
+}
+
+function RefTopic({ topic, description }: { topic: string; description: string }) {
+  return (
+    <li className="flex flex-col gap-1 text-sm">
+      <span className="font-medium">{topic}</span>
+      <span className="text-muted-foreground text-xs">{description}</span>
+    </li>
   );
 }
 
