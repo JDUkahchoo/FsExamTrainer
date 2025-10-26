@@ -21,21 +21,29 @@ export default function ProgressPage() {
     flashcardsMastered: number;
     practiceExamsTaken: number;
     lastExamScore: number;
-  }>({ queryKey: ['/api/progress/stats'] });
+  }>({ 
+    queryKey: ['/api/progress/stats'],
+    refetchOnMount: 'always'
+  });
 
   const { data: quizStats } = useQuery<{
     totalAnswered: number;
     totalCorrect: number;
     accuracy: number;
     domainStats: Record<string, { answered: number; correct: number; accuracy: number }>;
-  }>({ queryKey: ['/api/quiz/stats'] });
+  }>({ 
+    queryKey: ['/api/quiz/stats'],
+    refetchOnMount: 'always'
+  });
 
   const { data: quizSessions } = useQuery<QuizSession[]>({
-    queryKey: ['/api/quiz/sessions']
+    queryKey: ['/api/quiz/sessions'],
+    refetchOnMount: 'always'
   });
 
   const { data: examHistory } = useQuery<PracticeExam[]>({
-    queryKey: ['/api/exams']
+    queryKey: ['/api/exams'],
+    refetchOnMount: 'always'
   });
 
   if (isLoading) {

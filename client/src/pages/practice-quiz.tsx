@@ -129,6 +129,11 @@ export default function PracticeQuizPage() {
   };
 
   const handleNext = () => {
+    // Auto-submit current answer if one is selected but not yet submitted
+    if (selectedAnswer !== null && !answeredQuestions[currentQuestionIndex]) {
+      handleSubmit();
+    }
+    
     if (currentQuestionIndex < totalQuestions - 1) {
       const nextIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(nextIndex);
@@ -163,13 +168,25 @@ export default function PracticeQuizPage() {
   };
 
   const handleFinishQuiz = () => {
+    // Auto-submit current answer if one is selected but not yet submitted
+    if (selectedAnswer !== null && !answeredQuestions[currentQuestionIndex]) {
+      handleSubmit();
+    }
+    
+    // Calculate final counts (need to account for potentially just-submitted answer)
+    const finalAnsweredCount = selectedAnswer !== null && !answeredQuestions[currentQuestionIndex] 
+      ? Object.keys(answeredQuestions).length + 1 
+      : Object.keys(answeredQuestions).length;
+    
+    const finalCorrectCount = selectedAnswer !== null && !answeredQuestions[currentQuestionIndex]
+      ? (selectedAnswer === currentQuestion?.correctAnswer ? correctCount + 1 : correctCount)
+      : correctCount;
+    
     // Save the complete quiz session
-    // totalQuestions = actual quiz length (e.g., 50 for mixed exam)
-    // answeredCount = how many questions were actually answered
     saveSessionMutation.mutate({
       domain: selectedDomain,
       totalQuestions: quizQuestions.length,
-      correctAnswers: correctCount,
+      correctAnswers: finalCorrectCount,
       timeSpentSeconds: elapsedSeconds
     });
     setQuizState('completed');

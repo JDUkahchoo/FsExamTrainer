@@ -459,9 +459,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       
       // Get all data
-      const [weekProgress, quizResults, flashcardMastery, customWeeks, streak] = await Promise.all([
+      const [weekProgress, quizSessions, flashcardMastery, customWeeks, streak] = await Promise.all([
         storage.getAllWeekProgress(userId),
-        storage.getQuizResults(userId),
+        storage.getQuizSessions(userId),
         storage.getFlashcardMastery(userId),
         storage.getCustomWeeks(userId),
         storage.calculateStreak(userId)
@@ -491,10 +491,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }).length;
 
-      // Quiz accuracy
-      const totalQuestions = quizResults.length;
-      const correctQuestions = quizResults.filter(r => r.isCorrect).length;
-      const quizAccuracy = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
+      // Quiz accuracy - only count completed quiz sessions
+      const totalQuestionsFromSessions = quizSessions.reduce((sum, session) => sum + session.totalQuestions, 0);
+      const correctQuestionsFromSessions = quizSessions.reduce((sum, session) => sum + session.correctAnswers, 0);
+      const quizAccuracy = totalQuestionsFromSessions > 0 ? (correctQuestionsFromSessions / totalQuestionsFromSessions) * 100 : 0;
 
       // Flashcard mastery
       const totalFlashcards = flashcardMastery.length;
