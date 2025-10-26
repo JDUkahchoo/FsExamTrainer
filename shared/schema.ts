@@ -220,6 +220,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   flashcardMastery: many(flashcardMastery),
   practiceExams: many(practiceExams),
   studyNotes: many(studyNotes),
+  dailyActivity: many(dailyActivity),
+  achievements: many(achievements),
+  customWeeks: many(customWeeks),
 }));
 
 // --- Frontend-only Types (for UI state management) ---
@@ -255,3 +258,104 @@ export type StudyStreak = {
   longestStreak: number;
   lastStudyDate: string;
 };
+
+// --- Daily Activity Tracking ---
+
+export const dailyActivity = pgTable("daily_activity", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  date: text("date").notNull(), // YYYY-MM-DD format
+  activityTypes: text("activity_types").array().notNull().default(sql`'{}'::text[]`), // ['quiz', 'flashcard', 'notes', 'week_complete']
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const dailyActivityRelations = relations(dailyActivity, ({ one }) => ({
+  user: one(users, {
+    fields: [dailyActivity.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertDailyActivitySchema = createInsertSchema(dailyActivity).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertDailyActivity = z.infer<typeof insertDailyActivitySchema>;
+export type DailyActivity = typeof dailyActivity.$inferSelect;
+
+// --- Achievements ---
+
+export type AchievementType = 
+  | 'week_1_complete'
+  | 'week_8_complete'
+  | 'all_weeks_complete'
+  | 'quiz_master'
+  | 'flashcard_champion'
+  | 'practice_exam_pro'
+  | 'streak_7_days'
+  | 'streak_14_days'
+  | 'streak_30_days'
+  | 'perfect_quiz';
+
+export const ACHIEVEMENT_TYPES: AchievementType[] = [
+  'week_1_complete',
+  'week_8_complete',
+  'all_weeks_complete',
+  'quiz_master',
+  'flashcard_champion',
+  'practice_exam_pro',
+  'streak_7_days',
+  'streak_14_days',
+  'streak_30_days',
+  'perfect_quiz',
+];
+
+export const achievements = pgTable("achievements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  achievementType: text("achievement_type").notNull(),
+  earnedAt: timestamp("earned_at").notNull().defaultNow(),
+});
+
+export const achievementsRelations = relations(achievements, ({ one }) => ({
+  user: one(users, {
+    fields: [achievements.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertAchievementSchema = createInsertSchema(achievements).omit({
+  id: true,
+  earnedAt: true,
+});
+
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+export type Achievement = typeof achievements.$inferSelect;
+
+// --- Custom Study Weeks ---
+
+export const customWeeks = pgTable("custom_weeks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  weekNumber: integer("week_number").notNull(), // 17, 18, 19, etc.
+  title: text("title").notNull(),
+  domain: text("domain"), // Optional domain focus
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const customWeeksRelations = relations(customWeeks, ({ one }) => ({
+  user: one(users, {
+    fields: [customWeeks.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertCustomWeekSchema = createInsertSchema(customWeeks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertCustomWeek = z.infer<typeof insertCustomWeekSchema>;
+export type CustomWeek = typeof customWeeks.$inferSelect;

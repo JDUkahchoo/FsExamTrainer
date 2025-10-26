@@ -11,8 +11,16 @@ import type {
   InsertPracticeExam,
   StudyNote,
   InsertStudyNote,
+  DailyActivity,
+  InsertDailyActivity,
+  Achievement,
+  InsertAchievement,
+  AchievementType,
+  CustomWeek,
+  InsertCustomWeek,
   User,
-  UpsertUser
+  UpsertUser,
+  StudyStreak
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -22,9 +30,12 @@ import {
   quizSessions,
   flashcardMastery,
   practiceExams,
-  studyNotes
+  studyNotes,
+  dailyActivity,
+  achievements,
+  customWeeks
 } from "@shared/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, gte, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User methods (required for Replit Auth)
@@ -62,6 +73,24 @@ export interface IStorage {
   getStudyNote(userId: string, week: number): Promise<StudyNote | undefined>;
   getAllStudyNotes(userId: string): Promise<StudyNote[]>;
   upsertStudyNote(note: InsertStudyNote): Promise<StudyNote>;
+
+  // Daily Activity methods
+  getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
+  logDailyActivity(userId: string, activityType: string): Promise<void>;
+  calculateStreak(userId: string): Promise<StudyStreak>;
+
+  // Achievement methods
+  getUserAchievements(userId: string): Promise<Achievement[]>;
+  checkAndAwardAchievements(userId: string): Promise<Achievement[]>;
+  awardAchievement(userId: string, achievementType: AchievementType): Promise<Achievement | null>;
+
+  // Custom Week methods
+  getCustomWeeks(userId: string): Promise<CustomWeek[]>;
+  createCustomWeek(customWeek: InsertCustomWeek): Promise<CustomWeek>;
+  deleteCustomWeek(userId: string, id: string): Promise<void>;
+
+  // Helper method for flashcard mastery (used in routes)
+  getFlashcardMastery(userId: string): Promise<FlashcardMastery[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -287,6 +316,290 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return created;
     }
+  }
+
+  // Daily Activity methods
+  async getDailyActivity(userId: string, days: number): Promise<DailyActivity[]> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+    const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
+
+    return await db
+      .select()
+      .from(dailyActivity)
+      .where(and(
+        eq(dailyActivity.userId, userId),
+        gte(dailyActivity.date, cutoffDateStr)
+      ))
+      .orderBy(desc(dailyActivity.date));
+  }
+
+  async logDailyActivity(userId: string, activityType: string): Promise<void> {
+    const today = new Date().toISOString().split('T')[0];
+
+    // Check if there's already an entry for today
+    const [existing] = await db
+      .select()
+      .from(dailyActivity)
+      .where(and(
+        eq(dailyActivity.userId, userId),
+        eq(dailyActivity.date, today)
+      ));
+
+    if (existing) {
+      // Update existing entry with new activity type if not already included
+      if (!existing.activityTypes.includes(activityType)) {
+        await db
+          .update(dailyActivity)
+          .set({
+            activityTypes: [...existing.activityTypes, activityType]
+          })
+          .where(and(
+            eq(dailyActivity.userId, userId),
+            eq(dailyActivity.date, today)
+          ));
+      }
+    } else {
+      // Create new entry for today
+      await db
+        .insert(dailyActivity)
+        .values({
+          userId,
+          date: today,
+          activityTypes: [activityType]
+        });
+    }
+  }
+
+  async calculateStreak(userId: string): Promise<StudyStreak> {
+    const allActivity = await db
+      .select()
+      .from(dailyActivity)
+      .where(eq(dailyActivity.userId, userId))
+      .orderBy(desc(dailyActivity.date));
+
+    if (allActivity.length === 0) {
+      return {
+        currentStreak: 0,
+        longestStreak: 0,
+        lastStudyDate: ''
+      };
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+
+    // Calculate current streak
+    const latestDate = allActivity[0].date;
+    if (latestDate === today || latestDate === yesterdayStr) {
+      let expectedDate = new Date(latestDate);
+      for (const activity of allActivity) {
+        const activityDate = activity.date;
+        if (activityDate === expectedDate.toISOString().split('T')[0]) {
+          currentStreak++;
+          tempStreak++;
+          expectedDate.setDate(expectedDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+    }
+
+    // Calculate longest streak
+    tempStreak = 1;
+    let previousDate = new Date(allActivity[0].date);
+    
+    for (let i = 1; i < allActivity.length; i++) {
+      const currentDate = new Date(allActivity[i].date);
+      const dayDiff = Math.floor((previousDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (dayDiff === 1) {
+        tempStreak++;
+        longestStreak = Math.max(longestStreak, tempStreak);
+      } else {
+        tempStreak = 1;
+      }
+      previousDate = currentDate;
+    }
+
+    longestStreak = Math.max(longestStreak, tempStreak, currentStreak);
+
+    return {
+      currentStreak,
+      longestStreak,
+      lastStudyDate: allActivity[0].date
+    };
+  }
+
+  // Achievement methods
+  async getUserAchievements(userId: string): Promise<Achievement[]> {
+    return await db
+      .select()
+      .from(achievements)
+      .where(eq(achievements.userId, userId))
+      .orderBy(desc(achievements.earnedAt));
+  }
+
+  async awardAchievement(userId: string, achievementType: AchievementType): Promise<Achievement | null> {
+    // Check if achievement already earned
+    const [existing] = await db
+      .select()
+      .from(achievements)
+      .where(and(
+        eq(achievements.userId, userId),
+        eq(achievements.achievementType, achievementType)
+      ));
+
+    if (existing) {
+      return null; // Already earned
+    }
+
+    // Award new achievement
+    const [achievement] = await db
+      .insert(achievements)
+      .values({
+        userId,
+        achievementType
+      })
+      .returning();
+
+    return achievement;
+  }
+
+  async checkAndAwardAchievements(userId: string): Promise<Achievement[]> {
+    const newAchievements: Achievement[] = [];
+
+    // Get user data
+    const [weekProgressData, quizResults, flashcardData, practiceExams, streak] = await Promise.all([
+      this.getAllWeekProgress(userId),
+      this.getQuizResults(userId),
+      this.getAllFlashcardMastery(userId),
+      this.getPracticeExams(userId),
+      this.calculateStreak(userId)
+    ]);
+
+    // Check Week 1 Complete
+    const week1 = weekProgressData.find(w => w.week === 1);
+    if (week1 && (
+      week1.readCompleted.length > 0 ||
+      week1.focusCompleted.length > 0 ||
+      week1.applyCompleted.length > 0 ||
+      week1.reinforceCompleted.length > 0
+    )) {
+      const achievement = await this.awardAchievement(userId, 'week_1_complete');
+      if (achievement) newAchievements.push(achievement);
+    }
+
+    // Check Week 8 Complete (Halfway)
+    const week8 = weekProgressData.find(w => w.week === 8);
+    if (week8 && (
+      week8.readCompleted.length > 0 ||
+      week8.focusCompleted.length > 0 ||
+      week8.applyCompleted.length > 0 ||
+      week8.reinforceCompleted.length > 0
+    )) {
+      const achievement = await this.awardAchievement(userId, 'week_8_complete');
+      if (achievement) newAchievements.push(achievement);
+    }
+
+    // Check All Weeks Complete
+    const completedWeeks = weekProgressData.filter(w => {
+      const allCompleted = [
+        ...w.readCompleted,
+        ...w.focusCompleted,
+        ...w.applyCompleted,
+        ...w.reinforceCompleted
+      ];
+      return allCompleted.length > 0;
+    });
+    if (completedWeeks.length >= 16) {
+      const achievement = await this.awardAchievement(userId, 'all_weeks_complete');
+      if (achievement) newAchievements.push(achievement);
+    }
+
+    // Check Quiz Master (85%+ accuracy with at least 50 questions)
+    if (quizResults.length >= 50) {
+      const correctAnswers = quizResults.filter(r => r.isCorrect).length;
+      const accuracy = (correctAnswers / quizResults.length) * 100;
+      if (accuracy >= 85) {
+        const achievement = await this.awardAchievement(userId, 'quiz_master');
+        if (achievement) newAchievements.push(achievement);
+      }
+    }
+
+    // Check Perfect Quiz (100% accuracy on a quiz session)
+    const sessions = await this.getQuizSessions(userId);
+    const perfectSession = sessions.find(s => s.correctAnswers === s.totalQuestions && s.totalQuestions >= 10);
+    if (perfectSession) {
+      const achievement = await this.awardAchievement(userId, 'perfect_quiz');
+      if (achievement) newAchievements.push(achievement);
+    }
+
+    // Check Flashcard Champion (50+ cards mastered)
+    const masteredCards = flashcardData.filter(f => f.masteryLevel >= 4);
+    if (masteredCards.length >= 50) {
+      const achievement = await this.awardAchievement(userId, 'flashcard_champion');
+      if (achievement) newAchievements.push(achievement);
+    }
+
+    // Check Practice Exam Pro (completed at least one full exam)
+    if (practiceExams.length >= 1) {
+      const achievement = await this.awardAchievement(userId, 'practice_exam_pro');
+      if (achievement) newAchievements.push(achievement);
+    }
+
+    // Check Streak achievements
+    if (streak.currentStreak >= 7) {
+      const achievement = await this.awardAchievement(userId, 'streak_7_days');
+      if (achievement) newAchievements.push(achievement);
+    }
+    if (streak.currentStreak >= 14) {
+      const achievement = await this.awardAchievement(userId, 'streak_14_days');
+      if (achievement) newAchievements.push(achievement);
+    }
+    if (streak.currentStreak >= 30) {
+      const achievement = await this.awardAchievement(userId, 'streak_30_days');
+      if (achievement) newAchievements.push(achievement);
+    }
+
+    return newAchievements;
+  }
+
+  // Custom Week methods
+  async getCustomWeeks(userId: string): Promise<CustomWeek[]> {
+    return await db
+      .select()
+      .from(customWeeks)
+      .where(eq(customWeeks.userId, userId))
+      .orderBy(customWeeks.weekNumber);
+  }
+
+  async createCustomWeek(customWeek: InsertCustomWeek): Promise<CustomWeek> {
+    const [created] = await db
+      .insert(customWeeks)
+      .values(customWeek)
+      .returning();
+    return created;
+  }
+
+  async deleteCustomWeek(userId: string, id: string): Promise<void> {
+    await db
+      .delete(customWeeks)
+      .where(and(
+        eq(customWeeks.userId, userId),
+        eq(customWeeks.id, id)
+      ));
+  }
+
+  // Helper method to get all flashcard mastery (not just one card)
+  async getFlashcardMastery(userId: string): Promise<FlashcardMastery[]> {
+    return await this.getAllFlashcardMastery(userId);
   }
 }
 

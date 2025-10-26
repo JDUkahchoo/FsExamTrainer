@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -356,6 +356,165 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching stats:", error);
       res.status(500).json({ error: "Failed to fetch progress statistics" });
+    }
+  });
+
+  // Daily Activity routes
+  app.get("/api/activity/daily", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const days = parseInt(req.query.days as string) || 30;
+      const activity = await storage.getDailyActivity(userId, days);
+      res.json(activity);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch daily activity" });
+    }
+  });
+
+  app.post("/api/activity/log", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { activityType } = req.body;
+      await storage.logDailyActivity(userId, activityType);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error logging activity:", error);
+      res.status(500).json({ error: "Failed to log activity" });
+    }
+  });
+
+  // Streak calculation route
+  app.get("/api/activity/streak", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const streak = await storage.calculateStreak(userId);
+      res.json(streak);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to calculate streak" });
+    }
+  });
+
+  // Achievement routes
+  app.get("/api/achievements", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const achievements = await storage.getUserAchievements(userId);
+      res.json(achievements);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch achievements" });
+    }
+  });
+
+  app.post("/api/achievements/check", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const newAchievements = await storage.checkAndAwardAchievements(userId);
+      res.json(newAchievements);
+    } catch (error) {
+      console.error("Error checking achievements:", error);
+      res.status(500).json({ error: "Failed to check achievements" });
+    }
+  });
+
+  // Custom Weeks routes
+  app.get("/api/custom-weeks", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const customWeeks = await storage.getCustomWeeks(userId);
+      res.json(customWeeks);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch custom weeks" });
+    }
+  });
+
+  app.post("/api/custom-weeks", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertCustomWeekSchema.parse({ ...req.body, userId });
+      const customWeek = await storage.createCustomWeek(data);
+      res.json(customWeek);
+    } catch (error) {
+      console.error("Error creating custom week:", error);
+      res.status(400).json({ error: "Invalid custom week data" });
+    }
+  });
+
+  app.delete("/api/custom-weeks/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      await storage.deleteCustomWeek(userId, id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete custom week" });
+    }
+  });
+
+  // Overall Progress Metrics route
+  app.get("/api/progress/overall", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      // Get all data
+      const [weekProgress, quizResults, flashcardMastery, customWeeks, streak] = await Promise.all([
+        storage.getAllWeekProgress(userId),
+        storage.getQuizResults(userId),
+        storage.getFlashcardMastery(userId),
+        storage.getCustomWeeks(userId),
+        storage.calculateStreak(userId)
+      ]);
+
+      // Calculate weeks completed (core 16 weeks)
+      const coreWeeksCompleted = weekProgress.filter(w => {
+        const allItems = [
+          ...w.readCompleted,
+          ...w.focusCompleted,
+          ...w.applyCompleted,
+          ...w.reinforceCompleted
+        ];
+        return allItems.length > 0;
+      }).length;
+
+      // Total weeks including custom
+      const totalWeeks = 16 + customWeeks.length;
+      const totalWeeksCompleted = coreWeeksCompleted + customWeeks.filter(cw => {
+        // Check if there's progress for this custom week
+        const progress = weekProgress.find(wp => wp.week === cw.weekNumber);
+        return progress && (
+          progress.readCompleted.length > 0 ||
+          progress.focusCompleted.length > 0 ||
+          progress.applyCompleted.length > 0 ||
+          progress.reinforceCompleted.length > 0
+        );
+      }).length;
+
+      // Quiz accuracy
+      const totalQuestions = quizResults.length;
+      const correctQuestions = quizResults.filter(r => r.isCorrect).length;
+      const quizAccuracy = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
+
+      // Flashcard mastery
+      const totalFlashcards = flashcardMastery.length;
+      const masteredFlashcards = flashcardMastery.filter(f => f.masteryLevel >= 4).length;
+      const flashcardMasteryPercent = totalFlashcards > 0 ? (masteredFlashcards / totalFlashcards) * 100 : 0;
+
+      // Overall progress calculation
+      // 40% weeks, 30% quiz accuracy, 30% flashcard mastery
+      const weekProgress_percent = (totalWeeksCompleted / totalWeeks) * 100;
+      const overallProgress = (weekProgress_percent * 0.4) + (quizAccuracy * 0.3) + (flashcardMasteryPercent * 0.3);
+
+      res.json({
+        overallProgress: Math.round(overallProgress),
+        weeksCompleted: totalWeeksCompleted,
+        totalWeeks,
+        quizAccuracy: Math.round(quizAccuracy),
+        flashcardMasteryPercent: Math.round(flashcardMasteryPercent),
+        currentStreak: streak.currentStreak,
+        longestStreak: streak.longestStreak
+      });
+    } catch (error) {
+      console.error("Error fetching overall progress:", error);
+      res.status(500).json({ error: "Failed to fetch overall progress" });
     }
   });
 
