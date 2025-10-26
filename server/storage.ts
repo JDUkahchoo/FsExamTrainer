@@ -225,14 +225,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertFlashcardMastery(mastery: InsertFlashcardMastery): Promise<FlashcardMastery> {
+    console.log("[Storage] upsertFlashcardMastery called with:", mastery);
     const existing = await this.getFlashcardMastery(mastery.userId, mastery.flashcardId);
+    console.log("[Storage] Existing record:", existing, "typeof:", typeof existing, "isArray:", Array.isArray(existing));
     
-    if (existing) {
+    // Check if existing is a valid object (not null, undefined, or array)
+    const hasExisting = existing && typeof existing === 'object' && !Array.isArray(existing) && existing.id;
+    console.log("[Storage] Has existing:", hasExisting);
+    
+    if (hasExisting) {
+      console.log("[Storage] Updating existing record");
       const [updated] = await db
         .update(flashcardMastery)
         .set({
           masteryLevel: mastery.masteryLevel,
-          reviewCount: existing.reviewCount + 1,
+          reviewCount: (existing.reviewCount || 0) + 1,
           lastReviewedAt: new Date()
         })
         .where(and(
@@ -240,16 +247,23 @@ export class DatabaseStorage implements IStorage {
           eq(flashcardMastery.flashcardId, mastery.flashcardId)
         ))
         .returning();
+      console.log("[Storage] Updated record:", updated);
       return updated;
     } else {
-      const [created] = await db
+      console.log("[Storage] Creating new record");
+      const valuesToInsert = {
+        ...mastery,
+        reviewCount: 1,
+        lastReviewedAt: new Date()
+      };
+      console.log("[Storage] Values to insert:", valuesToInsert);
+      const result = await db
         .insert(flashcardMastery)
-        .values({
-          ...mastery,
-          reviewCount: 1,
-          lastReviewedAt: new Date()
-        })
+        .values(valuesToInsert)
         .returning();
+      console.log("[Storage] Insert result:", result);
+      const [created] = result;
+      console.log("[Storage] Created record:", created);
       return created;
     }
   }

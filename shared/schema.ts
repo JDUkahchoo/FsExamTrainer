@@ -340,8 +340,11 @@ export const customWeeks = pgTable("custom_weeks", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   weekNumber: integer("week_number").notNull(), // 17, 18, 19, etc.
   title: text("title").notNull(),
-  domain: text("domain"), // Optional domain focus
-  description: text("description"),
+  domain: text("domain"), // Primary domain focus
+  readItems: text("read_items").array().notNull().default(sql`'{}'::text[]`),
+  focusItems: text("focus_items").array().notNull().default(sql`'{}'::text[]`),
+  applyItems: text("apply_items").array().notNull().default(sql`'{}'::text[]`),
+  reinforceItems: text("reinforce_items").array().notNull().default(sql`'{}'::text[]`),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

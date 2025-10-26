@@ -195,8 +195,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/flashcards/mastery", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      console.log("[Flashcard POST] userId:", userId, "body:", req.body);
       const data = insertFlashcardMasterySchema.parse({ ...req.body, userId });
+      console.log("[Flashcard POST] Parsed data:", data);
       const mastery = await storage.upsertFlashcardMastery(data);
+      console.log("[Flashcard POST] Upserted mastery:", mastery);
       res.json(mastery);
     } catch (error) {
       console.error("Error saving flashcard mastery:", error);

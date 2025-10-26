@@ -115,11 +115,11 @@ export default function StudyPlanPage() {
     mutationFn: async (data: {
       weekNumber: number;
       title: string;
-      domains: Domain[];
-      read: string[];
-      focus: string[];
-      apply: string[];
-      reinforce: string[];
+      domain?: string;
+      readItems: string[];
+      focusItems: string[];
+      applyItems: string[];
+      reinforceItems: string[];
     }) => {
       return apiRequest('POST', '/api/custom-weeks', data);
     },
@@ -178,11 +178,11 @@ export default function StudyPlanPage() {
     createCustomWeekMutation.mutate({
       weekNumber,
       title: newWeekTitle,
-      domains: [newWeekDomain as Domain],
-      read,
-      focus,
-      apply,
-      reinforce,
+      domain: newWeekDomain,
+      readItems: read,
+      focusItems: focus,
+      applyItems: apply,
+      reinforceItems: reinforce,
     });
   };
 
@@ -225,11 +225,11 @@ export default function StudyPlanPage() {
     ...customWeeks.map(cw => ({
       week: cw.weekNumber,
       title: cw.title,
-      domains: cw.domains,
-      read: cw.read,
-      focus: cw.focus,
-      apply: cw.apply,
-      reinforce: cw.reinforce,
+      domains: cw.domain ? [cw.domain as Domain] : [],
+      read: cw.readItems || [],
+      focus: cw.focusItems || [],
+      apply: cw.applyItems || [],
+      reinforce: cw.reinforceItems || [],
       isCustom: true,
       customId: cw.id
     }))
