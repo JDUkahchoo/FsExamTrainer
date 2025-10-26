@@ -7,6 +7,7 @@ import { getDomainConfig } from '@/lib/domains';
 import { useQuery } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
 import type { Domain, QuizSession, PracticeExam } from '@shared/schema';
+import ProgressHeader from '@/components/ProgressHeader';
 
 export default function ProgressPage() {
   const { data: stats, isLoading } = useQuery<{
@@ -62,6 +63,11 @@ export default function ProgressPage() {
         <p className="text-muted-foreground">
           Track your study progress, streaks, and performance across all domains.
         </p>
+      </div>
+
+      {/* Gamification Header */}
+      <div className="mb-8">
+        <ProgressHeader />
       </div>
 
       {/* Overall Stats Cards */}
