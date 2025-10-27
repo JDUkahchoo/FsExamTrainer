@@ -4,59 +4,55 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { EXAM_QUESTIONS } from '@shared/data/examQuestions';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
-import type { Domain } from '@shared/schema';
+import type { Domain, ExamDraft } from '@shared/schema';
 
 const EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
 const TOTAL_QUESTIONS = 110;
 
+type ExamState = 'setup' | 'active' | 'completed';
+
 export default function PracticeExamPage() {
-  const [examStarted, setExamStarted] = useState(false);
-  const [examCompleted, setExamCompleted] = useState(false);
+  const [examState, setExamState] = useState<ExamState>('setup');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [timeRemaining, setTimeRemaining] = useState(EXAM_DURATION_MINUTES * 60); // in seconds
-  const [examQuestions, setExamQuestions] = useState<typeof EXAM_QUESTIONS>([]);
+  const [examQuestions, setExamQuestions] = useState<Array<typeof EXAM_QUESTIONS[0] & { id: string }>>([]);
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
 
-  // Generate exam questions when starting
-  const startExam = () => {
-    // Shuffle and select 110 questions from exam pool
-    const shuffled = [...EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
-    setExamQuestions(selected);
-    setExamStarted(true);
-    setExamCompleted(false);
-    setAnswers({});
-    setCurrentQuestionIndex(0);
-    setTimeRemaining(EXAM_DURATION_MINUTES * 60);
-  };
+  // Query to detect existing draft on page load
+  const { data: draftData, isLoading: isDraftLoading } = useQuery<ExamDraft | null>({
+    queryKey: ['/api/exam/draft'],
+    queryFn: async () => {
+      const response = await fetch('/api/exam/draft');
+      if (!response.ok) return null;
+      return response.json();
+    }
+  });
 
-  // Timer countdown
-  useEffect(() => {
-    if (!examStarted || examCompleted) return;
+  // Mutation to save draft
+  const saveDraftMutation = useMutation({
+    mutationFn: (draft: { questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentMinutes: number }) =>
+      apiRequest('POST', '/api/exam/draft', draft),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/exam/draft'] });
+    }
+  });
 
-    const timer = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          handleSubmitExam();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [examStarted, examCompleted]);
-
-  const handleAnswerSelect = (questionIndex: number, answerIndex: number) => {
-    setAnswers(prev => ({ ...prev, [questionIndex]: answerIndex }));
-  };
+  // Mutation to delete draft
+  const deleteDraftMutation = useMutation({
+    mutationFn: () => apiRequest('DELETE', '/api/exam/draft', {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/exam/draft'] });
+    }
+  });
 
   // Mutation to save practice exam
   const saveExamMutation = useMutation({
@@ -71,8 +67,131 @@ export default function PracticeExamPage() {
     }
   });
 
+  // Show resume dialog when draft is detected
+  useEffect(() => {
+    if (draftData && examState === 'setup' && !isDraftLoading) {
+      setShowResumeDialog(true);
+    }
+  }, [draftData, examState, isDraftLoading]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (examState !== 'active') return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          handleSubmitExam();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [examState]);
+
+  // Helper function to save draft
+  const saveDraft = () => {
+    if (examState === 'active' && examQuestions.length > 0) {
+      // Convert elapsed seconds to minutes for storage
+      const elapsedSeconds = EXAM_DURATION_MINUTES * 60 - timeRemaining;
+      const timeSpentMinutes = Math.floor(elapsedSeconds / 60);
+
+      // Save draft with stable question IDs
+      saveDraftMutation.mutate({
+        questionIds: examQuestions.map(q => q.id),
+        currentQuestionIndex,
+        userAnswers: answers,
+        timeSpentMinutes
+      });
+    }
+  };
+
+  const handleResumeDraft = () => {
+    if (!draftData) return;
+
+    // Create a map of ID -> question from original array for efficient lookup
+    const questionMap = new Map(
+      EXAM_QUESTIONS.map((q, i) => [`exam-${i}`, q])
+    );
+
+    // Reconstruct exam questions from stable question IDs
+    const reconstructedQuestions = draftData.questionIds.map(id => {
+      const question = questionMap.get(id);
+      if (!question) {
+        console.error(`Question ${id} not found in EXAM_QUESTIONS`);
+        return null;
+      }
+      return { ...question, id };
+    }).filter(Boolean) as Array<typeof EXAM_QUESTIONS[0] & { id: string }>;
+
+    // Restore state
+    setExamQuestions(reconstructedQuestions);
+    setCurrentQuestionIndex(draftData.currentQuestionIndex);
+    setAnswers(draftData.userAnswers as Record<number, number>);
+    
+    // Convert minutes back to seconds for timer
+    const elapsedSeconds = draftData.timeSpentMinutes * 60;
+    setTimeRemaining(EXAM_DURATION_MINUTES * 60 - elapsedSeconds);
+    
+    setExamState('active');
+    setShowResumeDialog(false);
+
+    // Delete the draft since we're resuming
+    deleteDraftMutation.mutate();
+  };
+
+  const handleStartFresh = () => {
+    // Delete the draft
+    deleteDraftMutation.mutate();
+    setShowResumeDialog(false);
+  };
+
+  // Generate exam questions when starting
+  const startExam = () => {
+    // Shuffle and select 110 questions from exam pool
+    const shuffled = [...EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
+    
+    // Add stable IDs based on original array position
+    const questionsWithIds = selected.map(q => ({
+      ...q,
+      id: `exam-${EXAM_QUESTIONS.indexOf(q)}`
+    }));
+    
+    setExamQuestions(questionsWithIds);
+    setExamState('active');
+    setAnswers({});
+    setCurrentQuestionIndex(0);
+    setTimeRemaining(EXAM_DURATION_MINUTES * 60);
+  };
+
+  const handleAnswerSelect = (questionIndex: number, answerIndex: number) => {
+    setAnswers(prev => ({ ...prev, [questionIndex]: answerIndex }));
+    // Auto-save draft when user selects an answer
+    setTimeout(() => saveDraft(), 100);
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < examQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      // Auto-save draft when user moves to next question
+      setTimeout(() => saveDraft(), 100);
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
   const handleSubmitExam = () => {
-    setExamCompleted(true);
+    // Delete the draft before saving exam
+    deleteDraftMutation.mutate();
+    
+    setExamState('completed');
     
     // Calculate and save exam results
     const results = calculateResults();
@@ -113,50 +232,71 @@ export default function PracticeExamPage() {
     return { correct, total: examQuestions.length, domainScores };
   };
 
-  // Start screen
-  if (!examStarted) {
+  // Setup screen
+  if (examState === 'setup') {
     return (
-      <div className="p-8 max-w-4xl mx-auto">
-        <Card className="p-12 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <PlayCircle className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-4" data-testid="heading-practice-exam">
-            FS Practice Exam
-          </h1>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            This practice exam simulates the actual FS exam with {TOTAL_QUESTIONS} questions across all 7 domains. 
-            You'll have {EXAM_DURATION_MINUTES / 60} hours to complete it. The timer will start immediately when you begin.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
-            <Card className="p-4 bg-muted">
-              <p className="text-2xl font-bold text-foreground">{TOTAL_QUESTIONS}</p>
-              <p className="text-sm text-muted-foreground">Questions</p>
-            </Card>
-            <Card className="p-4 bg-muted">
-              <p className="text-2xl font-bold text-foreground">{EXAM_DURATION_MINUTES / 60}h</p>
-              <p className="text-sm text-muted-foreground">Time Limit</p>
-            </Card>
-            <Card className="p-4 bg-muted">
-              <p className="text-2xl font-bold text-foreground">7</p>
-              <p className="text-sm text-muted-foreground">Domains</p>
-            </Card>
-          </div>
+      <>
+        <AlertDialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
+          <AlertDialogContent data-testid="dialog-resume-exam">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Resume Previous Exam?</AlertDialogTitle>
+              <AlertDialogDescription>
+                You have an unfinished practice exam from a previous session. Would you like to continue where you left off?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleStartFresh} data-testid="button-start-fresh">
+                Start Fresh
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={handleResumeDraft} data-testid="button-resume">
+                Resume
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
-          <Button size="lg" onClick={startExam} data-testid="button-start-exam">
-            <PlayCircle className="w-5 h-5 mr-2" />
-            Start Practice Exam
-          </Button>
-        </Card>
-      </div>
+        <div className="p-8 max-w-4xl mx-auto">
+          <Card className="p-12 text-center">
+            <div className="flex justify-center mb-6">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <PlayCircle className="h-8 w-8 text-primary" />
+              </div>
+            </div>
+            <h1 className="text-3xl font-bold text-foreground mb-4" data-testid="heading-practice-exam">
+              FS Practice Exam
+            </h1>
+            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+              This practice exam simulates the actual FS exam with {TOTAL_QUESTIONS} questions across all 7 domains. 
+              You'll have {EXAM_DURATION_MINUTES / 60} hours to complete it. The timer will start immediately when you begin.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
+              <Card className="p-4 bg-muted">
+                <p className="text-2xl font-bold text-foreground">{TOTAL_QUESTIONS}</p>
+                <p className="text-sm text-muted-foreground">Questions</p>
+              </Card>
+              <Card className="p-4 bg-muted">
+                <p className="text-2xl font-bold text-foreground">{EXAM_DURATION_MINUTES / 60}h</p>
+                <p className="text-sm text-muted-foreground">Time Limit</p>
+              </Card>
+              <Card className="p-4 bg-muted">
+                <p className="text-2xl font-bold text-foreground">7</p>
+                <p className="text-sm text-muted-foreground">Domains</p>
+              </Card>
+            </div>
+
+            <Button size="lg" onClick={startExam} data-testid="button-start-exam">
+              <PlayCircle className="w-5 h-5 mr-2" />
+              Start Practice Exam
+            </Button>
+          </Card>
+        </div>
+      </>
     );
   }
 
   // Results screen
-  if (examCompleted) {
+  if (examState === 'completed') {
     const results = calculateResults();
     const percentage = Math.round((results.correct / results.total) * 100);
     const passed = percentage >= 70;
@@ -311,7 +451,7 @@ export default function PracticeExamPage() {
         <div className="flex gap-3">
           <Button
             variant="outline"
-            onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+            onClick={handlePreviousQuestion}
             disabled={currentQuestionIndex === 0}
             data-testid="button-previous"
           >
@@ -320,7 +460,7 @@ export default function PracticeExamPage() {
           
           {currentQuestionIndex < examQuestions.length - 1 ? (
             <Button
-              onClick={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+              onClick={handleNextQuestion}
               className="ml-auto"
               data-testid="button-next"
             >

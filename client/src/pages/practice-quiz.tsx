@@ -3,15 +3,16 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle2, XCircle, RotateCcw, Lightbulb, Clock, Play, Trophy } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
-import type { Domain } from '@shared/schema';
+import type { Domain, QuizDraft } from '@shared/schema';
 
 type QuizState = 'setup' | 'active' | 'completed';
 
@@ -24,8 +25,36 @@ export default function PracticeQuizPage() {
   const [answeredQuestions, setAnsweredQuestions] = useState<Record<number, { selected: number; correct: boolean }>>({});
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [quizQuestions, setQuizQuestions] = useState<typeof QUIZ_QUESTIONS>([]);
+  const [quizQuestions, setQuizQuestions] = useState<Array<typeof QUIZ_QUESTIONS[0] & { id: string }>>([]);
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
+
+  // Query to detect existing draft on page load
+  const { data: draftData, isLoading: isDraftLoading } = useQuery<QuizDraft | null>({
+    queryKey: ['/api/quiz/draft'],
+    queryFn: async () => {
+      const response = await fetch('/api/quiz/draft');
+      if (!response.ok) return null;
+      return response.json();
+    }
+  });
+
+  // Mutation to save draft
+  const saveDraftMutation = useMutation({
+    mutationFn: (draft: { domain: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number }) =>
+      apiRequest('POST', '/api/quiz/draft', draft),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft'] });
+    }
+  });
+
+  // Mutation to delete draft
+  const deleteDraftMutation = useMutation({
+    mutationFn: () => apiRequest('DELETE', '/api/quiz/draft', {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft'] });
+    }
+  });
 
   // Mutation to save individual quiz result (for stats/analytics)
   const saveResultMutation = useMutation({
@@ -37,6 +66,13 @@ export default function PracticeQuizPage() {
     }
   });
 
+  // Show resume dialog when draft is detected
+  useEffect(() => {
+    if (draftData && quizState === 'setup' && !isDraftLoading) {
+      setShowResumeDialog(true);
+    }
+  }, [draftData, quizState, isDraftLoading]);
+
   // Timer effect
   useEffect(() => {
     if (quizState !== 'active' || !startTime) return;
@@ -47,6 +83,26 @@ export default function PracticeQuizPage() {
 
     return () => clearInterval(interval);
   }, [quizState, startTime]);
+
+  // Helper function to save draft
+  const saveDraft = () => {
+    if (quizState === 'active' && quizQuestions.length > 0) {
+      // Convert answeredQuestions to userAnswers format
+      const userAnswers: Record<number, number> = {};
+      Object.entries(answeredQuestions).forEach(([index, answer]) => {
+        userAnswers[parseInt(index)] = answer.selected;
+      });
+
+      // Save draft with stable question IDs
+      saveDraftMutation.mutate({
+        domain: selectedDomain,
+        questionIds: quizQuestions.map(q => q.id),
+        currentQuestionIndex,
+        userAnswers,
+        timeSpentSeconds: elapsedSeconds
+      });
+    }
+  };
 
   // Shuffle array helper
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -76,6 +132,69 @@ export default function PracticeQuizPage() {
     }
   });
 
+  const handleResumeDraft = () => {
+    if (!draftData) return;
+
+    // Create a map of ID -> question from original array for efficient lookup
+    const questionMap = new Map(
+      QUIZ_QUESTIONS.map((q, i) => [`quiz-${i}`, q])
+    );
+
+    // Reconstruct quiz questions from stable question IDs
+    const reconstructedQuestions = draftData.questionIds.map(id => {
+      const question = questionMap.get(id);
+      if (!question) {
+        console.error(`Question ${id} not found in QUIZ_QUESTIONS`);
+        return null;
+      }
+      return { ...question, id };
+    }).filter(Boolean) as Array<typeof QUIZ_QUESTIONS[0] & { id: string }>;
+
+    // Reconstruct answered questions
+    const reconstructedAnswers: Record<number, { selected: number; correct: boolean }> = {};
+    Object.entries(draftData.userAnswers as Record<string, number>).forEach(([indexStr, selectedAnswer]) => {
+      const index = parseInt(indexStr);
+      const question = reconstructedQuestions[index];
+      if (question) {
+        reconstructedAnswers[index] = {
+          selected: selectedAnswer,
+          correct: selectedAnswer === question.correctAnswer
+        };
+      }
+    });
+
+    // Restore state
+    setQuizQuestions(reconstructedQuestions);
+    setSelectedDomain(draftData.domain as Domain | 'all');
+    setCurrentQuestionIndex(draftData.currentQuestionIndex);
+    setAnsweredQuestions(reconstructedAnswers);
+    setElapsedSeconds(draftData.timeSpentSeconds);
+    
+    // Check if current question was already answered
+    const currentAnswer = reconstructedAnswers[draftData.currentQuestionIndex];
+    if (currentAnswer) {
+      setSelectedAnswer(currentAnswer.selected);
+      setShowExplanation(true);
+    } else {
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+    }
+
+    // Set start time to account for elapsed time
+    setStartTime(Date.now() - (draftData.timeSpentSeconds * 1000));
+    setQuizState('active');
+    setShowResumeDialog(false);
+
+    // Delete the draft since we're resuming
+    deleteDraftMutation.mutate();
+  };
+
+  const handleStartFresh = () => {
+    // Delete the draft
+    deleteDraftMutation.mutate();
+    setShowResumeDialog(false);
+  };
+
   const handleStartQuiz = () => {
     // Prepare quiz questions based on selected domain
     let questionsForQuiz: typeof QUIZ_QUESTIONS;
@@ -89,7 +208,13 @@ export default function PracticeQuizPage() {
       questionsForQuiz = QUIZ_QUESTIONS.filter(q => q.domain === selectedDomain);
     }
     
-    setQuizQuestions(questionsForQuiz);
+    // Add stable IDs based on original array position
+    const questionsWithIds = questionsForQuiz.map(q => ({
+      ...q,
+      id: `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
+    }));
+    
+    setQuizQuestions(questionsWithIds);
     setQuizState('active');
     setStartTime(Date.now());
     setCurrentQuestionIndex(0);
@@ -102,6 +227,8 @@ export default function PracticeQuizPage() {
   const handleAnswerSelect = (answerIndex: number) => {
     if (showExplanation) return;
     setSelectedAnswer(answerIndex);
+    // Auto-save draft when user selects an answer
+    setTimeout(() => saveDraft(), 100);
   };
 
   const handleSubmit = () => {
@@ -147,6 +274,9 @@ export default function PracticeQuizPage() {
         setSelectedAnswer(null);
         setShowExplanation(false);
       }
+      
+      // Auto-save draft when user moves to next question
+      setTimeout(() => saveDraft(), 100);
     }
   };
 
@@ -182,6 +312,9 @@ export default function PracticeQuizPage() {
       ? (selectedAnswer === currentQuestion?.correctAnswer ? correctCount + 1 : correctCount)
       : correctCount;
     
+    // Delete the draft before saving session
+    deleteDraftMutation.mutate();
+    
     // Save the complete quiz session
     saveSessionMutation.mutate({
       domain: selectedDomain,
@@ -211,10 +344,30 @@ export default function PracticeQuizPage() {
   // Setup screen
   if (quizState === 'setup') {
     return (
-      <div className="p-8 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-practice-quiz">Practice Quiz</h1>
-        
-        <Card className="p-8">
+      <>
+        <AlertDialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
+          <AlertDialogContent data-testid="dialog-resume-quiz">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Resume Previous Quiz?</AlertDialogTitle>
+              <AlertDialogDescription>
+                You have an unfinished quiz from a previous session. Would you like to continue where you left off?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleStartFresh} data-testid="button-start-fresh">
+                Start Fresh
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={handleResumeDraft} data-testid="button-resume">
+                Resume
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <div className="p-8 max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-practice-quiz">Practice Quiz</h1>
+          
+          <Card className="p-8">
           <div className="text-center mb-8">
             <Play className="w-16 h-16 mx-auto mb-4 text-primary" />
             <h2 className="text-2xl font-bold mb-2">Start a Practice Quiz</h2>
@@ -280,7 +433,8 @@ export default function PracticeQuizPage() {
             </Button>
           </div>
         </Card>
-      </div>
+        </div>
+      </>
     );
   }
 
@@ -354,7 +508,7 @@ export default function PracticeQuizPage() {
     );
   }
 
-  const domainConfig = getDomainConfig(currentQuestion.domain);
+  const domainConfig = getDomainConfig(currentQuestion.domain as Domain);
   const Icon = domainConfig.icon;
   const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
 

@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -168,6 +168,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error saving quiz session:", error);
       res.status(400).json({ error: "Invalid quiz session data" });
+    }
+  });
+
+  // Quiz Draft routes (for resume functionality)
+  app.get("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const draft = await storage.getActiveQuizDraft(userId);
+      res.json(draft || null);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch quiz draft" });
+    }
+  });
+
+  app.post("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertQuizDraftSchema.parse({ ...req.body, userId });
+      const draft = await storage.saveQuizDraft(data);
+      res.json(draft);
+    } catch (error) {
+      console.error("Error saving quiz draft:", error);
+      res.status(400).json({ error: "Invalid quiz draft data" });
+    }
+  });
+
+  app.delete("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.deleteQuizDraft(userId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete quiz draft" });
+    }
+  });
+
+  // Exam Draft routes (for resume functionality)
+  app.get("/api/exam/draft", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const draft = await storage.getActiveExamDraft(userId);
+      res.json(draft || null);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch exam draft" });
+    }
+  });
+
+  app.post("/api/exam/draft", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertExamDraftSchema.parse({ ...req.body, userId });
+      const draft = await storage.saveExamDraft(data);
+      res.json(draft);
+    } catch (error) {
+      console.error("Error saving exam draft:", error);
+      res.status(400).json({ error: "Invalid exam draft data" });
+    }
+  });
+
+  app.delete("/api/exam/draft", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.deleteExamDraft(userId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete exam draft" });
     }
   });
 
@@ -462,7 +528,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const [weekProgress, quizSessions, flashcardMastery, customWeeks, streak] = await Promise.all([
         storage.getAllWeekProgress(userId),
         storage.getQuizSessions(userId),
-        storage.getFlashcardMastery(userId),
+        storage.getAllFlashcardMastery(userId),
         storage.getCustomWeeks(userId),
         storage.calculateStreak(userId)
       ]);

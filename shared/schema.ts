@@ -211,6 +211,65 @@ export const insertStudyNoteSchema = createInsertSchema(studyNotes).omit({
 export type InsertStudyNote = z.infer<typeof insertStudyNoteSchema>;
 export type StudyNote = typeof studyNotes.$inferSelect;
 
+// --- Quiz Drafts (for resume functionality) ---
+
+export const quizDrafts = pgTable("quiz_drafts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  domain: text("domain").notNull(), // Domain filter used, or "all" for mixed
+  questionIds: text("question_ids").array().notNull(), // Array of question IDs in this quiz
+  currentQuestionIndex: integer("current_question_index").notNull().default(0),
+  userAnswers: jsonb("user_answers").notNull().default(sql`'{}'::jsonb`), // { [index]: answerIndex }
+  timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const quizDraftsRelations = relations(quizDrafts, ({ one }) => ({
+  user: one(users, {
+    fields: [quizDrafts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertQuizDraftSchema = createInsertSchema(quizDrafts).omit({
+  id: true,
+  startedAt: true,
+  updatedAt: true,
+});
+
+export type InsertQuizDraft = z.infer<typeof insertQuizDraftSchema>;
+export type QuizDraft = typeof quizDrafts.$inferSelect;
+
+// --- Exam Drafts (for resume functionality) ---
+
+export const examDrafts = pgTable("exam_drafts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  questionIds: text("question_ids").array().notNull(), // Array of exam question IDs
+  currentQuestionIndex: integer("current_question_index").notNull().default(0),
+  userAnswers: jsonb("user_answers").notNull().default(sql`'{}'::jsonb`), // { [index]: answerIndex }
+  timeSpentMinutes: integer("time_spent_minutes").notNull().default(0),
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const examDraftsRelations = relations(examDrafts, ({ one }) => ({
+  user: one(users, {
+    fields: [examDrafts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertExamDraftSchema = createInsertSchema(examDrafts).omit({
+  id: true,
+  startedAt: true,
+  updatedAt: true,
+});
+
+export type InsertExamDraft = z.infer<typeof insertExamDraftSchema>;
+export type ExamDraft = typeof examDrafts.$inferSelect;
+
 // --- User Relations ---
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -220,6 +279,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   flashcardMastery: many(flashcardMastery),
   practiceExams: many(practiceExams),
   studyNotes: many(studyNotes),
+  quizDrafts: many(quizDrafts),
+  examDrafts: many(examDrafts),
   dailyActivity: many(dailyActivity),
   achievements: many(achievements),
   customWeeks: many(customWeeks),
@@ -341,6 +402,7 @@ export const customWeeks = pgTable("custom_weeks", {
   weekNumber: integer("week_number").notNull(), // 17, 18, 19, etc.
   title: text("title").notNull(),
   domain: text("domain"), // Primary domain focus
+  description: text("description"), // Optional description for the custom week
   readItems: text("read_items").array().notNull().default(sql`'{}'::text[]`),
   focusItems: text("focus_items").array().notNull().default(sql`'{}'::text[]`),
   applyItems: text("apply_items").array().notNull().default(sql`'{}'::text[]`),

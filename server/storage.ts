@@ -11,6 +11,10 @@ import type {
   InsertPracticeExam,
   StudyNote,
   InsertStudyNote,
+  QuizDraft,
+  InsertQuizDraft,
+  ExamDraft,
+  InsertExamDraft,
   DailyActivity,
   InsertDailyActivity,
   Achievement,
@@ -31,6 +35,8 @@ import {
   flashcardMastery,
   practiceExams,
   studyNotes,
+  quizDrafts,
+  examDrafts,
   dailyActivity,
   achievements,
   customWeeks
@@ -89,8 +95,15 @@ export interface IStorage {
   createCustomWeek(customWeek: InsertCustomWeek): Promise<CustomWeek>;
   deleteCustomWeek(userId: string, id: string): Promise<void>;
 
-  // Helper method for flashcard mastery (used in routes)
-  getFlashcardMastery(userId: string): Promise<FlashcardMastery[]>;
+  // Quiz Draft methods (for resume functionality)
+  getActiveQuizDraft(userId: string): Promise<QuizDraft | undefined>;
+  saveQuizDraft(draft: InsertQuizDraft): Promise<QuizDraft>;
+  deleteQuizDraft(userId: string): Promise<void>;
+
+  // Exam Draft methods (for resume functionality)
+  getActiveExamDraft(userId: string): Promise<ExamDraft | undefined>;
+  saveExamDraft(draft: InsertExamDraft): Promise<ExamDraft>;
+  deleteExamDraft(userId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -611,9 +624,60 @@ export class DatabaseStorage implements IStorage {
       ));
   }
 
-  // Helper method to get all flashcard mastery (not just one card)
-  async getFlashcardMastery(userId: string): Promise<FlashcardMastery[]> {
-    return await this.getAllFlashcardMastery(userId);
+  // Quiz Draft methods (for resume functionality)
+  async getActiveQuizDraft(userId: string): Promise<QuizDraft | undefined> {
+    const [draft] = await db
+      .select()
+      .from(quizDrafts)
+      .where(eq(quizDrafts.userId, userId))
+      .orderBy(desc(quizDrafts.startedAt))
+      .limit(1);
+    return draft || undefined;
+  }
+
+  async saveQuizDraft(draftData: InsertQuizDraft): Promise<QuizDraft> {
+    // Delete any existing draft for this user first (one draft at a time)
+    await this.deleteQuizDraft(draftData.userId);
+    
+    const [draft] = await db
+      .insert(quizDrafts)
+      .values(draftData)
+      .returning();
+    return draft;
+  }
+
+  async deleteQuizDraft(userId: string): Promise<void> {
+    await db
+      .delete(quizDrafts)
+      .where(eq(quizDrafts.userId, userId));
+  }
+
+  // Exam Draft methods (for resume functionality)
+  async getActiveExamDraft(userId: string): Promise<ExamDraft | undefined> {
+    const [draft] = await db
+      .select()
+      .from(examDrafts)
+      .where(eq(examDrafts.userId, userId))
+      .orderBy(desc(examDrafts.startedAt))
+      .limit(1);
+    return draft || undefined;
+  }
+
+  async saveExamDraft(draftData: InsertExamDraft): Promise<ExamDraft> {
+    // Delete any existing draft for this user first (one draft at a time)
+    await this.deleteExamDraft(draftData.userId);
+    
+    const [draft] = await db
+      .insert(examDrafts)
+      .values(draftData)
+      .returning();
+    return draft;
+  }
+
+  async deleteExamDraft(userId: string): Promise<void> {
+    await db
+      .delete(examDrafts)
+      .where(eq(examDrafts.userId, userId));
   }
 }
 
