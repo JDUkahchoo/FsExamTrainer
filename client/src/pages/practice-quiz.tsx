@@ -85,7 +85,7 @@ export default function PracticeQuizPage() {
   }, [quizState, startTime]);
 
   // Helper function to save draft
-  const saveDraft = () => {
+  const saveDraft = (indexOverride?: number) => {
     if (quizState === 'active' && quizQuestions.length > 0) {
       // Convert answeredQuestions to userAnswers format
       const userAnswers: Record<number, number> = {};
@@ -97,7 +97,7 @@ export default function PracticeQuizPage() {
       saveDraftMutation.mutate({
         domain: selectedDomain,
         questionIds: quizQuestions.map(q => q.id),
-        currentQuestionIndex,
+        currentQuestionIndex: indexOverride !== undefined ? indexOverride : currentQuestionIndex,
         userAnswers,
         timeSpentSeconds: elapsedSeconds
       });
@@ -275,8 +275,8 @@ export default function PracticeQuizPage() {
         setShowExplanation(false);
       }
       
-      // Auto-save draft when user moves to next question
-      setTimeout(() => saveDraft(), 100);
+      // Auto-save draft when user moves to next question (use nextIndex to avoid stale closure)
+      setTimeout(() => saveDraft(nextIndex), 100);
     }
   };
 

@@ -92,7 +92,7 @@ export default function PracticeExamPage() {
   }, [examState]);
 
   // Helper function to save draft
-  const saveDraft = () => {
+  const saveDraft = (indexOverride?: number) => {
     if (examState === 'active' && examQuestions.length > 0) {
       // Convert elapsed seconds to minutes for storage
       const elapsedSeconds = EXAM_DURATION_MINUTES * 60 - timeRemaining;
@@ -101,7 +101,7 @@ export default function PracticeExamPage() {
       // Save draft with stable question IDs
       saveDraftMutation.mutate({
         questionIds: examQuestions.map(q => q.id),
-        currentQuestionIndex,
+        currentQuestionIndex: indexOverride !== undefined ? indexOverride : currentQuestionIndex,
         userAnswers: answers,
         timeSpentMinutes
       });
@@ -175,9 +175,10 @@ export default function PracticeExamPage() {
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < examQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      // Auto-save draft when user moves to next question
-      setTimeout(() => saveDraft(), 100);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      // Auto-save draft when user moves to next question (use nextIndex to avoid stale closure)
+      setTimeout(() => saveDraft(nextIndex), 100);
     }
   };
 
