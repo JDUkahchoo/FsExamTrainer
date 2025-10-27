@@ -232,6 +232,28 @@ Comprehensive resource library with seven organized sections:
   - Fixed frontend mapping for custom weeks (corrected property names from database schema)
 - All features end-to-end tested and verified working correctly
 
+**Phase 4: Resume Functionality** ✅ Complete
+- **Database Schema**: Added quizDrafts and examDrafts tables with user-scoped foreign keys
+- **Stable Question IDs**: Implemented quiz-X and exam-X ID system based on original array position
+  - Questions preserve exact order when shuffled using stable identifiers
+  - Prevents wrong questions from loading when resuming interrupted sessions
+- **Quiz Resume**: Full draft save/restore for practice quizzes
+  - Auto-saves draft when answering questions or navigating
+  - Detects draft on page load and shows resume dialog
+  - Resume restores exact questions, answers, timer, and domain selection
+  - Delete draft on completion or when starting fresh
+- **Exam Resume**: Same functionality for 110-question practice exams
+  - Timer resume from saved timeSpentMinutes
+  - All 110 questions restored in exact order
+- **API Endpoints**: 6 new routes (GET/POST/DELETE for quiz & exam drafts)
+- **Critical Bugs Fixed**:
+  - Fixed currentQuestionIndex not incrementing: saveDraft now accepts indexOverride parameter
+  - Fixed question shuffle bug: stable IDs prevent wrong questions from loading on resume
+- **Testing**: End-to-end tested with playwright - all scenarios passing
+  - Verified currentQuestionIndex saves correctly after navigation
+  - Verified stable IDs preserve question order
+  - Verified draft lifecycle (save, detect, resume, delete)
+
 **Phase 4: Enhanced Features** 📋 Planned
 - Question pool expansion to ~350 questions (50 per domain) for production readiness
 - AI Study Assistant (OpenAI integration)
