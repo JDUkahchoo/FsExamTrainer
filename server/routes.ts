@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -584,6 +584,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching overall progress:", error);
       res.status(500).json({ error: "Failed to fetch overall progress" });
+    }
+  });
+
+  // Pretest routes
+  app.get("/api/pretest/latest", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const result = await storage.getLatestPretestResult(userId);
+      res.json(result || null);
+    } catch (error) {
+      console.error("Error fetching pretest result:", error);
+      res.status(500).json({ error: "Failed to fetch pretest result" });
+    }
+  });
+
+  app.post("/api/pretest/results", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertPretestResultSchema.parse({ ...req.body, userId });
+      const result = await storage.savePretestResult(data);
+      
+      // Update user preferences to mark pretest as completed
+      await storage.upsertUserPreferences({ userId, hasCompletedPretest: true });
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error saving pretest result:", error);
+      res.status(400).json({ error: "Invalid pretest result data" });
+    }
+  });
+
+  // User Preferences routes
+  app.get("/api/preferences", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      let preferences = await storage.getUserPreferences(userId);
+      
+      // Create default preferences if they don't exist
+      if (!preferences) {
+        preferences = await storage.upsertUserPreferences({ 
+          userId, 
+          studyMode: 'standard', 
+          hasCompletedPretest: false,
+          hasSeenWelcome: false
+        });
+      }
+      
+      res.json(preferences);
+    } catch (error) {
+      console.error("Error fetching user preferences:", error);
+      res.status(500).json({ error: "Failed to fetch user preferences" });
+    }
+  });
+
+  app.put("/api/preferences", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertUserPreferencesSchema.parse({ ...req.body, userId });
+      const preferences = await storage.upsertUserPreferences(data);
+      res.json(preferences);
+    } catch (error) {
+      console.error("Error updating user preferences:", error);
+      res.status(400).json({ error: "Invalid preferences data" });
     }
   });
 

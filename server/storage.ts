@@ -22,6 +22,10 @@ import type {
   AchievementType,
   CustomWeek,
   InsertCustomWeek,
+  PretestResult,
+  InsertPretestResult,
+  UserPreferences,
+  InsertUserPreferences,
   User,
   UpsertUser,
   StudyStreak
@@ -39,7 +43,9 @@ import {
   examDrafts,
   dailyActivity,
   achievements,
-  customWeeks
+  customWeeks,
+  pretestResults,
+  userPreferences
 } from "@shared/schema";
 import { eq, and, desc, gte, sql } from "drizzle-orm";
 
@@ -104,6 +110,14 @@ export interface IStorage {
   getActiveExamDraft(userId: string): Promise<ExamDraft | undefined>;
   saveExamDraft(draft: InsertExamDraft): Promise<ExamDraft>;
   deleteExamDraft(userId: string): Promise<void>;
+
+  // Pretest methods
+  getLatestPretestResult(userId: string): Promise<PretestResult | undefined>;
+  savePretestResult(result: InsertPretestResult): Promise<PretestResult>;
+
+  // User Preferences methods
+  getUserPreferences(userId: string): Promise<UserPreferences | undefined>;
+  upsertUserPreferences(prefs: InsertUserPreferences): Promise<UserPreferences>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -678,6 +692,49 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(examDrafts)
       .where(eq(examDrafts.userId, userId));
+  }
+
+  // Pretest methods
+  async getLatestPretestResult(userId: string): Promise<PretestResult | undefined> {
+    const [result] = await db
+      .select()
+      .from(pretestResults)
+      .where(eq(pretestResults.userId, userId))
+      .orderBy(desc(pretestResults.completedAt))
+      .limit(1);
+    return result || undefined;
+  }
+
+  async savePretestResult(resultData: InsertPretestResult): Promise<PretestResult> {
+    const [result] = await db
+      .insert(pretestResults)
+      .values(resultData)
+      .returning();
+    return result;
+  }
+
+  // User Preferences methods
+  async getUserPreferences(userId: string): Promise<UserPreferences | undefined> {
+    const [prefs] = await db
+      .select()
+      .from(userPreferences)
+      .where(eq(userPreferences.userId, userId));
+    return prefs || undefined;
+  }
+
+  async upsertUserPreferences(prefsData: InsertUserPreferences): Promise<UserPreferences> {
+    const [prefs] = await db
+      .insert(userPreferences)
+      .values(prefsData)
+      .onConflictDoUpdate({
+        target: userPreferences.userId,
+        set: {
+          ...prefsData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return prefs;
   }
 }
 
