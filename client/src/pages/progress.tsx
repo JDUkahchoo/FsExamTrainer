@@ -1,19 +1,49 @@
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book, RefreshCw, Play } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
 import type { Domain, QuizSession, PracticeExam, UserPreferences, StudyCycle } from '@shared/schema';
 import ProgressHeader from '@/components/ProgressHeader';
 import { Link } from 'wouter';
 import { DailyLogForm } from '@/components/daily-log-form';
 import { DailyLogList } from '@/components/daily-log-list';
+import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
+import { formatMinutes } from '@/lib/time-utils';
 
 export default function ProgressPage() {
+  const { toast } = useToast();
+  const [showCompleteCycleDialog, setShowCompleteCycleDialog] = useState(false);
+  const [showStartNewCycleDialog, setShowStartNewCycleDialog] = useState(false);
+  const [showExamDateDialog, setShowExamDateDialog] = useState(false);
+  const [examDateInput, setExamDateInput] = useState('');
+
   const { data: stats, isLoading } = useQuery<{
     totalStudyDays: number;
     currentStreak: number;
@@ -58,6 +88,69 @@ export default function ProgressPage() {
   const { data: currentCycle } = useQuery<StudyCycle | null>({
     queryKey: ['/api/study-cycles/current'],
     refetchOnMount: 'always'
+  });
+
+  // Mutations
+  const completeCycleMutation = useMutation({
+    mutationFn: () => apiRequest('POST', '/api/study-cycles/complete', {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/study-cycles/current'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+      toast({
+        title: "Cycle completed!",
+        description: "Your progress has been saved. You can now start a new cycle or continue in maintenance mode.",
+      });
+      setShowCompleteCycleDialog(false);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to complete cycle. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const startNewCycleMutation = useMutation({
+    mutationFn: () => apiRequest('POST', '/api/study-cycles/start', {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/study-cycles/current'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      toast({
+        title: "New cycle started!",
+        description: "Your weekly progress has been reset. All quiz/exam history has been preserved.",
+      });
+      setShowStartNewCycleDialog(false);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to start new cycle. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateExamDateMutation = useMutation({
+    mutationFn: (examDate: string | null) => 
+      apiRequest('PUT', '/api/preferences', { examDate }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+      toast({
+        title: "Exam date updated",
+        description: examDateInput ? "Your exam date has been saved." : "Exam date has been cleared.",
+      });
+      setShowExamDateDialog(false);
+      setExamDateInput('');
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update exam date. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   // Default preferences for fallback rendering
@@ -190,19 +283,58 @@ export default function ProgressPage() {
             </div>
           </div>
           <div className="flex flex-col gap-2 w-full md:w-auto">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full" 
+              onClick={() => {
+                setExamDateInput(preferences?.examDate ? new Date(preferences.examDate).toISOString().split('T')[0] : '');
+                setShowExamDateDialog(true);
+              }}
+              data-testid="button-set-exam-date"
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              {preferences?.examDate ? 'Update Exam Date' : 'Set Exam Date'}
+            </Button>
             {!isInMaintenanceMode && (
-              <Link href="/study-plan">
-                <Button variant="default" size="sm" className="w-full" data-testid="button-continue-studying">
+              <>
+                <Link href="/study-plan">
+                  <Button variant="default" size="sm" className="w-full" data-testid="button-continue-studying">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Continue Studying
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full" 
+                  onClick={() => setShowCompleteCycleDialog(true)}
+                  data-testid="button-complete-cycle"
+                >
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Continue Studying
+                  Complete Cycle {preferences?.currentCycle || 1}
                 </Button>
-              </Link>
+              </>
             )}
             {isInMaintenanceMode && (
-              <Button variant="outline" size="sm" className="w-full" data-testid="button-review-materials">
-                <Brain className="h-4 w-4 mr-2" />
-                Review Materials
-              </Button>
+              <>
+                <Link href="/resources">
+                  <Button variant="outline" size="sm" className="w-full" data-testid="button-review-materials">
+                    <Brain className="h-4 w-4 mr-2" />
+                    Review Materials
+                  </Button>
+                </Link>
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  className="w-full" 
+                  onClick={() => setShowStartNewCycleDialog(true)}
+                  data-testid="button-start-new-cycle"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Start Cycle {(preferences?.currentCycle || 1) + 1}
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -511,6 +643,163 @@ export default function ProgressPage() {
           </div>
         </Card>
       )}
+
+      {/* Complete Cycle Dialog */}
+      <AlertDialog open={showCompleteCycleDialog} onOpenChange={setShowCompleteCycleDialog}>
+        <AlertDialogContent data-testid="dialog-complete-cycle">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Complete Cycle {preferences?.currentCycle || 1}?</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p>
+                You're about to complete your current study cycle. This will:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Mark Cycle {preferences?.currentCycle || 1} as complete</li>
+                <li>Enter Maintenance Mode for review and practice</li>
+                <li>Preserve all your quiz/exam history and daily logs</li>
+                <li>Allow you to start a new cycle when ready</li>
+              </ul>
+              <p className="font-medium">
+                Continue in Maintenance Mode to review materials, or start a new cycle to go through the 16-week plan again.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-complete">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => completeCycleMutation.mutate()}
+              disabled={completeCycleMutation.isPending}
+              data-testid="button-confirm-complete"
+            >
+              {completeCycleMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Completing...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Complete Cycle
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Start New Cycle Dialog */}
+      <AlertDialog open={showStartNewCycleDialog} onOpenChange={setShowStartNewCycleDialog}>
+        <AlertDialogContent data-testid="dialog-start-new-cycle">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Start Cycle {(preferences?.currentCycle || 1) + 1}?</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p>
+                You're about to start a new study cycle. This will:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Reset all weekly checkboxes and study notes</li>
+                <li>Begin fresh with Week 1 of the 16-week plan</li>
+                <li>Keep all quiz/exam history and daily logs from previous cycles</li>
+                <li>Track your progress separately for Cycle {(preferences?.currentCycle || 1) + 1}</li>
+              </ul>
+              <p className="font-medium text-warning">
+                Note: Weekly progress will be reset, but all test scores and logs are preserved.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-start">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => startNewCycleMutation.mutate()}
+              disabled={startNewCycleMutation.isPending}
+              data-testid="button-confirm-start"
+            >
+              {startNewCycleMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Starting...
+                </>
+              ) : (
+                <>
+                  <Play className="h-4 w-4 mr-2" />
+                  Start New Cycle
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Exam Date Dialog */}
+      <Dialog open={showExamDateDialog} onOpenChange={setShowExamDateDialog}>
+        <DialogContent data-testid="dialog-exam-date">
+          <DialogHeader>
+            <DialogTitle>Set Your Exam Date</DialogTitle>
+            <DialogDescription>
+              Setting an exam date helps you track your progress and stay on schedule. You can change or clear this date at any time.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="exam-date">Exam Date</Label>
+              <Input
+                id="exam-date"
+                type="date"
+                value={examDateInput}
+                onChange={(e) => setExamDateInput(e.target.value)}
+                data-testid="input-exam-date"
+              />
+            </div>
+            {preferences?.examDate && (
+              <p className="text-sm text-muted-foreground">
+                Current exam date: {new Date(preferences.examDate).toLocaleDateString()}
+              </p>
+            )}
+          </div>
+          <DialogFooter className="flex gap-2">
+            {preferences?.examDate && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  updateExamDateMutation.mutate(null);
+                }}
+                disabled={updateExamDateMutation.isPending}
+                data-testid="button-clear-date"
+              >
+                Clear Date
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowExamDateDialog(false);
+                setExamDateInput('');
+              }}
+              data-testid="button-cancel-date"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (examDateInput) {
+                  updateExamDateMutation.mutate(examDateInput);
+                }
+              }}
+              disabled={!examDateInput || updateExamDateMutation.isPending}
+              data-testid="button-save-date"
+            >
+              {updateExamDateMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Date'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
