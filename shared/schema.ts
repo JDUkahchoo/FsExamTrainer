@@ -488,6 +488,8 @@ export const dailyLogs = pgTable("daily_logs", {
   activities: text("activities").notNull(),
   notes: text("notes"),
   weekNumber: integer("week_number"),
+  timeSpent: integer("time_spent"), // Time in minutes
+  domain: text("domain"), // Optional NCEES domain tag
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
