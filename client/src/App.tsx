@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { WelcomeDialog } from "@/components/welcome-dialog";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import StudyPlanPage from "@/pages/study-plan";
@@ -15,6 +16,8 @@ import PracticeExamPage from "@/pages/practice-exam";
 import NotesPage from "@/pages/notes";
 import ProgressPage from "@/pages/progress";
 import ResourcesPage from "@/pages/resources";
+import PretestPage from "@/pages/pretest";
+import PretestResultsPage from "@/pages/pretest-results";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -35,12 +38,15 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={StudyPlanPage} />
+          <Route path="/study-plan" component={StudyPlanPage} />
           <Route path="/quiz" component={PracticeQuizPage} />
           <Route path="/flashcards" component={FlashcardsPage} />
           <Route path="/exam" component={PracticeExamPage} />
           <Route path="/notes" component={NotesPage} />
           <Route path="/progress" component={ProgressPage} />
           <Route path="/resources" component={ResourcesPage} />
+          <Route path="/pretest" component={PretestPage} />
+          <Route path="/pretest/results" component={PretestResultsPage} />
         </>
       )}
       <Route component={NotFound} />
@@ -81,6 +87,7 @@ function AppContent({ style }: { style: React.CSSProperties }) {
 
   return (
     <SidebarProvider style={style}>
+      <WelcomeDialog />
       <div className="flex h-screen w-full">
         <AppSidebar />
         <div className="flex flex-col flex-1 overflow-hidden">

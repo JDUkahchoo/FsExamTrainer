@@ -641,7 +641,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/preferences", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertUserPreferencesSchema.parse({ ...req.body, userId });
+      
+      // Get existing preferences to merge with partial updates
+      const existing = await storage.getUserPreferences(userId);
+      const merged = {
+        userId,
+        studyMode: req.body.studyMode ?? existing?.studyMode ?? 'standard',
+        hasCompletedPretest: req.body.hasCompletedPretest ?? existing?.hasCompletedPretest ?? false,
+        hasSeenWelcome: req.body.hasSeenWelcome ?? existing?.hasSeenWelcome ?? false,
+      };
+      
+      const data = insertUserPreferencesSchema.parse(merged);
       const preferences = await storage.upsertUserPreferences(data);
       res.json(preferences);
     } catch (error) {
