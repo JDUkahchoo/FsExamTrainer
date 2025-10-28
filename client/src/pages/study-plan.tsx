@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -34,6 +34,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
+import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
 
@@ -48,6 +49,8 @@ export default function StudyPlanPage() {
   const [applyActivities, setApplyActivities] = useState('');
   const [reinforceActivities, setReinforceActivities] = useState('');
   const [newDailyActivity, setNewDailyActivity] = useState('');
+  const [newTimeSpent, setNewTimeSpent] = useState('');
+  const [newDomain, setNewDomain] = useState<Domain | ''>('');
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
@@ -194,7 +197,7 @@ export default function StudyPlanPage() {
 
   // Mutations for daily logs
   const createDailyLogMutation = useMutation({
-    mutationFn: async (data: { date: string; activities: string; weekNumber: number }) => {
+    mutationFn: async (data: { date: string; activities: string; weekNumber: number; timeSpent?: number; domain?: string }) => {
       return apiRequest('POST', '/api/daily-logs', data);
     },
     onSuccess: () => {
@@ -202,6 +205,8 @@ export default function StudyPlanPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
       setNewDailyActivity('');
+      setNewTimeSpent('');
+      setNewDomain('');
       toast({
         title: "Daily log added",
         description: "Your daily activity has been recorded.",
@@ -210,13 +215,15 @@ export default function StudyPlanPage() {
   });
 
   const updateDailyLogMutation = useMutation({
-    mutationFn: async ({ id, activities }: { id: string; activities: string }) => {
-      return apiRequest('PUT', `/api/daily-logs/${id}`, { activities });
+    mutationFn: async ({ id, activities, timeSpent, domain }: { id: string; activities: string; timeSpent?: number; domain?: string }) => {
+      return apiRequest('PUT', `/api/daily-logs/${id}`, { activities, timeSpent, domain });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/daily-logs'] });
       setEditingLogId(null);
       setNewDailyActivity('');
+      setNewTimeSpent('');
+      setNewDomain('');
       toast({
         title: "Daily log updated",
         description: "Your daily activity has been updated.",
@@ -337,16 +344,26 @@ export default function StudyPlanPage() {
     }
 
     const today = new Date().toISOString().split('T')[0];
+    const timeMinutes = parseTimeToMinutes(newTimeSpent);
+    
     createDailyLogMutation.mutate({
       date: today,
       activities: newDailyActivity,
-      weekNumber
+      weekNumber,
+      timeSpent: timeMinutes || undefined,
+      domain: newDomain || undefined
     });
   };
 
   const handleUpdateDailyLog = (id: string) => {
     if (!newDailyActivity.trim()) return;
-    updateDailyLogMutation.mutate({ id, activities: newDailyActivity });
+    const timeMinutes = parseTimeToMinutes(newTimeSpent);
+    updateDailyLogMutation.mutate({ 
+      id, 
+      activities: newDailyActivity,
+      timeSpent: timeMinutes || undefined,
+      domain: newDomain || undefined
+    });
   };
 
   if (isLoading) {
@@ -649,44 +666,100 @@ export default function StudyPlanPage() {
                     {expandedDailyLogs === plan.week && (
                       <div className="mt-4 space-y-4">
                         {/* Add new log form */}
-                        <div className="p-4 rounded-lg border border-border bg-muted/30">
-                          <Label htmlFor={`daily-activity-${plan.week}`} className="text-sm font-medium mb-2 block">
-                            What did you study today?
-                          </Label>
-                          <div className="flex gap-2">
+                        <div className="p-4 rounded-lg border border-border bg-muted/30 space-y-3">
+                          <div>
+                            <Label htmlFor={`daily-activity-${plan.week}`} className="text-sm font-medium mb-2 block">
+                              What did you study today?
+                            </Label>
                             <Input
                               id={`daily-activity-${plan.week}`}
                               placeholder="e.g., Read chapter 1 of Elementary Surveying 15th edition"
                               value={newDailyActivity}
                               onChange={(e) => setNewDailyActivity(e.target.value)}
                               onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === 'Enter' && !e.shiftKey) {
                                   handleAddDailyLog(plan.week);
                                 }
                               }}
                               data-testid={`input-daily-activity-${plan.week}`}
                             />
-                            <Button
-                              onClick={() => handleAddDailyLog(plan.week)}
-                              disabled={createDailyLogMutation.isPending}
-                              data-testid={`button-add-log-${plan.week}`}
-                            >
-                              <Plus className="w-4 h-4 mr-1" />
-                              {createDailyLogMutation.isPending ? 'Adding...' : 'Add'}
-                            </Button>
                           </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                              <Label htmlFor={`time-spent-${plan.week}`} className="text-sm font-medium mb-2 block">
+                                Time Spent <span className="text-muted-foreground font-normal">(optional)</span>
+                              </Label>
+                              <Input
+                                id={`time-spent-${plan.week}`}
+                                placeholder="e.g., 30 min, 2h, 1.5 hours"
+                                value={newTimeSpent}
+                                onChange={(e) => setNewTimeSpent(e.target.value)}
+                                data-testid={`input-time-spent-${plan.week}`}
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor={`domain-${plan.week}`} className="text-sm font-medium mb-2 block">
+                                Domain <span className="text-muted-foreground font-normal">(optional)</span>
+                              </Label>
+                              <Select value={newDomain} onValueChange={(val) => setNewDomain(val as Domain | '')}>
+                                <SelectTrigger data-testid={`select-domain-${plan.week}`}>
+                                  <SelectValue placeholder="Select domain" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="">None</SelectItem>
+                                  {DOMAINS.map((d) => (
+                                    <SelectItem key={d} value={d}>{d}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          <Button
+                            onClick={() => handleAddDailyLog(plan.week)}
+                            disabled={createDailyLogMutation.isPending}
+                            className="w-full"
+                            data-testid={`button-add-log-${plan.week}`}
+                          >
+                            <Plus className="w-4 h-4 mr-1" />
+                            {createDailyLogMutation.isPending ? 'Adding...' : 'Add Log'}
+                          </Button>
                         </div>
+
+                        {/* Weekly summary stats */}
+                        {(dailyLogsByWeek[plan.week] || []).length > 0 && (
+                          <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">Days Logged:</span>
+                              <span className="font-medium">{(dailyLogsByWeek[plan.week] || []).length}</span>
+                            </div>
+                            {(() => {
+                              const totalMinutes = (dailyLogsByWeek[plan.week] || []).reduce((sum, log) => 
+                                sum + (log.timeSpent || 0), 0
+                              );
+                              return totalMinutes > 0 && (
+                                <div className="flex items-center justify-between text-sm mt-1">
+                                  <span className="text-muted-foreground">Total Time:</span>
+                                  <span className="font-medium">{formatMinutes(totalMinutes)}</span>
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        )}
 
                         {/* Display existing logs */}
                         <div className="space-y-2">
                           {(dailyLogsByWeek[plan.week] || []).map(log => {
                             const logDate = new Date(log.date);
+                            const dayOfWeek = logDate.toLocaleDateString('en-US', { weekday: 'short' });
                             const formattedDate = logDate.toLocaleDateString('en-US', { 
                               month: 'short', 
-                              day: 'numeric',
-                              year: 'numeric'
+                              day: 'numeric'
                             });
                             const isEditing = editingLogId === log.id;
+                            const domainConfig = log.domain ? getDomainConfig(log.domain as Domain) : null;
 
                             return (
                               <div 
@@ -697,37 +770,74 @@ export default function StudyPlanPage() {
                                 <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
                                 <div className="flex-1 min-w-0">
                                   {isEditing ? (
-                                    <div className="flex gap-2">
+                                    <div className="space-y-2">
                                       <Input
                                         value={newDailyActivity}
                                         onChange={(e) => setNewDailyActivity(e.target.value)}
-                                        onKeyPress={(e) => {
-                                          if (e.key === 'Enter') {
-                                            handleUpdateDailyLog(log.id);
-                                          }
-                                        }}
+                                        placeholder="Activity"
                                         autoFocus
                                         data-testid={`input-edit-log-${log.id}`}
                                       />
-                                      <Button size="sm" onClick={() => handleUpdateDailyLog(log.id)} data-testid={`button-save-edit-${log.id}`}>
-                                        Save
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => {
-                                          setEditingLogId(null);
-                                          setNewDailyActivity('');
-                                        }}
-                                        data-testid={`button-cancel-edit-${log.id}`}
-                                      >
-                                        Cancel
-                                      </Button>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <Input
+                                          value={newTimeSpent}
+                                          onChange={(e) => setNewTimeSpent(e.target.value)}
+                                          placeholder="Time (e.g., 30 min)"
+                                          data-testid={`input-edit-time-${log.id}`}
+                                        />
+                                        <Select value={newDomain} onValueChange={(val) => setNewDomain(val as Domain | '')}>
+                                          <SelectTrigger data-testid={`select-edit-domain-${log.id}`}>
+                                            <SelectValue placeholder="Domain" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="">None</SelectItem>
+                                            {DOMAINS.map((d) => (
+                                              <SelectItem key={d} value={d}>{d}</SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <Button size="sm" onClick={() => handleUpdateDailyLog(log.id)} data-testid={`button-save-edit-${log.id}`}>
+                                          Save
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => {
+                                            setEditingLogId(null);
+                                            setNewDailyActivity('');
+                                            setNewTimeSpent('');
+                                            setNewDomain('');
+                                          }}
+                                          data-testid={`button-cancel-edit-${log.id}`}
+                                        >
+                                          Cancel
+                                        </Button>
+                                      </div>
                                     </div>
                                   ) : (
                                     <>
-                                      <p className="text-sm text-foreground">{log.activities}</p>
-                                      <p className="text-xs text-muted-foreground mt-1">{formattedDate}</p>
+                                      <p className="text-sm text-foreground font-medium">{log.activities}</p>
+                                      <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                                        <span className="text-xs text-muted-foreground">
+                                          {dayOfWeek}, {formattedDate}
+                                        </span>
+                                        {log.timeSpent && (
+                                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                            <Clock className="w-3 h-3" />
+                                            <span>{formatMinutes(log.timeSpent)}</span>
+                                          </div>
+                                        )}
+                                        {domainConfig && (
+                                          <Badge 
+                                            variant="outline" 
+                                            className={`text-xs ${domainConfig.borderColor} ${domainConfig.textColor}`}
+                                          >
+                                            {log.domain}
+                                          </Badge>
+                                        )}
+                                      </div>
                                     </>
                                   )}
                                 </div>
@@ -740,6 +850,8 @@ export default function StudyPlanPage() {
                                       onClick={() => {
                                         setEditingLogId(log.id);
                                         setNewDailyActivity(log.activities);
+                                        setNewTimeSpent(log.timeSpent ? formatMinutes(log.timeSpent) : '');
+                                        setNewDomain((log.domain as Domain) || '');
                                       }}
                                       data-testid={`button-edit-log-${log.id}`}
                                     >
