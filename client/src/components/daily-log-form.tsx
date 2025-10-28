@@ -194,17 +194,27 @@ export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormP
 
           <div className="space-y-2">
             <Label htmlFor="domain">Domain (optional)</Label>
-            <Select value={domain} onValueChange={(val) => setDomain(val as Domain | '')}>
+            <Select value={domain || undefined} onValueChange={(val) => setDomain(val as Domain)}>
               <SelectTrigger data-testid="select-log-domain">
-                <SelectValue placeholder="Select domain" />
+                <SelectValue placeholder="Select domain (optional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
                 {DOMAINS.map((d) => (
                   <SelectItem key={d} value={d}>{d}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {domain && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setDomain('')}
+                className="h-auto py-1 px-2 text-xs"
+              >
+                Clear selection
+              </Button>
+            )}
           </div>
         </div>
 
