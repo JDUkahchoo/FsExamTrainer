@@ -30,7 +30,9 @@ import type {
   InsertDailyLog,
   User,
   UpsertUser,
-  StudyStreak
+  StudyStreak,
+  InsertStudyCycle,
+  StudyCycle
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -48,7 +50,8 @@ import {
   customWeeks,
   pretestResults,
   userPreferences,
-  dailyLogs
+  dailyLogs,
+  studyCycles
 } from "@shared/schema";
 import { eq, and, desc, gte, sql } from "drizzle-orm";
 
@@ -128,6 +131,12 @@ export interface IStorage {
   createDailyLog(log: InsertDailyLog): Promise<DailyLog>;
   updateDailyLog(userId: string, id: string, log: Partial<InsertDailyLog>): Promise<DailyLog>;
   deleteDailyLog(userId: string, id: string): Promise<void>;
+
+  // Study Cycle methods
+  getStudyCycles(userId: string): Promise<StudyCycle[]>;
+  getCurrentStudyCycle(userId: string): Promise<StudyCycle | undefined>;
+  completeCurrentCycle(userId: string): Promise<StudyCycle>;
+  startNewCycle(userId: string): Promise<StudyCycle>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -789,6 +798,141 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(dailyLogs)
       .where(and(eq(dailyLogs.id, id), eq(dailyLogs.userId, userId)));
+  }
+
+  // Study Cycle methods
+  async getStudyCycles(userId: string): Promise<StudyCycle[]> {
+    const cycles = await db
+      .select()
+      .from(studyCycles)
+      .where(eq(studyCycles.userId, userId))
+      .orderBy(desc(studyCycles.cycleNumber));
+    return cycles;
+  }
+
+  async getCurrentStudyCycle(userId: string): Promise<StudyCycle | undefined> {
+    // Get user preferences to check current cycle number
+    const prefs = await this.getUserPreferences(userId);
+    const currentCycleNumber = prefs?.currentCycle || 1;
+
+    // Find the active cycle (one without completedAt)
+    const [cycle] = await db
+      .select()
+      .from(studyCycles)
+      .where(
+        and(
+          eq(studyCycles.userId, userId),
+          eq(studyCycles.cycleNumber, currentCycleNumber)
+        )
+      );
+
+    // If no cycle exists for this number, create one
+    if (!cycle) {
+      const [newCycle] = await db
+        .insert(studyCycles)
+        .values({
+          userId,
+          cycleNumber: currentCycleNumber,
+        })
+        .returning();
+      return newCycle;
+    }
+
+    return cycle || undefined;
+  }
+
+  async completeCurrentCycle(userId: string): Promise<StudyCycle> {
+    const currentCycle = await this.getCurrentStudyCycle(userId);
+    if (!currentCycle) {
+      throw new Error("No active cycle found");
+    }
+
+    const cycleStartDate = new Date(currentCycle.startedAt);
+
+    // Calculate completion stats from week progress
+    const weekProgressData = await this.getAllWeekProgress(userId);
+    // Count total checklist items completed
+    const totalCompleted = weekProgressData.reduce((sum, week) => {
+      return sum + 
+        week.readCompleted.length + 
+        week.focusCompleted.length + 
+        week.applyCompleted.length + 
+        week.reinforceCompleted.length;
+    }, 0);
+    
+    // For 16 weeks, assume ~4 items per section average = 256 total items
+    // This is approximate - adjust based on actual study plan structure
+    const estimatedMaxItems = 256; 
+    const completionPercentage = Math.min(100, Math.round((totalCompleted / estimatedMaxItems) * 100));
+
+    // Calculate study time from daily logs DURING THIS CYCLE
+    const allLogs = await this.getDailyLogs(userId);
+    const cycleLogS = allLogs.filter(log => new Date(log.date) >= cycleStartDate);
+    const totalStudyMinutes = cycleLogS.reduce((sum, log) => sum + (log.timeSpent || 0), 0);
+
+    // Count quizzes DURING THIS CYCLE
+    const allQuizzes = await this.getQuizSessions(userId);
+    const cycleQuizzes = allQuizzes.filter(quiz => new Date(quiz.completedAt) >= cycleStartDate);
+
+    // Count exams DURING THIS CYCLE
+    const allExams = await this.getPracticeExams(userId);
+    const cycleExams = allExams.filter(exam => new Date(exam.completedAt) >= cycleStartDate);
+
+    // Update cycle as completed
+    const [completedCycle] = await db
+      .update(studyCycles)
+      .set({
+        completedAt: new Date(),
+        completionPercentage,
+        totalStudyMinutes,
+        quizzesTaken: cycleQuizzes.length,
+        examsTaken: cycleExams.length,
+      })
+      .where(eq(studyCycles.id, currentCycle.id))
+      .returning();
+
+    return completedCycle;
+  }
+
+  async startNewCycle(userId: string): Promise<StudyCycle> {
+    // Complete current cycle first
+    await this.completeCurrentCycle(userId);
+
+    // Get current preferences
+    const prefs = await this.getUserPreferences(userId);
+    const newCycleNumber = (prefs?.currentCycle || 1) + 1;
+
+    // Update user preferences with new cycle number
+    await this.upsertUserPreferences({
+      userId,
+      currentCycle: newCycleNumber,
+    });
+
+    // Reset week progress (clear all checkboxes for fresh start)
+    const existingProgress = await this.getAllWeekProgress(userId);
+    for (const progress of existingProgress) {
+      await db
+        .update(weekProgress)
+        .set({
+          readCompleted: [],
+          focusCompleted: [],
+          applyCompleted: [],
+          reinforceCompleted: [],
+          updatedAt: new Date(),
+        })
+        .where(eq(weekProgress.id, progress.id));
+    }
+
+    // Create new cycle record
+    const [newCycle] = await db
+      .insert(studyCycles)
+      .values({
+        userId,
+        cycleNumber: newCycleNumber,
+      })
+      .returning();
+
+    return newCycle;
   }
 }
 

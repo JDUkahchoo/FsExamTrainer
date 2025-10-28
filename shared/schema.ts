@@ -461,6 +461,8 @@ export const userPreferences = pgTable("user_preferences", {
   studyMode: text("study_mode").notNull().default('standard'), // 'standard' | 'personalized' | 'self-directed'
   hasCompletedPretest: boolean("has_completed_pretest").notNull().default(false),
   hasSeenWelcome: boolean("has_seen_welcome").notNull().default(false),
+  examDate: timestamp("exam_date"), // User's scheduled exam date
+  currentCycle: integer("current_cycle").notNull().default(1), // Current study cycle (1, 2, 3...)
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
@@ -511,3 +513,36 @@ export const insertDailyLogSchema = createInsertSchema(dailyLogs).omit({
 
 export type InsertDailyLog = z.infer<typeof insertDailyLogSchema>;
 export type DailyLog = typeof dailyLogs.$inferSelect;
+
+// --- Study Cycles ---
+
+export const studyCycles = pgTable("study_cycles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  cycleNumber: integer("cycle_number").notNull(),
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+  completionPercentage: integer("completion_percentage"), // Overall completion at cycle end
+  totalStudyMinutes: integer("total_study_minutes").default(0), // Sum of daily log time
+  quizzesTaken: integer("quizzes_taken").default(0), // Count of quiz sessions
+  examsTaken: integer("exams_taken").default(0), // Count of exam sessions
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  uniqueUserCycle: sql`UNIQUE (user_id, cycle_number)`,
+}));
+
+export const studyCyclesRelations = relations(studyCycles, ({ one }) => ({
+  user: one(users, {
+    fields: [studyCycles.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertStudyCycleSchema = createInsertSchema(studyCycles).omit({
+  id: true,
+  startedAt: true,
+  createdAt: true,
+});
+
+export type InsertStudyCycle = z.infer<typeof insertStudyCycleSchema>;
+export type StudyCycle = typeof studyCycles.$inferSelect;

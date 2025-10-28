@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -710,6 +710,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting daily log:", error);
       res.status(500).json({ error: "Failed to delete daily log" });
+    }
+  });
+
+  // Study Cycles routes
+  app.get("/api/study-cycles", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const cycles = await storage.getStudyCycles(userId);
+      res.json(cycles);
+    } catch (error) {
+      console.error("Error fetching study cycles:", error);
+      res.status(500).json({ error: "Failed to fetch study cycles" });
+    }
+  });
+
+  app.get("/api/study-cycles/current", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const cycle = await storage.getCurrentStudyCycle(userId);
+      res.json(cycle || null);
+    } catch (error) {
+      console.error("Error fetching current cycle:", error);
+      res.status(500).json({ error: "Failed to fetch current cycle" });
+    }
+  });
+
+  app.post("/api/study-cycles/complete", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const cycle = await storage.completeCurrentCycle(userId);
+      res.json(cycle);
+    } catch (error) {
+      console.error("Error completing cycle:", error);
+      res.status(500).json({ error: "Failed to complete cycle" });
+    }
+  });
+
+  app.post("/api/study-cycles/start", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const cycle = await storage.startNewCycle(userId);
+      res.json(cycle);
+    } catch (error) {
+      console.error("Error starting new cycle:", error);
+      res.status(500).json({ error: "Failed to start new cycle" });
     }
   });
 

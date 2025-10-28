@@ -7,7 +7,7 @@ import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, 
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
-import type { Domain, QuizSession, PracticeExam, UserPreferences } from '@shared/schema';
+import type { Domain, QuizSession, PracticeExam, UserPreferences, StudyCycle } from '@shared/schema';
 import ProgressHeader from '@/components/ProgressHeader';
 import { Link } from 'wouter';
 import { DailyLogForm } from '@/components/daily-log-form';
@@ -55,12 +55,26 @@ export default function ProgressPage() {
     refetchOnMount: 'always'
   });
 
+  const { data: currentCycle } = useQuery<StudyCycle | null>({
+    queryKey: ['/api/study-cycles/current'],
+    refetchOnMount: 'always'
+  });
+
   // Default preferences for fallback rendering
   const displayPreferences = preferences || {
     studyMode: 'standard' as const,
     hasCompletedPretest: false,
     weakDomains: []
   };
+
+  // Calculate days until exam
+  const daysUntilExam = preferences?.examDate 
+    ? Math.ceil((new Date(preferences.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : null;
+
+  // Determine study phase
+  const isInMaintenanceMode = currentCycle?.completedAt !== null && currentCycle?.completedAt !== undefined;
+  const studyPhase = isInMaintenanceMode ? 'Maintenance' : 'Learning';
 
   if (isLoading) {
     return (
@@ -131,6 +145,64 @@ export default function ProgressPage() {
                   View Results
                 </Button>
               </Link>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      {/* Study Cycle & Phase Card */}
+      <Card className="p-4 md:p-6 mb-6 md:mb-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex items-start gap-4 flex-1 min-w-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-success/10 shrink-0">
+              <TrendingUp className="h-6 w-6 text-success" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <h3 className="text-lg font-semibold text-foreground">Study Cycle</h3>
+                <Badge variant="outline" data-testid="badge-cycle-number">
+                  Cycle {preferences?.currentCycle || 1}
+                </Badge>
+                <Badge 
+                  variant={isInMaintenanceMode ? "secondary" : "default"}
+                  data-testid="badge-study-phase"
+                >
+                  {studyPhase} Phase
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground mb-2">
+                {isInMaintenanceMode 
+                  ? 'Cycle complete! Review and maintain your knowledge until exam day.'
+                  : 'Work through your 16-week study plan and track your progress.'}
+              </p>
+              {daysUntilExam !== null && (
+                <div className="flex items-center gap-2 mt-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground" data-testid="text-days-until-exam">
+                    {daysUntilExam > 0 
+                      ? `${daysUntilExam} days until exam`
+                      : daysUntilExam === 0 
+                        ? 'Exam is today!'
+                        : 'Exam date passed'}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 w-full md:w-auto">
+            {!isInMaintenanceMode && (
+              <Link href="/study-plan">
+                <Button variant="default" size="sm" className="w-full" data-testid="button-continue-studying">
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Continue Studying
+                </Button>
+              </Link>
+            )}
+            {isInMaintenanceMode && (
+              <Button variant="outline" size="sm" className="w-full" data-testid="button-review-materials">
+                <Brain className="h-4 w-4 mr-2" />
+                Review Materials
+              </Button>
             )}
           </div>
         </div>
