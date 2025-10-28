@@ -50,7 +50,15 @@ export default function ProgressPage() {
 
   const { data: preferences } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
+    refetchOnMount: 'always'
   });
+
+  // Default preferences for fallback rendering
+  const displayPreferences = preferences || {
+    studyMode: 'standard' as const,
+    hasCompletedPretest: false,
+    weakDomains: []
+  };
 
   if (isLoading) {
     return (
@@ -84,49 +92,47 @@ export default function ProgressPage() {
         <ProgressHeader />
       </div>
 
-      {/* Study Mode Section */}
-      {preferences && (
-        <Card className="p-4 md:p-6 mb-6 md:mb-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div className="flex items-start gap-4 flex-1 min-w-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 shrink-0">
-                <BookOpen className="h-6 w-6 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <h3 className="text-lg font-semibold text-foreground">Study Mode</h3>
-                  <Badge variant="outline" data-testid="badge-study-mode">
-                    {preferences.studyMode === 'standard' && 'Standard Plan'}
-                    {preferences.studyMode === 'personalized' && 'Personalized'}
-                    {preferences.studyMode === 'self-directed' && 'Self-Directed'}
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {preferences.studyMode === 'standard' && 'Following the comprehensive 16-week structured study plan'}
-                  {preferences.studyMode === 'personalized' && 'Custom plan tailored to your diagnostic pretest results'}
-                  {preferences.studyMode === 'self-directed' && 'Study at your own pace with access to all resources'}
-                </p>
-              </div>
+      {/* Study Mode Section - Always visible with defaults if preferences not loaded */}
+      <Card className="p-4 md:p-6 mb-6 md:mb-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex items-start gap-4 flex-1 min-w-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 shrink-0">
+              <BookOpen className="h-6 w-6 text-primary" />
             </div>
-            <div className="flex flex-col gap-2 w-full md:w-auto">
-              <Link href="/pretest">
-                <Button variant="outline" size="sm" className="w-full" data-testid="button-retake-pretest">
-                  <Target className="h-4 w-4 mr-2" />
-                  {preferences.hasCompletedPretest ? 'Retake Pretest' : 'Take Pretest'}
-                </Button>
-              </Link>
-              {preferences.hasCompletedPretest && (
-                <Link href="/pretest-results">
-                  <Button variant="ghost" size="sm" className="w-full" data-testid="button-view-results">
-                    <Settings className="h-4 w-4 mr-2" />
-                    View Results
-                  </Button>
-                </Link>
-              )}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <h3 className="text-lg font-semibold text-foreground">Study Mode</h3>
+                <Badge variant="outline" data-testid="badge-study-mode">
+                  {displayPreferences.studyMode === 'standard' && 'Standard Plan'}
+                  {displayPreferences.studyMode === 'personalized' && 'Personalized'}
+                  {displayPreferences.studyMode === 'self-directed' && 'Self-Directed'}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {displayPreferences.studyMode === 'standard' && 'Following the comprehensive 16-week structured study plan'}
+                {displayPreferences.studyMode === 'personalized' && 'Custom plan tailored to your diagnostic pretest results'}
+                {displayPreferences.studyMode === 'self-directed' && 'Study at your own pace with access to all resources'}
+              </p>
             </div>
           </div>
-        </Card>
-      )}
+          <div className="flex flex-col gap-2 w-full md:w-auto">
+            <Link href="/pretest">
+              <Button variant="outline" size="sm" className="w-full" data-testid="button-retake-pretest">
+                <Target className="h-4 w-4 mr-2" />
+                {displayPreferences.hasCompletedPretest ? 'Retake Pretest' : 'Take Pretest'}
+              </Button>
+            </Link>
+            {displayPreferences.hasCompletedPretest && (
+              <Link href="/pretest-results">
+                <Button variant="ghost" size="sm" className="w-full" data-testid="button-view-results">
+                  <Settings className="h-4 w-4 mr-2" />
+                  View Results
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </Card>
 
       {/* Overall Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

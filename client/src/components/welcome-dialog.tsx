@@ -20,9 +20,11 @@ export function WelcomeDialog() {
   const [, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Fetch user preferences
+  // Fetch user preferences with refetch to ensure fresh data
   const { data: preferences, isLoading } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
+    refetchOnMount: 'always',
+    staleTime: 0
   });
 
   // Mutation to update preferences
@@ -36,10 +38,13 @@ export function WelcomeDialog() {
 
   // Show welcome dialog if user hasn't seen it and hasn't completed pretest
   useEffect(() => {
-    if (preferences && !preferences.hasSeenWelcome && !preferences.hasCompletedPretest) {
-      setIsOpen(true);
+    // Only check after loading is complete and preferences exist
+    if (!isLoading && preferences) {
+      if (!preferences.hasSeenWelcome && !preferences.hasCompletedPretest) {
+        setIsOpen(true);
+      }
     }
-  }, [preferences]);
+  }, [preferences, isLoading]);
 
   const handleTakePretest = async () => {
     await updatePreferencesMutation.mutateAsync({ hasSeenWelcome: true });
@@ -55,6 +60,7 @@ export function WelcomeDialog() {
     setIsOpen(false);
   };
 
+  // Don't render anything while loading
   if (isLoading) {
     return null;
   }
