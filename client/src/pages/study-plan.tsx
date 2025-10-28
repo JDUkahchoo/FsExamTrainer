@@ -703,17 +703,27 @@ export default function StudyPlanPage() {
                               <Label htmlFor={`domain-${plan.week}`} className="text-sm font-medium mb-2 block">
                                 Domain <span className="text-muted-foreground font-normal">(optional)</span>
                               </Label>
-                              <Select value={newDomain} onValueChange={(val) => setNewDomain(val as Domain | '')}>
+                              <Select value={newDomain || undefined} onValueChange={(val) => setNewDomain(val as Domain)}>
                                 <SelectTrigger data-testid={`select-domain-${plan.week}`}>
-                                  <SelectValue placeholder="Select domain" />
+                                  <SelectValue placeholder="Select domain (optional)" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="">None</SelectItem>
                                   {DOMAINS.map((d) => (
                                     <SelectItem key={d} value={d}>{d}</SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
+                              {newDomain && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setNewDomain('')}
+                                  className="h-auto py-1 px-2 text-xs mt-1"
+                                >
+                                  Clear selection
+                                </Button>
+                              )}
                             </div>
                           </div>
 
@@ -785,17 +795,29 @@ export default function StudyPlanPage() {
                                           placeholder="Time (e.g., 30 min)"
                                           data-testid={`input-edit-time-${log.id}`}
                                         />
-                                        <Select value={newDomain} onValueChange={(val) => setNewDomain(val as Domain | '')}>
-                                          <SelectTrigger data-testid={`select-edit-domain-${log.id}`}>
-                                            <SelectValue placeholder="Domain" />
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            <SelectItem value="">None</SelectItem>
-                                            {DOMAINS.map((d) => (
-                                              <SelectItem key={d} value={d}>{d}</SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
+                                        <div>
+                                          <Select value={newDomain || undefined} onValueChange={(val) => setNewDomain(val as Domain)}>
+                                            <SelectTrigger data-testid={`select-edit-domain-${log.id}`}>
+                                              <SelectValue placeholder="Domain" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              {DOMAINS.map((d) => (
+                                                <SelectItem key={d} value={d}>{d}</SelectItem>
+                                              ))}
+                                            </SelectContent>
+                                          </Select>
+                                          {newDomain && (
+                                            <Button
+                                              type="button"
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={() => setNewDomain('')}
+                                              className="h-auto py-0.5 px-2 text-xs mt-0.5"
+                                            >
+                                              Clear
+                                            </Button>
+                                          )}
+                                        </div>
                                       </div>
                                       <div className="flex gap-2">
                                         <Button size="sm" onClick={() => handleUpdateDailyLog(log.id)} data-testid={`button-save-edit-${log.id}`}>
