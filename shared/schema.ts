@@ -424,3 +424,57 @@ export const insertCustomWeekSchema = createInsertSchema(customWeeks).omit({
 
 export type InsertCustomWeek = z.infer<typeof insertCustomWeekSchema>;
 export type CustomWeek = typeof customWeeks.$inferSelect;
+
+// --- Pretest Results ---
+
+export const pretestResults = pgTable("pretest_results", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  domainScores: jsonb("domain_scores").notNull(), // { domain: { correct: number, total: number } }
+  totalCorrect: integer("total_correct").notNull(),
+  totalQuestions: integer("total_questions").notNull(),
+  completedAt: timestamp("completed_at").notNull().defaultNow(),
+});
+
+export const pretestResultsRelations = relations(pretestResults, ({ one }) => ({
+  user: one(users, {
+    fields: [pretestResults.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertPretestResultSchema = createInsertSchema(pretestResults).omit({
+  id: true,
+  completedAt: true,
+});
+
+export type InsertPretestResult = z.infer<typeof insertPretestResultSchema>;
+export type PretestResult = typeof pretestResults.$inferSelect;
+
+// --- User Preferences ---
+
+export type StudyMode = 'standard' | 'personalized' | 'self-directed';
+
+export const userPreferences = pgTable("user_preferences", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+  studyMode: text("study_mode").notNull().default('standard'), // 'standard' | 'personalized' | 'self-directed'
+  hasCompletedPretest: boolean("has_completed_pretest").notNull().default(false),
+  hasSeenWelcome: boolean("has_seen_welcome").notNull().default(false),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const userPreferencesRelations = relations(userPreferences, ({ one }) => ({
+  user: one(users, {
+    fields: [userPreferences.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertUserPreferencesSchema = createInsertSchema(userPreferences).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
+export type UserPreferences = typeof userPreferences.$inferSelect;
