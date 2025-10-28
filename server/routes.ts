@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -657,6 +657,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating user preferences:", error);
       res.status(400).json({ error: "Invalid preferences data" });
+    }
+  });
+
+  // Daily Log routes
+  app.get("/api/daily-logs", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const logs = await storage.getDailyLogs(userId);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error fetching daily logs:", error);
+      res.status(500).json({ error: "Failed to fetch daily logs" });
+    }
+  });
+
+  app.post("/api/daily-logs", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertDailyLogSchema.parse({ ...req.body, userId });
+      const log = await storage.createDailyLog(data);
+      
+      // Log daily activity for streak tracking
+      await storage.logDailyActivity(userId, 'daily_log');
+      
+      res.json(log);
+    } catch (error) {
+      console.error("Error creating daily log:", error);
+      res.status(400).json({ error: "Invalid daily log data" });
+    }
+  });
+
+  app.put("/api/daily-logs/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      const data = insertDailyLogSchema.partial().parse(req.body);
+      const log = await storage.updateDailyLog(userId, id, data);
+      res.json(log);
+    } catch (error) {
+      console.error("Error updating daily log:", error);
+      res.status(400).json({ error: "Invalid daily log data" });
+    }
+  });
+
+  app.delete("/api/daily-logs/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      await storage.deleteDailyLog(userId, id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting daily log:", error);
+      res.status(500).json({ error: "Failed to delete daily log" });
     }
   });
 

@@ -478,3 +478,32 @@ export const insertUserPreferencesSchema = createInsertSchema(userPreferences).o
 
 export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
 export type UserPreferences = typeof userPreferences.$inferSelect;
+
+// --- Daily Logs ---
+
+export const dailyLogs = pgTable("daily_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  date: timestamp("date").notNull(),
+  activities: text("activities").notNull(),
+  notes: text("notes"),
+  weekNumber: integer("week_number"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const dailyLogsRelations = relations(dailyLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [dailyLogs.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertDailyLogSchema = createInsertSchema(dailyLogs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertDailyLog = z.infer<typeof insertDailyLogSchema>;
+export type DailyLog = typeof dailyLogs.$inferSelect;

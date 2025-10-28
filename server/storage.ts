@@ -26,6 +26,8 @@ import type {
   InsertPretestResult,
   UserPreferences,
   InsertUserPreferences,
+  DailyLog,
+  InsertDailyLog,
   User,
   UpsertUser,
   StudyStreak
@@ -45,7 +47,8 @@ import {
   achievements,
   customWeeks,
   pretestResults,
-  userPreferences
+  userPreferences,
+  dailyLogs
 } from "@shared/schema";
 import { eq, and, desc, gte, sql } from "drizzle-orm";
 
@@ -118,6 +121,13 @@ export interface IStorage {
   // User Preferences methods
   getUserPreferences(userId: string): Promise<UserPreferences | undefined>;
   upsertUserPreferences(prefs: InsertUserPreferences): Promise<UserPreferences>;
+
+  // Daily Log methods
+  getDailyLogs(userId: string): Promise<DailyLog[]>;
+  getDailyLog(userId: string, id: string): Promise<DailyLog | undefined>;
+  createDailyLog(log: InsertDailyLog): Promise<DailyLog>;
+  updateDailyLog(userId: string, id: string, log: Partial<InsertDailyLog>): Promise<DailyLog>;
+  deleteDailyLog(userId: string, id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -735,6 +745,50 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return prefs;
+  }
+
+  // Daily Log methods
+  async getDailyLogs(userId: string): Promise<DailyLog[]> {
+    const logs = await db
+      .select()
+      .from(dailyLogs)
+      .where(eq(dailyLogs.userId, userId))
+      .orderBy(desc(dailyLogs.date));
+    return logs;
+  }
+
+  async getDailyLog(userId: string, id: string): Promise<DailyLog | undefined> {
+    const [log] = await db
+      .select()
+      .from(dailyLogs)
+      .where(and(eq(dailyLogs.id, id), eq(dailyLogs.userId, userId)));
+    return log || undefined;
+  }
+
+  async createDailyLog(logData: InsertDailyLog): Promise<DailyLog> {
+    const [log] = await db
+      .insert(dailyLogs)
+      .values(logData)
+      .returning();
+    return log;
+  }
+
+  async updateDailyLog(userId: string, id: string, logData: Partial<InsertDailyLog>): Promise<DailyLog> {
+    const [log] = await db
+      .update(dailyLogs)
+      .set({
+        ...logData,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(dailyLogs.id, id), eq(dailyLogs.userId, userId)))
+      .returning();
+    return log;
+  }
+
+  async deleteDailyLog(userId: string, id: string): Promise<void> {
+    await db
+      .delete(dailyLogs)
+      .where(and(eq(dailyLogs.id, id), eq(dailyLogs.userId, userId)));
   }
 }
 

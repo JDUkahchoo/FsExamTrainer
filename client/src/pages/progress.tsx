@@ -3,13 +3,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings } from 'lucide-react';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
 import type { Domain, QuizSession, PracticeExam, UserPreferences } from '@shared/schema';
 import ProgressHeader from '@/components/ProgressHeader';
 import { Link } from 'wouter';
+import { DailyLogForm } from '@/components/daily-log-form';
+import { DailyLogList } from '@/components/daily-log-list';
 
 export default function ProgressPage() {
   const { data: stats, isLoading } = useQuery<{
@@ -186,8 +188,12 @@ export default function ProgressPage() {
       </div>
 
       {/* Tabbed Interface */}
-      <Tabs defaultValue="quiz" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+      <Tabs defaultValue="daily" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
+          <TabsTrigger value="daily" className="flex items-center gap-2" data-testid="tab-daily-logs">
+            <Book className="h-4 w-4" />
+            Daily Logs
+          </TabsTrigger>
           <TabsTrigger value="quiz" className="flex items-center gap-2" data-testid="tab-quiz-history">
             <FileText className="h-4 w-4" />
             Quiz History
@@ -201,6 +207,18 @@ export default function ProgressPage() {
             Domain Mastery
           </TabsTrigger>
         </TabsList>
+
+        {/* Daily Logs Tab */}
+        <TabsContent value="daily" className="space-y-6">
+          <DailyLogForm />
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Your Daily Study Log
+            </h2>
+            <DailyLogList />
+          </div>
+        </TabsContent>
 
         {/* Quiz History Tab */}
         <TabsContent value="quiz" className="space-y-4">
