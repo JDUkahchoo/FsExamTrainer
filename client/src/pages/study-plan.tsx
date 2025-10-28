@@ -1,10 +1,15 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +35,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
-import type { WeekPlan, WeekProgress, CustomWeek, Domain } from '@shared/schema';
+import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult } from '@shared/schema';
 
 export default function StudyPlanPage() {
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
@@ -53,6 +58,35 @@ export default function StudyPlanPage() {
   const { data: customWeeks = [] } = useQuery<CustomWeek[]>({
     queryKey: ['/api/custom-weeks']
   });
+
+  // Fetch user preferences
+  const { data: preferences } = useQuery<UserPreferences>({
+    queryKey: ['/api/preferences'],
+  });
+
+  // Fetch latest pretest results
+  const { data: pretestResult } = useQuery<PretestResult>({
+    queryKey: ['/api/pretest/latest'],
+    enabled: preferences?.hasCompletedPretest === true,
+  });
+
+  // Identify weak domains from pretest results (accuracy < 60%)
+  const weakDomains = useMemo(() => {
+    if (!pretestResult?.domainScores) return new Set<Domain>();
+    
+    const weak = new Set<Domain>();
+    Object.entries(pretestResult.domainScores).forEach(([domain, score]) => {
+      if (typeof score === 'object' && 'accuracy' in score && score.accuracy < 60) {
+        weak.add(domain as Domain);
+      }
+    });
+    return weak;
+  }, [pretestResult]);
+
+  // Check if a week covers any weak domains
+  const coversWeakDomain = (domains: Domain[]) => {
+    return domains.some(d => weakDomains.has(d));
+  };
 
   // Convert database format to UI format (Set-based)
   const completedItems = useMemo(() => {
@@ -362,6 +396,21 @@ export default function StudyPlanPage() {
         </Dialog>
       </div>
 
+      {/* Personalized Recommendations Banner */}
+      {preferences?.studyMode === 'personalized' && weakDomains.size > 0 && (
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Personalized Study Recommendations</AlertTitle>
+          <AlertDescription>
+            Based on your diagnostic pretest, we recommend focusing extra attention on these areas: 
+            <strong className="ml-1">
+              {Array.from(weakDomains).join(', ')}
+            </strong>.
+            Weeks highlighting these domains are marked with a "Focus Area" badge below.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="space-y-4">
         {allWeeks.map((plan) => {
           const progress = calculateWeekProgress(plan.week, plan);
@@ -405,6 +454,12 @@ export default function StudyPlanPage() {
                       <span className="text-xs text-muted-foreground font-medium">
                         {progress}% done
                       </span>
+                    )}
+                    {preferences?.studyMode === 'personalized' && coversWeakDomain(plan.domains) && (
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary" data-testid={`badge-focus-area-${plan.week}`}>
+                        <Target className="w-3 h-3 mr-1" />
+                        Focus Area
+                      </Badge>
                     )}
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-3">{plan.title}</h3>
