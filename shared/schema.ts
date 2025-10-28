@@ -503,6 +503,8 @@ export const insertDailyLogSchema = createInsertSchema(dailyLogs).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  date: z.coerce.date(), // Accept string or Date, coerce to Date
 });
 
 export type InsertDailyLog = z.infer<typeof insertDailyLogSchema>;
