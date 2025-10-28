@@ -87,13 +87,13 @@ export default function ProgressPage() {
       {/* Study Mode Section */}
       {preferences && (
         <Card className="p-6 mb-8">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-4 flex-1">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="flex items-start gap-4 flex-1 min-w-0">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 shrink-0">
                 <BookOpen className="h-6 w-6 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
                   <h3 className="text-lg font-semibold text-foreground">Study Mode</h3>
                   <Badge variant="outline" data-testid="badge-study-mode">
                     {preferences.studyMode === 'standard' && 'Standard Plan'}
@@ -108,16 +108,16 @@ export default function ProgressPage() {
                 </p>
               </div>
             </div>
-            <div className="flex flex-col gap-2 shrink-0">
+            <div className="flex flex-col gap-2 w-full md:w-auto">
               <Link href="/pretest">
-                <Button variant="outline" size="sm" data-testid="button-retake-pretest">
+                <Button variant="outline" size="sm" className="w-full" data-testid="button-retake-pretest">
                   <Target className="h-4 w-4 mr-2" />
                   {preferences.hasCompletedPretest ? 'Retake Pretest' : 'Take Pretest'}
                 </Button>
               </Link>
               {preferences.hasCompletedPretest && (
                 <Link href="/pretest-results">
-                  <Button variant="ghost" size="sm" data-testid="button-view-results">
+                  <Button variant="ghost" size="sm" className="w-full" data-testid="button-view-results">
                     <Settings className="h-4 w-4 mr-2" />
                     View Results
                   </Button>
