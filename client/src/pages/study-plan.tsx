@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -35,10 +35,11 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
-import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult } from '@shared/schema';
+import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
 
 export default function StudyPlanPage() {
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
+  const [expandedDailyLogs, setExpandedDailyLogs] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newWeekTitle, setNewWeekTitle] = useState('');
   const [newWeekDomain, setNewWeekDomain] = useState<Domain | ''>('');
@@ -46,6 +47,8 @@ export default function StudyPlanPage() {
   const [focusActivities, setFocusActivities] = useState('');
   const [applyActivities, setApplyActivities] = useState('');
   const [reinforceActivities, setReinforceActivities] = useState('');
+  const [newDailyActivity, setNewDailyActivity] = useState('');
+  const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
 
@@ -68,6 +71,11 @@ export default function StudyPlanPage() {
   const { data: pretestResult } = useQuery<PretestResult>({
     queryKey: ['/api/pretest/latest'],
     enabled: preferences?.hasCompletedPretest === true,
+  });
+
+  // Fetch daily logs
+  const { data: dailyLogs = [] } = useQuery<DailyLog[]>({
+    queryKey: ['/api/daily-logs']
   });
 
   // Identify weak domains from pretest results (accuracy < 60%)
@@ -97,10 +105,10 @@ export default function StudyPlanPage() {
       const weekKey = `week-${wp.week}`;
       const items = new Set<string>();
       
-      wp.readCompleted.forEach((i: number) => items.add(`read-${i}`));
-      wp.focusCompleted.forEach((i: number) => items.add(`focus-${i}`));
-      wp.applyCompleted.forEach((i: number) => items.add(`apply-${i}`));
-      wp.reinforceCompleted.forEach((i: number) => items.add(`reinforce-${i}`));
+      wp.readCompleted.forEach((i) => items.add(`read-${i}`));
+      wp.focusCompleted.forEach((i) => items.add(`focus-${i}`));
+      wp.applyCompleted.forEach((i) => items.add(`apply-${i}`));
+      wp.reinforceCompleted.forEach((i) => items.add(`reinforce-${i}`));
       
       result[weekKey] = items;
     });
@@ -184,6 +192,73 @@ export default function StudyPlanPage() {
     }
   });
 
+  // Mutations for daily logs
+  const createDailyLogMutation = useMutation({
+    mutationFn: async (data: { date: string; activities: string; weekNumber: number }) => {
+      return apiRequest('POST', '/api/daily-logs', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/daily-logs'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      setNewDailyActivity('');
+      toast({
+        title: "Daily log added",
+        description: "Your daily activity has been recorded.",
+      });
+    }
+  });
+
+  const updateDailyLogMutation = useMutation({
+    mutationFn: async ({ id, activities }: { id: string; activities: string }) => {
+      return apiRequest('PUT', `/api/daily-logs/${id}`, { activities });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/daily-logs'] });
+      setEditingLogId(null);
+      setNewDailyActivity('');
+      toast({
+        title: "Daily log updated",
+        description: "Your daily activity has been updated.",
+      });
+    }
+  });
+
+  const deleteDailyLogMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest('DELETE', `/api/daily-logs/${id}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/daily-logs'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      toast({
+        title: "Daily log deleted",
+        description: "Your daily activity has been removed.",
+      });
+    }
+  });
+
+  // Group daily logs by week
+  const dailyLogsByWeek = useMemo(() => {
+    const grouped: Record<number, DailyLog[]> = {};
+    dailyLogs.forEach(log => {
+      if (log.weekNumber) {
+        if (!grouped[log.weekNumber]) {
+          grouped[log.weekNumber] = [];
+        }
+        grouped[log.weekNumber].push(log);
+      }
+    });
+    // Sort logs within each week by date (descending)
+    Object.keys(grouped).forEach(week => {
+      grouped[parseInt(week)].sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+    });
+    return grouped;
+  }, [dailyLogs]);
+
   const resetForm = () => {
     setNewWeekTitle('');
     setNewWeekDomain('');
@@ -241,8 +316,37 @@ export default function StudyPlanPage() {
   const calculateWeekProgress = (week: number, plan: WeekPlan) => {
     const weekKey = `week-${week}`;
     const completed = completedItems[weekKey] || new Set();
-    const total = plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length;
-    return Math.round((completed.size / total) * 100) || 0;
+    const dailyLogsForWeek = dailyLogsByWeek[week] || [];
+    const checklistTotal = plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length;
+    
+    // Each daily log counts as 1 unit, add to completed count
+    const totalCompleted = completed.size + dailyLogsForWeek.length;
+    const total = checklistTotal + dailyLogsForWeek.length;
+    
+    return total > 0 ? Math.round((totalCompleted / total) * 100) : 0;
+  };
+
+  const handleAddDailyLog = (weekNumber: number) => {
+    if (!newDailyActivity.trim()) {
+      toast({
+        title: "Missing activity",
+        description: "Please enter what you studied today.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    createDailyLogMutation.mutate({
+      date: today,
+      activities: newDailyActivity,
+      weekNumber
+    });
+  };
+
+  const handleUpdateDailyLog = (id: string) => {
+    if (!newDailyActivity.trim()) return;
+    updateDailyLogMutation.mutate({ id, activities: newDailyActivity });
   };
 
   if (isLoading) {
@@ -527,6 +631,147 @@ export default function StudyPlanPage() {
                     prefix="reinforce"
                     colorClass="text-domain-field-fg"
                   />
+                  
+                  {/* Daily Logs Section */}
+                  <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
+                    <button
+                      onClick={() => setExpandedDailyLogs(expandedDailyLogs === plan.week ? null : plan.week)}
+                      className="w-full flex items-center justify-between p-3 rounded-lg hover-elevate active-elevate-2"
+                      data-testid={`button-daily-logs-${plan.week}`}
+                    >
+                      <div className="flex items-center gap-2 text-domain-field-fg font-semibold uppercase text-sm tracking-wider">
+                        <Calendar className="w-4 h-4" />
+                        Daily Study Logs ({(dailyLogsByWeek[plan.week] || []).length})
+                      </div>
+                      {expandedDailyLogs === plan.week ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </button>
+                    
+                    {expandedDailyLogs === plan.week && (
+                      <div className="mt-4 space-y-4">
+                        {/* Add new log form */}
+                        <div className="p-4 rounded-lg border border-border bg-muted/30">
+                          <Label htmlFor={`daily-activity-${plan.week}`} className="text-sm font-medium mb-2 block">
+                            What did you study today?
+                          </Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id={`daily-activity-${plan.week}`}
+                              placeholder="e.g., Read chapter 1 of Elementary Surveying 15th edition"
+                              value={newDailyActivity}
+                              onChange={(e) => setNewDailyActivity(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                  handleAddDailyLog(plan.week);
+                                }
+                              }}
+                              data-testid={`input-daily-activity-${plan.week}`}
+                            />
+                            <Button
+                              onClick={() => handleAddDailyLog(plan.week)}
+                              disabled={createDailyLogMutation.isPending}
+                              data-testid={`button-add-log-${plan.week}`}
+                            >
+                              <Plus className="w-4 h-4 mr-1" />
+                              {createDailyLogMutation.isPending ? 'Adding...' : 'Add'}
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Display existing logs */}
+                        <div className="space-y-2">
+                          {(dailyLogsByWeek[plan.week] || []).map(log => {
+                            const logDate = new Date(log.date);
+                            const formattedDate = logDate.toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric',
+                              year: 'numeric'
+                            });
+                            const isEditing = editingLogId === log.id;
+
+                            return (
+                              <div 
+                                key={log.id} 
+                                className="p-3 rounded-lg border border-border bg-card flex items-start gap-3 group"
+                                data-testid={`daily-log-${log.id}`}
+                              >
+                                <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  {isEditing ? (
+                                    <div className="flex gap-2">
+                                      <Input
+                                        value={newDailyActivity}
+                                        onChange={(e) => setNewDailyActivity(e.target.value)}
+                                        onKeyPress={(e) => {
+                                          if (e.key === 'Enter') {
+                                            handleUpdateDailyLog(log.id);
+                                          }
+                                        }}
+                                        autoFocus
+                                        data-testid={`input-edit-log-${log.id}`}
+                                      />
+                                      <Button size="sm" onClick={() => handleUpdateDailyLog(log.id)} data-testid={`button-save-edit-${log.id}`}>
+                                        Save
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => {
+                                          setEditingLogId(null);
+                                          setNewDailyActivity('');
+                                        }}
+                                        data-testid={`button-cancel-edit-${log.id}`}
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <p className="text-sm text-foreground">{log.activities}</p>
+                                      <p className="text-xs text-muted-foreground mt-1">{formattedDate}</p>
+                                    </>
+                                  )}
+                                </div>
+                                {!isEditing && (
+                                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-7 w-7"
+                                      onClick={() => {
+                                        setEditingLogId(log.id);
+                                        setNewDailyActivity(log.activities);
+                                      }}
+                                      data-testid={`button-edit-log-${log.id}`}
+                                    >
+                                      <Edit2 className="w-3 h-3" />
+                                    </Button>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-7 w-7 text-destructive"
+                                      onClick={() => {
+                                        if (confirm('Delete this daily log?')) {
+                                          deleteDailyLogMutation.mutate(log.id);
+                                        }
+                                      }}
+                                      data-testid={`button-delete-log-${log.id}`}
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                          {(dailyLogsByWeek[plan.week] || []).length === 0 && (
+                            <p className="text-sm text-muted-foreground text-center py-4">
+                              No daily logs yet for this week. Add your first entry above!
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </Card>
