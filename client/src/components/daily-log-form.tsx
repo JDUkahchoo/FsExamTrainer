@@ -4,11 +4,20 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar, Plus, X } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import type { InsertDailyLog } from '@shared/schema';
+import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
+import { DOMAINS } from '@shared/schema';
+import type { InsertDailyLog, Domain } from '@shared/schema';
 
 interface DailyLogFormProps {
   onSuccess?: () => void;
@@ -19,6 +28,8 @@ interface DailyLogFormProps {
     activities?: string;
     notes?: string;
     weekNumber?: number;
+    timeSpent?: number;
+    domain?: string;
   };
 }
 
@@ -34,6 +45,12 @@ export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormP
   const [weekNumber, setWeekNumber] = useState<string>(
     initialData?.weekNumber?.toString() || ''
   );
+  const [timeSpent, setTimeSpent] = useState<string>(
+    initialData?.timeSpent ? formatMinutes(initialData.timeSpent) : ''
+  );
+  const [domain, setDomain] = useState<Domain | ''>(
+    (initialData?.domain as Domain) || ''
+  );
 
   const createMutation = useMutation({
     mutationFn: (data: Omit<InsertDailyLog, 'userId'>) =>
@@ -48,6 +65,8 @@ export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormP
       setActivities('');
       setNotes('');
       setWeekNumber('');
+      setTimeSpent('');
+      setDomain('');
       setDate(new Date().toISOString().split('T')[0]);
       onSuccess?.();
     },
@@ -78,11 +97,15 @@ export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormP
       return;
     }
 
+    const timeMinutes = parseTimeToMinutes(timeSpent);
+    
     const logData = {
       date: new Date(date),
       activities: activities.trim(),
       notes: notes.trim() || undefined,
       weekNumber: weekNumber ? parseInt(weekNumber) : undefined,
+      timeSpent: timeMinutes || undefined,
+      domain: domain || undefined,
     };
 
     if (initialData?.id) {
@@ -151,6 +174,38 @@ export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormP
             className="min-h-[80px] resize-y"
             data-testid="input-log-notes"
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="timeSpent">Time Spent (optional)</Label>
+            <Input
+              id="timeSpent"
+              type="text"
+              value={timeSpent}
+              onChange={(e) => setTimeSpent(e.target.value)}
+              placeholder="e.g., 30 min, 2h, 1.5 hours"
+              data-testid="input-log-time"
+            />
+            <p className="text-xs text-muted-foreground">
+              Format: 30 min, 2h, 1.5 hours, etc.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="domain">Domain (optional)</Label>
+            <Select value={domain} onValueChange={(val) => setDomain(val as Domain | '')}>
+              <SelectTrigger data-testid="select-log-domain">
+                <SelectValue placeholder="Select domain" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">None</SelectItem>
+                {DOMAINS.map((d) => (
+                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="space-y-2">

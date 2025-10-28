@@ -12,12 +12,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Calendar, Edit, Trash2, FileText, Loader2 } from 'lucide-react';
+import { Calendar, Edit, Trash2, FileText, Loader2, Clock } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { DailyLogForm } from './daily-log-form';
-import type { DailyLog } from '@shared/schema';
+import { getDomainConfig } from '@/lib/domains';
+import { formatMinutes } from '@/lib/time-utils';
+import type { DailyLog, Domain } from '@shared/schema';
 import { format, parseISO, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 
 export function DailyLogList() {
@@ -92,6 +94,8 @@ export function DailyLogList() {
           activities: editingLog.activities,
           notes: editingLog.notes || '',
           weekNumber: editingLog.weekNumber || undefined,
+          timeSpent: editingLog.timeSpent || undefined,
+          domain: editingLog.domain || undefined,
         }}
         onSuccess={() => setEditingLog(null)}
         onCancel={() => setEditingLog(null)}
@@ -122,14 +126,32 @@ export function DailyLogList() {
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Calendar className="h-4 w-4" />
                               <span data-testid={`log-date-${log.id}`}>
-                                {format(parseISO(log.date.toString()), 'EEEE, MMMM d, yyyy')}
+                                {format(parseISO(log.date.toString()), 'EEE, MMM d, yyyy')}
                               </span>
                             </div>
+                            {log.timeSpent && (
+                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <Clock className="h-4 w-4" />
+                                <span>{formatMinutes(log.timeSpent)}</span>
+                              </div>
+                            )}
                             {log.weekNumber && (
                               <Badge variant="outline" data-testid={`log-week-${log.id}`}>
                                 Week {log.weekNumber}
                               </Badge>
                             )}
+                            {log.domain && (() => {
+                              const domainConfig = getDomainConfig(log.domain as Domain);
+                              return (
+                                <Badge 
+                                  variant="outline" 
+                                  className={`${domainConfig.borderColor} ${domainConfig.textColor}`}
+                                  data-testid={`log-domain-${log.id}`}
+                                >
+                                  {log.domain}
+                                </Badge>
+                              );
+                            })()}
                           </div>
                           
                           <div className="mb-3">
