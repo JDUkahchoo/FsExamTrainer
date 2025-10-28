@@ -1,13 +1,15 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap } from 'lucide-react';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
-import type { Domain, QuizSession, PracticeExam } from '@shared/schema';
+import type { Domain, QuizSession, PracticeExam, UserPreferences } from '@shared/schema';
 import ProgressHeader from '@/components/ProgressHeader';
+import { Link } from 'wouter';
 
 export default function ProgressPage() {
   const { data: stats, isLoading } = useQuery<{
@@ -46,6 +48,10 @@ export default function ProgressPage() {
     refetchOnMount: 'always'
   });
 
+  const { data: preferences } = useQuery<UserPreferences>({
+    queryKey: ['/api/preferences'],
+  });
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -77,6 +83,50 @@ export default function ProgressPage() {
       <div className="mb-8">
         <ProgressHeader />
       </div>
+
+      {/* Study Mode Section */}
+      {preferences && (
+        <Card className="p-6 mb-8">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 shrink-0">
+                <BookOpen className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-lg font-semibold text-foreground">Study Mode</h3>
+                  <Badge variant="outline" data-testid="badge-study-mode">
+                    {preferences.studyMode === 'standard' && 'Standard Plan'}
+                    {preferences.studyMode === 'personalized' && 'Personalized'}
+                    {preferences.studyMode === 'self-directed' && 'Self-Directed'}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {preferences.studyMode === 'standard' && 'Following the comprehensive 16-week structured study plan'}
+                  {preferences.studyMode === 'personalized' && 'Custom plan tailored to your diagnostic pretest results'}
+                  {preferences.studyMode === 'self-directed' && 'Study at your own pace with access to all resources'}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 shrink-0">
+              <Link href="/pretest">
+                <Button variant="outline" size="sm" data-testid="button-retake-pretest">
+                  <Target className="h-4 w-4 mr-2" />
+                  {preferences.hasCompletedPretest ? 'Retake Pretest' : 'Take Pretest'}
+                </Button>
+              </Link>
+              {preferences.hasCompletedPretest && (
+                <Link href="/pretest-results">
+                  <Button variant="ghost" size="sm" data-testid="button-view-results">
+                    <Settings className="h-4 w-4 mr-2" />
+                    View Results
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Overall Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
