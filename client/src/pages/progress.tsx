@@ -71,22 +71,22 @@ export default function ProgressPage() {
   const domainProgress = quizStats?.domainStats || {};
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="heading-progress">Your Progress</h1>
-        <p className="text-muted-foreground">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2" data-testid="heading-progress">Your Progress</h1>
+        <p className="text-sm md:text-base text-muted-foreground">
           Track your study progress, streaks, and performance across all domains.
         </p>
       </div>
 
       {/* Gamification Header */}
-      <div className="mb-8">
+      <div className="mb-6 md:mb-8">
         <ProgressHeader />
       </div>
 
       {/* Study Mode Section */}
       {preferences && (
-        <Card className="p-6 mb-8">
+        <Card className="p-4 md:p-6 mb-6 md:mb-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="flex items-start gap-4 flex-1 min-w-0">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 shrink-0">
