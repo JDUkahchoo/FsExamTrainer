@@ -19,34 +19,34 @@ export default function Resources() {
       <ScrollArea className="flex-1">
         <div className="p-6">
           <Tabs defaultValue="formulas" className="w-full">
-            <TabsList className="grid w-full grid-cols-7 mb-6">
-              <TabsTrigger value="formulas" data-testid="tab-formulas">
-                <Calculator className="w-4 h-4 mr-2" />
-                Formulas
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-1 mb-6 h-auto">
+              <TabsTrigger value="formulas" data-testid="tab-formulas" className="flex-col sm:flex-row py-2 sm:py-3">
+                <Calculator className="w-4 h-4 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Formulas</span>
               </TabsTrigger>
-              <TabsTrigger value="memory" data-testid="tab-memory">
-                <Brain className="w-4 h-4 mr-2" />
-                Memory
+              <TabsTrigger value="memory" data-testid="tab-memory" className="flex-col sm:flex-row py-2 sm:py-3">
+                <Brain className="w-4 h-4 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Memory</span>
               </TabsTrigger>
-              <TabsTrigger value="exam" data-testid="tab-exam">
-                <Clock className="w-4 h-4 mr-2" />
-                Exam Day
+              <TabsTrigger value="exam" data-testid="tab-exam" className="flex-col sm:flex-row py-2 sm:py-3">
+                <Clock className="w-4 h-4 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Exam Day</span>
               </TabsTrigger>
-              <TabsTrigger value="strategies" data-testid="tab-strategies">
-                <Target className="w-4 h-4 mr-2" />
-                Strategies
+              <TabsTrigger value="strategies" data-testid="tab-strategies" className="flex-col sm:flex-row py-2 sm:py-3">
+                <Target className="w-4 h-4 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Strategies</span>
               </TabsTrigger>
-              <TabsTrigger value="problems" data-testid="tab-problems">
-                <GraduationCap className="w-4 h-4 mr-2" />
-                Problems
+              <TabsTrigger value="problems" data-testid="tab-problems" className="flex-col sm:flex-row py-2 sm:py-3">
+                <GraduationCap className="w-4 h-4 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Problems</span>
               </TabsTrigger>
-              <TabsTrigger value="math" data-testid="tab-math">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Math Review
+              <TabsTrigger value="math" data-testid="tab-math" className="flex-col sm:flex-row py-2 sm:py-3">
+                <BookOpen className="w-4 h-4 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Math Review</span>
               </TabsTrigger>
-              <TabsTrigger value="reference" data-testid="tab-reference">
-                <FileText className="w-4 h-4 mr-2" />
-                Reference
+              <TabsTrigger value="reference" data-testid="tab-reference" className="flex-col sm:flex-row py-2 sm:py-3">
+                <FileText className="w-4 h-4 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Reference</span>
               </TabsTrigger>
             </TabsList>
 
