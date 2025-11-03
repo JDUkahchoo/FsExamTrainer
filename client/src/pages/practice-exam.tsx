@@ -56,7 +56,21 @@ export default function PracticeExamPage() {
 
   // Mutation to save practice exam
   const saveExamMutation = useMutation({
-    mutationFn: (exam: { totalQuestions: number; correctAnswers: number; timeSpentMinutes: number; domainScores: any }) =>
+    mutationFn: (exam: { 
+      totalQuestions: number; 
+      correctAnswers: number; 
+      timeSpentMinutes: number; 
+      domainScores: any;
+      questionResults?: Array<{
+        questionId: string;
+        domain: string;
+        questionText: string;
+        selectedAnswer: number;
+        correctAnswer: number;
+        isCorrect: boolean;
+        explanation: string;
+      }>;
+    }) =>
       apiRequest('POST', '/api/exams', exam),
     onSuccess: () => {
       logActivity('exam_completion');
@@ -202,7 +216,8 @@ export default function PracticeExamPage() {
       totalQuestions: results.total,
       correctAnswers: results.correct,
       timeSpentMinutes,
-      domainScores: results.domainScores
+      domainScores: results.domainScores,
+      questionResults: results.questionResults
     });
   };
 
@@ -216,6 +231,15 @@ export default function PracticeExamPage() {
   const calculateResults = () => {
     let correct = 0;
     const domainScores: Record<Domain, { correct: number; total: number }> = {} as any;
+    const questionResults: Array<{
+      questionId: string;
+      domain: string;
+      questionText: string;
+      selectedAnswer: number;
+      correctAnswer: number;
+      isCorrect: boolean;
+      explanation: string;
+    }> = [];
 
     examQuestions.forEach((question, index) => {
       const domain = question.domain as Domain;
@@ -224,13 +248,27 @@ export default function PracticeExamPage() {
       }
       domainScores[domain].total++;
 
-      if (answers[index] === question.correctAnswer) {
+      const userAnswer = answers[index];
+      const isCorrect = userAnswer === question.correctAnswer;
+
+      if (isCorrect) {
         correct++;
         domainScores[domain].correct++;
       }
+
+      // Save individual question result
+      questionResults.push({
+        questionId: question.id,
+        domain: question.domain,
+        questionText: question.question,
+        selectedAnswer: userAnswer !== undefined ? userAnswer : -1,
+        correctAnswer: question.correctAnswer,
+        isCorrect,
+        explanation: question.explanation
+      });
     });
 
-    return { correct, total: examQuestions.length, domainScores };
+    return { correct, total: examQuestions.length, domainScores, questionResults };
   };
 
   // Setup screen

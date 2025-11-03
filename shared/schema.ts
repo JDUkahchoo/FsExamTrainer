@@ -84,6 +84,7 @@ export type WeekProgress = typeof weekProgress.$inferSelect;
 export const quizResults = pgTable("quiz_results", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  sessionId: varchar("session_id").references(() => quizSessions.id, { onDelete: 'cascade' }),
   questionId: varchar("question_id").notNull(),
   domain: text("domain").notNull(),
   selectedAnswer: integer("selected_answer").notNull(),
@@ -95,6 +96,10 @@ export const quizResultsRelations = relations(quizResults, ({ one }) => ({
   user: one(users, {
     fields: [quizResults.userId],
     references: [users.id],
+  }),
+  session: one(quizSessions, {
+    fields: [quizResults.sessionId],
+    references: [quizSessions.id],
   }),
 }));
 
@@ -118,11 +123,12 @@ export const quizSessions = pgTable("quiz_sessions", {
   completedAt: timestamp("completed_at").notNull().defaultNow(),
 });
 
-export const quizSessionsRelations = relations(quizSessions, ({ one }) => ({
+export const quizSessionsRelations = relations(quizSessions, ({ one, many }) => ({
   user: one(users, {
     fields: [quizSessions.userId],
     references: [users.id],
   }),
+  results: many(quizResults),
 }));
 
 export const insertQuizSessionSchema = createInsertSchema(quizSessions).omit({
@@ -171,11 +177,12 @@ export const practiceExams = pgTable("practice_exams", {
   completedAt: timestamp("completed_at").notNull().defaultNow(),
 });
 
-export const practiceExamsRelations = relations(practiceExams, ({ one }) => ({
+export const practiceExamsRelations = relations(practiceExams, ({ one, many }) => ({
   user: one(users, {
     fields: [practiceExams.userId],
     references: [users.id],
   }),
+  results: many(practiceExamResults),
 }));
 
 export const insertPracticeExamSchema = createInsertSchema(practiceExams).omit({
@@ -185,6 +192,98 @@ export const insertPracticeExamSchema = createInsertSchema(practiceExams).omit({
 
 export type InsertPracticeExam = z.infer<typeof insertPracticeExamSchema>;
 export type PracticeExam = typeof practiceExams.$inferSelect;
+
+// --- Practice Exam Question Results ---
+
+export const practiceExamResults = pgTable("practice_exam_results", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  examId: varchar("exam_id").notNull().references(() => practiceExams.id, { onDelete: 'cascade' }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  questionId: varchar("question_id").notNull(),
+  domain: text("domain").notNull(),
+  questionText: text("question_text").notNull(),
+  selectedAnswer: integer("selected_answer").notNull(),
+  correctAnswer: integer("correct_answer").notNull(),
+  isCorrect: boolean("is_correct").notNull(),
+  explanation: text("explanation"),
+});
+
+export const practiceExamResultsRelations = relations(practiceExamResults, ({ one }) => ({
+  exam: one(practiceExams, {
+    fields: [practiceExamResults.examId],
+    references: [practiceExams.id],
+  }),
+  user: one(users, {
+    fields: [practiceExamResults.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertPracticeExamResultSchema = createInsertSchema(practiceExamResults).omit({
+  id: true,
+});
+
+export type InsertPracticeExamResult = z.infer<typeof insertPracticeExamResultSchema>;
+
+// Client-side schema for question results (without userId/examId)
+export const clientPracticeExamQuestionResultSchema = z.object({
+  questionId: z.string(),
+  domain: z.string(),
+  questionText: z.string(),
+  selectedAnswer: z.number(),
+  correctAnswer: z.number(),
+  isCorrect: z.boolean(),
+  explanation: z.string().optional(),
+});
+
+export type ClientPracticeExamQuestionResult = z.infer<typeof clientPracticeExamQuestionResultSchema>;
+export type PracticeExamResult = typeof practiceExamResults.$inferSelect;
+
+// --- Pretest Question Results ---
+
+export const pretestQuestionResults = pgTable("pretest_question_results", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  pretestId: varchar("pretest_id").notNull().references(() => pretestResults.id, { onDelete: 'cascade' }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  questionId: varchar("question_id").notNull(),
+  domain: text("domain").notNull(),
+  questionText: text("question_text").notNull(),
+  selectedAnswer: integer("selected_answer").notNull(),
+  correctAnswer: integer("correct_answer").notNull(),
+  isCorrect: boolean("is_correct").notNull(),
+  explanation: text("explanation"),
+});
+
+export const pretestQuestionResultsRelations = relations(pretestQuestionResults, ({ one }) => ({
+  pretest: one(pretestResults, {
+    fields: [pretestQuestionResults.pretestId],
+    references: [pretestResults.id],
+  }),
+  user: one(users, {
+    fields: [pretestQuestionResults.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertPretestQuestionResultSchema = createInsertSchema(pretestQuestionResults).omit({
+  id: true,
+});
+
+export type InsertPretestQuestionResult = z.infer<typeof insertPretestQuestionResultSchema>;
+
+// Client-side schema for pretest question results (without userId/pretestId)
+export const clientPretestQuestionResultSchema = z.object({
+  questionId: z.string(),
+  domain: z.string(),
+  questionText: z.string(),
+  selectedAnswer: z.number(),
+  correctAnswer: z.number(),
+  isCorrect: z.boolean(),
+  explanation: z.string().optional(),
+});
+
+export type ClientPretestQuestionResult = z.infer<typeof clientPretestQuestionResultSchema>;
+export type PretestQuestionResult = typeof pretestQuestionResults.$inferSelect;
 
 // --- Study Notes ---
 
@@ -278,6 +377,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   quizSessions: many(quizSessions),
   flashcardMastery: many(flashcardMastery),
   practiceExams: many(practiceExams),
+  practiceExamResults: many(practiceExamResults),
+  pretestResults: many(pretestResults),
+  pretestQuestionResults: many(pretestQuestionResults),
   studyNotes: many(studyNotes),
   quizDrafts: many(quizDrafts),
   examDrafts: many(examDrafts),
@@ -436,11 +538,12 @@ export const pretestResults = pgTable("pretest_results", {
   completedAt: timestamp("completed_at").notNull().defaultNow(),
 });
 
-export const pretestResultsRelations = relations(pretestResults, ({ one }) => ({
+export const pretestResultsRelations = relations(pretestResults, ({ one, many }) => ({
   user: one(users, {
     fields: [pretestResults.userId],
     references: [users.id],
   }),
+  questionResults: many(pretestQuestionResults),
 }));
 
 export const insertPretestResultSchema = createInsertSchema(pretestResults).omit({

@@ -9,6 +9,12 @@ import type {
   InsertFlashcardMastery,
   PracticeExam,
   InsertPracticeExam,
+  PracticeExamResult,
+  InsertPracticeExamResult,
+  PretestResult,
+  InsertPretestResult,
+  PretestQuestionResult,
+  InsertPretestQuestionResult,
   StudyNote,
   InsertStudyNote,
   QuizDraft,
@@ -22,8 +28,6 @@ import type {
   AchievementType,
   CustomWeek,
   InsertCustomWeek,
-  PretestResult,
-  InsertPretestResult,
   UserPreferences,
   InsertUserPreferences,
   DailyLog,
@@ -42,13 +46,15 @@ import {
   quizSessions,
   flashcardMastery,
   practiceExams,
+  practiceExamResults,
+  pretestResults,
+  pretestQuestionResults,
   studyNotes,
   quizDrafts,
   examDrafts,
   dailyActivity,
   achievements,
   customWeeks,
-  pretestResults,
   userPreferences,
   dailyLogs,
   studyCycles
@@ -68,12 +74,14 @@ export interface IStorage {
   // Quiz Results methods
   getQuizResults(userId: string): Promise<QuizResult[]>;
   getQuizResultsByDomain(userId: string, domain: string): Promise<QuizResult[]>;
+  getQuizResultsBySession(sessionId: string): Promise<QuizResult[]>;
   createQuizResult(result: InsertQuizResult): Promise<QuizResult>;
   deleteAllQuizResults(userId: string): Promise<void>;
 
   // Quiz Session methods
   getQuizSessions(userId: string): Promise<QuizSession[]>;
   getQuizSessionsByDomain(userId: string, domain: string): Promise<QuizSession[]>;
+  getQuizSessionWithResults(sessionId: string): Promise<{ session: QuizSession; results: QuizResult[] } | undefined>;
   createQuizSession(session: InsertQuizSession): Promise<QuizSession>;
 
   // Flashcard Mastery methods
@@ -85,7 +93,9 @@ export interface IStorage {
   // Practice Exam methods
   getPracticeExams(userId: string): Promise<PracticeExam[]>;
   getLatestPracticeExam(userId: string): Promise<PracticeExam | undefined>;
+  getPracticeExamWithResults(examId: string): Promise<{ exam: PracticeExam; results: PracticeExamResult[] } | undefined>;
   createPracticeExam(exam: InsertPracticeExam): Promise<PracticeExam>;
+  createPracticeExamResult(result: InsertPracticeExamResult): Promise<PracticeExamResult>;
 
   // Study Notes methods
   getStudyNote(userId: string, week: number): Promise<StudyNote | undefined>;
@@ -119,7 +129,9 @@ export interface IStorage {
 
   // Pretest methods
   getLatestPretestResult(userId: string): Promise<PretestResult | undefined>;
+  getPretestWithResults(pretestId: string): Promise<{ pretest: PretestResult; results: PretestQuestionResult[] } | undefined>;
   savePretestResult(result: InsertPretestResult): Promise<PretestResult>;
+  createPretestQuestionResult(result: InsertPretestQuestionResult): Promise<PretestQuestionResult>;
 
   // User Preferences methods
   getUserPreferences(userId: string): Promise<UserPreferences | undefined>;
@@ -214,6 +226,13 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(quizResults.userId, userId), eq(quizResults.domain, domain)));
   }
 
+  async getQuizResultsBySession(sessionId: string): Promise<QuizResult[]> {
+    return await db
+      .select()
+      .from(quizResults)
+      .where(eq(quizResults.sessionId, sessionId));
+  }
+
   async createQuizResult(result: InsertQuizResult): Promise<QuizResult> {
     const [created] = await db
       .insert(quizResults)
@@ -241,6 +260,19 @@ export class DatabaseStorage implements IStorage {
       .from(quizSessions)
       .where(and(eq(quizSessions.userId, userId), eq(quizSessions.domain, domain)))
       .orderBy(desc(quizSessions.completedAt));
+  }
+
+  async getQuizSessionWithResults(sessionId: string): Promise<{ session: QuizSession; results: QuizResult[] } | undefined> {
+    const [session] = await db
+      .select()
+      .from(quizSessions)
+      .where(eq(quizSessions.id, sessionId));
+    
+    if (!session) return undefined;
+
+    const results = await this.getQuizResultsBySession(sessionId);
+    
+    return { session, results };
   }
 
   async createQuizSession(session: InsertQuizSession): Promise<QuizSession> {
@@ -336,6 +368,30 @@ export class DatabaseStorage implements IStorage {
     const [created] = await db
       .insert(practiceExams)
       .values({ ...exam, completedAt: new Date() })
+      .returning();
+    return created;
+  }
+
+  async getPracticeExamWithResults(examId: string): Promise<{ exam: PracticeExam; results: PracticeExamResult[] } | undefined> {
+    const [exam] = await db
+      .select()
+      .from(practiceExams)
+      .where(eq(practiceExams.id, examId));
+    
+    if (!exam) return undefined;
+
+    const results = await db
+      .select()
+      .from(practiceExamResults)
+      .where(eq(practiceExamResults.examId, examId));
+    
+    return { exam, results };
+  }
+
+  async createPracticeExamResult(result: InsertPracticeExamResult): Promise<PracticeExamResult> {
+    const [created] = await db
+      .insert(practiceExamResults)
+      .values(result)
       .returning();
     return created;
   }
@@ -730,6 +786,30 @@ export class DatabaseStorage implements IStorage {
       .values(resultData)
       .returning();
     return result;
+  }
+
+  async getPretestWithResults(pretestId: string): Promise<{ pretest: PretestResult; results: PretestQuestionResult[] } | undefined> {
+    const [pretest] = await db
+      .select()
+      .from(pretestResults)
+      .where(eq(pretestResults.id, pretestId));
+    
+    if (!pretest) return undefined;
+
+    const results = await db
+      .select()
+      .from(pretestQuestionResults)
+      .where(eq(pretestQuestionResults.pretestId, pretestId));
+    
+    return { pretest, results };
+  }
+
+  async createPretestQuestionResult(result: InsertPretestQuestionResult): Promise<PretestQuestionResult> {
+    const [created] = await db
+      .insert(pretestQuestionResults)
+      .values(result)
+      .returning();
+    return created;
   }
 
   // User Preferences methods

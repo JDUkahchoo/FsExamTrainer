@@ -32,7 +32,20 @@ export default function PretestPage() {
 
   // Mutation to save pretest results
   const savePretestMutation = useMutation({
-    mutationFn: (data: { domainScores: any; totalCorrect: number; totalQuestions: number }) =>
+    mutationFn: async (data: { 
+      domainScores: any; 
+      totalCorrect: number; 
+      totalQuestions: number;
+      questionResults: Array<{
+        questionId: string;
+        domain: string;
+        questionText: string;
+        selectedAnswer: number;
+        correctAnswer: number;
+        isCorrect: boolean;
+        explanation: string;
+      }>;
+    }) =>
       apiRequest('POST', '/api/pretest/results', data),
     onSuccess: () => {
       // Navigate to results page
@@ -64,6 +77,15 @@ export default function PretestPage() {
     // Calculate results
     const domainScores: Record<Domain, { correct: number; total: number }> = {} as any;
     let totalCorrect = 0;
+    const questionResults: Array<{
+      questionId: string;
+      domain: string;
+      questionText: string;
+      selectedAnswer: number;
+      correctAnswer: number;
+      isCorrect: boolean;
+      explanation: string;
+    }> = [];
 
     PRETEST_QUESTIONS.forEach((question, index) => {
       const domain = question.domain as Domain;
@@ -73,17 +95,31 @@ export default function PretestPage() {
       domainScores[domain].total++;
 
       const userAnswer = answers[index];
-      if (userAnswer === question.correctAnswer) {
+      const isCorrect = userAnswer === question.correctAnswer;
+      
+      if (isCorrect) {
         domainScores[domain].correct++;
         totalCorrect++;
       }
+
+      // Save individual question result (use -1 for unanswered)
+      questionResults.push({
+        questionId: `pretest-q${index}`,
+        domain: question.domain,
+        questionText: question.question,
+        selectedAnswer: userAnswer !== undefined ? userAnswer : -1,
+        correctAnswer: question.correctAnswer,
+        isCorrect,
+        explanation: question.explanation
+      });
     });
 
     // Save results
     savePretestMutation.mutate({
       domainScores,
       totalCorrect,
-      totalQuestions: PRETEST_QUESTIONS.length
+      totalQuestions: PRETEST_QUESTIONS.length,
+      questionResults
     });
   };
 

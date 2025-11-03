@@ -171,6 +171,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/quiz/sessions/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const sessionId = req.params.id;
+      const data = await storage.getQuizSessionWithResults(sessionId);
+      
+      if (!data) {
+        return res.status(404).json({ error: "Quiz session not found" });
+      }
+      
+      // Verify ownership
+      if (data.session.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching quiz session with results:", error);
+      res.status(500).json({ error: "Failed to fetch quiz session details" });
+    }
+  });
+
   // Quiz Draft routes (for resume functionality)
   app.get("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
     try {
@@ -326,12 +348,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/exams", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertPracticeExamSchema.parse({ ...req.body, userId });
+      const { questionResults, ...summaryData } = req.body;
+      
+      // Save exam summary
+      const data = insertPracticeExamSchema.parse({ ...summaryData, userId });
       const exam = await storage.createPracticeExam(data);
+      
+      // Validate and save individual question results if provided
+      if (questionResults && Array.isArray(questionResults)) {
+        // Import validation schema
+        const { clientPracticeExamQuestionResultSchema } = await import("@shared/schema");
+        
+        for (const qr of questionResults) {
+          // Validate client data (without userId/examId)
+          const validatedQr = clientPracticeExamQuestionResultSchema.parse(qr);
+          
+          // Add server-side userId and examId
+          await storage.createPracticeExamResult({
+            ...validatedQr,
+            examId: exam.id,
+            userId, // Derived from session, not client
+            explanation: validatedQr.explanation || ""
+          });
+        }
+      }
+      
       res.json(exam);
     } catch (error) {
       console.error("Error saving exam:", error);
       res.status(400).json({ error: "Invalid practice exam data" });
+    }
+  });
+
+  app.get("/api/exams/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const examId = req.params.id;
+      const data = await storage.getPracticeExamWithResults(examId);
+      
+      if (!data) {
+        return res.status(404).json({ error: "Practice exam not found" });
+      }
+      
+      // Verify ownership
+      if (data.exam.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching practice exam with results:", error);
+      res.status(500).json({ error: "Failed to fetch practice exam details" });
     }
   });
 
@@ -603,8 +670,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/pretest/results", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = insertPretestResultSchema.parse({ ...req.body, userId });
+      const { questionResults, ...summaryData } = req.body;
+      
+      // Save pretest summary
+      const data = insertPretestResultSchema.parse({ ...summaryData, userId });
       const result = await storage.savePretestResult(data);
+      
+      // Validate and save individual question results if provided
+      if (questionResults && Array.isArray(questionResults)) {
+        // Import validation schema
+        const { clientPretestQuestionResultSchema } = await import("@shared/schema");
+        
+        for (const qr of questionResults) {
+          // Validate client data (without userId/pretestId)
+          const validatedQr = clientPretestQuestionResultSchema.parse(qr);
+          
+          // Add server-side userId and pretestId
+          await storage.createPretestQuestionResult({
+            ...validatedQr,
+            pretestId: result.id,
+            userId, // Derived from session, not client
+            explanation: validatedQr.explanation || ""
+          });
+        }
+      }
       
       // Update user preferences to mark pretest as completed
       await storage.upsertUserPreferences({ userId, hasCompletedPretest: true });
@@ -613,6 +702,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error saving pretest result:", error);
       res.status(400).json({ error: "Invalid pretest result data" });
+    }
+  });
+
+  app.get("/api/pretest/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const pretestId = req.params.id;
+      const data = await storage.getPretestWithResults(pretestId);
+      
+      if (!data) {
+        return res.status(404).json({ error: "Pretest not found" });
+      }
+      
+      // Verify ownership
+      if (data.pretest.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching pretest with results:", error);
+      res.status(500).json({ error: "Failed to fetch pretest details" });
     }
   });
 
