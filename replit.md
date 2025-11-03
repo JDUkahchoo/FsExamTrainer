@@ -40,9 +40,20 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Study Cycles Architecture:** Database tracks each cycle with unique (userId, cycleNumber) constraint. Cycle completion calculates stats only from data within that cycle's timeframe (quizzes, exams, daily logs filtered by cycle startedAt timestamp). Starting a new cycle resets weekly checkboxes but preserves all quiz/exam/log history. User preferences track current cycle number and optional exam date.
 
 ## Recent Changes (November 3, 2025)
+
+### Session 1: Core Bug Fixes
 -   **Bug Fix - Exam Date Handling:** Fixed exam date update failures by adding preprocessing to the Zod schema to handle ISO date strings from HTML date inputs. The schema now converts string dates to Date objects and properly handles null values for clearing dates using `z.preprocess` with `z.date().nullable().optional()`.
 -   **Bug Fix - Resources Mobile Layout:** Fixed tab overflow on mobile devices by implementing responsive grid breakpoints (`grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7`) with flex-col/flex-row tab layouts. Tabs now display in 2 columns on mobile, 3 on small screens, 4 on medium, and 7 on large screens.
--   **Testing:** Comprehensive end-to-end tests verified exam date setting/clearing/resetting, daily log creation, pretest completion, and responsive Resources layout across all viewport sizes.
+-   **Bug Fix - Flashcard Reset Button:** Fixed non-functional reset button by removing unnecessary empty object parameter from DELETE request and adding proper error handling with try-catch.
+
+### Session 2: Critical Functionality Fixes
+-   **Bug Fix - Day Streak Tracking:** Fixed streak counter not updating by connecting `dailyLogs` and `dailyActivity` tables. The `createDailyLog` method now automatically creates a `dailyActivity` record for streak calculation.
+-   **Bug Fix - Date/Time Recording:** Fixed timezone issues where selected dates appeared offset by a day. Daily log form now creates dates in local timezone by appending 'T12:00:00' instead of relying on UTC midnight conversion.
+-   **Bug Fix - Streak API Consistency:** Fixed inconsistent streak values between `/api/progress/stats` and `/api/progress/overall` by updating both endpoints to use the proper `calculateStreak` method from storage instead of simplified hardcoded logic.
+-   **Pre-test Results:** Verified pre-test results display correctly after completion. The routing and API endpoints are functioning as expected.
+
+### Testing
+-   Comprehensive end-to-end tests verified exam date handling, flashcard reset, daily log creation with correct dates, streak tracking, and API consistency across all endpoints.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
