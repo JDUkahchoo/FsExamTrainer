@@ -779,6 +779,25 @@ export class DatabaseStorage implements IStorage {
       .insert(dailyLogs)
       .values(logData)
       .returning();
+    
+    // Also create/update dailyActivity for streak tracking
+    const dateStr = new Date(logData.date).toISOString().split('T')[0];
+    const existingActivity = await db
+      .select()
+      .from(dailyActivity)
+      .where(and(
+        eq(dailyActivity.userId, logData.userId),
+        eq(dailyActivity.date, dateStr)
+      ))
+      .limit(1);
+    
+    if (existingActivity.length === 0) {
+      await db.insert(dailyActivity).values({
+        userId: logData.userId,
+        date: dateStr,
+      });
+    }
+    
     return log;
   }
 

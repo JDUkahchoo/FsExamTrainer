@@ -99,8 +99,11 @@ export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormP
 
     const timeMinutes = parseTimeToMinutes(timeSpent);
     
+    // Create date in local timezone by appending time component
+    const localDate = new Date(date + 'T12:00:00');
+    
     const logData = {
-      date: new Date(date),
+      date: localDate,
       activities: activities.trim(),
       notes: notes.trim() || undefined,
       weekNumber: weekNumber ? parseInt(weekNumber) : undefined,

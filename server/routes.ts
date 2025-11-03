@@ -406,9 +406,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ? Math.round((latestExam.correctAnswers / latestExam.totalQuestions) * 100)
         : 0;
 
-      // Study streak (simplified - based on consecutive unique dates)
-      let currentStreak = totalStudyDays > 0 ? 1 : 0;
-      let longestStreak = currentStreak;
+      // Study streak (use proper calculation from storage)
+      const streakData = await storage.calculateStreak(userId);
+      const currentStreak = streakData.currentStreak;
+      const longestStreak = streakData.longestStreak;
 
       res.json({
         totalStudyDays,
