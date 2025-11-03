@@ -128,11 +128,18 @@ export default function FlashcardsPage() {
   };
 
   const handleReset = async () => {
-    // Delete all flashcard mastery
-    await apiRequest('DELETE', '/api/flashcards/mastery', {});
-    queryClient.invalidateQueries({ queryKey: ['/api/flashcards/mastery'] });
-    setCurrentIndex(0);
-    setIsFlipped(false);
+    try {
+      // Delete all flashcard mastery
+      await apiRequest('DELETE', '/api/flashcards/mastery');
+      queryClient.invalidateQueries({ queryKey: ['/api/flashcards/mastery'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/flashcards/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
+      setCurrentIndex(0);
+      setIsFlipped(false);
+    } catch (error) {
+      console.error('Failed to reset flashcard mastery:', error);
+    }
   };
 
   const domainConfig = getDomainConfig(currentCard.domain);
