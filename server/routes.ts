@@ -699,9 +699,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.upsertUserPreferences({ userId, hasCompletedPretest: true });
       
       res.json(result);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving pretest result:", error);
-      res.status(400).json({ error: "Invalid pretest result data" });
+      const errorMessage = error?.message || "Invalid pretest result data";
+      res.status(400).json({ error: errorMessage });
     }
   });
 

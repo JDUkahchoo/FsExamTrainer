@@ -10,10 +10,12 @@ import { PRETEST_QUESTIONS } from '@shared/data/pretestQuestions';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useLocation } from 'wouter';
+import { useToast } from '@/hooks/use-toast';
 import type { Domain } from '@shared/schema';
 
 export default function PretestPage() {
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [timeElapsed, setTimeElapsed] = useState(0); // in seconds
@@ -50,6 +52,14 @@ export default function PretestPage() {
     onSuccess: () => {
       // Navigate to results page
       setLocation('/pretest/results');
+    },
+    onError: (error: any) => {
+      console.error('Pretest submission error:', error);
+      toast({
+        title: "Submission Failed",
+        description: error?.message || "Failed to submit pretest results. Please try again.",
+        variant: "destructive",
+      });
     }
   });
 

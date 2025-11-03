@@ -15,7 +15,7 @@ export default function PretestResultsPage() {
   const [, setLocation] = useLocation();
 
   // Fetch latest pretest result
-  const { data: pretestResult, isLoading } = useQuery<PretestResult>({
+  const { data: pretestResult, isLoading, isError, error } = useQuery<PretestResult>({
     queryKey: ['/api/pretest/latest'],
   });
 
@@ -53,12 +53,30 @@ export default function PretestResultsPage() {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Card className="p-8">
+          <Alert variant="destructive" className="mb-4">
+            <AlertTriangle className="w-4 h-4" />
+            <AlertDescription>
+              Failed to load pretest results. {error?.message || 'Please try again later.'}
+            </AlertDescription>
+          </Alert>
+          <Button onClick={() => setLocation('/pretest')} data-testid="button-retake-pretest">
+            Retake Diagnostic Test
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   if (!pretestResult) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Card className="p-8">
           <p>No pretest results found. Please take the pretest first.</p>
-          <Button onClick={() => setLocation('/pretest')} className="mt-4">
+          <Button onClick={() => setLocation('/pretest')} className="mt-4" data-testid="button-take-pretest">
             Take Diagnostic Test
           </Button>
         </Card>
