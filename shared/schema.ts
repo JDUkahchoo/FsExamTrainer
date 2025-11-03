@@ -476,6 +476,17 @@ export const userPreferencesRelations = relations(userPreferences, ({ one }) => 
 export const insertUserPreferencesSchema = createInsertSchema(userPreferences).omit({
   id: true,
   updatedAt: true,
+}).extend({
+  examDate: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return null;
+      if (typeof val === 'string' && val.trim() === '') return null;
+      if (val instanceof Date) return val;
+      if (typeof val === 'string') return new Date(val);
+      return val;
+    },
+    z.date().nullable()
+  ).optional(),
 });
 
 export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
