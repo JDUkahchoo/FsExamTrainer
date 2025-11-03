@@ -55,6 +55,27 @@ The application features a comprehensive UI/UX with domain-specific color coding
 ### Testing
 -   Comprehensive end-to-end tests verified exam date handling, flashcard reset, daily log creation with correct dates, streak tracking, and API consistency across all endpoints.
 
+### Session 3: Detailed Results Tracking System
+-   **Feature - Individual Question Tracking:** Implemented comprehensive question-level tracking for pretests and practice exams. Database now stores individual question results including question text, selected/correct answers, domain, and explanations.
+-   **Security Enhancement - Authorization & Validation:** Added multi-layer security for detailed results:
+    - Created client-side Zod validation schemas (`clientPracticeExamQuestionResultSchema`, `clientPretestQuestionResultSchema`) that exclude sensitive fields (userId, examId, pretestId)
+    - Server-side validation through Zod parse before database insertion
+    - userId derived exclusively from authenticated session (`req.user.claims.sub`), never from client payloads
+    - GET detail endpoints verify ownership and return 403 for unauthorized access attempts
+-   **Bug Fix - Unanswered Questions:** Fixed NOT NULL constraint violations by using -1 as sentinel value for unanswered questions in both pretest and exam submissions.
+-   **Database Tables Added:**
+    - `practice_exam_results`: Links to `practice_exams` table, stores individual question results with foreign key cascading
+    - `pretest_question_results`: Links to `pretest_results` table, stores individual question results with foreign key cascading
+-   **API Endpoints Added:**
+    - GET `/api/quiz/sessions/:id` - Retrieve detailed quiz session with all question results
+    - GET `/api/exams/:id` - Retrieve detailed practice exam with all question results
+    - GET `/api/pretest/:id` - Retrieve detailed pretest with all question results
+-   **Architecture Notes:**
+    - Question results stored with full context (question text, explanations) for historical accuracy
+    - Sentinel value -1 used for unanswered questions to maintain NOT NULL constraints
+    - Server-side validation prevents data injection and cross-user data leakage
+    - Foundation ready for detailed results pages and improvement tracking features
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.
