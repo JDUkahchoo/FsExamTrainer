@@ -649,6 +649,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         studyMode: req.body.studyMode ?? existing?.studyMode ?? 'standard',
         hasCompletedPretest: req.body.hasCompletedPretest ?? existing?.hasCompletedPretest ?? false,
         hasSeenWelcome: req.body.hasSeenWelcome ?? existing?.hasSeenWelcome ?? false,
+        examDate: req.body.examDate !== undefined ? req.body.examDate : existing?.examDate,
+        currentCycle: req.body.currentCycle ?? existing?.currentCycle ?? 1,
       };
       
       const data = insertUserPreferencesSchema.parse(merged);
