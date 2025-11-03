@@ -39,6 +39,11 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Weekly progress calculation now includes both checklist items AND daily log count, so logging daily activities increases weekly completion percentage.
 -   **Study Cycles Architecture:** Database tracks each cycle with unique (userId, cycleNumber) constraint. Cycle completion calculates stats only from data within that cycle's timeframe (quizzes, exams, daily logs filtered by cycle startedAt timestamp). Starting a new cycle resets weekly checkboxes but preserves all quiz/exam/log history. User preferences track current cycle number and optional exam date.
 
+## Recent Changes (November 3, 2025)
+-   **Bug Fix - Exam Date Handling:** Fixed exam date update failures by adding preprocessing to the Zod schema to handle ISO date strings from HTML date inputs. The schema now converts string dates to Date objects and properly handles null values for clearing dates using `z.preprocess` with `z.date().nullable().optional()`.
+-   **Bug Fix - Resources Mobile Layout:** Fixed tab overflow on mobile devices by implementing responsive grid breakpoints (`grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7`) with flex-col/flex-row tab layouts. Tabs now display in 2 columns on mobile, 3 on small screens, 4 on medium, and 7 on large screens.
+-   **Testing:** Comprehensive end-to-end tests verified exam date setting/clearing/resetting, daily log creation, pretest completion, and responsive Resources layout across all viewport sizes.
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.
