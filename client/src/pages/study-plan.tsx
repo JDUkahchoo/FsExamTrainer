@@ -38,6 +38,7 @@ import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
+import { getWeeklyLessonsByMode } from '@/lib/study-plan-logic';
 
 export default function StudyPlanPage() {
   const [, navigate] = useLocation();
@@ -88,10 +89,9 @@ export default function StudyPlanPage() {
     queryKey: ['/api/lessons/progress']
   });
 
-  // Fetch lessons for the expanded week
-  const { data: weekLessons = [] } = useQuery<any[]>({
-    queryKey: ['/api/lessons/week', expandedWeek],
-    enabled: expandedWeek !== null,
+  // Fetch ALL lessons for study plan distribution
+  const { data: allLessons = [] } = useQuery<any[]>({
+    queryKey: ['/api/lessons']
   });
 
   // Identify weak domains from pretest results (accuracy < 60%)
@@ -106,6 +106,31 @@ export default function StudyPlanPage() {
     });
     return weak;
   }, [pretestResult]);
+
+  // Convert pretest results to domain scores for study plan logic
+  const domainScores = useMemo(() => {
+    if (!pretestResult?.domainScores) return [];
+    
+    // domainScores is stored as: { "1": { correct: number, total: number, accuracy: number }, ... }
+    const scores = pretestResult.domainScores as Record<string, { correct: number; total: number; accuracy: number }>;
+    
+    // Convert to array format expected by study plan logic
+    return Object.entries(scores).map(([domainNumStr, stats]) => {
+      const domainNumber = parseInt(domainNumStr);
+      return {
+        domainNumber,
+        correct: stats.correct,
+        total: stats.total,
+        percentage: stats.accuracy
+      };
+    });
+  }, [pretestResult]);
+
+  // Organize lessons by week based on study mode
+  const weeklyLessonsMap = useMemo(() => {
+    const studyMode = (preferences?.studyMode || 'standard') as import('@shared/schema').StudyMode;
+    return getWeeklyLessonsByMode(studyMode, allLessons, domainScores);
+  }, [preferences?.studyMode, allLessons, domainScores]);
 
   // Check if a week covers any weak domains
   const coversWeakDomain = (domains: Domain[]) => {
@@ -663,14 +688,16 @@ export default function StudyPlanPage() {
                   />
 
                   {/* Interactive Lessons Section */}
-                  {weekLessons.length > 0 && (
-                    <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
-                      <div className="flex items-center gap-2 text-primary font-semibold uppercase text-sm tracking-wider mb-4">
-                        <BookOpen className="w-4 h-4" />
-                        Interactive Lessons ({weekLessons.length})
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {weekLessons.map((lesson: any) => {
+                  {(() => {
+                    const currentWeekLessons = weeklyLessonsMap.get(plan.week) || [];
+                    return currentWeekLessons.length > 0 && (
+                      <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
+                        <div className="flex items-center gap-2 text-primary font-semibold uppercase text-sm tracking-wider mb-4">
+                          <BookOpen className="w-4 h-4" />
+                          Interactive Lessons ({currentWeekLessons.length})
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {currentWeekLessons.map((lesson: any) => {
                           const progress = lessonProgressData.find((p: any) => p.lessonId === lesson.id);
                           const isCompleted = progress?.completed || false;
                           const hasAttempted = !!progress;
@@ -711,10 +738,11 @@ export default function StudyPlanPage() {
                               </div>
                             </Card>
                           );
-                        })}
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
                   
                   {/* Daily Logs Section */}
                   <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
