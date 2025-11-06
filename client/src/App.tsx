@@ -18,6 +18,7 @@ import ProgressPage from "@/pages/progress";
 import ResourcesPage from "@/pages/resources";
 import PretestPage from "@/pages/pretest";
 import PretestResultsPage from "@/pages/pretest-results";
+import LessonPage from "@/pages/lesson";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -47,6 +48,7 @@ function Router() {
           <Route path="/resources" component={ResourcesPage} />
           <Route path="/pretest" component={PretestPage} />
           <Route path="/pretest/results" component={PretestResultsPage} />
+          <Route path="/lesson/:id" component={LessonPage} />
         </>
       )}
       <Route component={NotFound} />
