@@ -36,7 +36,13 @@ import type {
   UpsertUser,
   StudyStreak,
   InsertStudyCycle,
-  StudyCycle
+  StudyCycle,
+  Lesson,
+  InsertLesson,
+  LessonQuestion,
+  InsertLessonQuestion,
+  LessonProgress,
+  InsertLessonProgress
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -57,7 +63,10 @@ import {
   customWeeks,
   userPreferences,
   dailyLogs,
-  studyCycles
+  studyCycles,
+  lessons,
+  lessonQuestions,
+  lessonProgress
 } from "@shared/schema";
 import { eq, and, desc, gte, sql } from "drizzle-orm";
 
@@ -149,6 +158,15 @@ export interface IStorage {
   getCurrentStudyCycle(userId: string): Promise<StudyCycle | undefined>;
   completeCurrentCycle(userId: string): Promise<StudyCycle>;
   startNewCycle(userId: string): Promise<StudyCycle>;
+
+  // Interactive Lesson methods
+  getLessonsByWeek(week: number): Promise<Lesson[]>;
+  getLessonWithQuestions(lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
+  getLessonProgress(userId: string, lessonId: string): Promise<LessonProgress | undefined>;
+  getAllLessonProgress(userId: string): Promise<LessonProgress[]>;
+  upsertLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
+  createLesson(lesson: InsertLesson): Promise<Lesson>;
+  createLessonQuestion(question: InsertLessonQuestion): Promise<LessonQuestion>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1032,6 +1050,88 @@ export class DatabaseStorage implements IStorage {
       .returning();
 
     return newCycle;
+  }
+
+  // Interactive Lesson methods
+  async getLessonsByWeek(week: number): Promise<Lesson[]> {
+    return await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.week, week))
+      .orderBy(lessons.orderIndex);
+  }
+
+  async getLessonWithQuestions(lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined> {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.id, lessonId));
+
+    if (!lesson) return undefined;
+
+    const questions = await db
+      .select()
+      .from(lessonQuestions)
+      .where(eq(lessonQuestions.lessonId, lessonId))
+      .orderBy(lessonQuestions.orderIndex);
+
+    return { lesson, questions };
+  }
+
+  async getLessonProgress(userId: string, lessonId: string): Promise<LessonProgress | undefined> {
+    const [progress] = await db
+      .select()
+      .from(lessonProgress)
+      .where(and(
+        eq(lessonProgress.userId, userId),
+        eq(lessonProgress.lessonId, lessonId)
+      ));
+    return progress || undefined;
+  }
+
+  async getAllLessonProgress(userId: string): Promise<LessonProgress[]> {
+    return await db
+      .select()
+      .from(lessonProgress)
+      .where(eq(lessonProgress.userId, userId));
+  }
+
+  async upsertLessonProgress(progressData: InsertLessonProgress): Promise<LessonProgress> {
+    const existing = await this.getLessonProgress(progressData.userId, progressData.lessonId);
+
+    if (existing) {
+      const [updated] = await db
+        .update(lessonProgress)
+        .set(progressData)
+        .where(and(
+          eq(lessonProgress.userId, progressData.userId),
+          eq(lessonProgress.lessonId, progressData.lessonId)
+        ))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(lessonProgress)
+        .values(progressData)
+        .returning();
+      return created;
+    }
+  }
+
+  async createLesson(lessonData: InsertLesson): Promise<Lesson> {
+    const [lesson] = await db
+      .insert(lessons)
+      .values(lessonData)
+      .returning();
+    return lesson;
+  }
+
+  async createLessonQuestion(questionData: InsertLessonQuestion): Promise<LessonQuestion> {
+    const [question] = await db
+      .insert(lessonQuestions)
+      .values(questionData)
+      .returning();
+    return question;
   }
 }
 

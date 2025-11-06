@@ -660,3 +660,101 @@ export const insertStudyCycleSchema = createInsertSchema(studyCycles).omit({
 
 export type InsertStudyCycle = z.infer<typeof insertStudyCycleSchema>;
 export type StudyCycle = typeof studyCycles.$inferSelect;
+
+// --- Interactive Lessons ---
+
+export type QuestionType = 'multiple_choice' | 'fill_in_blank' | 'drag_drop';
+
+export const lessons = pgTable("lessons", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  week: integer("week").notNull(), // Which week this lesson belongs to
+  domain: text("domain").notNull(), // NCEES domain
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  content: text("content").notNull(), // Lesson content/explanation
+  orderIndex: integer("order_index").notNull(), // Order within the week
+  estimatedMinutes: integer("estimated_minutes").notNull().default(15),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const lessonsRelations = relations(lessons, ({ many }) => ({
+  questions: many(lessonQuestions),
+  progress: many(lessonProgress),
+}));
+
+export const insertLessonSchema = createInsertSchema(lessons).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertLesson = z.infer<typeof insertLessonSchema>;
+export type Lesson = typeof lessons.$inferSelect;
+
+// --- Lesson Questions ---
+
+export const lessonQuestions = pgTable("lesson_questions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  lessonId: varchar("lesson_id").notNull().references(() => lessons.id, { onDelete: 'cascade' }),
+  questionType: text("question_type").notNull(), // 'multiple_choice', 'fill_in_blank', 'drag_drop'
+  questionText: text("question_text").notNull(),
+  options: jsonb("options"), // For multiple choice: string[], for drag_drop: { items: string[], correctOrder: number[] }
+  correctAnswer: text("correct_answer").notNull(), // For MC: index as string, for fill_in: answer text, for drag: JSON array
+  explanation: text("explanation").notNull(),
+  orderIndex: integer("order_index").notNull(), // Order within the lesson
+  points: integer("points").notNull().default(10),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const lessonQuestionsRelations = relations(lessonQuestions, ({ one }) => ({
+  lesson: one(lessons, {
+    fields: [lessonQuestions.lessonId],
+    references: [lessons.id],
+  }),
+}));
+
+export const insertLessonQuestionSchema = createInsertSchema(lessonQuestions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertLessonQuestion = z.infer<typeof insertLessonQuestionSchema>;
+export type LessonQuestion = typeof lessonQuestions.$inferSelect;
+
+// --- Lesson Progress ---
+
+export const lessonProgress = pgTable("lesson_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  lessonId: varchar("lesson_id").notNull().references(() => lessons.id, { onDelete: 'cascade' }),
+  completed: boolean("completed").notNull().default(false),
+  score: integer("score"), // Total points earned
+  totalPoints: integer("total_points"), // Total points possible
+  attempts: integer("attempts").notNull().default(0),
+  timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  lastAttemptAt: timestamp("last_attempt_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  uniqueUserLesson: sql`UNIQUE (user_id, lesson_id)`,
+}));
+
+export const lessonProgressRelations = relations(lessonProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [lessonProgress.userId],
+    references: [users.id],
+  }),
+  lesson: one(lessons, {
+    fields: [lessonProgress.lessonId],
+    references: [lessons.id],
+  }),
+}));
+
+export const insertLessonProgressSchema = createInsertSchema(lessonProgress).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertLessonProgress = z.infer<typeof insertLessonProgressSchema>;
+export type LessonProgress = typeof lessonProgress.$inferSelect;

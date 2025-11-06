@@ -873,6 +873,150 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Interactive Lesson routes
+  app.get("/api/lessons/week/:week", isAuthenticated, async (req: any, res) => {
+    try {
+      const week = parseInt(req.params.week);
+      const lessons = await storage.getLessonsByWeek(week);
+      res.json(lessons);
+    } catch (error) {
+      console.error("Error fetching lessons for week:", error);
+      res.status(500).json({ error: "Failed to fetch lessons" });
+    }
+  });
+
+  app.get("/api/lessons/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const lessonId = req.params.id;
+      const data = await storage.getLessonWithQuestions(lessonId);
+      
+      if (!data) {
+        return res.status(404).json({ error: "Lesson not found" });
+      }
+
+      // Sanitize questions - don't expose correct answers or explanations
+      const sanitizedQuestions = data.questions.map((q) => {
+        let sanitizedOptions = q.options;
+        
+        // For drag-drop, only send the items array, not the correct order
+        if (q.questionType === 'drag_drop' && q.options) {
+          const dragDropData = q.options as { items: string[]; correctOrder?: number[] };
+          sanitizedOptions = { items: dragDropData.items };
+        }
+
+        return {
+          id: q.id,
+          lessonId: q.lessonId,
+          questionType: q.questionType,
+          questionText: q.questionText,
+          options: sanitizedOptions,
+          orderIndex: q.orderIndex,
+          points: q.points,
+          // correctAnswer and explanation are NOT included - only revealed after submission
+        };
+      });
+      
+      res.json({
+        lesson: data.lesson,
+        questions: sanitizedQuestions,
+      });
+    } catch (error) {
+      console.error("Error fetching lesson:", error);
+      res.status(500).json({ error: "Failed to fetch lesson" });
+    }
+  });
+
+  app.get("/api/lessons/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getAllLessonProgress(userId);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error fetching lesson progress:", error);
+      res.status(500).json({ error: "Failed to fetch lesson progress" });
+    }
+  });
+
+  app.post("/api/lessons/:id/submit", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const lessonId = req.params.id;
+      const { answers, timeSpentSeconds = 0 } = req.body;
+
+      // Get lesson with questions
+      const lessonData = await storage.getLessonWithQuestions(lessonId);
+      if (!lessonData) {
+        return res.status(404).json({ error: "Lesson not found" });
+      }
+
+      const { lesson, questions } = lessonData;
+
+      // Validate lesson has questions
+      if (questions.length === 0) {
+        return res.status(400).json({ error: "Lesson has no questions" });
+      }
+
+      // Calculate score
+      let score = 0;
+      const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
+      const results = questions.map((question) => {
+        const userAnswer = answers[question.id];
+        let isCorrect = false;
+
+        // Check answer based on question type
+        if (question.questionType === 'multiple_choice') {
+          isCorrect = userAnswer === question.correctAnswer;
+        } else if (question.questionType === 'fill_in_blank') {
+          isCorrect = userAnswer?.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
+        } else if (question.questionType === 'drag_drop') {
+          isCorrect = JSON.stringify(userAnswer) === question.correctAnswer;
+        }
+
+        if (isCorrect) {
+          score += question.points;
+        }
+
+        return {
+          questionId: question.id,
+          userAnswer,
+          correctAnswer: question.correctAnswer,
+          isCorrect,
+          explanation: question.explanation,
+          points: isCorrect ? question.points : 0,
+        };
+      });
+
+      // Update or create progress
+      const existingProgress = await storage.getLessonProgress(userId, lessonId);
+      const attempts = (existingProgress?.attempts || 0) + 1;
+      const completed = score >= totalPoints * 0.7; // 70% to pass
+
+      const progress = await storage.upsertLessonProgress({
+        userId,
+        lessonId,
+        completed,
+        score,
+        totalPoints,
+        attempts,
+        timeSpentSeconds: (existingProgress?.timeSpentSeconds || 0) + timeSpentSeconds,
+        lastAttemptAt: new Date(),
+        completedAt: completed ? new Date() : existingProgress?.completedAt,
+      });
+
+      res.json({
+        progress,
+        results,
+        passed: completed,
+        score,
+        totalPoints,
+        percentage: Math.round((score / totalPoints) * 100),
+      });
+    } catch (error: any) {
+      console.error("Error submitting lesson:", error);
+      res.status(400).json({ error: error.message || "Failed to submit lesson" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
