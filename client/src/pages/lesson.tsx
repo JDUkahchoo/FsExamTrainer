@@ -138,6 +138,40 @@ export default function LessonPage() {
   }
 
   const { lesson, questions } = lessonData;
+
+  // Handle lessons with no questions yet
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Card className="max-w-2xl">
+          <CardHeader>
+            <CardTitle>{lesson.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">{lesson.description}</p>
+            <div className="bg-muted p-4 rounded-lg">
+              <p className="text-sm">
+                <strong>Coming Soon!</strong> This lesson is currently being developed. 
+                Interactive questions will be available soon.
+              </p>
+              <p className="text-sm mt-2 text-muted-foreground">
+                {lesson.content}
+              </p>
+            </div>
+            <Button
+              className="w-full"
+              onClick={() => navigate("/study-plan")}
+              data-testid="button-back-to-study-plan"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Study Plan
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 

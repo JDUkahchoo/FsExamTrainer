@@ -40,6 +40,7 @@ export function getSession() {
     cookie: {
       httpOnly: true,
       secure: true,
+      sameSite: 'lax', // Fix for iPad/Safari login issues
       maxAge: sessionTtl,
     },
   });
