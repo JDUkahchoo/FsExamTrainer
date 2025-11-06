@@ -98,7 +98,7 @@ async function checkProductionComplete() {
       console.log("   ✓ No user data found in any table");
       console.log("   ✓ Safe to delete and recreate lessons");
       console.log("\n🚀 Next step: Run the migration script");
-      console.log("   NODE_ENV=production tsx server/migrate-production-final.ts");
+      console.log("   NODE_ENV=production tsx server/migrate-production-safe.ts");
     } else {
       console.log("⚠️  CANNOT MIGRATE SAFELY!");
       console.log("   ✗ User data exists in one or more tables");
