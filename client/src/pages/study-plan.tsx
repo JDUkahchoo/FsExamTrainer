@@ -673,25 +673,29 @@ export default function StudyPlanPage() {
                         {weekLessons.map((lesson: any) => {
                           const progress = lessonProgressData.find((p: any) => p.lessonId === lesson.id);
                           const isCompleted = progress?.completed || false;
+                          const hasAttempted = !!progress;
                           const percentage = progress ? Math.round((progress.score / progress.totalPoints) * 100) : 0;
+                          const passed = percentage >= 70;
 
                           return (
-                            <Card key={lesson.id} className={isCompleted ? "border-green-500/50" : ""}>
+                            <Card key={lesson.id} className={isCompleted ? "border-green-500/50" : hasAttempted ? "border-yellow-500/50" : ""}>
                               <div className="p-4 space-y-3">
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1">
                                     <h4 className="font-medium text-sm">{lesson.title}</h4>
                                     <p className="text-xs text-muted-foreground mt-1">{lesson.description}</p>
                                   </div>
-                                  {isCompleted && (
+                                  {isCompleted ? (
                                     <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" data-testid={`icon-lesson-completed-${lesson.id}`} />
+                                  ) : hasAttempted && (
+                                    <CheckCircle2 className="h-5 w-5 text-yellow-500 flex-shrink-0" data-testid={`icon-lesson-attempted-${lesson.id}`} />
                                   )}
                                 </div>
                                 
                                 <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
                                   <span>{lesson.estimatedMinutes} min</span>
                                   {progress && (
-                                    <span className="font-medium">{percentage}%</span>
+                                    <span className={`font-medium ${passed ? 'text-green-600' : 'text-yellow-600'}`}>{percentage}%</span>
                                   )}
                                 </div>
 
@@ -702,7 +706,7 @@ export default function StudyPlanPage() {
                                   onClick={() => navigate(`/lesson/${lesson.id}`)}
                                   data-testid={`button-lesson-${lesson.id}`}
                                 >
-                                  {isCompleted ? 'Review Lesson' : 'Start Lesson'}
+                                  {isCompleted ? 'Review Lesson' : hasAttempted ? 'Retry Lesson' : 'Start Lesson'}
                                 </Button>
                               </div>
                             </Card>

@@ -885,6 +885,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get lesson progress - must come BEFORE /api/lessons/:id to avoid route collision
+  app.get("/api/lessons/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getAllLessonProgress(userId);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error fetching lesson progress:", error);
+      res.status(500).json({ error: "Failed to fetch lesson progress" });
+    }
+  });
+
   app.get("/api/lessons/:id", isAuthenticated, async (req: any, res) => {
     try {
       const lessonId = req.params.id;
@@ -923,17 +935,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching lesson:", error);
       res.status(500).json({ error: "Failed to fetch lesson" });
-    }
-  });
-
-  app.get("/api/lessons/progress", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const progress = await storage.getAllLessonProgress(userId);
-      res.json(progress);
-    } catch (error) {
-      console.error("Error fetching lesson progress:", error);
-      res.status(500).json({ error: "Failed to fetch lesson progress" });
     }
   });
 
