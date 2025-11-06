@@ -21,6 +21,14 @@ export default function PretestPage() {
   const [timeElapsed, setTimeElapsed] = useState(0); // in seconds
   const [testStarted, setTestStarted] = useState(false);
 
+  // Reset state when component mounts (for retakes)
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+    setAnswers({});
+    setTimeElapsed(0);
+    setTestStarted(false);
+  }, []);
+
   // Timer
   useEffect(() => {
     if (!testStarted) return;
