@@ -1053,12 +1053,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Interactive Lesson methods
-  async getLessonsByWeek(week: number): Promise<Lesson[]> {
+  async getLessonsByDomain(domainNumber: number): Promise<Lesson[]> {
     return await db
       .select()
       .from(lessons)
-      .where(eq(lessons.week, week))
+      .where(eq(lessons.domainNumber, domainNumber))
       .orderBy(lessons.orderIndex);
+  }
+
+  async getLessonsByWeek(week: number): Promise<Lesson[]> {
+    // For backward compatibility and Standard mode
+    return await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.suggestedWeek, week))
+      .orderBy(lessons.orderIndex);
+  }
+
+  async getAllLessons(): Promise<Lesson[]> {
+    return await db
+      .select()
+      .from(lessons)
+      .orderBy(lessons.domainNumber, lessons.orderIndex);
   }
 
   async getLessonWithQuestions(lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined> {

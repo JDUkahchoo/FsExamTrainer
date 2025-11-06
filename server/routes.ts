@@ -885,6 +885,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/lessons/domain/:domainNumber", isAuthenticated, async (req: any, res) => {
+    try {
+      const domainNumber = parseInt(req.params.domainNumber);
+      if (Number.isNaN(domainNumber) || domainNumber < 1 || domainNumber > 7) {
+        return res.status(400).json({ error: "Domain number must be between 1 and 7" });
+      }
+      const lessons = await storage.getLessonsByDomain(domainNumber);
+      res.json(lessons);
+    } catch (error) {
+      console.error("Error fetching lessons for domain:", error);
+      res.status(500).json({ error: "Failed to fetch lessons" });
+    }
+  });
+
   // Get lesson progress - must come BEFORE /api/lessons/:id to avoid route collision
   app.get("/api/lessons/progress", isAuthenticated, async (req: any, res) => {
     try {

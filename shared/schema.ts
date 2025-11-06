@@ -667,13 +667,15 @@ export type QuestionType = 'multiple_choice' | 'fill_in_blank' | 'drag_drop';
 
 export const lessons = pgTable("lessons", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  week: integer("week").notNull(), // Which week this lesson belongs to
-  domain: text("domain").notNull(), // NCEES domain
+  domainNumber: integer("domain_number").notNull(), // 1-7 for NCEES domains
+  domain: text("domain").notNull(), // NCEES domain name
   title: text("title").notNull(),
   description: text("description").notNull(),
   content: text("content").notNull(), // Lesson content/explanation
-  orderIndex: integer("order_index").notNull(), // Order within the week
+  difficulty: text("difficulty").notNull().default('medium'), // 'easy', 'medium', 'hard'
+  orderIndex: integer("order_index").notNull(), // Order within the domain
   estimatedMinutes: integer("estimated_minutes").notNull().default(15),
+  suggestedWeek: integer("suggested_week"), // Optional: suggested week for Standard mode
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
