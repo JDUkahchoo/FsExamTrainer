@@ -10,7 +10,10 @@ I prefer simple language and detailed explanations. I want iterative development
 The application features a comprehensive UI/UX with domain-specific color coding, the Inter font for UI, and JetBrains Mono for code/formulas, all designed responsively with dark mode support.
 
 **Key Features:**
--   **16-Week Study Plan:** Structured weekly schedules with a READ → FOCUS → APPLY → REINFORCE framework, interactive checklists, and progress tracking, including integrated Daily Study Logs.
+-   **16-Week Study Plan with Flexible Study Modes:** Structured weekly schedules with a READ → FOCUS → APPLY → REINFORCE framework, interactive checklists, and progress tracking, including integrated Daily Study Logs. Now supports three study modes:
+    -   **Standard Mode:** Distributes all 7 NCEES domains evenly across 16 weeks using suggested week assignments
+    -   **Result-Driven Mode:** Prioritizes weak domains based on pretest scores, placing difficult areas earlier in the study plan
+    -   **Custom Mode:** Allows users to manually create their own personalized study schedule
 -   **Study Cycles System:** Multi-pass study framework allowing users to complete the 16-week plan multiple times, preserving historical data and tracking progress per cycle.
 -   **Practice Quizzes:** Two modes (Mixed Exam and Domain Practice) with unique questions, instant feedback, detailed explanations, and performance analytics.
 -   **Flashcard System:** Two decks with card flip animations, spaced repetition, and mastery tracking.
@@ -20,7 +23,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Daily Logging System:** Integrated into the Study Plan for tracking daily activities, contributing to weekly completion and study streaks.
 -   **Progress Dashboard with Gamification:** Features a circular progress ring, study streak tracker, and an achievement badge system, with detailed history for quizzes, exams, domain mastery, and daily logs.
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
--   **Interactive Lessons System:** Duolingo-style interactive lessons with multiple question types, integrated into the 16-week study plan, featuring progress indicators, real-time timers, immediate feedback, and an auto-grading system.
+-   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain (1-7) with multiple question types, difficulty levels (easy/medium/hard), and suggested week assignments. Features progress indicators, real-time timers, immediate feedback, and auto-grading. Currently includes 49 comprehensive lessons across all 7 domains.
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams, storing question text, selected/correct answers, domain, and explanations.
 
 **Technical Implementation:**
@@ -40,6 +43,12 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Daily logs integrated into Study Plan for weekly progress calculation.
 -   Study Cycles Architecture: Database tracks each cycle with unique (userId, cycleNumber) constraint; cycle completion calculates stats from data within that cycle's timeframe.
 -   Server-side validation and security measures for interactive lessons and detailed results, preventing answer leakage and ensuring data integrity.
+-   **Domain-Based Lesson Architecture:** Lessons organized by NCEES domain number (1-7) rather than week, enabling flexible study mode distribution:
+    -   Centralized domain mappings in `shared/domains.ts` prevent metadata drift
+    -   Lessons have domainNumber (1-7), difficulty (easy/medium/hard), and optional suggestedWeek
+    -   Client-side study plan logic (`client/src/lib/study-plan-logic.ts`) distributes lessons across weeks based on study mode
+    -   Single API endpoint (`GET /api/lessons`) fetches all lessons; client organizes by week
+    -   Study modes stored in user preferences; Result-Driven mode uses pretest domain scores for prioritization
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
