@@ -39,9 +39,19 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Weekly progress calculation now includes both checklist items AND daily log count, so logging daily activities increases weekly completion percentage.
 -   **Study Cycles Architecture:** Database tracks each cycle with unique (userId, cycleNumber) constraint. Cycle completion calculates stats only from data within that cycle's timeframe (quizzes, exams, daily logs filtered by cycle startedAt timestamp). Starting a new cycle resets weekly checkboxes but preserves all quiz/exam/log history. User preferences track current cycle number and optional exam date.
 
-## Recent Changes (November 3, 2025)
+## Recent Changes
 
-### Session 1: Core Bug Fixes
+### Session 4: Pretest Retake Bug Fix (November 6, 2025)
+-   **Bug Fix - Pretest Retake:** Fixed issue where users couldn't retake the diagnostic pretest. Added state reset logic in pretest.tsx to clear all answers, timer, and question index when component mounts, ensuring each attempt starts fresh.
+-   **Enhancement - Error Handling:** Added toast notifications for pretest submission failures with detailed error messages, plus error states on results page for better user feedback.
+-   **Architecture Validation:** Architect confirmed that the database schema (no unique constraints on pretest_results) correctly supports multiple attempts per user with timestamp-based historical tracking, which is essential for the upcoming interactive lesson system.
+-   **Testing:** End-to-end test verified complete flow: take pretest → view results → retake → submit → verify updated results display. Test showed different scores (43% vs 39%) on successive attempts, confirming proper retake functionality.
+-   **Future Compatibility:** Architecture supports planned Duolingo-style interactive learning with:
+    - Multiple pretest attempts tracked historically
+    - Personalized study plan generation based on weakest domains
+    - Future API enhancements for attempt history and domain trend analysis
+
+### Session 1: Core Bug Fixes (November 3, 2025)
 -   **Bug Fix - Exam Date Handling:** Fixed exam date update failures by adding preprocessing to the Zod schema to handle ISO date strings from HTML date inputs. The schema now converts string dates to Date objects and properly handles null values for clearing dates using `z.preprocess` with `z.date().nullable().optional()`.
 -   **Bug Fix - Resources Mobile Layout:** Fixed tab overflow on mobile devices by implementing responsive grid breakpoints (`grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7`) with flex-col/flex-row tab layouts. Tabs now display in 2 columns on mobile, 3 on small screens, 4 on medium, and 7 on large screens.
 -   **Bug Fix - Flashcard Reset Button:** Fixed non-functional reset button by removing unnecessary empty object parameter from DELETE request and adding proper error handling with try-catch.
