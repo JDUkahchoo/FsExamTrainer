@@ -956,6 +956,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Lesson has no questions" });
       }
 
+      // Helper function to compare fill-in-blank answers
+      const compareFillInBlank = (userAnswer: string, correctAnswer: string): boolean => {
+        const userStr = (userAnswer || '').toLowerCase().trim();
+        const correctStr = correctAnswer.toLowerCase().trim();
+
+        // Direct string match
+        if (userStr === correctStr) {
+          return true;
+        }
+
+        // Try numeric comparison with tolerance
+        const normalizeNumber = (str: string) => {
+          // Remove commas and common separators
+          return str.replace(/,/g, '').replace(/\s/g, '');
+        };
+
+        const userNorm = normalizeNumber(userStr);
+        const correctNorm = normalizeNumber(correctStr);
+
+        // Check if both are numbers
+        const userNum = parseFloat(userNorm);
+        const correctNum = parseFloat(correctNorm);
+
+        if (!isNaN(userNum) && !isNaN(correctNum)) {
+          // For whole numbers, require exact match
+          if (Number.isInteger(correctNum) && Number.isInteger(userNum)) {
+            return userNum === correctNum;
+          }
+          
+          // For decimals, allow small tolerance (0.1%)
+          const tolerance = Math.abs(correctNum) * 0.001;
+          return Math.abs(userNum - correctNum) <= tolerance;
+        }
+
+        // Fall back to normalized string comparison
+        return userNorm === correctNorm;
+      };
+
       // Calculate score
       let score = 0;
       const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
@@ -967,7 +1005,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (question.questionType === 'multiple_choice') {
           isCorrect = userAnswer === question.correctAnswer;
         } else if (question.questionType === 'fill_in_blank') {
-          isCorrect = userAnswer?.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
+          isCorrect = compareFillInBlank(userAnswer, question.correctAnswer);
         } else if (question.questionType === 'drag_drop') {
           isCorrect = JSON.stringify(userAnswer) === question.correctAnswer;
         }
