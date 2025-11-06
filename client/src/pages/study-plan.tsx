@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useLocation } from 'wouter';
 import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,7 @@ import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
 
 export default function StudyPlanPage() {
+  const [, navigate] = useLocation();
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
   const [expandedDailyLogs, setExpandedDailyLogs] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -79,6 +81,17 @@ export default function StudyPlanPage() {
   // Fetch daily logs
   const { data: dailyLogs = [] } = useQuery<DailyLog[]>({
     queryKey: ['/api/daily-logs']
+  });
+
+  // Fetch lesson progress
+  const { data: lessonProgressData = [] } = useQuery<any[]>({
+    queryKey: ['/api/lessons/progress']
+  });
+
+  // Fetch lessons for the expanded week
+  const { data: weekLessons = [] } = useQuery<any[]>({
+    queryKey: ['/api/lessons/week', expandedWeek],
+    enabled: expandedWeek !== null,
   });
 
   // Identify weak domains from pretest results (accuracy < 60%)
@@ -648,6 +661,56 @@ export default function StudyPlanPage() {
                     prefix="reinforce"
                     colorClass="text-domain-field-fg"
                   />
+
+                  {/* Interactive Lessons Section */}
+                  {weekLessons.length > 0 && (
+                    <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
+                      <div className="flex items-center gap-2 text-primary font-semibold uppercase text-sm tracking-wider mb-4">
+                        <BookOpen className="w-4 h-4" />
+                        Interactive Lessons ({weekLessons.length})
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {weekLessons.map((lesson: any) => {
+                          const progress = lessonProgressData.find((p: any) => p.lessonId === lesson.id);
+                          const isCompleted = progress?.completed || false;
+                          const percentage = progress ? Math.round((progress.score / progress.totalPoints) * 100) : 0;
+
+                          return (
+                            <Card key={lesson.id} className={isCompleted ? "border-green-500/50" : ""}>
+                              <div className="p-4 space-y-3">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1">
+                                    <h4 className="font-medium text-sm">{lesson.title}</h4>
+                                    <p className="text-xs text-muted-foreground mt-1">{lesson.description}</p>
+                                  </div>
+                                  {isCompleted && (
+                                    <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" data-testid={`icon-lesson-completed-${lesson.id}`} />
+                                  )}
+                                </div>
+                                
+                                <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                                  <span>{lesson.estimatedMinutes} min</span>
+                                  {progress && (
+                                    <span className="font-medium">{percentage}%</span>
+                                  )}
+                                </div>
+
+                                <Button
+                                  size="sm"
+                                  className="w-full"
+                                  variant={isCompleted ? "outline" : "default"}
+                                  onClick={() => navigate(`/lesson/${lesson.id}`)}
+                                  data-testid={`button-lesson-${lesson.id}`}
+                                >
+                                  {isCompleted ? 'Review Lesson' : 'Start Lesson'}
+                                </Button>
+                              </div>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                   
                   {/* Daily Logs Section */}
                   <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
