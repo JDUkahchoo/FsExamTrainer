@@ -556,12 +556,12 @@ export type PretestResult = typeof pretestResults.$inferSelect;
 
 // --- User Preferences ---
 
-export type StudyMode = 'standard' | 'personalized' | 'self-directed';
+export type StudyMode = 'standard' | 'result-driven' | 'custom';
 
 export const userPreferences = pgTable("user_preferences", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
-  studyMode: text("study_mode").notNull().default('standard'), // 'standard' | 'personalized' | 'self-directed'
+  studyMode: text("study_mode").notNull().default('standard'), // 'standard' | 'result-driven' | 'custom'
   hasCompletedPretest: boolean("has_completed_pretest").notNull().default(false),
   hasSeenWelcome: boolean("has_seen_welcome").notNull().default(false),
   examDate: timestamp("exam_date"), // User's scheduled exam date

@@ -874,6 +874,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Interactive Lesson routes
+  // Get all lessons - must come before parameterized routes
+  app.get("/api/lessons", isAuthenticated, async (req: any, res) => {
+    try {
+      const lessons = await storage.getAllLessons();
+      res.json(lessons);
+    } catch (error) {
+      console.error("Error fetching all lessons:", error);
+      res.status(500).json({ error: "Failed to fetch lessons" });
+    }
+  });
+
   app.get("/api/lessons/week/:week", isAuthenticated, async (req: any, res) => {
     try {
       const week = parseInt(req.params.week);
