@@ -4,7 +4,7 @@
 This project is an interactive study guide for the Fundamentals of Surveying (FS) exam, designed to help surveying students prepare for the NCEES FS exam. It offers structured study plans, practice quizzes, flashcards, and full-length practice exams, covering all 7 NCEES domains. The application aims to be the first step for users towards becoming a professional licensed surveyor (PLS), providing a comprehensive and engaging learning experience.
 
 ## User Preferences
-I prefer simple language and detailed explanations. I want iterative development with frequent updates. Ask before making major architectural changes. Do not make changes to the `server/storage.ts` or `design_guidelines.md` files.
+I prefer simple language and detailed explanations. I want iterative development with frequent updates. Ask before making major architectural changes. Do not make changes to the `design_guidelines.md` file.
 
 ## System Architecture
 The application features a comprehensive UI/UX with domain-specific color coding, the Inter font for UI, and JetBrains Mono for code/formulas, all designed responsively with dark mode support.
@@ -43,6 +43,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Daily logs integrated into Study Plan for weekly progress calculation.
 -   Study Cycles Architecture: Database tracks each cycle with unique (userId, cycleNumber) constraint; cycle completion calculates stats from data within that cycle's timeframe.
 -   Server-side validation and security measures for interactive lessons and detailed results, preventing answer leakage and ensuring data integrity.
+-   **Lesson Progress Persistence Fix (Nov 2025):** Modified `storage.upsertLessonProgress()` to explicitly update all critical fields (completed, score, totalPoints, attempts, timeSpentSeconds, lastAttemptAt, completedAt) in the UPDATE clause, ensuring lesson completion status and scores are correctly persisted to the database.
 -   **Domain-Based Lesson Architecture:** Lessons organized by NCEES domain number (1-7) rather than week, enabling flexible study mode distribution:
     -   Centralized domain mappings in `shared/domains.ts` prevent metadata drift
     -   Lessons have domainNumber (1-7), difficulty (easy/medium/hard), and optional suggestedWeek

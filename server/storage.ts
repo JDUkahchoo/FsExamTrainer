@@ -1118,7 +1118,15 @@ export class DatabaseStorage implements IStorage {
     if (existing) {
       const [updated] = await db
         .update(lessonProgress)
-        .set(progressData)
+        .set({
+          completed: progressData.completed,
+          score: progressData.score,
+          totalPoints: progressData.totalPoints,
+          attempts: progressData.attempts,
+          timeSpentSeconds: progressData.timeSpentSeconds,
+          lastAttemptAt: progressData.lastAttemptAt,
+          completedAt: progressData.completedAt,
+        })
         .where(and(
           eq(lessonProgress.userId, progressData.userId),
           eq(lessonProgress.lessonId, progressData.lessonId)
