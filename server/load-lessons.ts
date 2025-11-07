@@ -218,6 +218,26 @@ async function loadLessons() {
         ]
       },
 
+      // Domain 7: Unit Conversions and Dimensional Analysis
+      {
+        domainNumber: 7,
+        domain: DOMAINS[7],
+        title: "Unit Conversions and Dimensional Analysis",
+        description: "Master essential unit conversions for surveying applications",
+        content: "Surveyors work with multiple measurement systems daily. Understanding unit conversions between feet/meters, acres/hectares, degrees/radians, and surveying chains is critical for accurate work and clear communication.",
+        difficulty: "easy" as const,
+        orderIndex: 15,
+        estimatedMinutes: 20,
+        suggestedWeek: 2,
+        questions: [
+          { type: "multiple_choice", text: "Convert 150 feet to meters. (1 meter = 3.28084 feet)", options: ["45.72 m", "492.13 m", "50.00 m", "30.48 m"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 150 feet, conversion: 1 m = 3.28084 ft\n2. **Set up conversion:** 150 ft × (1 m / 3.28084 ft)\n3. **Cancel units:** Feet cancel out\n4. **Calculate:** 150 / 3.28084 = 45.72 m\n5. **Check:** 45.72 × 3.28 ≈ 150 ✓\n**Answer: 45.72 m**", points: 10 },
+          { type: "multiple_choice", text: "Convert 2.5 acres to square feet. (1 acre = 43,560 sq ft)", options: ["108,900 sq ft", "43,560 sq ft", "87,120 sq ft", "174,240 sq ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 2.5 acres\n2. **Conversion factor:** 1 acre = 43,560 sq ft\n3. **Multiply:** 2.5 acres × 43,560 sq ft/acre\n4. **Calculate:** 2.5 × 43,560 = 108,900 sq ft\n5. **Units check:** acres × (sq ft/acre) = sq ft ✓\n**Answer: 108,900 sq ft**", points: 10 },
+          { type: "multiple_choice", text: "Convert 45 degrees to radians. (π radians = 180 degrees)", options: ["π/4 radians", "π/2 radians", "π/6 radians", "2π radians"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 45°\n2. **Conversion:** π rad = 180°\n3. **Set up:** 45° × (π rad / 180°)\n4. **Simplify:** 45/180 = 1/4\n5. **Result:** π/4 radians\n6. **Decimal check:** π/4 ≈ 0.7854 rad\n**Answer: π/4 radians**", points: 10 },
+          { type: "multiple_choice", text: "A surveyor's chain is 66 feet long and contains 100 links. How many feet is 25 links?", options: ["16.5 ft", "25.0 ft", "6.6 ft", "33.0 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 1 chain = 66 ft = 100 links\n2. **Find:** Length of 25 links\n3. **Per-link length:** 66 ft / 100 links = 0.66 ft/link\n4. **Calculate:** 25 links × 0.66 ft/link = 16.5 ft\n5. **Fraction method:** 25/100 × 66 = 1/4 × 66 = 16.5 ft\n**Answer: 16.5 ft**", points: 10 },
+          { type: "multiple_choice", text: "Convert 5 square chains to acres. (1 chain = 66 ft, 1 acre = 43,560 sq ft)", options: ["0.5 acres", "1.0 acres", "2.0 acres", "5.0 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 5 square chains\n2. **Convert to sq ft:** 1 chain = 66 ft\n   - 1 sq chain = 66² = 4,356 sq ft\n3. **Calculate:** 5 sq chains × 4,356 sq ft/sq chain = 21,780 sq ft\n4. **Convert to acres:** 21,780 sq ft / 43,560 sq ft/acre\n5. **Result:** 21,780 / 43,560 = 0.5 acres\n6. **Shortcut:** 10 sq chains = 1 acre, so 5 sq chains = 0.5 acre\n**Answer: 0.5 acres**", points: 10 }
+        ]
+      },
+
       // Domain 5: Traverse Computations - Lat/Dep
       {
         domainNumber: 5,
