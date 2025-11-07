@@ -13,7 +13,7 @@ const DOMAINS = {
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 14 lessons with 70 questions...\n");
+  console.log("📚 Loading 16 lessons with 80 questions...\n");
 
   try {
     // All 11 lessons with questions
@@ -235,6 +235,46 @@ async function loadLessons() {
           { type: "multiple_choice", text: "Convert 45 degrees to radians. (π radians = 180 degrees)", options: ["π/4 radians", "π/2 radians", "π/6 radians", "2π radians"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 45°\n2. **Conversion:** π rad = 180°\n3. **Set up:** 45° × (π rad / 180°)\n4. **Simplify:** 45/180 = 1/4\n5. **Result:** π/4 radians\n6. **Decimal check:** π/4 ≈ 0.7854 rad\n**Answer: π/4 radians**", points: 10 },
           { type: "multiple_choice", text: "A surveyor's chain is 66 feet long and contains 100 links. How many feet is 25 links?", options: ["16.5 ft", "25.0 ft", "6.6 ft", "33.0 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 1 chain = 66 ft = 100 links\n2. **Find:** Length of 25 links\n3. **Per-link length:** 66 ft / 100 links = 0.66 ft/link\n4. **Calculate:** 25 links × 0.66 ft/link = 16.5 ft\n5. **Fraction method:** 25/100 × 66 = 1/4 × 66 = 16.5 ft\n**Answer: 16.5 ft**", points: 10 },
           { type: "multiple_choice", text: "Convert 5 square chains to acres. (1 chain = 66 ft, 1 acre = 43,560 sq ft)", options: ["0.5 acres", "1.0 acres", "2.0 acres", "5.0 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given:** 5 square chains\n2. **Convert to sq ft:** 1 chain = 66 ft\n   - 1 sq chain = 66² = 4,356 sq ft\n3. **Calculate:** 5 sq chains × 4,356 sq ft/sq chain = 21,780 sq ft\n4. **Convert to acres:** 21,780 sq ft / 43,560 sq ft/acre\n5. **Result:** 21,780 / 43,560 = 0.5 acres\n6. **Shortcut:** 10 sq chains = 1 acre, so 5 sq chains = 0.5 acre\n**Answer: 0.5 acres**", points: 10 }
+        ]
+      },
+
+      // Domain 7: Coordinate Geometry
+      {
+        domainNumber: 7,
+        domain: DOMAINS[7],
+        title: "Coordinate Geometry",
+        description: "Apply coordinate geometry for surveying calculations",
+        content: "Coordinate geometry is fundamental in modern surveying. Understanding distance calculations, slopes, midpoints, and point-line relationships enables accurate boundary determinations and property descriptions.",
+        difficulty: "medium" as const,
+        orderIndex: 16,
+        estimatedMinutes: 25,
+        suggestedWeek: 4,
+        questions: [
+          { type: "multiple_choice", text: "Find the distance between points A(100, 200) and B(400, 500).", options: ["424.26 ft", "300.00 ft", "500.00 ft", "360.55 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Distance formula:** d = √[(x₂-x₁)² + (y₂-y₁)²]\n2. **Given:** A(100, 200), B(400, 500)\n3. **Calculate differences:**\n   - Δx = 400 - 100 = 300\n   - Δy = 500 - 200 = 300\n4. **Square and add:**\n   - d = √(300² + 300²)\n   - d = √(90,000 + 90,000)\n   - d = √180,000\n5. **Result:** d = 424.26 ft\n**Answer: 424.26 ft**", points: 10 },
+          { type: "multiple_choice", text: "Find the midpoint of the line segment connecting (200, 300) and (800, 700).", options: ["(500, 500)", "(600, 400)", "(400, 600)", "(1000, 1000)"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Midpoint formula:** M = ((x₁+x₂)/2, (y₁+y₂)/2)\n2. **Given:** P₁(200, 300), P₂(800, 700)\n3. **Calculate x-coordinate:**\n   - x = (200 + 800) / 2 = 1000 / 2 = 500\n4. **Calculate y-coordinate:**\n   - y = (300 + 700) / 2 = 1000 / 2 = 500\n5. **Midpoint:** (500, 500)\n**Answer: (500, 500)**", points: 10 },
+          { type: "multiple_choice", text: "Calculate the slope of the line through points (100, 150) and (300, 450).", options: ["1.5", "2.0", "0.67", "3.0"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Slope formula:** m = (y₂ - y₁) / (x₂ - x₁)\n2. **Given:** (100, 150) and (300, 450)\n3. **Calculate rise (Δy):** 450 - 150 = 300\n4. **Calculate run (Δx):** 300 - 100 = 200\n5. **Compute slope:** m = 300 / 200 = 1.5\n6. **Interpretation:** For every 1 ft horizontal, rise 1.5 ft vertical\n**Answer: 1.5**", points: 10 },
+          { type: "multiple_choice", text: "A line passes through (0, 0) and (100, 100). What is the equation of this line?", options: ["y = x", "y = 2x", "y = x + 100", "y = 0.5x"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Find slope:** m = (100 - 0) / (100 - 0) = 100/100 = 1\n2. **Point-slope form:** y - y₁ = m(x - x₁)\n3. **Use point (0, 0):** y - 0 = 1(x - 0)\n4. **Simplify:** y = x\n5. **Check with (100, 100):** 100 = 100 ✓\n6. **Slope-intercept form:** y = mx + b where m=1, b=0\n**Answer: y = x**", points: 10 },
+          { type: "multiple_choice", text: "Points A(0, 0), B(200, 200), and C(400, 400) are:", options: ["Collinear (on the same line)", "Form a right triangle", "Form an equilateral triangle", "Form a scalene triangle"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Test collinearity:** Check if slopes are equal\n2. **Slope AB:** (200-0)/(200-0) = 200/200 = 1\n3. **Slope BC:** (400-200)/(400-200) = 200/200 = 1\n4. **Compare:** Slope AB = Slope BC = 1\n5. **Conclusion:** All points lie on line y = x\n6. **Verification:** All points satisfy y = x equation\n**Answer: Collinear (on the same line)**", points: 10 }
+        ]
+      },
+
+      // Domain 7: Ratios, Proportions, and Scale
+      {
+        domainNumber: 7,
+        domain: DOMAINS[7],
+        title: "Ratios, Proportions, and Scale",
+        description: "Apply ratios, proportions, and scale factors in surveying problems",
+        content: "Understanding ratios, proportions, and scale is essential for map reading, plot plans, and converting between scaled drawings and actual measurements. These concepts are fundamental to interpreting and creating survey documents.",
+        difficulty: "medium" as const,
+        orderIndex: 17,
+        estimatedMinutes: 25,
+        suggestedWeek: 5,
+        questions: [
+          { type: "multiple_choice", text: "A map scale is 1:2400. A property line measures 5 inches on the map. What is the actual distance in feet?", options: ["1,000 ft", "12,000 ft", "500 ft", "2,400 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Scale ratio:** 1 inch on map = 2,400 inches actual\n2. **Map measurement:** 5 inches\n3. **Actual distance:** 5 × 2,400 = 12,000 inches\n4. **Convert to feet:** 12,000 inches ÷ 12 inches/ft = 1,000 ft\n5. **Check:** 1,000 ft = 12,000 in; scaled down by 2,400 = 5 in ✓\n**Answer: 1,000 ft**", points: 10 },
+          { type: "multiple_choice", text: "Solve the proportion: 3/x = 9/12", options: ["4", "3", "6", "9"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Given proportion:** 3/x = 9/12\n2. **Cross multiply:** 3 × 12 = 9 × x\n3. **Calculate:** 36 = 9x\n4. **Solve for x:** x = 36 ÷ 9 = 4\n5. **Verify:** 3/4 = 0.75 and 9/12 = 0.75 ✓\n**Answer: 4**", points: 10 },
+          { type: "multiple_choice", text: "A rectangular lot is 120 ft × 80 ft. On a plot with scale 1\"=20', what are the dimensions on paper?", options: ["6\" × 4\"", "12\" × 8\"", "3\" × 2\"", "24\" × 16\""], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Scale:** 1 inch represents 20 feet\n2. **Length:** 120 ft ÷ 20 ft/in = 6 inches\n3. **Width:** 80 ft ÷ 20 ft/in = 4 inches\n4. **Paper dimensions:** 6\" × 4\"\n5. **Check:** 6 × 20 = 120 ft ✓, 4 × 20 = 80 ft ✓\n**Answer: 6\" × 4\"**", points: 10 },
+          { type: "multiple_choice", text: "Two similar triangles have corresponding sides in ratio 2:5. If the smaller triangle has a side of 8 ft, what is the corresponding side in the larger triangle?", options: ["20 ft", "16 ft", "10 ft", "3.2 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Ratio:** Small : Large = 2 : 5\n2. **Set up proportion:** 2/5 = 8/x\n3. **Cross multiply:** 2x = 5 × 8\n4. **Calculate:** 2x = 40\n5. **Solve:** x = 40 ÷ 2 = 20 ft\n6. **Verify ratio:** 8/20 = 2/5 ✓\n**Answer: 20 ft**", points: 10 },
+          { type: "multiple_choice", text: "A scaled drawing uses 1 inch = 40 feet. An area on the drawing is 6 square inches. What is the actual area in square feet?", options: ["9,600 sq ft", "240 sq ft", "96 sq ft", "960 sq ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Linear scale:** 1 in = 40 ft\n2. **Area scale:** (1 in)² = (40 ft)²\n   - 1 sq in = 1,600 sq ft\n3. **Drawing area:** 6 sq inches\n4. **Actual area:** 6 × 1,600 = 9,600 sq ft\n5. **Important:** Square the linear scale for area!\n**Answer: 9,600 sq ft**", points: 10 }
         ]
       },
 
