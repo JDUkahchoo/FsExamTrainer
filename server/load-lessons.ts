@@ -13,7 +13,7 @@ const DOMAINS = {
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 12 lessons with 60 questions...\n");
+  console.log("📚 Loading 13 lessons with 65 questions...\n");
 
   try {
     // All 11 lessons with questions
@@ -195,6 +195,26 @@ async function loadLessons() {
           { type: "multiple_choice", text: "In triangle ABC: angle A = 35°, angle B = 65°, side a = 50 ft (opposite angle A). Find side b using Law of Sines.", options: ["79.0 ft", "50.0 ft", "43.5 ft", "87.2 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Law of Sines:** a/sin(A) = b/sin(B)\n2. **Given:** A = 35°, B = 65°, a = 50 ft\n3. **Rearrange:** b = a × sin(B) / sin(A)\n4. **Substitute:** b = 50 × sin(65°) / sin(35°)\n5. **Calculate:**\n   - sin(65°) = 0.9063\n   - sin(35°) = 0.5736\n6. **Compute:** b = 50 × 0.9063 / 0.5736 = 79.0 ft\n**Answer: 79.0 ft**", points: 10 },
           { type: "multiple_choice", text: "Triangle has sides a = 8 ft, b = 6 ft, and included angle C = 60°. Find side c using Law of Cosines.", options: ["7.21 ft", "10.0 ft", "8.72 ft", "6.00 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Law of Cosines:** c² = a² + b² - 2ab·cos(C)\n2. **Given:** a = 8, b = 6, C = 60°\n3. **Substitute:** c² = 8² + 6² - 2(8)(6)cos(60°)\n4. **Calculate components:**\n   - 8² = 64\n   - 6² = 36\n   - cos(60°) = 0.5\n   - 2(8)(6)(0.5) = 48\n5. **Compute:** c² = 64 + 36 - 48 = 52\n6. **Take square root:** c = √52 = 7.21 ft\n**Answer: 7.21 ft**", points: 10 },
           { type: "multiple_choice", text: "Two control points are 500 ft apart. From point A, the angle to a tree is 40°. From point B, the angle is 75°. How far is the tree from point A?", options: ["532.8 ft", "500.0 ft", "421.7 ft", "268.3 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Setup:** Triangle with baseline AB = 500 ft\n   - Angle at A = 40°\n   - Angle at B = 75°\n2. **Find angle at tree (C):** 180° - 40° - 75° = 65°\n3. **Identify what we need:**\n   - Side opposite angle B (at point B) = distance from A to tree\n4. **Use Law of Sines:** AB/sin(C) = distance/sin(B)\n5. **Rearrange:** distance = AB × sin(B) / sin(C)\n6. **Substitute:** distance = 500 × sin(75°) / sin(65°)\n7. **Calculate:**\n   - sin(75°) = 0.9659\n   - sin(65°) = 0.9063\n8. **Result:** distance = 500 × 0.9659 / 0.9063 = 532.8 ft\n**Answer: 532.8 ft**", points: 10 }
+        ]
+      },
+
+      // Domain 7: Statistics and Probability
+      {
+        domainNumber: 7,
+        domain: DOMAINS[7],
+        title: "Statistics and Probability",
+        description: "Apply statistical analysis and probability to surveying measurements",
+        content: "Statistical methods help surveyors analyze measurement data, identify outliers, and make informed decisions about data quality. Understanding probability aids in risk assessment and quality control.",
+        difficulty: "medium" as const,
+        orderIndex: 14,
+        estimatedMinutes: 30,
+        suggestedWeek: 6,
+        questions: [
+          { type: "multiple_choice", text: "Dataset: 5, 7, 9, 11, 13. What is the mean?", options: ["9", "8", "10", "7"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Formula:** Mean = Sum of all values / Number of values\n2. **Add all values:** 5 + 7 + 9 + 11 + 13 = 45\n3. **Count values:** n = 5\n4. **Calculate mean:** 45 / 5 = 9\n**Answer: 9**", points: 10 },
+          { type: "multiple_choice", text: "Dataset: 12, 15, 18, 15, 20, 15. What is the mode?", options: ["15", "12", "18", "20"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Mode:** The value that appears most frequently\n2. **Count occurrences:**\n   - 12 appears 1 time\n   - 15 appears 3 times\n   - 18 appears 1 time\n   - 20 appears 1 time\n3. **Most frequent:** 15 (appears 3 times)\n**Answer: 15**", points: 10 },
+          { type: "multiple_choice", text: "A measurement has a z-score of 2.5. This means the value is:", options: ["2.5 standard deviations above the mean", "2.5 times the mean", "2.5 standard deviations below the mean", "In the 25th percentile"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Z-score formula:** z = (x - μ) / σ\n   - Where x = value, μ = mean, σ = standard deviation\n2. **Positive z-score:** Value is ABOVE the mean\n3. **z = 2.5:** Value is 2.5 standard deviations above mean\n4. **Example:** If μ = 100, σ = 10, then x = 125\n**Answer: 2.5 standard deviations above the mean**", points: 10 },
+          { type: "multiple_choice", text: "For a normal distribution, approximately what percentage of data falls within ±1 standard deviation of the mean?", options: ["68%", "95%", "99.7%", "50%"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Empirical Rule (68-95-99.7):**\n   - ±1σ contains ~68% of data\n   - ±2σ contains ~95% of data\n   - ±3σ contains ~99.7% of data\n2. **Question asks for ±1σ**\n3. **Answer:** Approximately 68%\n4. **Application:** Most measurements fall within 1 standard deviation\n**Answer: 68%**", points: 10 },
+          { type: "multiple_choice", text: "A surveyor flips a coin 3 times. What is the probability of getting exactly 2 heads?", options: ["3/8", "1/2", "1/4", "1/8"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Total outcomes:** 2³ = 8 possible sequences\n2. **List all outcomes:**\n   HHH, HHT, HTH, HTT, THH, THT, TTH, TTT\n3. **Count exactly 2 heads:**\n   HHT, HTH, THH = 3 outcomes\n4. **Calculate probability:** 3 / 8\n5. **Alternative:** Use binomial: C(3,2) × (½)² × (½)¹ = 3 × ¼ × ½ = 3/8\n**Answer: 3/8**", points: 10 }
         ]
       },
 
