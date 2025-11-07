@@ -9,11 +9,12 @@ import { lessons, lessonQuestions } from "@shared/schema";
 const DOMAINS = {
   1: "Surveying Processes and Methods",
   5: "Survey Computations and Computer Applications",
+  6: "Geodesy and the Public Land Survey System",
   7: "Applied Mathematics and Statistics"
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 16 lessons with 80 questions...\n");
+  console.log("📚 Loading 22 lessons with 110 questions...\n");
 
   try {
     // All 11 lessons with questions
@@ -275,6 +276,126 @@ async function loadLessons() {
           { type: "multiple_choice", text: "A rectangular lot is 120 ft × 80 ft. On a plot with scale 1\"=20', what are the dimensions on paper?", options: ["6\" × 4\"", "12\" × 8\"", "3\" × 2\"", "24\" × 16\""], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Scale:** 1 inch represents 20 feet\n2. **Length:** 120 ft ÷ 20 ft/in = 6 inches\n3. **Width:** 80 ft ÷ 20 ft/in = 4 inches\n4. **Paper dimensions:** 6\" × 4\"\n5. **Check:** 6 × 20 = 120 ft ✓, 4 × 20 = 80 ft ✓\n**Answer: 6\" × 4\"**", points: 10 },
           { type: "multiple_choice", text: "Two similar triangles have corresponding sides in ratio 2:5. If the smaller triangle has a side of 8 ft, what is the corresponding side in the larger triangle?", options: ["20 ft", "16 ft", "10 ft", "3.2 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Ratio:** Small : Large = 2 : 5\n2. **Set up proportion:** 2/5 = 8/x\n3. **Cross multiply:** 2x = 5 × 8\n4. **Calculate:** 2x = 40\n5. **Solve:** x = 40 ÷ 2 = 20 ft\n6. **Verify ratio:** 8/20 = 2/5 ✓\n**Answer: 20 ft**", points: 10 },
           { type: "multiple_choice", text: "A scaled drawing uses 1 inch = 40 feet. An area on the drawing is 6 square inches. What is the actual area in square feet?", options: ["9,600 sq ft", "240 sq ft", "96 sq ft", "960 sq ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Linear scale:** 1 in = 40 ft\n2. **Area scale:** (1 in)² = (40 ft)²\n   - 1 sq in = 1,600 sq ft\n3. **Drawing area:** 6 sq inches\n4. **Actual area:** 6 × 1,600 = 9,600 sq ft\n5. **Important:** Square the linear scale for area!\n**Answer: 9,600 sq ft**", points: 10 }
+        ]
+      },
+
+      // Domain 6: Township and Range System
+      {
+        domainNumber: 6,
+        domain: DOMAINS[6],
+        title: "Township and Range System",
+        description: "Understand the Public Land Survey System grid structure",
+        content: "The Public Land Survey System (PLSS) divides land using a grid based on principal meridians and base lines. Understanding how townships and ranges are numbered is fundamental to reading legal descriptions in 30 western states.",
+        difficulty: "easy" as const,
+        orderIndex: 18,
+        estimatedMinutes: 20,
+        suggestedWeek: 10,
+        questions: [
+          { type: "multiple_choice", text: "A township is described as T3N, R2W. What does this mean?", options: ["3 townships north and 2 ranges west of reference lines", "3 ranges north and 2 townships west", "3 miles north and 2 miles west", "Section 3 in Range 2"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **T3N:** Township 3 North\n   - Count 3 township tiers NORTH of the base line\n2. **R2W:** Range 2 West\n   - Count 2 range columns WEST of the principal meridian\n3. **Grid intersection:** This locates a specific 6×6 mile township\n4. **Contains:** 36 sections of 1 square mile each\n**Answer: 3 townships north and 2 ranges west of reference lines**", points: 10 },
+          { type: "multiple_choice", text: "How many miles are in one township (one side)?", options: ["6 miles", "1 mile", "3 miles", "36 miles"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Township definition:** A square parcel of land\n2. **Standard size:** 6 miles × 6 miles\n3. **One side:** 6 miles\n4. **Total area:** 36 square miles\n5. **Subdivisions:** Contains 36 sections of 1 mile × 1 mile each\n**Answer: 6 miles**", points: 10 },
+          { type: "multiple_choice", text: "What is the total area of one township?", options: ["36 square miles", "6 square miles", "640 acres", "1 square mile"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Township dimensions:** 6 miles × 6 miles\n2. **Calculate area:** 6 × 6 = 36 square miles\n3. **In acres:** 36 sq mi × 640 acres/sq mi = 23,040 acres\n4. **Number of sections:** 36 sections (each 1 sq mi)\n**Answer: 36 square miles**", points: 10 },
+          { type: "multiple_choice", text: "Principal meridians and base lines serve as:", options: ["Reference lines for the PLSS grid system", "Property boundaries", "State borders", "County lines"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Principal Meridian:** True north-south reference line\n2. **Base Line:** True east-west reference line\n3. **Grid origin:** Intersection creates the origin point\n4. **Measurement:** All townships and ranges counted from these\n5. **Purpose:** Systematic land division framework\n**Answer: Reference lines for the PLSS grid system**", points: 10 },
+          { type: "multiple_choice", text: "Township T2S, R4E is located:", options: ["2 tiers south and 4 columns east of origin", "2 miles south and 4 miles east", "In Section 2, Range 4", "4 tiers south and 2 columns east"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **T2S:** Township 2 South\n   - 2 township tiers south of base line\n   - Each tier is 6 miles\n2. **R4E:** Range 4 East\n   - 4 range columns east of principal meridian\n   - Each column is 6 miles\n3. **Location:** (2×6=12 mi south, 4×6=24 mi east)\n**Answer: 2 tiers south and 4 columns east of origin**", points: 10 }
+        ]
+      },
+
+      // Domain 6: Section Subdivision and Numbering
+      {
+        domainNumber: 6,
+        domain: DOMAINS[6],
+        title: "Section Subdivision and Numbering",
+        description: "Master section numbering and subdivision patterns",
+        content: "Sections are numbered 1-36 in a specific pattern within each township. Understanding this numbering system and how sections subdivide into quarter sections is essential for accurate legal descriptions.",
+        difficulty: "easy" as const,
+        orderIndex: 19,
+        estimatedMinutes: 20,
+        suggestedWeek: 10,
+        questions: [
+          { type: "multiple_choice", text: "How many acres are in one section?", options: ["640 acres", "160 acres", "40 acres", "320 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Section size:** 1 mile × 1 mile\n2. **Convert to acres:** 1 sq mile = 640 acres\n3. **Standard subdivision:**\n   - 4 quarter sections = 160 acres each\n   - 16 quarter-quarter sections = 40 acres each\n**Answer: 640 acres**", points: 10 },
+          { type: "multiple_choice", text: "Sections in a township are numbered starting from:", options: ["Northeast corner, proceeding west then east alternately", "Northwest corner, proceeding east", "Southeast corner, proceeding north", "Southwest corner, proceeding east"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Start:** Section 1 in NORTHEAST corner\n2. **Pattern:** Snake/boustrophedon pattern\n3. **First row:** 1→2→3→4→5→6 (west)\n4. **Second row:** 7→8→9→10→11→12 (east)\n5. **Continue alternating** until Section 36 in SE corner\n**Answer: Northeast corner, proceeding west then east alternately**", points: 10 },
+          { type: "multiple_choice", text: "Section 16 in each township is typically:", options: ["Reserved for schools (school section)", "The largest section", "Adjacent to Section 1", "In the southeast corner"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Location:** Section 16 is center of township\n2. **Historical purpose:** School section\n3. **Land grant:** Reserved for public education funding\n4. **Still relevant:** Many schools built on Section 16\n5. **Exception:** Some states use different section numbers\n**Answer: Reserved for schools (school section)**", points: 10 },
+          { type: "multiple_choice", text: "What is the area of a quarter section?", options: ["160 acres", "640 acres", "40 acres", "80 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Full section:** 640 acres\n2. **Quarter section:** 1/4 of section\n3. **Calculate:** 640 ÷ 4 = 160 acres\n4. **Dimensions:** 1/2 mile × 1/2 mile\n5. **Common designation:** NE 1/4, NW 1/4, SE 1/4, SW 1/4\n**Answer: 160 acres**", points: 10 },
+          { type: "multiple_choice", text: "Section 36 is located in which corner of the township?", options: ["Southeast", "Northeast", "Southwest", "Northwest"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Section 1:** Northeast corner\n2. **Numbering pattern:** Snake pattern\n3. **Last section:** Section 36\n4. **Final location:** Southeast corner\n5. **Note:** Also often reserved for schools in some states\n**Answer: Southeast**", points: 10 }
+        ]
+      },
+
+      // Domain 6: Aliquot Parts and Legal Descriptions
+      {
+        domainNumber: 6,
+        domain: DOMAINS[6],
+        title: "Aliquot Parts and Legal Descriptions",
+        description: "Write and interpret PLSS legal descriptions using aliquot parts",
+        content: "Aliquot parts are the fractional subdivisions of sections used in legal descriptions. Understanding how to read and write descriptions like 'NE 1/4 of SW 1/4' and calculate areas is critical for boundary work.",
+        difficulty: "medium" as const,
+        orderIndex: 20,
+        estimatedMinutes: 25,
+        suggestedWeek: 11,
+        questions: [
+          { type: "multiple_choice", text: "What is the area of the NE 1/4 of Section 12?", options: ["160 acres", "40 acres", "80 acres", "640 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Full section:** 640 acres\n2. **NE 1/4:** One quarter of section\n3. **Calculate:** 640 × 1/4 = 160 acres\n4. **Note:** All quarter sections = 160 acres\n5. **Dimensions:** 1/2 mile × 1/2 mile = 2,640 ft × 2,640 ft\n**Answer: 160 acres**", points: 10 },
+          { type: "multiple_choice", text: "Calculate the area: SW 1/4 of NE 1/4 of Section 25", options: ["40 acres", "160 acres", "10 acres", "80 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Read right to left:** Start with Section 25 (640 ac)\n2. **NE 1/4:** 640 × 1/4 = 160 acres\n3. **SW 1/4 of that:** 160 × 1/4 = 40 acres\n4. **Formula:** 640 × 1/4 × 1/4 = 40 acres\n5. **Dimensions:** 1/4 mile × 1/4 mile = 1,320 ft × 1,320 ft\n**Answer: 40 acres**", points: 10 },
+          { type: "multiple_choice", text: "How many acres: N 1/2 of SE 1/4 of Section 8?", options: ["80 acres", "40 acres", "160 acres", "20 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **SE 1/4 of Section 8:** 640 × 1/4 = 160 acres\n2. **N 1/2 of that:** 160 × 1/2 = 80 acres\n3. **Alternative:** 640 × 1/4 × 1/2 = 80 acres\n4. **Note:** 1/2 (not 1/4) = different fraction\n5. **Shape:** Rectangle, not square\n**Answer: 80 acres**", points: 10 },
+          { type: "multiple_choice", text: "Write the legal description for the highlighted 40-acre parcel in the northwest corner of the southeast quarter of Section 14:", options: ["NW 1/4 of SE 1/4, Section 14", "SE 1/4 of NW 1/4, Section 14", "NE 1/4 of SW 1/4, Section 14", "SW 1/4 of NE 1/4, Section 14"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Identify quarters from INSIDE out:**\n   - Parcel is IN the southeast quarter (SE 1/4)\n2. **Within SE 1/4, which corner?**\n   - Northwest corner of that quarter\n3. **Write:** NW 1/4 of SE 1/4, Section 14\n4. **Verify area:** 640 × 1/4 × 1/4 = 40 acres ✓\n**Answer: NW 1/4 of SE 1/4, Section 14**", points: 10 },
+          { type: "multiple_choice", text: "Total area of: E 1/2 of NE 1/4 of Section 22?", options: ["80 acres", "40 acres", "160 acres", "320 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **NE 1/4 of Section 22:** 640 × 1/4 = 160 acres\n2. **E 1/2 of that:** 160 × 1/2 = 80 acres\n3. **Formula:** 640 × 1/4 × 1/2 = 80 acres\n4. **Shape:** East half of northeast quarter\n5. **Dimensions:** 1/4 mile (E-W) × 1/2 mile (N-S)\n**Answer: 80 acres**", points: 10 }
+        ]
+      },
+
+      // Domain 6: Monuments and Corner Types
+      {
+        domainNumber: 6,
+        domain: DOMAINS[6],
+        title: "Monuments and Corner Types",
+        description: "Identify and understand different types of PLSS monuments and corners",
+        content: "The PLSS uses various types of monuments to mark section corners, quarter corners, and other control points. Understanding the hierarchy and purpose of different monument types is essential for retracement surveys.",
+        difficulty: "medium" as const,
+        orderIndex: 21,
+        estimatedMinutes: 25,
+        suggestedWeek: 11,
+        questions: [
+          { type: "multiple_choice", text: "A section corner is common to how many sections?", options: ["4 sections", "2 sections", "1 section", "8 sections"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Section corner:** Intersection point of 4 sections\n2. **Grid layout:** Sections meet at corners\n3. **Example:** NE corner of Sec 14, NW corner of Sec 13,\n   SE corner of Sec 11, SW corner of Sec 12\n4. **Common to:** All 4 surrounding sections\n**Answer: 4 sections**", points: 10 },
+          { type: "multiple_choice", text: "A quarter corner is located:", options: ["At the midpoint of a section line", "At the intersection of 4 sections", "In the center of a section", "At township corners"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Definition:** Midpoint between two section corners\n2. **Purpose:** Divides section line in half\n3. **Creates boundary:** Between quarter sections\n4. **Location:** On section line (not inside section)\n5. **Common to:** 2 sections (on boundary)\n**Answer: At the midpoint of a section line**", points: 10 },
+          { type: "multiple_choice", text: "The center of a section (center quarter corner) divides the section into:", options: ["4 quarter sections", "2 half sections", "8 eighth sections", "16 parcels"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Location:** Geographic center of section\n2. **Function:** Intersection of quarter section lines\n3. **Creates:** 4 quarter sections\n4. **Each quarter:** 160 acres (NE, NW, SE, SW)\n5. **NOT on section boundary:** Inside the section\n**Answer: 4 quarter sections**", points: 10 },
+          { type: "multiple_choice", text: "A witness corner is set when:", options: ["The actual corner is inaccessible (water, cliff, etc.)", "The surveyor witnesses the original survey", "Two surveyors agree on a location", "A landowner is present"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Purpose:** Mark corner position when actual location inaccessible\n2. **Reasons:** Water body, cliff, building, etc.\n3. **Tied to:** True corner position with bearing and distance\n4. **Marked:** 'WC' on monument\n5. **Legal status:** Reference point, not the actual corner\n**Answer: The actual corner is inaccessible (water, cliff, etc.)**", points: 10 },
+          { type: "multiple_choice", text: "Meander corners are set along:", options: ["Navigable water bodies and rivers", "Property boundaries", "All section lines", "Township boundaries"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Purpose:** Mark where section lines meet water bodies\n2. **Definition:** Navigable streams, lakes, rivers\n3. **Creates:** Government lots (irregular parcels)\n4. **Not regular:** Sizes vary due to water boundary\n5. **Historical:** Water was highway for transportation\n**Answer: Navigable water bodies and rivers**", points: 10 }
+        ]
+      },
+
+      // Domain 6: Corner Restoration
+      {
+        domainNumber: 6,
+        domain: DOMAINS[6],
+        title: "Corner Restoration and Proportionate Measurement",
+        description: "Apply proportionate measurement to restore lost PLSS corners",
+        content: "When original PLSS corners are lost or destroyed, surveyors use proportionate measurement methods to restore them. Understanding single and double proportionate measurement is critical for accurate boundary retracement.",
+        difficulty: "hard" as const,
+        orderIndex: 22,
+        estimatedMinutes: 30,
+        suggestedWeek: 12,
+        questions: [
+          { type: "multiple_choice", text: "Single proportionate measurement is used to restore:", options: ["A lost quarter corner on a section line", "A lost section corner", "A lost township corner", "Any lost corner"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Single proportionate:** Restore corners ON lines\n2. **Typical use:** Lost quarter corners\n3. **Between:** Two known section corners\n4. **Method:** Proportion based on record vs. measured distances\n5. **NOT for:** Section corners (use double proportionate)\n**Answer: A lost quarter corner on a section line**", points: 10 },
+          { type: "multiple_choice", text: "Two section corners are 5,285 ft apart (record: 5,280 ft). A quarter corner should be set at what distance from the west corner?", options: ["2,642.5 ft", "2,640 ft", "2,645 ft", "5,285 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Single proportionate:** Divide measured distance equally\n2. **Measured distance:** 5,285 ft\n3. **Quarter corner:** At midpoint\n4. **Calculate:** 5,285 ÷ 2 = 2,642.5 ft\n5. **Note:** NOT record distance (5,280/2=2,640)\n**Answer: 2,642.5 ft**", points: 10 },
+          { type: "multiple_choice", text: "Double proportionate measurement is used to restore:", options: ["Lost section corners", "Lost quarter corners", "Lost witness corners", "Lost meander corners"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Double proportionate:** For corners common to 4 sections\n2. **Typical use:** Lost section corners\n3. **Method:** Proportion in BOTH N-S and E-W directions\n4. **Creates:** Position at intersection of two proportioned lines\n5. **More complex:** Than single proportionate\n**Answer: Lost section corners**", points: 10 },
+          { type: "multiple_choice", text: "In proportionate measurement, if the record distance is 5,280 ft but measured is 5,300 ft, what principle applies?", options: ["Proportion based on measured distance, not record", "Use record distance only", "Average the two distances", "Reject the measurement"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Principle:** Accept existing monuments as correct\n2. **Pro-rate:** Based on actual measured distances\n3. **Reason:** Ground conditions may differ from original survey\n4. **Example:** 1/4 corner at 5,300÷2 = 2,650 ft (not 2,640 ft)\n5. **Honors:** Existing monumentation over record\n**Answer: Proportion based on measured distance, not record**", points: 10 },
+          { type: "multiple_choice", text: "The 'Manual of Surveying Instructions' is published by:", options: ["Bureau of Land Management (BLM)", "State surveying boards", "NCEES", "American Congress on Surveying and Mapping"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Authority:** Bureau of Land Management (BLM)\n2. **Purpose:** Standards for PLSS surveys and restoration\n3. **Content:** Corner restoration, monumentation, procedures\n4. **Updated:** Periodically (current edition used)\n5. **Legal weight:** Followed in federal courts\n**Answer: Bureau of Land Management (BLM)**", points: 10 }
+        ]
+      },
+
+      // Domain 6: Government Lots and Irregular Sections
+      {
+        domainNumber: 6,
+        domain: DOMAINS[6],
+        title: "Government Lots and Irregular Sections",
+        description: "Understand fractional sections and government lot numbering",
+        content: "Not all sections are perfect 640-acre squares. Fractional sections occur along water bodies, state lines, and correction lines. Government lots are irregular parcels created by these conditions and are numbered rather than described by aliquot parts.",
+        difficulty: "medium" as const,
+        orderIndex: 23,
+        estimatedMinutes: 25,
+        suggestedWeek: 12,
+        questions: [
+          { type: "multiple_choice", text: "Fractional sections most commonly occur:", options: ["Along township boundaries and water bodies", "In the center of townships", "Only in mountainous areas", "At section corners"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **North/west boundaries:** Closing sections (convergence)\n2. **Water bodies:** Navigable streams, lakes\n3. **Reason:** Can't maintain perfect 1-mile grid\n4. **Result:** Sections < or > 640 acres\n5. **Numbered lots:** Instead of aliquot parts\n**Answer: Along township boundaries and water bodies**", points: 10 },
+          { type: "multiple_choice", text: "Government lots are numbered starting from:", options: ["Northeast corner, proceeding counterclockwise", "Southeast corner", "Northwest corner, clockwise", "Southwest corner"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Start:** Lot 1 in northeast corner of section\n2. **Pattern:** Counterclockwise around section\n3. **Lot 2:** Northwest corner\n4. **Lot 3:** Southwest corner\n5. **Lot 4:** Southeast corner\n**Answer: Northeast corner, proceeding counterclockwise**", points: 10 },
+          { type: "multiple_choice", text: "Why are sections along the north and west township boundaries often fractional?", options: ["Convergence of meridians creates closing errors", "Poor original surveying", "Irregular terrain", "State boundary adjustments"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Earth curvature:** Meridians converge toward poles\n2. **6-mile township:** North boundary shorter than south\n3. **Closing:** Errors accumulate in north and west tiers\n4. **Result:** Sections 1-7 (north) and 6, 7, 18, 19, 30, 31 (west)\n5. **Intentional:** By design to absorb convergence\n**Answer: Convergence of meridians creates closing errors**", points: 10 },
+          { type: "multiple_choice", text: "A government lot shown on a plat as 'Lot 3 = 38.2 acres' means:", options: ["The lot contains 38.2 acres as calculated", "The lot should contain 40 acres", "The lot is subdivided into 38.2 parcels", "The lot is 38.2 square miles"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Platted area:** Actual calculated acreage\n2. **38.2 acres:** Irregular size due to water/boundaries\n3. **NOT 40 acres:** Unlike regular quarter-quarters\n4. **Legal description:** Lot 3, Section X\n5. **Acreage:** As shown on official plat\n**Answer: The lot contains 38.2 acres as calculated**", points: 10 },
+          { type: "multiple_choice", text: "Standard parallels (correction lines) are established every:", options: ["24 miles (4 townships) north-south", "6 miles", "12 miles", "36 miles"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Purpose:** Reset grid to compensate for convergence\n2. **Interval:** Every 24 miles (4 township tiers)\n3. **Function:** New base line for next tier\n4. **Result:** Jogs in section lines at correction lines\n5. **Also called:** Township boundaries\n**Answer: 24 miles (4 townships) north-south**", points: 10 }
         ]
       },
 
