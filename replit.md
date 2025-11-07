@@ -23,7 +23,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Daily Logging System:** Integrated into the Study Plan for tracking daily activities, contributing to weekly completion and study streaks.
 -   **Progress Dashboard with Gamification:** Features a circular progress ring, study streak tracker, and an achievement badge system, with detailed history for quizzes, exams, domain mastery, and daily logs.
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
--   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain (1-7) with multiple question types, difficulty levels (easy/medium/hard), and suggested week assignments. Features progress indicators, real-time timers, immediate feedback, and auto-grading. Currently includes 31 comprehensive lessons (155 questions) across domains 1, 5, 6, and 7. **Domain 5 complete (12/12 lessons)! Domain 6 complete (6/6 lessons)! Domain 7 complete (12/12 lessons)!** Target: 58 total lessons covering all 7 NCEES domains.
+-   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain (1-7) with multiple question types, difficulty levels (easy/medium/hard), and suggested week assignments. Features progress indicators, real-time timers, immediate feedback, and auto-grading. Currently includes 37 comprehensive lessons (185 questions) across domains 1, 5, 6, and 7. **Domain 1 complete (7/7 lessons)! Domain 5 complete (12/12 lessons)! Domain 6 complete (6/6 lessons)! Domain 7 complete (12/12 lessons)!** Target: 58 total lessons covering all 7 NCEES domains.
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams, storing question text, selected/correct answers, domain, and explanations.
 
 **Technical Implementation:**
@@ -49,6 +49,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
     -   Client-side study plan logic (`client/src/lib/study-plan-logic.ts`) distributes lessons across weeks based on study mode
     -   Single API endpoint (`GET /api/lessons`) fetches all lessons; client organizes by week
     -   Study modes stored in user preferences; Result-Driven mode uses pretest domain scores for prioritization
+    -   **Stable Lesson IDs:** Deterministic ID format `d{domain}-lesson-{orderIndex:02}` (e.g., "d1-lesson-01") eliminates 404 errors from lesson reloads and enables reliable progress tracking
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

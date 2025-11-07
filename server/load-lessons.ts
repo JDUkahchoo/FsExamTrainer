@@ -14,10 +14,10 @@ const DOMAINS = {
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 31 lessons with 155 questions...\n");
+  console.log("📚 Loading 37 lessons with 185 questions...\n");
 
   try {
-    // All 11 lessons with questions
+    // All 37 lessons with questions
     const lessonsData = [
       // Domain 1: Differential Leveling Fundamentals
       {
@@ -27,7 +27,7 @@ async function loadLessons() {
         description: "Master basic leveling concepts, rod readings, and elevation calculations",
         content: "Differential leveling is the most common method for determining elevation differences. Understanding backsights (BS), foresights (FS), and height of instrument (HI) is essential for accurate elevation work.",
         difficulty: "easy" as const,
-        orderIndex: 13,
+        orderIndex: 1,
         estimatedMinutes: 20,
         suggestedWeek: 2,
         questions: [
@@ -36,6 +36,126 @@ async function loadLessons() {
           { type: "multiple_choice", text: "With HI = 130.22 ft, a foresight reading of 6.35 ft is taken on point A. What is the elevation of point A?", options: ["136.57 ft", "123.87 ft", "125.40 ft", "133.75 ft"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Formula:** Elevation = HI - Foresight\n2. **Given:**\n   - HI = 130.22 ft\n   - Foresight (FS) = 6.35 ft\n3. **Substitute:** Elevation = 130.22 - 6.35\n4. **Calculate:** Elevation = 123.87 ft\n5. **Remember:** Subtract FS because rod extends DOWN from HI\n**Answer: 123.87 ft**", points: 10 },
           { type: "multiple_choice", text: "A rod reading shows the following: The target is between 5 and 6 ft, with the crosshair at 3 small divisions above 5. If each small division = 0.01 ft, what is the reading?", options: ["5.03 ft", "5.30 ft", "5.003 ft", "6.03 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Start with whole foot:** 5 ft\n2. **Count small divisions above:** 3 divisions\n3. **Each division:** 0.01 ft\n4. **Calculate:** 3 × 0.01 = 0.03 ft\n5. **Total reading:** 5 + 0.03 = 5.03 ft\n6. **Note:** Standard leveling rods read to 0.01 ft precision\n**Answer: 5.03 ft**", points: 10 },
           { type: "multiple_choice", text: "A construction site needs to be graded to elevation 150.00 ft. Current HI = 156.75 ft. What rod reading (cut) is needed to mark grade stakes?", options: ["6.75 ft", "150.00 ft", "156.75 ft", "306.75 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **What we need:** Find rod reading for elevation 150.00 ft\n2. **Formula:** Rod Reading = HI - Desired Elevation\n3. **Given:**\n   - HI = 156.75 ft\n   - Desired elevation = 150.00 ft\n4. **Calculate:** Rod Reading = 156.75 - 150.00 = 6.75 ft\n5. **Real-world use:** Mark grade stakes at 6.75 ft cut\n**Answer: 6.75 ft**", points: 10 }
+        ]
+      },
+
+      // Domain 1: Total Station Setup and Operation
+      {
+        domainNumber: 1,
+        domain: DOMAINS[1],
+        title: "Total Station Setup and Operation",
+        description: "Learn proper total station setup, centering, and leveling procedures",
+        content: "Total stations combine electronic distance measurement (EDM) and angle measurement in one instrument. Proper setup ensures accurate measurements for control surveys, construction layout, and topographic mapping.",
+        difficulty: "easy" as const,
+        orderIndex: 2,
+        estimatedMinutes: 20,
+        suggestedWeek: 3,
+        questions: [
+          { type: "multiple_choice", text: "What is the first step in setting up a total station over a control point?", options: ["Level the instrument", "Center the tribrach over the point using the optical plummet", "Measure the instrument height", "Turn on the total station"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Proper setup sequence** ensures accuracy\n2. **First:** Center tribrach over point using optical plummet\n3. **Second:** Level the instrument using plate/circular bubbles\n4. **Third:** Measure instrument height\n5. **Fourth:** Power on and initialize\n6. **Why:** Centering must be done first while adjusting tripod\n**Answer: Center the tribrach over the point using the optical plummet**", points: 10 },
+          { type: "multiple_choice", text: "A total station is set up with an instrument height of 1.52 m above point A (elevation 245.30 m). What is the elevation of the instrument's horizontal axis?", options: ["243.78 m", "246.82 m", "245.30 m", "1.52 m"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Formula:** Instrument Elevation = Point Elevation + Instrument Height\n2. **Given:**\n   - Point A elevation = 245.30 m\n   - Instrument height = 1.52 m\n3. **Calculate:** 245.30 + 1.52 = 246.82 m\n4. **Concept:** Horizontal axis is where angles are measured from\n**Answer: 246.82 m**", points: 10 },
+          { type: "multiple_choice", text: "When leveling a total station, which bubble should be centered first?", options: ["The plate level (long tubular bubble)", "The circular bubble", "The optical plummet bubble", "The electronic level display"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Leveling sequence:**\n   - First: Circular bubble (coarse leveling)\n   - Second: Plate level (fine leveling)\n2. **Circular bubble** gives rough level (±5-10 minutes)\n3. Use tripod leg adjustments\n4. **Plate level** gives precise level (±20 seconds)\n5. Use foot screws for fine adjustment\n**Answer: The circular bubble**", points: 10 },
+          { type: "multiple_choice", text: "After leveling, you rotate the instrument 180° and notice the bubble is off-center by 2 divisions. What does this indicate?", options: ["The instrument is properly adjusted", "The instrument has a collimation error in the level vials", "The tripod is unstable", "The point is incorrectly marked"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Two-petal test** checks level vial adjustment\n2. **Procedure:**\n   - Level bubble in one direction\n   - Rotate 180°\n   - Check bubble position\n3. **If off-center:** Vial needs adjustment\n4. **Correction:** Half with footscrews, half with adjustment screws\n5. 2 divisions off indicates **collimation error**\n**Answer: The instrument has a collimation error in the level vials**", points: 10 },
+          { type: "multiple_choice", text: "A surveyor measures instrument height from the ground mark to the center of the telescope. The measured height is 1.48 m, but the tribrach adds 0.15 m. What is the correct instrument height above the point?", options: ["1.48 m", "1.63 m", "1.33 m", "0.15 m"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Instrument height** = Distance from point to horizontal axis\n2. **Measured to telescope center:** 1.48 m\n3. **Tribrach offset adds:** 0.15 m\n4. **Total height:** 1.48 + 0.15 = 1.63 m\n5. **Important:** Always measure to correct reference point\n**Answer: 1.63 m**", points: 10 }
+        ]
+      },
+
+      // Domain 1: EDM and Distance Measurement
+      {
+        domainNumber: 1,
+        domain: DOMAINS[1],
+        title: "EDM and Distance Measurement",
+        description: "Understand electronic distance measurement principles, corrections, and accuracy",
+        content: "Electronic Distance Measurement (EDM) uses electromagnetic waves to measure distances. Understanding atmospheric corrections, prism constants, and systematic errors is essential for accurate distance measurements.",
+        difficulty: "medium" as const,
+        orderIndex: 3,
+        estimatedMinutes: 25,
+        suggestedWeek: 4,
+        questions: [
+          { type: "multiple_choice", text: "An EDM measures a slope distance of 285.456 m to a prism. The vertical angle is +5°30'. What is the horizontal distance?", options: ["284.234 m", "284.123 m", "285.456 m", "286.789 m"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Formula:** Horizontal Distance = Slope Distance × cos(vertical angle)\n2. **Given:**\n   - Slope distance = 285.456 m\n   - Vertical angle = +5°30' = 5.5°\n3. **Calculate:** HD = 285.456 × cos(5.5°)\n4. cos(5.5°) = 0.9952\n5. HD = 285.456 × 0.9952 = 284.234 m\n**Answer: 284.234 m**", points: 10 },
+          { type: "multiple_choice", text: "A prism has a constant of -30 mm. The EDM displays a distance of 125.478 m. What is the correct distance to the prism center?", options: ["125.448 m", "125.508 m", "125.478 m", "125.450 m"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Prism constant** is the offset from prism face to center\n2. **Negative constant:** Prism center is CLOSER than displayed\n3. **Given:**\n   - Displayed distance = 125.478 m\n   - Prism constant = -30 mm = -0.030 m\n4. **Correct distance** = 125.478 + (-0.030) = 125.448 m\n5. **Remember:** Subtract constant magnitude for negative values\n**Answer: 125.448 m**", points: 10 },
+          { type: "multiple_choice", text: "Temperature affects EDM measurements. If the assumed temperature is 20°C but actual temperature is 30°C, how does this affect the measured distance?", options: ["Measured distance is too short", "Measured distance is too long", "No effect on distance", "Depends on humidity"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **EDM uses assumed atmospheric conditions**\n2. **Temperature affects:** Speed of electromagnetic waves\n3. **Higher temperature:** Waves travel FASTER\n4. **EDM assumes standard temp:** Calculates distance based on assumed speed\n5. **Actual speed is faster:** EDM thinks waves took longer → reports LONGER distance\n6. **Result:** Measured distance is TOO LONG\n**Answer: Measured distance is too long**", points: 10 },
+          { type: "multiple_choice", text: "An EDM manufacturer specifies accuracy as ±(2 mm + 2 ppm). What is the expected error for a 1,500 m distance?", options: ["±5 mm", "±3.5 mm", "±4 mm", "±2 mm"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Accuracy formula:** ±(constant + ppm × distance)\n2. **Given:**\n   - Constant error = 2 mm\n   - ppm (parts per million) = 2\n   - Distance = 1,500 m = 1,500,000 mm\n3. **ppm calculation:** 2 ppm = 2/1,000,000\n4. **Distance error:** 1,500,000 × (2/1,000,000) = 3 mm\n5. **Total error:** 2 mm + 3 mm = 5 mm\n**Answer: ±5 mm**", points: 10 },
+          { type: "multiple_choice", text: "A slope distance of 450.00 m is measured with a vertical angle of -8°20'. What is the elevation difference?", options: ["-65.12 m", "-64.89 m", "+65.12 m", "-450.00 m"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Formula:** Elevation Difference = Slope Distance × sin(vertical angle)\n2. **Given:**\n   - Slope distance = 450.00 m\n   - Vertical angle = -8°20' = -8.333°\n3. **Calculate:** ΔElev = 450.00 × sin(-8.333°)\n4. sin(-8.333°) = -0.1447\n5. ΔElev = 450.00 × (-0.1447) = -65.12 m\n6. **Negative:** Target is BELOW instrument\n**Answer: -65.12 m**", points: 10 }
+        ]
+      },
+
+      // Domain 1: Angle Measurement and Precision
+      {
+        domainNumber: 1,
+        domain: DOMAINS[1],
+        title: "Angle Measurement and Precision",
+        description: "Master horizontal and vertical angle measurement techniques and error mitigation",
+        content: "Precise angle measurement requires understanding measurement techniques, reading conventions, and systematic error elimination through multiple measurements and face positions.",
+        difficulty: "medium" as const,
+        orderIndex: 4,
+        estimatedMinutes: 25,
+        suggestedWeek: 5,
+        questions: [
+          { type: "multiple_choice", text: "A horizontal angle is measured as 47°25'18\" on Face 1 and 227°25'24\" on Face 2. What is the mean angle?", options: ["47°25'21\"", "47°25'18\"", "47°25'24\"", "137°25'21\""], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Face 2 reading** = Face 1 + 180° (approximately)\n2. **Adjust Face 2:** 227°25'24\" - 180° = 47°25'24\"\n3. **Mean angle** = (Face 1 + Adjusted Face 2) / 2\n4. **Calculate:** (47°25'18\" + 47°25'24\") / 2\n5. Sum: 94°50'42\" ÷ 2 = 47°25'21\"\n6. **Averaging eliminates collimation errors**\n**Answer: 47°25'21\"**", points: 10 },
+          { type: "multiple_choice", text: "What is the primary purpose of measuring angles on both Face 1 and Face 2?", options: ["To save time", "To eliminate systematic errors like collimation and horizontal axis errors", "To check if the instrument is level", "To measure two different angles"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Face 1:** Telescope in normal position\n2. **Face 2:** Telescope flipped 180° (reverse position)\n3. **Systematic errors** that occur:\n   - Horizontal collimation error\n   - Vertical collimation error\n   - Horizontal axis tilt\n4. **These errors** are equal but opposite on Face 1 vs Face 2\n5. **Averaging** Face 1 and Face 2 eliminates these errors\n**Answer: To eliminate systematic errors like collimation and horizontal axis errors**", points: 10 },
+          { type: "multiple_choice", text: "A vertical angle to a target is measured as +12°30'45\" on Face 1 and -12°30'50\" on Face 2 (after index correction). What is the zenith angle on Face 1?", options: ["77°29'15\"", "77°29'10\"", "102°30'45\"", "12°30'45\""], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Vertical angle** = angle from horizontal\n2. **Zenith angle** = angle from vertical (zenith)\n3. **Relationship:** Zenith = 90° - Vertical (for elevation angles)\n4. **Mean vertical angle:** (12°30'45\" + 12°30'50\") / 2 = 12°30'47.5\" ≈ 12°30'48\"\n5. **Zenith angle:** 90° - 12°30'48\" = 77°29'12\" ≈ 77°29'15\"\n**Answer: 77°29'15\"**", points: 10 },
+          { type: "multiple_choice", text: "An angle is measured 4 times with the following results: 67°32'15\", 67°32'20\", 67°32'18\", 67°32'17\". What is the standard deviation? (Hint: Mean = 67°32'17.5\")", options: ["±2.1\"", "±3.0\"", "±1.5\"", "±0.5\""], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Mean** = 67°32'17.5\" (given)\n2. **Deviations from mean:** -2.5\", +2.5\", +0.5\", -0.5\" (in seconds)\n3. **Square deviations:** 6.25, 6.25, 0.25, 0.25\n4. **Sum of squares:** 6.25 + 6.25 + 0.25 + 0.25 = 13.0\n5. **Variance** = 13.0 / (4-1) = 4.33\n6. **Standard deviation** = √4.33 = 2.08\" ≈ ±2.1\"\n**Answer: ±2.1\"**", points: 10 },
+          { type: "multiple_choice", text: "Three angles in a triangle are measured as: A = 47°32'15\", B = 68°45'30\", C = 63°42'10\". What is the angular misclosure?", options: ["-5\"", "+5\"", "0\"", "-10\""], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Triangle rule:** Sum of angles = 180°00'00\"\n2. **Add measured angles:**\n   - A = 47°32'15\"\n   - B = 68°45'30\"\n   - C = 63°42'10\"\n3. **Sum:** 47° + 68° + 63° = 178° (degrees)\n4. **Minutes:** 32' + 45' + 42' = 119' = 1°59'\n5. **Seconds:** 15\" + 30\" + 10\" = 55\"\n6. **Total:** 178° + 1°59'55\" = 179°59'55\"\n7. **Misclosure formula:** Σmeasured - 180° (standard surveying convention)\n8. **Calculate:** 179°59'55\" - 180°00'00\" = -5\"\n9. **Negative misclosure:** Sum is LESS than required 180°\n**Answer: -5\"**", points: 10 }
+        ]
+      },
+
+      // Domain 1: Field Notes and Documentation Standards
+      {
+        domainNumber: 1,
+        domain: DOMAINS[1],
+        title: "Field Notes and Documentation Standards",
+        description: "Learn proper field book practices, sketching, and data recording standards",
+        content: "Accurate, legible, and complete field notes are legal documents that support survey calculations and defend boundary determinations. Professional standards require systematic documentation of all field observations.",
+        difficulty: "easy" as const,
+        orderIndex: 5,
+        estimatedMinutes: 15,
+        suggestedWeek: 6,
+        questions: [
+          { type: "multiple_choice", text: "What is the cardinal rule when making an error in field notes?", options: ["Erase the error completely", "Draw a single line through the error and write the correction above", "Use correction fluid to cover the error", "Tear out the page and start over"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Field notes are legal documents**\n2. **Never erase or obliterate** original entries\n3. **Proper correction method:**\n   - Draw single line through error\n   - Write correction above or beside\n   - Initial and date if critical\n4. **Why:** Maintains record of original observation\n5. **Legal principle:** Shows honesty, not concealment\n**Answer: Draw a single line through the error and write the correction above**", points: 10 },
+          { type: "multiple_choice", text: "Field notes should always be recorded in:", options: ["Pencil for easy corrections", "Indelible ink or permanent medium", "Any medium, as long as it's legible", "Computer files only"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Purpose:** Create permanent record\n2. **Weather resistance:** Pencil fades, smudges in rain\n3. **Legal requirement:** Permanent, tamper-resistant\n4. **Professional standard:** Indelible ink (waterproof)\n5. **Modern options:**\n   - Waterproof ink pens\n   - All-weather paper\n   - Digital collectors with backup\n6. **Pencil is NOT acceptable** for permanent records\n**Answer: Indelible ink or permanent medium**", points: 10 },
+          { type: "multiple_choice", text: "When sketching a field situation, which direction should be oriented at the top of the page by convention?", options: ["East", "North", "South", "The direction you're facing"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Standard convention:** North at top of page\n2. **Benefits:**\n   - Consistent with maps\n   - Easy to orient\n   - Universal understanding\n3. **If not possible:** Clearly mark north arrow\n4. **Always show:** North arrow on every sketch\n5. **Exception:** Construction staking may use project baseline\n**Answer: North**", points: 10 },
+          { type: "multiple_choice", text: "What information MUST be included on every page of field notes?", options: ["Weather conditions only", "Project name, date, crew names, and page number", "Only the measurements", "Client's phone number"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Essential header information:**\n   - Project name/number\n   - Date\n   - Crew members (names and positions)\n   - Page number\n   - Location/station range\n2. **Additional useful info:**\n   - Weather conditions\n   - Equipment used\n   - Time started\n3. **Why critical:** Identifies when, where, who for legal purposes\n**Answer: Project name, date, crew names, and page number**", points: 10 },
+          { type: "multiple_choice", text: "A crew chief notices an ambiguous note from yesterday: 'Stake at 245.3'. How should this have been recorded?", options: ["245.3 is sufficient", "Stake at elevation 245.3 ft (BM-5 datum)", "Stake near building", "245.3 meters"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Ambiguous elements:**\n   - What does 245.3 represent?\n   - What units?\n   - Referenced to what datum?\n2. **Proper recording:**\n   - Specify parameter (elevation, station, offset)\n   - Include units (ft, m)\n   - Reference datum or control point\n3. **Complete note:** \"Stake at elevation 245.3 ft (BM-5 datum)\"\n4. **Rule:** Notes should be understandable months/years later\n**Answer: Stake at elevation 245.3 ft (BM-5 datum)**", points: 10 }
+        ]
+      },
+
+      // Domain 1: Error Sources and Systematic Errors
+      {
+        domainNumber: 1,
+        domain: DOMAINS[1],
+        title: "Error Sources and Systematic Errors",
+        description: "Identify and mitigate instrumental, natural, and personal errors in surveying",
+        content: "Understanding error sources—instrumental, natural, and personal—enables surveyors to implement proper field procedures and corrections to achieve required accuracy standards.",
+        difficulty: "medium" as const,
+        orderIndex: 6,
+        estimatedMinutes: 25,
+        suggestedWeek: 7,
+        questions: [
+          { type: "multiple_choice", text: "Which type of error can be eliminated by averaging multiple measurements?", options: ["Systematic errors", "Random errors", "Gross errors (blunders)", "Instrumental errors"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Three error types:**\n   - **Systematic:** Constant, predictable (corrections apply)\n   - **Random:** Unpredictable, both + and - (averaging helps)\n   - **Gross:** Blunders, large mistakes (must reject)\n2. **Random errors:**\n   - Reading uncertainty\n   - Atmospheric variations\n   - Target centering\n3. **Averaging** causes + and - errors to cancel\n4. **Result:** Mean approaches true value\n**Answer: Random errors**", points: 10 },
+          { type: "multiple_choice", text: "Temperature change causes a 100 ft steel tape to expand 0.02 ft. This is an example of:", options: ["Random error", "Systematic error", "Gross error", "Personal error"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Characteristics of this error:**\n   - Predictable based on temperature\n   - Consistent direction (always expansion or contraction)\n   - Can be calculated and corrected\n2. **Systematic error definition:**\n   - Constant or follows pattern\n   - Correctable with formula\n   - Examples: temp, sag, slope, standardization\n3. **Not random:** Same temp produces same expansion\n4. **Correction formula:** ΔL = L × α × ΔT\n**Answer: Systematic error**", points: 10 },
+          { type: "multiple_choice", text: "Refraction causes light rays to curve downward when passing through the atmosphere. This affects:", options: ["Horizontal angles", "Horizontal distances", "Vertical angles and elevations", "Control point coordinates"], answer: "2", explanation: "**Step-by-Step Solution:**\n1. **Atmospheric refraction:**\n   - Light bends when passing through air layers\n   - Density changes cause curvature\n   - Ray curves DOWNWARD (toward Earth)\n2. **Effect on measurements:**\n   - Horizontal angles: NO direct effect\n   - Horizontal distances: Minimal effect\n   - **Vertical angles:** Significant error\n   - **Elevations:** Calculated from vertical angles affected\n3. **Result:** Objects appear HIGHER than true position\n4. **Correction:** Refraction coefficient applied to leveling\n**Answer: Vertical angles and elevations**", points: 10 },
+          { type: "multiple_choice", text: "A surveyor consistently reads the level rod 0.05 ft too low. This error is:", options: ["A random error that will average out", "A systematic personal error requiring correction", "A gross error requiring rejection", "An acceptable error within tolerance"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Error characteristics:**\n   - **Consistent** (always 0.05 ft)\n   - **Same direction** (always too low)\n   - **Personal** (caused by observer)\n2. **Personal systematic error** examples:\n   - Parallax (improper eye position)\n   - Reading bias\n   - Interpolation habits\n3. **Not random:** Same mistake every time\n4. **Correction:** Training, proper technique, different observer\n**Answer: A systematic personal error requiring correction**", points: 10 },
+          { type: "multiple_choice", text: "Earth curvature causes elevations determined by leveling to be too low by approximately 0.02 ft per 1,000 ft of distance. Combined with refraction (opposite effect, 1/7 magnitude), what is the net correction per 1,000 ft?", options: ["+0.020 ft", "-0.017 ft", "+0.023 ft", "-0.020 ft"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Curvature effect:** -0.02 ft per 1,000 ft (makes elevations too LOW)\n2. **Refraction effect:** Opposite sign, 1/7 magnitude\n3. **Refraction:** +0.02 / 7 = +0.0029 ft (approximately +0.003 ft)\n4. **Net correction:** -0.020 + 0.003 = -0.017 ft\n5. **Combined effect:** Elevations still too low, but less than curvature alone\n6. **Formula:** C&R = -0.0206K² (ft) where K = distance in thousands of feet\n**Answer: -0.017 ft**", points: 10 }
+        ]
+      },
+
+      // Domain 1: Quality Control and Field Procedures
+      {
+        domainNumber: 1,
+        domain: DOMAINS[1],
+        title: "Quality Control and Field Procedures",
+        description: "Implement QC checks, redundant measurements, and procedural standards",
+        content: "Quality control procedures including redundant measurements, closure checks, and systematic verification ensure survey data meets accuracy specifications and client requirements.",
+        difficulty: "medium" as const,
+        orderIndex: 7,
+        estimatedMinutes: 25,
+        suggestedWeek: 8,
+        questions: [
+          { type: "multiple_choice", text: "A traverse closes with an error of 0.15 ft in 2,500 ft of total distance. What is the relative precision?", options: ["1:16,667", "1:2,500", "1:15,000", "1:10,000"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Relative precision** = 1 : (Total Distance / Error)\n2. **Given:**\n   - Error = 0.15 ft\n   - Total distance = 2,500 ft\n3. **Calculate ratio:** 2,500 / 0.15 = 16,666.67\n4. **Round:** 16,667\n5. **Express as:** 1:16,667\n6. **Meaning:** 1 ft of error per 16,667 ft measured\n7. **Comparison:** Better precision = larger second number\n**Answer: 1:16,667**", points: 10 },
+          { type: "multiple_choice", text: "For third-order control surveys, FGCS standards require horizontal closure better than:", options: ["1:100,000", "1:10,000", "1:5,000", "1:1,000"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **FGCS Standards (Federal Geographic Data Committee):**\n   - **First Order:** 1:100,000 or better\n   - **Second Order Class I:** 1:50,000\n   - **Second Order Class II:** 1:20,000\n   - **Third Order Class I:** 1:10,000\n   - **Third Order Class II:** 1:5,000\n2. **Third Order** = 1:10,000 (Class I) or 1:5,000 (Class II)\n3. **General third-order:** 1:10,000 is standard reference\n**Answer: 1:10,000**", points: 10 },
+          { type: "multiple_choice", text: "What is the primary purpose of measuring distances in both directions on critical control lines?", options: ["To save time", "To detect systematic errors and blunders", "To satisfy legal requirements", "To average out random errors only"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Redundant measurements** serve multiple purposes:\n2. **Forward vs. Backward:**\n   - Different atmospheric conditions\n   - Different EDM/prism setup\n   - Independent measurement\n3. **Detects:**\n   - **Systematic errors:** Prism constant, atmospheric\n   - **Blunders:** Wrong target, misread distance\n   - Scale errors\n4. **If agree within tolerance:** High confidence\n5. **If disagree:** Remeasure to find source\n**Answer: To detect systematic errors and blunders**", points: 10 },
+          { type: "multiple_choice", text: "A leveling loop is run starting from BM-1 (100.00 ft), through several points, and back to BM-1. The final elevation reads 100.08 ft. What should the crew do?", options: ["Accept the 100.08 ft as the new elevation", "Adjust BM-1 elevation to 100.04 ft (average)", "Investigate and likely re-run the level circuit", "Report the misclosure to the client"], answer: "2", explanation: "**Step-by-Step Solution:**\n1. **Loop closure check:** Should return to starting elevation\n2. **Misclosure:** 100.08 - 100.00 = +0.08 ft\n3. **Evaluate against standards:**\n   - Third-order: ±0.012√K ft (K = distance in km)\n   - Typical: ±0.05 ft acceptable for short loops\n4. **0.08 ft misclosure** is significant\n5. **Action required:**\n   - Check notes for blunders\n   - Verify setup procedures\n   - **Re-run circuit** to find error source\n**Answer: Investigate and likely re-run the level circuit**", points: 10 },
+          { type: "multiple_choice", text: "When establishing control points, why is it important to have at least two independent measurements to each point?", options: ["To save money", "To provide redundancy for blunder detection and validation", "To meet minimum legal requirements", "To train new crew members"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Single measurement:** Cannot verify correctness\n2. **Two independent measurements:**\n   - Different instrument setups\n   - Different observation times\n   - Different methods (if possible)\n3. **Benefits:**\n   - **Blunder detection:** Large disagreement reveals mistake\n   - **Validation:** Agreement confirms accuracy\n   - **Redundancy:** Backup if one fails QC\n   - **Least squares:** Improved solution\n4. **Professional standard:** Critical control requires redundancy\n**Answer: To provide redundancy for blunder detection and validation**", points: 10 }
         ]
       },
       
