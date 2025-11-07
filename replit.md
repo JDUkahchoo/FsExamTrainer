@@ -23,7 +23,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Daily Logging System:** Integrated into the Study Plan for tracking daily activities, contributing to weekly completion and study streaks.
 -   **Progress Dashboard with Gamification:** Features a circular progress ring, study streak tracker, and an achievement badge system, with detailed history for quizzes, exams, domain mastery, and daily logs.
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
--   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain (1-7) with multiple question types, difficulty levels (easy/medium/hard), and suggested week assignments. Features progress indicators, real-time timers, immediate feedback, and auto-grading. Currently includes 49 comprehensive lessons across all 7 domains.
+-   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain (1-7) with multiple question types, difficulty levels (easy/medium/hard), and suggested week assignments. Features progress indicators, real-time timers, immediate feedback, and auto-grading. Currently includes 12 comprehensive lessons (60 questions) across domains 1, 5, and 7. Target: 58 total lessons covering all 7 NCEES domains.
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams, storing question text, selected/correct answers, domain, and explanations.
 
 **Technical Implementation:**
