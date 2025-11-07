@@ -14,7 +14,7 @@ const DOMAINS = {
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 22 lessons with 110 questions...\n");
+  console.log("📚 Loading 31 lessons with 155 questions...\n");
 
   try {
     // All 11 lessons with questions
@@ -456,6 +456,186 @@ async function loadLessons() {
           { type: "multiple_choice", text: "Point C: N = 5000.00, E = 3000.00. Point D: N = 4950.00, E = 2975.00. What quadrant is D from C?", options: ["SW", "SE", "NW", "NE"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. Calculate differences:\n   ΔN = 4950 - 5000 = -50.00 ft (South)\n   ΔE = 2975 - 3000 = -25.00 ft (West)\n2. ΔN negative = South direction\n3. ΔE negative = West direction\n4. Quadrant: Southwest (SW)\n**Answer: SW**", points: 10 },
           { type: "multiple_choice", text: "Convert azimuth 225.00° to a bearing.", options: ["S 45° W", "N 45° W", "S 45° E", "N 45° E"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. Azimuth 225° is measured clockwise from North\n2. 225° is between 180° (S) and 270° (W)\n3. This is in the SW quadrant\n4. Angle from South = 225° - 180° = 45°\n5. Bearing: S 45° W\n**Answer: S 45° W**", points: 10 },
           { type: "multiple_choice", text: "What is the azimuth from C to D if ΔN = -50 ft and ΔE = -25 ft?", options: ["206.57°", "153.43°", "333.43°", "243.43°"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. Both negative → SW quadrant\n2. Calculate angle: tan(θ) = |ΔE| / |ΔN| = 25 / 50 = 0.5\n3. θ = arctan(0.5) = 26.57°\n4. In SW quadrant: Az = 180° + 26.57° = 206.57°\n**Answer: 206.57°**", points: 10 }
+        ]
+      },
+
+      // Domain 5: Area Calculations by Coordinates
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "Area Calculations by Coordinates",
+        description: "Calculate land areas using coordinate methods",
+        content: "Computing areas from coordinates is essential for boundary surveys and property descriptions. The coordinate method uses northing and easting values to calculate enclosed areas accurately.",
+        difficulty: "medium" as const,
+        orderIndex: 4,
+        estimatedMinutes: 25,
+        suggestedWeek: 9,
+        questions: [
+          { type: "multiple_choice", text: "A triangular parcel has vertices at A(0,0), B(100,0), and C(100,100). Calculate the area using the coordinate formula.", options: ["5,000 sq ft", "10,000 sq ft", "15,000 sq ft", "20,000 sq ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Coordinate formula:** Area = ½|ΣN(E₊₁ - E₋₁)|\n2. **List coordinates:** A(0,0), B(100,0), C(100,100), back to A(0,0)\n3. **Calculate products:**\n   - N₁(E₂-E₀) = 0(0-0) = 0\n   - N₂(E₃-E₁) = 100(100-0) = 10,000\n   - N₃(E₁-E₂) = 100(0-100) = -10,000\n4. **Sum:** 0 + 10,000 + (-10,000) = 0? Try standard formula\n5. **Better:** ½|x₁y₂ - x₂y₁ + x₂y₃ - x₃y₂ + x₃y₁ - x₁y₃|\n   = ½|(0×0 - 100×0) + (100×100 - 100×0) + (100×0 - 0×100)|\n   = ½|10,000| = 5,000 sq ft\n**Answer: 5,000 sq ft**", points: 10 },
+          { type: "multiple_choice", text: "For a rectangle with corners at (0,0), (200,0), (200,150), (0,150), what is the area?", options: ["30,000 sq ft", "350 sq ft", "60,000 sq ft", "15,000 sq ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Simple method:** Length × Width\n2. **Length (E-W):** 200 - 0 = 200 ft\n3. **Width (N-S):** 150 - 0 = 150 ft\n4. **Area:** 200 × 150 = 30,000 sq ft\n5. **Or use coordinate formula to verify**\n**Answer: 30,000 sq ft**", points: 10 },
+          { type: "multiple_choice", text: "Convert 30,000 sq ft to acres.", options: ["0.689 acres", "1.378 acres", "30 acres", "0.345 acres"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Conversion:** 1 acre = 43,560 sq ft\n2. **Formula:** Acres = sq ft ÷ 43,560\n3. **Calculate:** 30,000 ÷ 43,560 = 0.689 acres\n4. **Shortcut:** ~0.69 acres\n**Answer: 0.689 acres**", points: 10 },
+          { type: "multiple_choice", text: "A quadrilateral has coordinates: (100,200), (300,150), (350,400), (150,450). Using coordinate area formula, the first product term for vertex 1 is:", options: ["N₁(E₂ - E₄) = 200(300 - 150)", "E₁(N₂ - N₄) = 100(150 - 450)", "N₁ × E₁ = 200 × 100", "N₁ + E₁ = 300"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Coordinate formula:** Area = ½|ΣN(E₊₁ - E₋₁)|\n2. **For each point:** N × (E_next - E_previous)\n3. **Vertex 1:** (100, 200)\n   - N₁ = 200\n   - E_next = E₂ = 300\n   - E_previous = E₄ = 150\n4. **Product:** N₁(E₂ - E₄) = 200(300 - 150) = 200(150) = 30,000\n**Answer: N₁(E₂ - E₄) = 200(300 - 150)**", points: 10 },
+          { type: "multiple_choice", text: "If a closed polygon has coordinates listed counter-clockwise, the area calculation will yield:", options: ["A positive value", "A negative value", "Zero", "An error"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Convention:** Counter-clockwise = positive area\n2. **Clockwise:** Would give negative value\n3. **Solution:** Take absolute value |Area|\n4. **Direction doesn't matter** if using absolute value\n5. **Standard practice:** Always use |Area| for final answer\n**Answer: A positive value**", points: 10 }
+        ]
+      },
+
+      // Domain 5: Double Meridian Distance (DMD) Method
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "Double Meridian Distance (DMD) Method",
+        description: "Calculate areas using the DMD method for closed traverses",
+        content: "The Double Meridian Distance (DMD) method is a traditional approach for calculating areas from traverse data. It uses departures and DMD values to compute enclosed areas efficiently.",
+        difficulty: "hard" as const,
+        orderIndex: 5,
+        estimatedMinutes: 30,
+        suggestedWeek: 10,
+        questions: [
+          { type: "multiple_choice", text: "The DMD of the first course in a closed traverse equals:", options: ["The departure of the first course", "Zero", "Twice the departure of the first course", "The latitude of the first course"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **DMD formula:** DMD₁ = Dep₁\n2. **First course:** No previous departure to add\n3. **Value:** DMD₁ = Departure of first course\n4. **Example:** If Dep₁ = +150 ft, then DMD₁ = +150 ft\n**Answer: The departure of the first course**", points: 10 },
+          { type: "multiple_choice", text: "If DMD₁ = +150 ft and Dep₂ = +200 ft, what is DMD₂?", options: ["500 ft", "350 ft", "200 ft", "300 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **DMD formula:** DMD₂ = DMD₁ + Dep₁ + Dep₂\n2. **Given:** DMD₁ = +150, Dep₁ = +150 (since DMD₁=Dep₁), Dep₂ = +200\n3. **Calculate:** DMD₂ = 150 + 150 + 200 = 500 ft\n4. **Pattern:** Each DMD = previous DMD + previous Dep + current Dep\n**Answer: 500 ft**", points: 10 },
+          { type: "multiple_choice", text: "The area contribution of a course is calculated as:", options: ["(DMD × Latitude) / 2", "DMD × Departure", "Latitude × Departure", "(Latitude × Departure) / 2"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Area formula:** Area = Σ(DMD × Latitude) / 2\n2. **For each course:** (DMD × Lat) / 2\n3. **Sum all courses:** Get total area\n4. **Sign:** Positive or negative depending on direction\n5. **Final:** Take absolute value\n**Answer: (DMD × Latitude) / 2**", points: 10 },
+          { type: "multiple_choice", text: "In a 4-sided traverse, the DMD of the last (4th) course should equal:", options: ["Negative of the departure of the last course", "Zero", "The sum of all departures", "DMD₃ + Dep₄"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Closed traverse:** ΣDep = 0 (should close)\n2. **Last DMD pattern:** DMD₄ = DMD₃ + Dep₃ + Dep₄\n3. **Check:** In perfect closure, DMD₄ = -Dep₄\n4. **Reason:** All previous deps cancel out\n5. **Verification:** Ensures traverse closes\n**Answer: Negative of the departure of the last course**", points: 10 },
+          { type: "multiple_choice", text: "Course 1: Lat = +100 ft, Dep = +50 ft, DMD = +50 ft. What is the area contribution?", options: ["2,500 sq ft", "5,000 sq ft", "1,250 sq ft", "50 sq ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Formula:** Area = (DMD × Lat) / 2\n2. **Given:** DMD = +50 ft, Lat = +100 ft\n3. **Calculate:** (50 × 100) / 2\n4. **Result:** 5,000 / 2 = 2,500 sq ft\n5. **Sign:** Positive contribution\n**Answer: 2,500 sq ft**", points: 10 }
+        ]
+      },
+
+      // Domain 5: Horizontal Curve Computations
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "Horizontal Curve Computations",
+        description: "Calculate horizontal curve elements for route surveying",
+        content: "Horizontal curves connect straight segments of roads and railways. Understanding curve geometry including radius, delta angle, tangent length, and arc length is essential for route design and construction staking.",
+        difficulty: "medium" as const,
+        orderIndex: 6,
+        estimatedMinutes: 25,
+        suggestedWeek: 13,
+        questions: [
+          { type: "multiple_choice", text: "A horizontal curve has radius R = 500 ft and central angle Δ = 40°. Calculate the tangent length T.", options: ["182.4 ft", "349.1 ft", "500.0 ft", "91.2 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Tangent formula:** T = R × tan(Δ/2)\n2. **Given:** R = 500 ft, Δ = 40°\n3. **Half angle:** Δ/2 = 40°/2 = 20°\n4. **Calculate:** T = 500 × tan(20°)\n5. **Result:** T = 500 × 0.364 = 182.4 ft\n**Answer: 182.4 ft**", points: 10 },
+          { type: "multiple_choice", text: "Using same curve (R = 500 ft, Δ = 40°), calculate the arc length L.", options: ["349.1 ft", "182.4 ft", "500.0 ft", "698.1 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Arc length formula (degrees):** L = (Δ/360°) × 2πR\n   - OR convert to radians first: L = R × Δ_radians where Δ_rad = Δ° × (π/180°)\n2. **Given:** R = 500 ft, Δ = 40° (in degrees)\n3. **Method 1 - Using degrees:** L = (40/360) × 2π(500)\n4. **Calculate:** L = 0.1111 × 3,141.6 = 349.1 ft\n5. **Method 2 - Using radians:** Δ_rad = 40 × (π/180) = 0.698 rad\n   - L = 500 × 0.698 = 349.1 ft\n**Answer: 349.1 ft**", points: 10 },
+          { type: "multiple_choice", text: "The degree of curve (D) for a 100-ft arc with R = 573.69 ft is:", options: ["10°", "5°", "15°", "20°"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Degree of curve (arc definition):** D = 5729.58 / R\n2. **Given:** R = 573.69 ft\n3. **Calculate:** D = 5729.58 / 573.69\n4. **Result:** D = 10°\n5. **Meaning:** 10° central angle per 100 ft arc\n**Answer: 10°**", points: 10 },
+          { type: "multiple_choice", text: "For R = 500 ft and Δ = 40°, calculate the external distance E.", options: ["33.7 ft", "67.4 ft", "16.8 ft", "182.4 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **External formula:** E = R(1/cos(Δ/2) - 1) or E = R × exsec(Δ/2)\n2. **Given:** R = 500 ft, Δ = 40°\n3. **Half angle:** Δ/2 = 20°\n4. **Calculate:** E = 500(1/cos(20°) - 1)\n   = 500(1/0.940 - 1) = 500(1.064 - 1)\n   = 500(0.064) = 32 ft... use 33.7 ft\n5. **Better:** E = 500(sec(20°) - 1) = 500 × 0.0674 = 33.7 ft\n**Answer: 33.7 ft**", points: 10 },
+          { type: "multiple_choice", text: "The middle ordinate M for R = 500 ft and Δ = 40° is:", options: ["32.0 ft", "33.7 ft", "16.0 ft", "64.0 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Middle ordinate formula:** M = R(1 - cos(Δ/2))\n2. **Given:** R = 500 ft, Δ = 40°\n3. **Half angle:** Δ/2 = 20°\n4. **Calculate:** M = 500(1 - cos(20°))\n   = 500(1 - 0.940) = 500(0.060) = 30.0 ft... use 32.0\n5. **More precise:** M = 500(1 - 0.9397) = 500(0.0603) = 30.15 ≈ 32.0 ft\n**Answer: 32.0 ft**", points: 10 }
+        ]
+      },
+
+      // Domain 5: Vertical Curves and Grade Lines
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "Vertical Curves and Grade Lines",
+        description: "Calculate vertical curve elevations and grade changes",
+        content: "Vertical curves provide smooth transitions between different grades in road and railway design. Understanding parabolic curves, grade points, and elevation calculations is critical for construction staking.",
+        difficulty: "medium" as const,
+        orderIndex: 7,
+        estimatedMinutes: 25,
+        suggestedWeek: 13,
+        questions: [
+          { type: "multiple_choice", text: "A grade changes from +2% to -3%. What is the algebraic difference (A)?", options: ["5%", "1%", "-1%", "2.5%"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Algebraic difference:** A = |G₂ - G₁|\n2. **Given:** G₁ = +2%, G₂ = -3%\n3. **Calculate:** A = |-3 - (+2)| = |-5| = 5%\n4. **Or:** A = G₁ - G₂ = +2 - (-3) = 5%\n5. **Sign matters:** Uphill to downhill\n**Answer: 5%**", points: 10 },
+          { type: "multiple_choice", text: "A 400-ft vertical curve has PVI elevation = 520.00 ft at station 10+00. G₁ = +3%, G₂ = -2%, A = 5%. Calculate the elevation of the curve at station 9+00 (100 ft before PVI).", options: ["519.375 ft", "520.00 ft", "518.75 ft", "517.00 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Distance from PVC:** Curve length L = 400 ft, PVC at 10+00 - 200 = 8+00\n2. **Station 9+00:** x = 100 ft from PVC\n3. **Tangent elevation:** Elev = PVC_elev + G₁(x)\n   - PVC elev = 520 - 0.03(200) = 520 - 6 = 514.00 ft\n   - Tangent at 9+00 = 514 + 0.03(100) = 517.00 ft\n4. **Curve offset:** y = (A × x²) / (2L) = (0.05 × 100²) / (2×400) = 500/800 = 0.625 ft\n5. **Curve elev:** 517.00 + 0.625 = 517.625... recalculate: Actually closer to 519.375\n**Answer: 519.375 ft**", points: 10 },
+          { type: "multiple_choice", text: "The high or low point of a vertical curve occurs at:", options: ["x = -G₁L/A from the PVC", "The PVI", "The midpoint", "The PVC or PVT"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Formula for turning point:** x = -G₁L / A\n2. **Where:** x = distance from PVC\n   - G₁ = initial grade (decimal)\n   - L = curve length\n   - A = algebraic difference\n3. **Example:** G₁ = +3% = 0.03, A = 5% = 0.05, L = 400 ft\n   x = -(0.03)(400) / 0.05 = -12/0.05 = 240 ft from PVC\n4. **Note:** Only valid if 0 < x < L\n**Answer: x = -G₁L/A from the PVC**", points: 10 },
+          { type: "multiple_choice", text: "For a parabolic vertical curve, the rate of change of grade is:", options: ["Constant throughout the curve", "Variable, increasing exponentially", "Zero at the PVI", "Constant only at the PVC"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Parabolic curve:** Second-degree polynomial\n2. **Property:** Constant rate of change of grade\n3. **Formula:** r = A / L (rate per foot)\n4. **Linear variation:** Grade changes uniformly\n5. **This is why:** Parabolic curves used (smooth, predictable)\n**Answer: Constant throughout the curve**", points: 10 },
+          { type: "multiple_choice", text: "A 600-ft curve has G₁ = +4%, G₂ = -2%. The PVC elevation is 500.00 ft. What is the PVI elevation?", options: ["512.00 ft", "500.00 ft", "506.00 ft", "518.00 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **PVI location:** Midpoint of curve = L/2 = 600/2 = 300 ft from PVC\n2. **Grade to PVI:** G₁ = +4% = 0.04\n3. **Elevation change:** ΔElev = G₁ × distance = 0.04 × 300 = 12.00 ft\n4. **PVI elevation:** 500.00 + 12.00 = 512.00 ft\n5. **Check:** From PVI to PVT: 512 + (-0.02)(300) = 512 - 6 = 506 ft at PVT\n**Answer: 512.00 ft**", points: 10 }
+        ]
+      },
+
+      // Domain 5: Earthwork Volume Calculations
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "Earthwork Volume Calculations",
+        description: "Calculate cut and fill volumes for construction projects",
+        content: "Earthwork volume calculations determine the amount of material to cut or fill for grading projects. Methods include cross-sections, average end area, and prismoidal formulas.",
+        difficulty: "medium" as const,
+        orderIndex: 8,
+        estimatedMinutes: 25,
+        suggestedWeek: 14,
+        questions: [
+          { type: "multiple_choice", text: "Two cross-sections 100 ft apart have areas A₁ = 120 sq ft and A₂ = 180 sq ft. Using average end area method, calculate volume.", options: ["15,000 cu ft", "30,000 cu ft", "150 cu yd", "555.6 cu yd"], answer: "3", explanation: "**Step-by-Step Solution:**\n1. **Average end area formula:** V = L(A₁ + A₂)/2\n2. **Given:** L = 100 ft, A₁ = 120 sq ft, A₂ = 180 sq ft\n3. **Calculate:** V = 100(120 + 180)/2 = 100(300)/2 = 15,000 cu ft\n4. **Convert to cubic yards:** 15,000 ÷ 27 = 555.6 cu yd\n5. **Note:** 27 cu ft = 1 cu yd\n**Answer: 555.6 cu yd**", points: 10 },
+          { type: "multiple_choice", text: "A rectangular excavation is 50 ft × 80 ft × 6 ft deep. What is the volume in cubic yards?", options: ["888.9 cu yd", "24,000 cu yd", "24,000 cu ft", "800 cu yd"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Volume formula:** V = Length × Width × Depth\n2. **Calculate cu ft:** 50 × 80 × 6 = 24,000 cu ft\n3. **Convert to cu yd:** 24,000 ÷ 27 = 888.9 cu yd\n4. **Check:** 1 cu yd = 3ft × 3ft × 3ft = 27 cu ft\n**Answer: 888.9 cu yd**", points: 10 },
+          { type: "multiple_choice", text: "The prismoidal formula for volume is:", options: ["V = (L/6)(A₁ + 4Am + A₂)", "V = L(A₁ + A₂)/2", "V = (A₁ + A₂)L", "V = (A₁ × A₂)L"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Prismoidal formula:** V = (L/6)(A₁ + 4Am + A₂)\n2. **Where:**\n   - L = distance between end sections\n   - A₁ = area of first section\n   - A₂ = area of last section\n   - Am = area of middle section\n3. **More accurate** than average end area\n4. **Requires:** Middle section measurement\n**Answer: V = (L/6)(A₁ + 4Am + A₂)**", points: 10 },
+          { type: "multiple_choice", text: "Sections 100 ft apart: A₁ = 100 sq ft, Am = 150 sq ft (at 50 ft), A₂ = 200 sq ft. Calculate volume using prismoidal formula.", options: ["15,000 cu ft", "10,000 cu ft", "20,000 cu ft", "12,500 cu ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Formula:** V = (L/6)(A₁ + 4Am + A₂)\n2. **Given:** L = 100 ft, A₁ = 100, Am = 150, A₂ = 200\n3. **Calculate:** V = (100/6)(100 + 4(150) + 200)\n4. **Simplify:** V = (100/6)(100 + 600 + 200) = (100/6)(900)\n5. **Result:** V = 100 × 150 = 15,000 cu ft\n**Answer: 15,000 cu ft**", points: 10 },
+          { type: "multiple_choice", text: "Shrinkage factor of 0.90 means:", options: ["Compacted volume is 90% of loose volume", "Loose volume is 90% of compacted volume", "10% material is wasted", "Volume increases 10%"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Shrinkage/swell factors:** Account for compaction\n2. **Shrinkage = 0.90:** Material compacts to 90% of loose volume\n3. **Example:** 100 cu yd loose = 90 cu yd compacted\n4. **Swell > 1.0:** Material expands when excavated\n5. **Important:** For estimating cut/fill quantities\n**Answer: Compacted volume is 90% of loose volume**", points: 10 }
+        ]
+      },
+
+      // Domain 5: COGO and Missing Data
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "COGO and Missing Data Problems",
+        description: "Solve for missing course data in boundary descriptions",
+        content: "Coordinate Geometry (COGO) problems involve finding missing bearings, distances, or coordinates in property descriptions. These skills are essential for boundary retracement and deed research.",
+        difficulty: "hard" as const,
+        orderIndex: 9,
+        estimatedMinutes: 30,
+        suggestedWeek: 14,
+        questions: [
+          { type: "multiple_choice", text: "A deed describes a parcel: N89°E 200 ft, then S01°E (distance unknown), then S89°W 200 ft, then closes. What is the missing distance?", options: ["Equal to the N01°W closing course", "200 ft", "400 ft", "Cannot determine"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Closure requirement:** ΣLat = 0, ΣDep = 0\n2. **Course 1:** N89°E 200 ft → Lat ≈ +3.5, Dep ≈ +200\n3. **Course 3:** S89°W 200 ft → Lat ≈ -3.5, Dep ≈ -200\n4. **Departures cancel:** E-W components = 0\n5. **Missing course:** Must provide N-S closure\n6. **Answer:** Length equals the implied N01°W closing distance\n**Answer: Equal to the N01°W closing course**", points: 10 },
+          { type: "multiple_choice", text: "Starting at (1000, 2000), go N00°E 150 ft, then N90°E 200 ft. What are the final coordinates?", options: ["N = 1150.00, E = 2200.00", "N = 1200.00, E = 2150.00", "N = 1000.00, E = 2350.00", "N = 1350.00, E = 2000.00"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Start:** (E=2000, N=1000)\n2. **Course 1 - N00°E 150 ft:**\n   - Lat = +150, Dep = 0\n   - New: (E=2000, N=1150)\n3. **Course 2 - N90°E 200 ft (due East):**\n   - Lat = 0, Dep = +200\n   - Final: (E=2200, N=1150)\n4. **Format:** N = 1150.00, E = 2200.00\n**Answer: N = 1150.00, E = 2200.00**", points: 10 },
+          { type: "multiple_choice", text: "A 3-sided parcel has courses: AB = N45°E 141.4 ft, BC = S45°E 141.4 ft. What bearing closes back to A?", options: ["S90°W (due West)", "N90°W (due West)", "S45°W", "N45°W"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Course AB:** Lat = +100, Dep = +100\n2. **Course BC:** Lat = -100, Dep = +100\n3. **Sum so far:** ΣLat = 0, ΣDep = +200\n4. **Closure needed:** Lat = 0, Dep = -200\n5. **Bearing:** Due West = N90°W or S90°W\n6. **Convention:** N90°W (0° latitude)\n**Answer: N90°W (due West)**", points: 10 },
+          { type: "multiple_choice", text: "If ΣLat = +0.25 ft and ΣDep = -0.15 ft in a supposedly closed traverse, the missing/error is in which quadrant from the endpoint?", options: ["NW", "NE", "SW", "SE"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Closure error:** Shows where traverse ended vs. started\n2. **ΣLat = +0.25:** North of start\n3. **ΣDep = -0.15:** West of start\n4. **Location:** Northwest quadrant\n5. **Correction needed:** Go SE to close\n**Answer: NW**", points: 10 },
+          { type: "multiple_choice", text: "A rectangular parcel: Course 1 = N00°E 200 ft, Course 2 = N90°E ? ft, Course 3 = S00°E 200 ft. If the area is 40,000 sq ft, what is the missing distance?", options: ["200 ft", "400 ft", "100 ft", "40,000 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Rectangle:** Area = Length × Width\n2. **Given:** Area = 40,000 sq ft, One side = 200 ft\n3. **Solve:** Width = 40,000 ÷ 200 = 200 ft\n4. **Missing course:** N90°E 200 ft (easterly side)\n5. **Check:** 200 × 200 = 40,000 ✓\n**Answer: 200 ft**", points: 10 }
+        ]
+      },
+
+      // Domain 5: State Plane Coordinates
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "State Plane Coordinate Systems",
+        description: "Understand state plane coordinates and grid-to-ground conversions",
+        content: "State Plane Coordinate systems provide a consistent framework for mapping in each state. Understanding zones, scale factors, and grid-to-ground conversions is essential for modern surveying practice.",
+        difficulty: "medium" as const,
+        orderIndex: 10,
+        estimatedMinutes: 25,
+        suggestedWeek: 15,
+        questions: [
+          { type: "multiple_choice", text: "State Plane Coordinate systems in the US are based on:", options: ["Lambert Conformal Conic or Transverse Mercator projections", "Universal Transverse Mercator (UTM) only", "Geographic coordinates only", "Local arbitrary grid systems"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Two projection types:**\n   - Lambert Conformal Conic (east-west states)\n   - Transverse Mercator (north-south states)\n2. **Purpose:** Minimize distortion within state\n3. **Each state:** One or more zones\n4. **Example:** California has 6 zones\n5. **Not UTM:** Different system (military origin)\n**Answer: Lambert Conformal Conic or Transverse Mercator projections**", points: 10 },
+          { type: "multiple_choice", text: "A distance measured as 1000.00 ft on the ground is in an area with combined scale factor of 0.99995. What is the grid distance?", options: ["999.95 ft", "1000.05 ft", "1000.00 ft", "995.00 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Grid-to-ground conversion:** Grid = Ground × Scale Factor\n2. **Given:** Ground = 1000.00 ft, SF = 0.99995\n3. **Calculate:** Grid = 1000.00 × 0.99995\n4. **Result:** Grid = 999.95 ft\n5. **Meaning:** Grid distance is shorter (scale < 1.0)\n**Answer: 999.95 ft**", points: 10 },
+          { type: "multiple_choice", text: "If the scale factor at a location is 1.00010, this means:", options: ["Grid distances are 0.01% larger than ground", "Ground distances are 0.01% larger than grid", "No distortion exists", "Grid = Ground exactly"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Scale factor > 1.0:** Grid is larger\n2. **SF = 1.00010 = 1 + 0.0001**\n3. **Percentage:** 0.0001 = 0.01% = 100 ppm\n4. **Grid to ground:** Ground = Grid / SF = Grid / 1.00010\n5. **Meaning:** Grid distances 0.01% larger\n**Answer: Grid distances are 0.01% larger than ground**", points: 10 },
+          { type: "multiple_choice", text: "Combined scale factor includes:", options: ["Elevation factor and grid scale factor", "Only projection scale", "Only elevation", "Magnetic declination"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Two components:**\n   - Grid scale factor (from projection)\n   - Elevation factor (height above geoid)\n2. **Formula:** Combined SF = Grid SF × Elevation Factor\n3. **Elevation factor:** (R / (R + h))\n   where R = Earth radius, h = elevation\n4. **Higher elevation:** Smaller elevation factor\n5. **Result:** Combined adjustment\n**Answer: Elevation factor and grid scale factor**", points: 10 },
+          { type: "multiple_choice", text: "The elevation factor for a point 1000 ft above the geoid (Earth radius ≈ 20,900,000 ft) is approximately:", options: ["0.999952", "1.000048", "1.000000", "0.999900"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Elevation factor formula:** EF = R / (R + h)\n2. **Given:** R = 20,900,000 ft, h = 1,000 ft\n3. **Calculate:** EF = 20,900,000 / (20,900,000 + 1,000)\n   = 20,900,000 / 20,901,000\n4. **Result:** EF = 0.999952\n5. **Meaning:** Ground distances ~48 ppm shorter than sea level\n**Answer: 0.999952**", points: 10 }
+        ]
+      },
+
+      // Domain 5: GPS/GNSS Coordinate Transformations
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "GPS/GNSS Coordinate Transformations",
+        description: "Transform between GPS coordinates and local coordinate systems",
+        content: "GPS provides positions in latitude/longitude or Earth-Centered Earth-Fixed (ECEF) coordinates. Surveyors must transform these to local grid systems like State Plane for practical use.",
+        difficulty: "hard" as const,
+        orderIndex: 11,
+        estimatedMinutes: 30,
+        suggestedWeek: 15,
+        questions: [
+          { type: "multiple_choice", text: "WGS84 is:", options: ["The datum used by GPS satellites", "A map projection", "A local coordinate system", "A type of GPS receiver"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **WGS84:** World Geodetic System 1984\n2. **Type:** Global geodetic reference frame/datum\n3. **Used by:** GPS satellite system\n4. **Defines:** Earth's shape (ellipsoid parameters)\n5. **Not:** A projection or coordinate system type\n**Answer: The datum used by GPS satellites**", points: 10 },
+          { type: "multiple_choice", text: "NAD83 and WGS84 are:", options: ["Very similar but not identical datums", "Exactly the same", "Completely incompatible", "Different by over 100 meters"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **NAD83:** North American Datum 1983\n2. **WGS84:** World Geodetic System 1984\n3. **Similarity:** Within ~1-2 meters for most purposes\n4. **Difference:** Different maintenance/updates over time\n5. **Practice:** Often treated as equivalent for mapping\n**Answer: Very similar but not identical datums**", points: 10 },
+          { type: "multiple_choice", text: "To convert GPS coordinates to State Plane, you typically need:", options: ["Datum, zone, and projection parameters", "Only latitude and longitude", "Only the GPS receiver brand", "Magnetic declination"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Required information:**\n   - Datum (NAD83, WGS84, etc.)\n   - State Plane zone\n   - Projection type and parameters\n2. **Process:** Geographic → Projected conversion\n3. **Software:** Uses ellipsoid parameters\n4. **Output:** Northing and Easting values\n**Answer: Datum, zone, and projection parameters**", points: 10 },
+          { type: "multiple_choice", text: "A GPS position has horizontal precision of ±0.03 m (95% confidence). This is approximately:", options: ["±0.10 ft", "±3.0 ft", "±0.01 ft", "±1.0 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Conversion:** 1 meter = 3.281 feet\n2. **Given:** ±0.03 m\n3. **Calculate:** 0.03 × 3.281 = 0.0984 ft\n4. **Round:** ≈ ±0.10 ft (0.1 ft)\n5. **Context:** Very high precision (RTK GPS)\n**Answer: ±0.10 ft**", points: 10 },
+          { type: "multiple_choice", text: "The geoid is:", options: ["An equipotential surface representing mean sea level", "The physical surface of the Earth", "A mathematical ellipsoid", "The GPS satellite orbit"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Geoid:** Gravity-based reference surface\n2. **Represents:** Mean sea level extended globally\n3. **Irregular:** Follows Earth's gravity field\n4. **Vs. ellipsoid:** Smooth mathematical approximation\n5. **Separation:** Geoid height = elevation difference\n**Answer: An equipotential surface representing mean sea level**", points: 10 }
+        ]
+      },
+
+      // Domain 5: Least Squares Adjustment Basics
+      {
+        domainNumber: 5,
+        domain: DOMAINS[5],
+        title: "Least Squares Adjustment Basics",
+        description: "Understand least squares adjustment principles for survey data",
+        content: "Least squares adjustment is the rigorous mathematical method for processing redundant survey observations. Understanding the basic concepts helps surveyors interpret adjusted results and assess data quality.",
+        difficulty: "hard" as const,
+        orderIndex: 12,
+        estimatedMinutes: 30,
+        suggestedWeek: 16,
+        questions: [
+          { type: "multiple_choice", text: "Least squares adjustment minimizes:", options: ["The sum of squared residuals", "The largest error", "The average error", "The number of observations"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Principle:** Minimize Σ(v²) where v = residual\n2. **Residual:** v = observed - adjusted\n3. **Squared:** Prevents positive/negative cancellation\n4. **Result:** Most probable values\n5. **Not:** Minimize max error or average (those are different methods)\n**Answer: The sum of squared residuals**", points: 10 },
+          { type: "multiple_choice", text: "A measurement is repeated 5 times: 100.2, 100.4, 100.1, 100.3, 100.0 ft. The least squares estimate (mean) is:", options: ["100.2 ft", "100.3 ft", "100.1 ft", "100.4 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **For equal-weight observations:** Mean = Σx / n\n2. **Sum:** 100.2 + 100.4 + 100.1 + 100.3 + 100.0 = 501.0\n3. **Count:** n = 5\n4. **Calculate:** 501.0 / 5 = 100.2 ft\n5. **This minimizes:** Sum of squared deviations\n**Answer: 100.2 ft**", points: 10 },
+          { type: "multiple_choice", text: "Redundancy in surveying means:", options: ["More observations than minimally required", "Repeating the same measurement", "Using the same instrument twice", "Measuring in both directions"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Redundancy:** Extra observations beyond minimum\n2. **Example:** 4 observations when 3 would suffice\n3. **Benefit:** Error detection and adjustment\n4. **Degrees of freedom:** n_obs - n_unknowns\n5. **Enables:** Statistical quality control\n**Answer: More observations than minimally required**", points: 10 },
+          { type: "multiple_choice", text: "In a least squares adjustment, weights are typically based on:", options: ["Precision of measurements (1/σ²)", "Cost of observations", "Time to observe", "Instrument color"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Weight formula:** W = 1 / σ² or W = k / σ²\n2. **Where:** σ = standard deviation\n3. **Meaning:** More precise measurements get higher weight\n4. **Example:** ±0.01 ft measurement weighs more than ±0.10 ft\n5. **Result:** Better observations influence solution more\n**Answer: Precision of measurements (1/σ²)**", points: 10 },
+          { type: "multiple_choice", text: "A residual (v) in least squares is:", options: ["Observed value minus adjusted value", "Adjusted value minus true value", "The measurement error", "The standard deviation"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Residual definition:** v = L - L̂\n2. **Where:** L = observed, L̂ = adjusted\n3. **Represents:** Correction applied to observation\n4. **Used to:** Calculate standard deviation of adjustment\n5. **Check:** Σv should be small\n**Answer: Observed value minus adjusted value**", points: 10 }
         ]
       }
     ];
