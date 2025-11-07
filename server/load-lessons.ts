@@ -654,7 +654,13 @@ async function loadLessons() {
       for (const lessonData of lessonsData) {
         const { questions: questionData, ...lessonInfo } = lessonData;
         
-        const [lesson] = await tx.insert(lessons).values(lessonInfo).returning();
+        // Generate deterministic ID: d{domain}-lesson-{orderIndex:02}
+        const lessonId = `d${lessonInfo.domainNumber}-lesson-${String(lessonInfo.orderIndex).padStart(2, '0')}`;
+        
+        const [lesson] = await tx.insert(lessons).values({
+          ...lessonInfo,
+          id: lessonId
+        }).returning();
         loadedLessons.push(`${lessonInfo.domain}: ${lessonInfo.title}`);
         
         // Insert questions for this lesson
