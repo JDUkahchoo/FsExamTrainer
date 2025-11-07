@@ -7,16 +7,37 @@ import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
 
 const DOMAINS = {
+  1: "Surveying Processes and Methods",
   5: "Survey Computations and Computer Applications",
   7: "Applied Mathematics and Statistics"
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 10 lessons with 50 questions...\n");
+  console.log("📚 Loading 11 lessons with 55 questions...\n");
 
   try {
-    // All 10 lessons with questions
+    // All 11 lessons with questions
     const lessonsData = [
+      // Domain 1: Differential Leveling Fundamentals
+      {
+        domainNumber: 1,
+        domain: DOMAINS[1],
+        title: "Differential Leveling Fundamentals",
+        description: "Master basic leveling concepts, rod readings, and elevation calculations",
+        content: "Differential leveling is the most common method for determining elevation differences. Understanding backsights (BS), foresights (FS), and height of instrument (HI) is essential for accurate elevation work.",
+        difficulty: "easy" as const,
+        orderIndex: 13,
+        estimatedMinutes: 20,
+        suggestedWeek: 2,
+        questions: [
+          { type: "multiple_choice", text: "In differential leveling, a backsight (BS) is:", options: ["A rod reading taken on a point of unknown elevation", "A rod reading taken on a point of known elevation", "The difference between two rod readings", "The height of the instrument above the ground"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Backsight (BS)** is the FIRST rod reading after setting up the level\n2. It's always taken on a point of KNOWN elevation (benchmark or turning point)\n3. Purpose: Establish the Height of Instrument (HI)\n4. Formula: HI = Known Elevation + BS\n5. Foresights are taken on unknown points\n**Answer: A rod reading taken on a point of known elevation**", points: 10 },
+          { type: "multiple_choice", text: "A level is set up and a backsight of 4.82 ft is read on BM-5 (elevation 125.40 ft). What is the Height of Instrument (HI)?", options: ["120.58 ft", "130.22 ft", "121.42 ft", "129.58 ft"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Formula:** HI = Elevation of BM + Backsight\n2. **Given:**\n   - BM elevation = 125.40 ft\n   - Backsight (BS) = 4.82 ft\n3. **Substitute:** HI = 125.40 + 4.82\n4. **Calculate:** HI = 130.22 ft\n5. **Concept:** HI is the elevation of the line of sight\n**Answer: 130.22 ft**", points: 10 },
+          { type: "multiple_choice", text: "With HI = 130.22 ft, a foresight reading of 6.35 ft is taken on point A. What is the elevation of point A?", options: ["136.57 ft", "123.87 ft", "125.40 ft", "133.75 ft"], answer: "1", explanation: "**Step-by-Step Solution:**\n1. **Formula:** Elevation = HI - Foresight\n2. **Given:**\n   - HI = 130.22 ft\n   - Foresight (FS) = 6.35 ft\n3. **Substitute:** Elevation = 130.22 - 6.35\n4. **Calculate:** Elevation = 123.87 ft\n5. **Remember:** Subtract FS because rod extends DOWN from HI\n**Answer: 123.87 ft**", points: 10 },
+          { type: "multiple_choice", text: "A rod reading shows the following: The target is between 5 and 6 ft, with the crosshair at 3 small divisions above 5. If each small division = 0.01 ft, what is the reading?", options: ["5.03 ft", "5.30 ft", "5.003 ft", "6.03 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Start with whole foot:** 5 ft\n2. **Count small divisions above:** 3 divisions\n3. **Each division:** 0.01 ft\n4. **Calculate:** 3 × 0.01 = 0.03 ft\n5. **Total reading:** 5 + 0.03 = 5.03 ft\n6. **Note:** Standard leveling rods read to 0.01 ft precision\n**Answer: 5.03 ft**", points: 10 },
+          { type: "multiple_choice", text: "A construction site needs to be graded to elevation 150.00 ft. Current HI = 156.75 ft. What rod reading (cut) is needed to mark grade stakes?", options: ["6.75 ft", "150.00 ft", "156.75 ft", "306.75 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **What we need:** Find rod reading for elevation 150.00 ft\n2. **Formula:** Rod Reading = HI - Desired Elevation\n3. **Given:**\n   - HI = 156.75 ft\n   - Desired elevation = 150.00 ft\n4. **Calculate:** Rod Reading = 156.75 - 150.00 = 6.75 ft\n5. **Real-world use:** Mark grade stakes at 6.75 ft cut\n**Answer: 6.75 ft**", points: 10 }
+        ]
+      },
+      
       // Domain 7: Algebra and Equation Solving
       {
         domainNumber: 7,
