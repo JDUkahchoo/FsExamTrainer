@@ -13,7 +13,7 @@ const DOMAINS = {
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 13 lessons with 65 questions...\n");
+  console.log("📚 Loading 14 lessons with 70 questions...\n");
 
   try {
     // All 11 lessons with questions
