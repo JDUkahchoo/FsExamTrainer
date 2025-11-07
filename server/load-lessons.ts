@@ -239,34 +239,49 @@ async function loadLessons() {
       }
     ];
 
-    // Insert all lessons
-    for (const lessonData of lessonsData) {
-      const { questions: questionData, ...lessonInfo } = lessonData;
-      
-      console.log(`✅ Loaded ${lessonInfo.domain}: ${lessonInfo.title}`);
-      const [lesson] = await db.insert(lessons).values(lessonInfo).returning();
-      
-      // Insert questions for this lesson
-      for (let i = 0; i < questionData.length; i++) {
-        const q = questionData[i];
-        await db.insert(lessonQuestions).values({
-          lessonId: lesson.id,
-          questionType: q.type,
-          questionText: q.text,
-          options: q.options ? JSON.stringify(q.options) : null,
-          correctAnswer: q.answer,
-          explanation: q.explanation,
-          orderIndex: i + 1,
-          points: q.points
-        });
-      }
-    }
+    // Track loaded lessons for post-transaction logging
+    const loadedLessons: string[] = [];
+    
+    // Wrap everything in a transaction for production safety
+    console.log("🧹 Clearing existing lessons and questions...");
+    await db.transaction(async (tx) => {
+      // Clear existing lessons to ensure idempotent loading
+      await tx.delete(lessonQuestions);
+      await tx.delete(lessons);
 
+      // Insert all lessons (silent during transaction)
+      for (const lessonData of lessonsData) {
+        const { questions: questionData, ...lessonInfo } = lessonData;
+        
+        const [lesson] = await tx.insert(lessons).values(lessonInfo).returning();
+        loadedLessons.push(`${lessonInfo.domain}: ${lessonInfo.title}`);
+        
+        // Insert questions for this lesson
+        for (let i = 0; i < questionData.length; i++) {
+          const q = questionData[i];
+          await tx.insert(lessonQuestions).values({
+            lessonId: lesson.id,
+            questionType: q.type,
+            questionText: q.text,
+            options: q.options ? JSON.stringify(q.options) : null,
+            correctAnswer: q.answer,
+            explanation: q.explanation,
+            orderIndex: i + 1,
+            points: q.points
+          });
+        }
+      }
+    }); // End transaction
+    
+    // Success logging ONLY after transaction commits successfully
+    console.log("✅ Database cleared\n");
+    loadedLessons.forEach(lesson => console.log(`✅ Loaded ${lesson}`));
     console.log(`\n🎉 All ${lessonsData.length} lessons loaded successfully!`);
     console.log(`✅ Total: ${lessonsData.reduce((sum, l) => sum + l.questions.length, 0)} questions`);
     
   } catch (error) {
-    console.error("\n❌ Error loading lessons:", error);
+    console.error("\n❌ TRANSACTION FAILED - No lessons were loaded");
+    console.error("Error details:", error);
     throw error;
   }
 }
