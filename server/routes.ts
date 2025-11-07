@@ -1029,7 +1029,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Check answer based on question type
         if (question.questionType === 'multiple_choice') {
-          isCorrect = userAnswer === question.correctAnswer;
+          isCorrect = String(userAnswer) === question.correctAnswer;
         } else if (question.questionType === 'fill_in_blank') {
           isCorrect = compareFillInBlank(userAnswer, question.correctAnswer);
         } else if (question.questionType === 'drag_drop') {
