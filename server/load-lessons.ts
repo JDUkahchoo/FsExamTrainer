@@ -13,7 +13,7 @@ const DOMAINS = {
 };
 
 async function loadLessons() {
-  console.log("📚 Loading 11 lessons with 55 questions...\n");
+  console.log("📚 Loading 12 lessons with 60 questions...\n");
 
   try {
     // All 11 lessons with questions
@@ -175,6 +175,26 @@ async function loadLessons() {
           { type: "multiple_choice", text: "For area = length × width, if L = 50 ± 0.05 ft and W = 30 ± 0.03 ft, what is the approximate error?", options: ["±2.9 sq ft", "±0.08 sq ft", "±1.5 sq ft", "±4.0 sq ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. Area = 50 × 30 = 1500 sq ft\n2. For multiplication: relative errors combine\n3. Relative error in L: 0.05/50 = 0.001\n4. Relative error in W: 0.03/30 = 0.001\n5. Combined: √(0.001² + 0.001²) = 0.00141\n6. Absolute error: 1500 × 0.00141 ≈ 2.1 sq ft\nClosest: ±2.9 sq ft\n**Answer: ±2.9 sq ft**", points: 10 },
           { type: "multiple_choice", text: "An angle is measured 4 times with standard deviation σ = 10\". What is the error in the mean?", options: ["±5\"", "±2.5\"", "±10\"", "±20\""], answer: "0", explanation: "**Step-by-Step Solution:**\n1. Error in mean = σ / √n\n2. n = 4 measurements\n3. Calculate: 10\" / √4 = 10\" / 2\n4. Result: 5\"\n**Answer: ±5\"**", points: 10 },
           { type: "multiple_choice", text: "Three angles are measured: 30°±5', 45°±3', 60°±4'. What is the total angular error?", options: ["±7.1'", "±12'", "±5'", "±4'"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. Formula: σₜₒₜₐₗ = √(σ₁² + σ₂² + σ₃²)\n2. Square errors:\n   5² = 25\n   3² = 9\n   4² = 16\n3. Add: 25 + 9 + 16 = 50\n4. Square root: √50 = 7.07 ≈ 7.1'\n**Answer: ±7.1'**", points: 10 }
+        ]
+      },
+
+      // Domain 7: Trigonometry Fundamentals
+      {
+        domainNumber: 7,
+        domain: DOMAINS[7],
+        title: "Trigonometry Fundamentals",
+        description: "Master right triangle trigonometry and laws of sines/cosines",
+        content: "Trigonometry is essential for surveying calculations involving angles and distances in triangles. Understanding SOH-CAH-TOA, Law of Sines, and Law of Cosines enables solving complex field problems.",
+        difficulty: "medium" as const,
+        orderIndex: 13,
+        estimatedMinutes: 25,
+        suggestedWeek: 3,
+        questions: [
+          { type: "multiple_choice", text: "In a right triangle, the opposite side is 40 ft and the hypotenuse is 50 ft. What is sin(θ)?", options: ["0.80", "0.60", "1.25", "0.75"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **SOH-CAH-TOA:** sin(θ) = Opposite / Hypotenuse\n2. **Given:**\n   - Opposite = 40 ft\n   - Hypotenuse = 50 ft\n3. **Calculate:** sin(θ) = 40 / 50\n4. **Simplify:** sin(θ) = 0.80\n**Answer: 0.80**", points: 10 },
+          { type: "multiple_choice", text: "A surveyor stands 100 ft from a building. The angle to the top is 35°. What is the building height?", options: ["70.0 ft", "81.9 ft", "57.4 ft", "122.1 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Draw diagram:** Right triangle with adjacent = 100 ft, angle = 35°\n2. **Use TOA:** tan(θ) = Opposite / Adjacent\n3. **Rearrange:** Opposite = Adjacent × tan(θ)\n4. **Calculate:** Height = 100 × tan(35°)\n5. **Compute:** tan(35°) = 0.7002\n6. **Result:** Height = 100 × 0.7002 = 70.0 ft\n**Answer: 70.0 ft**", points: 10 },
+          { type: "multiple_choice", text: "In triangle ABC: angle A = 35°, angle B = 65°, side a = 50 ft (opposite angle A). Find side b using Law of Sines.", options: ["79.0 ft", "50.0 ft", "43.5 ft", "87.2 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Law of Sines:** a/sin(A) = b/sin(B)\n2. **Given:** A = 35°, B = 65°, a = 50 ft\n3. **Rearrange:** b = a × sin(B) / sin(A)\n4. **Substitute:** b = 50 × sin(65°) / sin(35°)\n5. **Calculate:**\n   - sin(65°) = 0.9063\n   - sin(35°) = 0.5736\n6. **Compute:** b = 50 × 0.9063 / 0.5736 = 79.0 ft\n**Answer: 79.0 ft**", points: 10 },
+          { type: "multiple_choice", text: "Triangle has sides a = 8 ft, b = 6 ft, and included angle C = 60°. Find side c using Law of Cosines.", options: ["7.21 ft", "10.0 ft", "8.72 ft", "6.00 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Law of Cosines:** c² = a² + b² - 2ab·cos(C)\n2. **Given:** a = 8, b = 6, C = 60°\n3. **Substitute:** c² = 8² + 6² - 2(8)(6)cos(60°)\n4. **Calculate components:**\n   - 8² = 64\n   - 6² = 36\n   - cos(60°) = 0.5\n   - 2(8)(6)(0.5) = 48\n5. **Compute:** c² = 64 + 36 - 48 = 52\n6. **Take square root:** c = √52 = 7.21 ft\n**Answer: 7.21 ft**", points: 10 },
+          { type: "multiple_choice", text: "Two control points are 500 ft apart. From point A, the angle to a tree is 40°. From point B, the angle is 75°. How far is the tree from point A?", options: ["532.8 ft", "500.0 ft", "421.7 ft", "268.3 ft"], answer: "0", explanation: "**Step-by-Step Solution:**\n1. **Setup:** Triangle with baseline AB = 500 ft\n   - Angle at A = 40°\n   - Angle at B = 75°\n2. **Find angle at tree (C):** 180° - 40° - 75° = 65°\n3. **Identify what we need:**\n   - Side opposite angle B (at point B) = distance from A to tree\n4. **Use Law of Sines:** AB/sin(C) = distance/sin(B)\n5. **Rearrange:** distance = AB × sin(B) / sin(C)\n6. **Substitute:** distance = 500 × sin(75°) / sin(65°)\n7. **Calculate:**\n   - sin(75°) = 0.9659\n   - sin(65°) = 0.9063\n8. **Result:** distance = 500 × 0.9659 / 0.9063 = 532.8 ft\n**Answer: 532.8 ft**", points: 10 }
         ]
       },
 
