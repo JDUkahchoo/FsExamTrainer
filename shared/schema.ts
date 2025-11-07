@@ -666,7 +666,7 @@ export type StudyCycle = typeof studyCycles.$inferSelect;
 export type QuestionType = 'multiple_choice' | 'fill_in_blank' | 'drag_drop';
 
 export const lessons = pgTable("lessons", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id").primaryKey(), // Deterministic ID: d{domain}-lesson-{orderIndex:02}
   domainNumber: integer("domain_number").notNull(), // 1-7 for NCEES domains
   domain: text("domain").notNull(), // NCEES domain name
   title: text("title").notNull(),
