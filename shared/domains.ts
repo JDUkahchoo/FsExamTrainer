@@ -1,7 +1,8 @@
-// NCEES FS Exam - 7 Knowledge Areas
+// NCEES FS Exam - 7 Knowledge Areas + Foundational Math Review
 // Centralized domain mappings for consistency across application
 
 export const NCEES_DOMAINS = {
+  0: "Math & Science Foundations",
   1: "Surveying Processes and Methods",
   2: "Mapping Processes and Methods",
   3: "Boundary Law and Real Property Principles",
