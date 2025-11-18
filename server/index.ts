@@ -1,6 +1,10 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { db } from "./db";
+import { lessons } from "@shared/schema";
+import { seedLessons } from "./seed-lessons";
+import { count } from "drizzle-orm";
 
 const app = express();
 
@@ -47,6 +51,23 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Auto-seed lessons if database is empty (for production deployments)
+  try {
+    const result = await db.select({ count: count() }).from(lessons);
+    const lessonCount = result[0]?.count || 0;
+    
+    if (lessonCount === 0) {
+      log("📚 Database is empty. Auto-seeding lessons...");
+      await seedLessons();
+      log("✅ Auto-seeding completed! 68 lessons loaded.");
+    } else {
+      log(`✅ Database ready with ${lessonCount} lessons`);
+    }
+  } catch (error) {
+    console.error("⚠️ Error checking/seeding lessons:", error);
+    // Continue server startup even if seeding fails
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
