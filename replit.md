@@ -13,7 +13,14 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **16-Week Study Plan with Flexible Study Modes:** Structured weekly schedules with a READ → FOCUS → APPLY → REINFORCE framework, interactive checklists, and progress tracking, including integrated Daily Study Logs. Now supports three study modes:
     -   **Standard Mode:** Distributes all 7 NCEES domains evenly across 16 weeks using suggested week assignments
     -   **Result-Driven Mode:** Prioritizes weak domains based on pretest scores, placing difficult areas earlier in the study plan
-    -   **Custom Mode:** Allows users to manually create their own personalized study schedule
+    -   **Custom Mode:** Allows users to manually create their own personalized study schedule with the Custom Plan Builder tool
+-   **Custom Plan Builder (Nov 2025):** Interactive UI for creating personalized study plans without requiring pretest completion. Features:
+    -   Domain selection with visual checkboxes for all 7 NCEES domains
+    -   Priority ordering with drag-and-drop functionality to arrange domains by importance
+    -   Timeline slider (8-16 weeks) to customize study duration
+    -   Real-time validation preventing empty plans
+    -   Automatic lesson distribution based on selected priorities and timeline
+    -   State synchronization that preserves user edits and loads saved preferences correctly
 -   **Study Cycles System:** Multi-pass study framework allowing users to complete the 16-week plan multiple times, preserving historical data and tracking progress per cycle.
 -   **Practice Quizzes:** Two modes (Mixed Exam and Domain Practice) with unique questions, instant feedback, detailed explanations, and performance analytics.
 -   **Flashcard System:** Two decks with card flip animations, spaced repetition, and mastery tracking.
@@ -49,8 +56,14 @@ The application features a comprehensive UI/UX with domain-specific color coding
     -   Lessons have domainNumber (1-7), difficulty (easy/medium/hard), and optional suggestedWeek
     -   Client-side study plan logic (`client/src/lib/study-plan-logic.ts`) distributes lessons across weeks based on study mode
     -   Single API endpoint (`GET /api/lessons`) fetches all lessons; client organizes by week
-    -   Study modes stored in user preferences; Result-Driven mode uses pretest domain scores for prioritization
+    -   Study modes stored in user preferences; Result-Driven mode uses pretest domain scores for prioritization; Custom mode uses manually selected domain priorities
     -   **Stable Lesson IDs:** Deterministic ID format `d{domain}-lesson-{orderIndex:02}` (e.g., "d1-lesson-01") eliminates 404 errors from lesson reloads and enables reliable progress tracking
+-   **Custom Plan Builder Implementation (Nov 2025):** 
+    -   Database: Added `customDomainPriorities` (array of domain indices) and `customTimeline` (weeks) to userPreferences table
+    -   Logic: `getCustomPriorityModeWeeklyLessons()` function distributes lessons based on user-selected priority domains
+    -   UI: Modal component with domain selection, priority reordering, and timeline slider
+    -   State Management: useEffect syncs preferences when dialog opens; useMemo stabilizes prop references to prevent unwanted re-renders
+    -   Backend: POST `/api/preferences/custom-plan` endpoint saves custom priorities and timeline
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
