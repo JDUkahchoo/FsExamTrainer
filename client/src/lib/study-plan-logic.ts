@@ -1,5 +1,5 @@
 import { NCEES_DOMAINS, getAllDomains, type DomainNumber } from "@shared/domains";
-import type { StudyMode } from "@shared/schema";
+import type { StudyMode, WeekPlan } from "@shared/schema";
 
 // Lesson type matching backend
 interface Lesson {
@@ -218,4 +218,45 @@ export function getWeeklyLessonsByMode(
     default:
       return getStandardModeWeeklyLessons(allLessons);
   }
+}
+
+/**
+ * Generate dynamic week plans with READ/FOCUS/APPLY/REINFORCE content based on custom domain selections
+ */
+export function generateCustomWeekPlans(
+  customWeeklyDomains: Record<string, number[]>,
+  customTimeline: number
+): WeekPlan[] {
+  const weekPlans: WeekPlan[] = [];
+  
+  // Import domain content generation functions
+  const { generateWeekTitle, generateWeekContent } = require('@shared/data/domainContent');
+  const { getDomainName } = require('@shared/domains');
+  
+  for (let week = 1; week <= customTimeline; week++) {
+    const weekKey = week.toString();
+    const domainNumbers = customWeeklyDomains[weekKey] || [];
+    
+    // Skip weeks with no domain assignments
+    if (domainNumbers.length === 0) continue;
+    
+    // Generate content based on selected domains
+    const content = generateWeekContent(domainNumbers);
+    const title = generateWeekTitle(domainNumbers);
+    
+    // Map domain numbers to domain names for the WeekPlan structure
+    const domains = domainNumbers.map(num => getDomainName(num as any));
+    
+    weekPlans.push({
+      week,
+      title,
+      domains: domains as any[],
+      read: content.read,
+      focus: content.focus,
+      apply: content.apply,
+      reinforce: content.reinforce
+    });
+  }
+  
+  return weekPlans;
 }

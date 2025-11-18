@@ -38,7 +38,7 @@ import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
-import { getWeeklyLessonsByMode } from '@/lib/study-plan-logic';
+import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 
 export default function StudyPlanPage() {
@@ -446,9 +446,19 @@ export default function StudyPlanPage() {
     );
   }
 
-  // Convert custom weeks to WeekPlan format
+  // Determine which week plans to use based on study mode
+  const baseWeeks = useMemo(() => {
+    if (preferences?.studyMode === 'custom' && currentCustomWeeklyDomains && Object.keys(currentCustomWeeklyDomains).length > 0) {
+      // Generate dynamic week plans based on custom domain selections
+      return generateCustomWeekPlans(currentCustomWeeklyDomains, currentCustomTimeline);
+    }
+    // Use standard hardcoded study plan for standard and result-driven modes
+    return STUDY_PLAN;
+  }, [preferences?.studyMode, currentCustomWeeklyDomains, currentCustomTimeline]);
+
+  // Convert custom weeks to WeekPlan format and merge with base weeks
   const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = [
-    ...STUDY_PLAN,
+    ...baseWeeks,
     ...customWeeks.map(cw => ({
       week: cw.weekNumber,
       title: cw.title,
