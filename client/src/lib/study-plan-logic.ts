@@ -122,15 +122,66 @@ export function getResultDrivenModeWeeklyLessons(
 }
 
 /**
- * Custom Mode: User creates their own plan
- * This returns empty weekly lessons - user will manually add lessons to weeks
+ * Custom Mode: User creates their own plan based on manual domain priorities
+ * Distributes lessons based on prioritized domains (similar to Result-Driven but user-specified)
  */
-export function getCustomModeWeeklyLessons(): Map<number, Lesson[]> {
+export function getCustomModeWeeklyLessons(
+  allLessons: Lesson[],
+  priorityDomains?: number[], // Array of domain numbers in priority order, e.g., [3, 5, 4, 1] means focus on domains 3,5,4,1
+  timeline: number = 12 // Number of weeks (8-16)
+): Map<number, Lesson[]> {
   const weeklyLessons = new Map<number, Lesson[]>();
   
-  // Initialize all 16 weeks empty
-  for (let week = 1; week <= 16; week++) {
+  // Initialize weeks based on timeline
+  for (let week = 1; week <= timeline; week++) {
     weeklyLessons.set(week, []);
+  }
+  
+  // If no priorities specified, return empty plan (user manually adds lessons)
+  if (!priorityDomains || priorityDomains.length === 0) {
+    return weeklyLessons;
+  }
+  
+  // Group lessons by domain
+  const lessonsByDomain = new Map<number, Lesson[]>();
+  allLessons.forEach((lesson) => {
+    if (!lessonsByDomain.has(lesson.domainNumber)) {
+      lessonsByDomain.set(lesson.domainNumber, []);
+    }
+    lessonsByDomain.get(lesson.domainNumber)!.push(lesson);
+  });
+  
+  // Organize domains: priority domains first, then others
+  const prioritySet = new Set(priorityDomains);
+  const otherDomains = Array.from(lessonsByDomain.keys()).filter(d => !prioritySet.has(d));
+  const orderedDomains = [...priorityDomains, ...otherDomains];
+  
+  // Distribute lessons across weeks
+  let currentWeek = 1;
+  const lessonsPerWeek = Math.ceil(allLessons.length / timeline);
+  
+  for (const domainNum of orderedDomains) {
+    const domainLessons = lessonsByDomain.get(domainNum);
+    if (!domainLessons) continue;
+    
+    // Sort by difficulty (easy first)
+    const difficultyOrder = { easy: 1, medium: 2, hard: 3 };
+    domainLessons.sort((a, b) => {
+      const diffA = difficultyOrder[a.difficulty];
+      const diffB = difficultyOrder[b.difficulty];
+      if (diffA !== diffB) return diffA - diffB;
+      return a.title.localeCompare(b.title);
+    });
+    
+    // Distribute this domain's lessons across available weeks
+    for (const lesson of domainLessons) {
+      weeklyLessons.get(currentWeek)!.push(lesson);
+      
+      // Move to next week if current week is full
+      if (weeklyLessons.get(currentWeek)!.length >= lessonsPerWeek) {
+        currentWeek = Math.min(timeline, currentWeek + 1);
+      }
+    }
   }
   
   return weeklyLessons;
@@ -142,7 +193,9 @@ export function getCustomModeWeeklyLessons(): Map<number, Lesson[]> {
 export function getWeeklyLessonsByMode(
   mode: StudyMode,
   allLessons: Lesson[],
-  domainScores?: DomainScore[]
+  domainScores?: DomainScore[],
+  customPriorities?: number[], // For custom mode: array of domain numbers in priority order
+  customTimeline?: number // For custom mode: number of weeks (8-16)
 ): Map<number, Lesson[]> {
   switch (mode) {
     case 'standard':
@@ -156,7 +209,7 @@ export function getWeeklyLessonsByMode(
       return getResultDrivenModeWeeklyLessons(allLessons, domainScores);
     
     case 'custom':
-      return getCustomModeWeeklyLessons();
+      return getCustomModeWeeklyLessons(allLessons, customPriorities, customTimeline);
     
     default:
       return getStandardModeWeeklyLessons(allLessons);

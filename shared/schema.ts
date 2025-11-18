@@ -566,6 +566,8 @@ export const userPreferences = pgTable("user_preferences", {
   hasSeenWelcome: boolean("has_seen_welcome").notNull().default(false),
   examDate: timestamp("exam_date"), // User's scheduled exam date
   currentCycle: integer("current_cycle").notNull().default(1), // Current study cycle (1, 2, 3...)
+  customDomainPriorities: jsonb("custom_domain_priorities"), // Array of domain numbers in priority order, e.g., [3, 5, 4, 1, 2, 7, 6]
+  customTimeline: integer("custom_timeline").default(12), // Number of weeks for custom study plan (8-16)
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
