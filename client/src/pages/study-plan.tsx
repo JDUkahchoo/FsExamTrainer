@@ -446,34 +446,31 @@ export default function StudyPlanPage() {
     );
   }
 
-  // Determine which week plans to use based on study mode and merge with custom weeks
-  const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => {
-    // Determine base weeks based on study mode
-    let baseWeeks: WeekPlan[];
+  // Determine which week plans to use based on study mode
+  const baseWeeks = useMemo(() => {
     if (preferences?.studyMode === 'custom' && currentCustomWeeklyDomains && Object.keys(currentCustomWeeklyDomains).length > 0) {
       // Generate dynamic week plans based on custom domain selections
-      baseWeeks = generateCustomWeekPlans(currentCustomWeeklyDomains, currentCustomTimeline);
-    } else {
-      // Use standard hardcoded study plan for standard and result-driven modes
-      baseWeeks = STUDY_PLAN;
+      return generateCustomWeekPlans(currentCustomWeeklyDomains, currentCustomTimeline);
     }
-    
-    // Merge with manual custom weeks from database
-    return [
-      ...baseWeeks,
-      ...customWeeks.map(cw => ({
-        week: cw.weekNumber,
-        title: cw.title,
-        domains: cw.domain ? [cw.domain as Domain] : [],
-        read: cw.readItems || [],
-        focus: cw.focusItems || [],
-        apply: cw.applyItems || [],
-        reinforce: cw.reinforceItems || [],
-        isCustom: true,
-        customId: cw.id
-      }))
-    ];
-  }, [preferences?.studyMode, currentCustomWeeklyDomains, currentCustomTimeline, customWeeks]);
+    // Use standard hardcoded study plan for standard and result-driven modes
+    return STUDY_PLAN;
+  }, [preferences?.studyMode, currentCustomWeeklyDomains, currentCustomTimeline]);
+
+  // Convert custom weeks to WeekPlan format and merge with base weeks
+  const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => [
+    ...baseWeeks,
+    ...customWeeks.map(cw => ({
+      week: cw.weekNumber,
+      title: cw.title,
+      domains: cw.domain ? [cw.domain as Domain] : [],
+      read: cw.readItems || [],
+      focus: cw.focusItems || [],
+      apply: cw.applyItems || [],
+      reinforce: cw.reinforceItems || [],
+      isCustom: true,
+      customId: cw.id
+    }))
+  ], [baseWeeks, customWeeks]);
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
