@@ -764,6 +764,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         hasSeenWelcome: req.body.hasSeenWelcome ?? existing?.hasSeenWelcome ?? false,
         examDate: req.body.examDate !== undefined ? req.body.examDate : existing?.examDate,
         currentCycle: req.body.currentCycle ?? existing?.currentCycle ?? 1,
+        customWeeklyDomains: req.body.customWeeklyDomains !== undefined ? req.body.customWeeklyDomains : existing?.customWeeklyDomains,
+        customTimeline: req.body.customTimeline ?? existing?.customTimeline ?? 12,
       };
       
       const data = insertUserPreferencesSchema.parse(merged);
