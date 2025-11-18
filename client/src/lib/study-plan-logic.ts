@@ -1,5 +1,6 @@
-import { NCEES_DOMAINS, getAllDomains, type DomainNumber } from "@shared/domains";
+import { NCEES_DOMAINS, getAllDomains, getDomainName, type DomainNumber } from "@shared/domains";
 import type { StudyMode, WeekPlan } from "@shared/schema";
+import { generateWeekTitle, generateWeekContent } from "@shared/data/domainContent";
 
 // Lesson type matching backend
 interface Lesson {
@@ -229,10 +230,6 @@ export function generateCustomWeekPlans(
 ): WeekPlan[] {
   const weekPlans: WeekPlan[] = [];
   
-  // Import domain content generation functions
-  const { generateWeekTitle, generateWeekContent } = require('@shared/data/domainContent');
-  const { getDomainName } = require('@shared/domains');
-  
   for (let week = 1; week <= customTimeline; week++) {
     const weekKey = week.toString();
     const domainNumbers = customWeeklyDomains[weekKey] || [];
@@ -245,7 +242,7 @@ export function generateCustomWeekPlans(
     const title = generateWeekTitle(domainNumbers);
     
     // Map domain numbers to domain names for the WeekPlan structure
-    const domains = domainNumbers.map(num => getDomainName(num as any));
+    const domains = domainNumbers.map(num => getDomainName(num as DomainNumber));
     
     weekPlans.push({
       week,
