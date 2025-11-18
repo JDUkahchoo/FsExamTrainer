@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Check, Info } from 'lucide-react';
 import {
   Dialog,
@@ -66,10 +66,30 @@ export function CustomPlanBuilder({
     });
   };
 
+  // Calculate normalized weekly domains for validation
+  const normalizedWeeklyDomains = useMemo(() => {
+    const normalized: Record<string, number[]> = {};
+    
+    for (let week = 1; week <= timeline; week++) {
+      const weekKey = week.toString();
+      const domains = weeklyDomains[weekKey] || [];
+      
+      // Remove duplicates and filter out domain 0 if present
+      const uniqueDomains = Array.from(new Set(domains)).filter(d => d !== 0);
+      
+      // Only include weeks that have at least one domain assigned
+      if (uniqueDomains.length > 0) {
+        normalized[weekKey] = uniqueDomains;
+      }
+    }
+    
+    return normalized;
+  }, [weeklyDomains, timeline]);
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onSave(weeklyDomains, timeline);
+      await onSave(normalizedWeeklyDomains, timeline);
       setOpen(false);
     } catch (error) {
       console.error('Failed to save custom plan:', error);
@@ -78,7 +98,8 @@ export function CustomPlanBuilder({
     }
   };
 
-  const totalAssignedWeeks = Object.keys(weeklyDomains).length;
+  const totalAssignedWeeks = Object.keys(normalizedWeeklyDomains).length;
+  const hasValidPlan = totalAssignedWeeks > 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

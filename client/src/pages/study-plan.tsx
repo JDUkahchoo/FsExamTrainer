@@ -468,11 +468,14 @@ export default function StudyPlanPage() {
           <p className="text-muted-foreground">
             Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all 7 NCEES domains.
           </p>
-          {preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 && (
+          {preferences?.studyMode === 'custom' && 
+           preferences?.customWeeklyDomains && 
+           typeof preferences.customWeeklyDomains === 'object' && 
+           Object.keys(preferences.customWeeklyDomains).length > 0 ? (
             <Badge variant="secondary" className="mt-2">
               Custom Plan Active: {Object.keys(preferences.customWeeklyDomains).length} Weeks Customized
             </Badge>
-          )}
+          ) : null}
         </div>
         
         <div className="flex gap-2">
