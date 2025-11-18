@@ -1,6 +1,18 @@
 import { NCEES_DOMAINS, getAllDomains, getDomainName, type DomainNumber } from "@shared/domains";
-import type { StudyMode, WeekPlan } from "@shared/schema";
+import type { StudyMode, WeekPlan, Domain } from "@shared/schema";
 import { generateWeekTitle, generateWeekContent } from "@shared/data/domainContent";
+
+// Map NCEES domain numbers (0-7) to UI domain names (8 unique domains)
+const DOMAIN_NUMBER_TO_UI_NAME: Record<number, Domain> = {
+  0: "Math & Basic Science",                    // NCEES: Math & Science Foundations
+  1: "Field Data Acquisition",                  // NCEES: Surveying Processes and Methods
+  2: "Mapping, GIS, and CAD",                   // NCEES: Mapping Processes and Methods
+  3: "Boundary Law & PLSS",                     // NCEES: Boundary Law and Real Property Principles
+  4: "Surveying Principles",                    // NCEES: Surveying Principles
+  5: "Survey Computations & Applications",      // NCEES: Survey Computations and Computer Applications
+  6: "Professional Practice",                   // NCEES: Business Concepts
+  7: "Geodesy, GPS, Astronomy"                  // NCEES: Applied Mathematics and Statistics
+};
 
 // Lesson type matching backend
 interface Lesson {
@@ -241,13 +253,18 @@ export function generateCustomWeekPlans(
     const content = generateWeekContent(domainNumbers);
     const title = generateWeekTitle(domainNumbers);
     
-    // Map domain numbers to domain names for the WeekPlan structure
-    const domains = domainNumbers.map(num => getDomainName(num as DomainNumber));
+    // Map domain numbers to UI domain names that match getDomainConfig
+    // Use Set to deduplicate since domains 4 and 5 both map to "Plane Survey Computations"
+    const domains = Array.from(new Set(
+      domainNumbers
+        .map(num => DOMAIN_NUMBER_TO_UI_NAME[num])
+        .filter(Boolean) // Remove any undefined mappings
+    ));
     
     weekPlans.push({
       week,
       title,
-      domains: domains as any[],
+      domains: domains as Domain[],
       read: content.read,
       focus: content.focus,
       apply: content.apply,

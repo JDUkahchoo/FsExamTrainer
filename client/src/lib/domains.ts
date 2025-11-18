@@ -7,6 +7,8 @@ import {
   Scale,
   Target,
   Briefcase,
+  Calculator as ComputerCalc,
+  Compass,
   type LucideIcon
 } from 'lucide-react';
 
@@ -33,13 +35,6 @@ export const DOMAIN_CONFIG: Record<Domain, DomainConfig> = {
     textColor: 'text-domain-field-fg',
     borderColor: 'border-domain-field-fg'
   },
-  'Plane Survey Computations': {
-    name: 'Plane Survey Computations',
-    icon: Ruler,
-    bgColor: 'bg-domain-computations',
-    textColor: 'text-domain-computations-fg',
-    borderColor: 'border-domain-computations-fg'
-  },
   'Mapping, GIS, and CAD': {
     name: 'Mapping, GIS, and CAD',
     icon: Globe2,
@@ -54,12 +49,19 @@ export const DOMAIN_CONFIG: Record<Domain, DomainConfig> = {
     textColor: 'text-domain-boundary-fg',
     borderColor: 'border-domain-boundary-fg'
   },
-  'Geodesy, GPS, Astronomy': {
-    name: 'Geodesy, GPS, Astronomy',
-    icon: Target,
-    bgColor: 'bg-domain-geodesy',
-    textColor: 'text-domain-geodesy-fg',
-    borderColor: 'border-domain-geodesy-fg'
+  'Surveying Principles': {
+    name: 'Surveying Principles',
+    icon: Compass,
+    bgColor: 'bg-domain-computations',
+    textColor: 'text-domain-computations-fg',
+    borderColor: 'border-domain-computations-fg'
+  },
+  'Survey Computations & Applications': {
+    name: 'Survey Computations & Applications',
+    icon: Ruler,
+    bgColor: 'bg-domain-computations',
+    textColor: 'text-domain-computations-fg',
+    borderColor: 'border-domain-computations-fg'
   },
   'Professional Practice': {
     name: 'Professional Practice',
@@ -67,6 +69,13 @@ export const DOMAIN_CONFIG: Record<Domain, DomainConfig> = {
     bgColor: 'bg-domain-practice',
     textColor: 'text-domain-practice-fg',
     borderColor: 'border-domain-practice-fg'
+  },
+  'Geodesy, GPS, Astronomy': {
+    name: 'Geodesy, GPS, Astronomy',
+    icon: Target,
+    bgColor: 'bg-domain-geodesy',
+    textColor: 'text-domain-geodesy-fg',
+    borderColor: 'border-domain-geodesy-fg'
   }
 };
 

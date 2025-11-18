@@ -5,23 +5,26 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // --- Domain Types ---
+// Aligned with 8 NCEES exam domains (0-7)
 export type Domain = 
-  | 'Math & Basic Science'
-  | 'Field Data Acquisition'
-  | 'Plane Survey Computations'
-  | 'Mapping, GIS, and CAD'
-  | 'Boundary Law & PLSS'
-  | 'Geodesy, GPS, Astronomy'
-  | 'Professional Practice';
+  | 'Math & Basic Science'                    // NCEES Domain 0
+  | 'Field Data Acquisition'                  // NCEES Domain 1
+  | 'Mapping, GIS, and CAD'                   // NCEES Domain 2
+  | 'Boundary Law & PLSS'                     // NCEES Domain 3
+  | 'Surveying Principles'                    // NCEES Domain 4
+  | 'Survey Computations & Applications'      // NCEES Domain 5
+  | 'Professional Practice'                   // NCEES Domain 6
+  | 'Geodesy, GPS, Astronomy';                // NCEES Domain 7
 
 export const DOMAINS: Domain[] = [
   'Math & Basic Science',
   'Field Data Acquisition',
-  'Plane Survey Computations',
   'Mapping, GIS, and CAD',
   'Boundary Law & PLSS',
-  'Geodesy, GPS, Astronomy',
-  'Professional Practice'
+  'Surveying Principles',
+  'Survey Computations & Applications',
+  'Professional Practice',
+  'Geodesy, GPS, Astronomy'
 ];
 
 // --- Replit Auth Tables (from blueprint:javascript_log_in_with_replit) ---

@@ -22,7 +22,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 3,
     title: "Angles, Azimuths, and Bearings",
-    domains: ['Field Data Acquisition', 'Plane Survey Computations'],
+    domains: ['Field Data Acquisition', 'Surveying Principles'],
     read: ["ES15 Ch. 7 (Angles/Directions), Ch. 8 (Total Stations)", "SRM Ch. 5 (Angles/Directions)"],
     focus: ["Converting between Azimuths and Bearings", "Magnetic declination adjustments over time", "Interior/Exterior angle sums for polygons", "Total Station instrument errors (collimation, trunnion axis)"],
     apply: ["Solve 5 closed-traverse interior angle problems", "NCEES Handbook: Locate magnetic declination charts/formulas"],
@@ -31,7 +31,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 4,
     title: "Traverse Computations & Coordinate Geometry",
-    domains: ['Plane Survey Computations'],
+    domains: ['Surveying Principles'],
     read: ["ES15 Ch. 9 (Traverse), Ch. 10 (Traverse Comp)", "SRM Ch. 6 (Traverse)"],
     focus: ["Latitude and Departure calculations", "Compass Rule (Bowditch) adjustment", "Coordinate geometry (inversing, intersection of lines)", "Area by coordinates method"],
     apply: ["Complete full traverse adjustment by hand (Compass rule)", "Calculate area of a 5-sided polygon using coordinates"],
@@ -40,7 +40,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 5,
     title: "Areas, Volumes, and Route Surveying Basics",
-    domains: ['Plane Survey Computations'],
+    domains: ['Surveying Principles'],
     read: ["ES15 Ch. 12 (Area), Ch. 26 (Volumes)", "SRM Ch. 8 (Areas/Volumes)"],
     focus: ["Average end area vs. Prismoidal formula", "Borrow pit volume calculations", "Area by DMD (Double Meridian Distance)"],
     apply: ["Calculate earthwork volume for a 3-station roadway section", "Solve an area problem with a curved boundary (Simpson's rule)"],
@@ -49,7 +49,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 6,
     title: "Horizontal & Vertical Curves",
-    domains: ['Plane Survey Computations'],
+    domains: ['Surveying Principles'],
     read: ["ES15 Ch. 24 (Horizontal Curves), Ch. 25 (Vertical Curves)", "SRM Ch. 10 (Curves)"],
     focus: ["Horizontal curve elements (PC, PT, PI, LC, R, D, T, E, M)", "Degree of curve definition (arc vs chord)", "Vertical curve high/low point calculation", "Sight distance on vertical curves"],
     apply: ["Compute all elements for a generic horizontal curve given Delta and R", "Find station and elevation of a vertical curve high point"],
@@ -130,7 +130,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 15,
     title: "Weak Area Review & Targeted Practice",
-    domains: ['Math & Basic Science', 'Plane Survey Computations', 'Boundary Law & PLSS'],
+    domains: ['Math & Basic Science', 'Surveying Principles', 'Boundary Law & PLSS'],
     read: ["Re-read highlighted sections of ES15/SRM for weakest 2 domains"],
     focus: ["Review error logs from previous 14 weeks of practice problems", "Deep dive into hardest concepts (usually Geodesy or complex PLSS for most)"],
     apply: ["Take 2 timed mini-exams (50 questions each) focused on weak areas", "Practice using ONLY the NCEES Handbook for formulas"],
@@ -139,7 +139,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 16,
     title: "Final Simulations & Exam Prep",
-    domains: ['Math & Basic Science', 'Field Data Acquisition', 'Plane Survey Computations', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Geodesy, GPS, Astronomy', 'Professional Practice'],
+    domains: ['Math & Basic Science', 'Field Data Acquisition', 'Surveying Principles', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Geodesy, GPS, Astronomy', 'Professional Practice'],
     read: ["NCEES Examinee Guide (Test day rules)"],
     focus: ["Test-taking strategy (triage questions, time management)", "Packing for exam day (approved calculator, ID)"],
     apply: ["Full NCEES Practice Exam (Timed, 5.5 hours simulated split)", "Analyze results and do final spot review"],
