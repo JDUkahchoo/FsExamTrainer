@@ -446,29 +446,21 @@ export default function StudyPlanPage() {
     );
   }
 
-  // Determine base week plans and merge with custom weeks
-  const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => {
-    // Determine base weeks based on study mode
-    const baseWeeks = preferences?.studyMode === 'custom' && currentCustomWeeklyDomains && Object.keys(currentCustomWeeklyDomains).length > 0
-      ? generateCustomWeekPlans(currentCustomWeeklyDomains, currentCustomTimeline)
-      : STUDY_PLAN;
-    
-    // Merge base weeks with manual custom weeks from database
-    return [
-      ...baseWeeks,
-      ...customWeeks.map(cw => ({
-        week: cw.weekNumber,
-        title: cw.title,
-        domains: cw.domain ? [cw.domain as Domain] : [],
-        read: cw.readItems || [],
-        focus: cw.focusItems || [],
-        apply: cw.applyItems || [],
-        reinforce: cw.reinforceItems || [],
-        isCustom: true,
-        customId: cw.id
-      }))
-    ];
-  }, [preferences?.studyMode, currentCustomWeeklyDomains, currentCustomTimeline, customWeeks]);
+  // Convert custom weeks to WeekPlan format and merge with base weeks
+  const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => [
+    ...STUDY_PLAN,
+    ...customWeeks.map(cw => ({
+      week: cw.weekNumber,
+      title: cw.title,
+      domains: cw.domain ? [cw.domain as Domain] : [],
+      read: cw.readItems || [],
+      focus: cw.focusItems || [],
+      apply: cw.applyItems || [],
+      reinforce: cw.reinforceItems || [],
+      isCustom: true,
+      customId: cw.id
+    }))
+  ], [customWeeks]);
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
