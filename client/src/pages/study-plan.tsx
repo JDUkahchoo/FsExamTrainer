@@ -39,6 +39,7 @@ import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
 import { getWeeklyLessonsByMode } from '@/lib/study-plan-logic';
+import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 
 export default function StudyPlanPage() {
   const [, navigate] = useLocation();
@@ -129,8 +130,10 @@ export default function StudyPlanPage() {
   // Organize lessons by week based on study mode
   const weeklyLessonsMap = useMemo(() => {
     const studyMode = (preferences?.studyMode || 'standard') as import('@shared/schema').StudyMode;
-    return getWeeklyLessonsByMode(studyMode, allLessons, domainScores);
-  }, [preferences?.studyMode, allLessons, domainScores]);
+    const customPriorities = preferences?.customDomainPriorities as number[] | undefined;
+    const customTimeline = preferences?.customTimeline || 12;
+    return getWeeklyLessonsByMode(studyMode, allLessons, domainScores, customPriorities, customTimeline);
+  }, [preferences?.studyMode, preferences?.customDomainPriorities, preferences?.customTimeline, allLessons, domainScores]);
 
   // Check if a week covers any weak domains
   const coversWeakDomain = (domains: Domain[]) => {
@@ -229,6 +232,24 @@ export default function StudyPlanPage() {
       toast({
         title: "Custom week deleted",
         description: "The custom study week has been removed.",
+      });
+    }
+  });
+
+  // Mutation to save custom study plan preferences
+  const saveCustomPlanMutation = useMutation({
+    mutationFn: async ({ priorities, timeline }: { priorities: number[]; timeline: number }) => {
+      return apiRequest('PATCH', '/api/preferences', {
+        studyMode: 'custom',
+        customDomainPriorities: priorities,
+        customTimeline: timeline
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+      toast({
+        title: "Custom study plan saved",
+        description: "Your personalized study plan has been generated successfully.",
       });
     }
   });
@@ -438,19 +459,33 @@ export default function StudyPlanPage() {
           <p className="text-muted-foreground">
             Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all 7 NCEES domains.
           </p>
+          {preferences?.studyMode === 'custom' && preferences?.customDomainPriorities && Array.isArray(preferences.customDomainPriorities) && (
+            <Badge variant="secondary" className="mt-2">
+              Custom Plan Active: {preferences.customDomainPriorities.length} Priority Domains
+            </Badge>
+          )}
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-2"
-              data-testid="button-add-custom-week"
-            >
-              <Plus className="w-4 h-4" />
-              Add Custom Week
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <CustomPlanBuilder 
+            onSave={async (priorities, timeline) => {
+              await saveCustomPlanMutation.mutateAsync({ priorities, timeline });
+            }}
+            currentPriorities={(preferences?.customDomainPriorities as number[]) || []}
+            currentTimeline={preferences?.customTimeline || 12}
+          />
+          
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2"
+                data-testid="button-add-custom-week"
+              >
+                <Plus className="w-4 h-4" />
+                Add Custom Week
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add Custom Study Week</DialogTitle>
@@ -553,6 +588,7 @@ export default function StudyPlanPage() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Personalized Recommendations Banner */}
