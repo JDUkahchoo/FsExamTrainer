@@ -162,40 +162,31 @@ export function getCustomModeWeeklyLessons(
     });
   });
   
-  // Track which lessons have been assigned to weeks
-  const assignedLessons = new Set<string>();
-  
-  // Distribute lessons based on week-by-week domain assignments
+  // First, build a map of which weeks each domain is assigned to
+  const domainToWeeks = new Map<number, number[]>();
   for (let week = 1; week <= timeline; week++) {
     const weekKey = week.toString();
     const assignedDomains = weeklyDomainAssignments[weekKey] || [];
     
-    // For each domain assigned to this week, add its unassigned lessons
     for (const domainNum of assignedDomains) {
-      const domainLessons = lessonsByDomain.get(domainNum) || [];
-      
-      for (const lesson of domainLessons) {
-        if (!assignedLessons.has(lesson.id)) {
-          weeklyLessons.get(week)!.push(lesson);
-          assignedLessons.add(lesson.id);
-        }
+      if (!domainToWeeks.has(domainNum)) {
+        domainToWeeks.set(domainNum, []);
       }
+      domainToWeeks.get(domainNum)!.push(week);
     }
   }
   
-  // Add any remaining unassigned lessons to the last few weeks
-  const unassignedLessons = allLessons.filter(l => !assignedLessons.has(l.id));
-  if (unassignedLessons.length > 0) {
-    const remainingWeeks = Math.max(1, Math.ceil(timeline / 2)); // Use last half of weeks
-    const startWeek = Math.max(1, timeline - remainingWeeks + 1);
+  // Now distribute each domain's lessons across all weeks that selected it
+  // Only lessons for explicitly selected domains will be included in the plan
+  domainToWeeks.forEach((weeks, domainNum) => {
+    const domainLessons = lessonsByDomain.get(domainNum) || [];
     
-    let currentWeek = startWeek;
-    for (const lesson of unassignedLessons) {
-      weeklyLessons.get(currentWeek)!.push(lesson);
-      currentWeek++;
-      if (currentWeek > timeline) currentWeek = startWeek;
-    }
-  }
+    // Round-robin distribute lessons across the weeks that want this domain
+    domainLessons.forEach((lesson, lessonIndex) => {
+      const targetWeek = weeks[lessonIndex % weeks.length];
+      weeklyLessons.get(targetWeek)!.push(lesson);
+    });
+  });
   
   return weeklyLessons;
 }

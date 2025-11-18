@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, GripVertical, Info } from 'lucide-react';
+import { Check, Info } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -15,25 +15,25 @@ import {
   Alert,
   AlertDescription,
 } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { NCEES_DOMAINS, getAllDomains } from '@shared/domains';
+import { Checkbox } from "@/components/ui/checkbox";
+import { getAllDomains } from '@shared/domains';
 
 interface CustomPlanBuilderProps {
-  onSave: (priorities: number[], timeline: number) => Promise<void>;
-  currentPriorities?: number[];
+  onSave: (weeklyDomains: Record<string, number[]>, timeline: number) => Promise<void>;
+  currentWeeklyDomains?: Record<string, number[]>;
   currentTimeline?: number;
   trigger?: React.ReactNode;
 }
 
 export function CustomPlanBuilder({ 
   onSave, 
-  currentPriorities = [], 
+  currentWeeklyDomains = {}, 
   currentTimeline = 12,
   trigger 
 }: CustomPlanBuilderProps) {
   const [open, setOpen] = useState(false);
-  const [selectedDomains, setSelectedDomains] = useState<number[]>(currentPriorities);
+  const [weeklyDomains, setWeeklyDomains] = useState<Record<string, number[]>>(currentWeeklyDomains);
   const [timeline, setTimeline] = useState(currentTimeline);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -41,39 +41,35 @@ export function CustomPlanBuilder({
 
   useEffect(() => {
     if (open) {
-      setSelectedDomains(currentPriorities);
+      setWeeklyDomains(currentWeeklyDomains);
       setTimeline(currentTimeline);
     }
-  }, [open, currentPriorities, currentTimeline]);
+  }, [open, currentWeeklyDomains, currentTimeline]);
 
-  const toggleDomain = (domainNum: number) => {
-    setSelectedDomains(prev => {
-      if (prev.includes(domainNum)) {
-        return prev.filter(d => d !== domainNum);
+  const toggleDomainForWeek = (week: number, domainNum: number) => {
+    setWeeklyDomains(prev => {
+      const weekKey = week.toString();
+      const currentDomains = prev[weekKey] || [];
+      
+      if (currentDomains.includes(domainNum)) {
+        // Remove domain from this week
+        const updated = currentDomains.filter(d => d !== domainNum);
+        if (updated.length === 0) {
+          const { [weekKey]: _, ...rest } = prev;
+          return rest;
+        }
+        return { ...prev, [weekKey]: updated };
       } else {
-        return [...prev, domainNum];
+        // Add domain to this week
+        return { ...prev, [weekKey]: [...currentDomains, domainNum] };
       }
     });
-  };
-
-  const moveDomainUp = (index: number) => {
-    if (index === 0) return;
-    const newPriorities = [...selectedDomains];
-    [newPriorities[index - 1], newPriorities[index]] = [newPriorities[index], newPriorities[index - 1]];
-    setSelectedDomains(newPriorities);
-  };
-
-  const moveDomainDown = (index: number) => {
-    if (index === selectedDomains.length - 1) return;
-    const newPriorities = [...selectedDomains];
-    [newPriorities[index], newPriorities[index + 1]] = [newPriorities[index + 1], newPriorities[index]];
-    setSelectedDomains(newPriorities);
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onSave(selectedDomains, timeline);
+      await onSave(weeklyDomains, timeline);
       setOpen(false);
     } catch (error) {
       console.error('Failed to save custom plan:', error);
@@ -81,6 +77,8 @@ export function CustomPlanBuilder({
       setIsSaving(false);
     }
   };
+
+  const totalAssignedWeeks = Object.keys(weeklyDomains).length;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -118,103 +116,65 @@ export function CustomPlanBuilder({
             </p>
           </div>
 
-          {/* Domain Selection */}
+          {/* Week-by-Week Domain Assignment Grid */}
           <div className="space-y-3">
-            <Label className="text-base font-semibold">Select Priority Domains</Label>
+            <Label className="text-base font-semibold">Assign Domains to Each Week</Label>
             <p className="text-sm text-muted-foreground">
-              Click to select domains you want to prioritize. Selected domains will appear first in your study plan.
+              Select which domains you want to study each week. You can choose multiple domains per week.
             </p>
             
-            <div className="grid gap-2">
-              {allDomains
-                .filter(d => d.number !== 0) // Exclude Domain 0 (Math Foundations) from priority selection
-                .map((domain) => {
-                  const isSelected = selectedDomains.includes(domain.number);
-                  return (
-                    <Card
-                      key={domain.number}
-                      className={`p-3 cursor-pointer transition-colors ${
-                        isSelected ? 'bg-primary/10 border-primary' : 'hover-elevate'
-                      }`}
-                      onClick={() => toggleDomain(domain.number)}
-                      data-testid={`card-domain-${domain.number}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                          isSelected ? 'bg-primary border-primary' : 'border-muted-foreground'
-                        }`}>
-                          {isSelected && <Check className="w-4 h-4 text-primary-foreground" />}
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium">Domain {domain.number}: {domain.name}</div>
-                        </div>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+              {Array.from({ length: timeline }, (_, i) => i + 1).map((week) => {
+                const weekKey = week.toString();
+                const selectedDomainsForWeek = weeklyDomains[weekKey] || [];
+                
+                return (
+                  <Card key={week} className="p-4">
+                    <div className="space-y-3">
+                      <Label className="font-semibold">Week {week}</Label>
+                      <div className="grid grid-cols-1 gap-2">
+                        {allDomains
+                          .filter(d => d.number !== 0) // Exclude Domain 0
+                          .map((domain) => {
+                            const isSelected = selectedDomainsForWeek.includes(domain.number);
+                            return (
+                              <div
+                                key={domain.number}
+                                className="flex items-center gap-2 hover-elevate p-2 rounded-md"
+                              >
+                                <Checkbox
+                                  id={`week-${week}-domain-${domain.number}`}
+                                  checked={isSelected}
+                                  onCheckedChange={() => toggleDomainForWeek(week, domain.number)}
+                                  data-testid={`checkbox-week-${week}-domain-${domain.number}`}
+                                />
+                                <label
+                                  htmlFor={`week-${week}-domain-${domain.number}`}
+                                  className="text-sm cursor-pointer flex-1"
+                                >
+                                  Domain {domain.number}: {domain.name}
+                                </label>
+                              </div>
+                            );
+                          })}
                       </div>
-                    </Card>
-                  );
-                })}
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           </div>
-
-          {/* Priority Order */}
-          {selectedDomains.length > 0 && (
-            <div className="space-y-3">
-              <Label className="text-base font-semibold">Priority Order</Label>
-              <p className="text-sm text-muted-foreground">
-                Drag to reorder. Top domains will be scheduled earlier.
-              </p>
-              
-              <div className="space-y-2">
-                {selectedDomains.map((domainNum, index) => {
-                  const domain = allDomains.find(d => d.number === domainNum);
-                  if (!domain) return null;
-                  
-                  return (
-                    <Card key={domainNum} className="p-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex flex-col gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-4 w-4 p-0"
-                            onClick={() => moveDomainUp(index)}
-                            disabled={index === 0}
-                            data-testid={`button-move-up-${domainNum}`}
-                          >
-                            <GripVertical className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-4 w-4 p-0"
-                            onClick={() => moveDomainDown(index)}
-                            disabled={index === selectedDomains.length - 1}
-                            data-testid={`button-move-down-${domainNum}`}
-                          >
-                            <GripVertical className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        <Badge variant="secondary">{index + 1}</Badge>
-                        <div className="flex-1">
-                          <div className="font-medium">Domain {domain.number}: {domain.name}</div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           {/* Info Alert */}
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              {selectedDomains.length === 0 ? (
-                <span>Select at least one domain to create a custom study plan. Your selected domains will be prioritized in the early weeks.</span>
+              {totalAssignedWeeks === 0 ? (
+                <span>Select domains for at least one week to create a custom study plan. Domain 0 (Math Foundations) will be distributed throughout the plan as needed.</span>
               ) : (
                 <span>
-                  Your custom plan will focus on {selectedDomains.length} domain{selectedDomains.length > 1 ? 's' : ''} over {timeline} weeks. 
-                  Domain 0 (Math Foundations) will be distributed throughout the plan as needed.
+                  You've assigned domains to {totalAssignedWeeks} week{totalAssignedWeeks > 1 ? 's' : ''}. 
+                  Lessons for selected domains will be distributed across your chosen weeks.
                 </span>
               )}
             </AlertDescription>
@@ -232,7 +192,7 @@ export function CustomPlanBuilder({
             </Button>
             <Button
               onClick={handleSave}
-              disabled={selectedDomains.length === 0 || isSaving}
+              disabled={totalAssignedWeeks === 0 || isSaving}
               data-testid="button-save-custom-plan"
             >
               {isSaving ? 'Saving...' : 'Save & Generate Plan'}

@@ -128,9 +128,9 @@ export default function StudyPlanPage() {
   }, [pretestResult]);
 
   // Memoize custom plan builder props to prevent unnecessary re-renders
-  const currentCustomPriorities = useMemo(() => {
-    return (preferences?.customDomainPriorities as number[]) || [];
-  }, [preferences?.customDomainPriorities]);
+  const currentCustomWeeklyDomains = useMemo(() => {
+    return (preferences?.customWeeklyDomains as Record<string, number[]>) || {};
+  }, [preferences?.customWeeklyDomains]);
 
   const currentCustomTimeline = useMemo(() => {
     return preferences?.customTimeline || 12;
@@ -139,10 +139,10 @@ export default function StudyPlanPage() {
   // Organize lessons by week based on study mode
   const weeklyLessonsMap = useMemo(() => {
     const studyMode = (preferences?.studyMode || 'standard') as import('@shared/schema').StudyMode;
-    const customPriorities = preferences?.customDomainPriorities as number[] | undefined;
+    const customWeeklyDomains = preferences?.customWeeklyDomains as Record<string, number[]> | undefined;
     const customTimeline = preferences?.customTimeline || 12;
-    return getWeeklyLessonsByMode(studyMode, allLessons, domainScores, customPriorities, customTimeline);
-  }, [preferences?.studyMode, preferences?.customDomainPriorities, preferences?.customTimeline, allLessons, domainScores]);
+    return getWeeklyLessonsByMode(studyMode, allLessons, domainScores, customWeeklyDomains, customTimeline);
+  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, allLessons, domainScores]);
 
   // Check if a week covers any weak domains
   const coversWeakDomain = (domains: Domain[]) => {
@@ -247,10 +247,10 @@ export default function StudyPlanPage() {
 
   // Mutation to save custom study plan preferences
   const saveCustomPlanMutation = useMutation({
-    mutationFn: async ({ priorities, timeline }: { priorities: number[]; timeline: number }) => {
+    mutationFn: async ({ weeklyDomains, timeline }: { weeklyDomains: Record<string, number[]>; timeline: number }) => {
       return apiRequest('PATCH', '/api/preferences', {
         studyMode: 'custom',
-        customDomainPriorities: priorities,
+        customWeeklyDomains: weeklyDomains,
         customTimeline: timeline
       });
     },
@@ -468,19 +468,19 @@ export default function StudyPlanPage() {
           <p className="text-muted-foreground">
             Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all 7 NCEES domains.
           </p>
-          {preferences?.studyMode === 'custom' && preferences?.customDomainPriorities && Array.isArray(preferences.customDomainPriorities) && (
+          {preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 && (
             <Badge variant="secondary" className="mt-2">
-              Custom Plan Active: {preferences.customDomainPriorities.length} Priority Domains
+              Custom Plan Active: {Object.keys(preferences.customWeeklyDomains).length} Weeks Customized
             </Badge>
           )}
         </div>
         
         <div className="flex gap-2">
           <CustomPlanBuilder 
-            onSave={async (priorities, timeline) => {
-              await saveCustomPlanMutation.mutateAsync({ priorities, timeline });
+            onSave={async (weeklyDomains, timeline) => {
+              await saveCustomPlanMutation.mutateAsync({ weeklyDomains, timeline });
             }}
-            currentPriorities={currentCustomPriorities}
+            currentWeeklyDomains={currentCustomWeeklyDomains}
             currentTimeline={currentCustomTimeline}
           />
           
