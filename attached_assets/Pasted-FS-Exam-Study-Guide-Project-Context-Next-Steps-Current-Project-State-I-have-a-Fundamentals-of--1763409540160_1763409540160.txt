@@ -1,0 +1,167 @@
+FS Exam Study Guide - Project Context & Next Steps
+Current Project State
+I have a Fundamentals of Surveying (FS) exam study guide - an interactive Duolingo-style web application for helping students pass the NCEES FS professional licensing exam.
+
+What's Built:
+
+✅ 68 interactive lessons across 8 domains (Domain 0: Math Foundations + Domains 1-7: NCEES exam topics)
+✅ 417 practice questions with detailed step-by-step solutions
+✅ 16-week study plan with 3 modes (Standard, Result-Driven, Custom)
+✅ Practice quizzes (Mixed Exam + Domain Practice modes)
+✅ Flashcard system with spaced repetition (2 decks)
+✅ Full 110-question practice exam simulator
+✅ Progress dashboard with gamification (badges, streaks)
+✅ Study notes with auto-save per week
+✅ Daily activity logging system
+✅ User authentication via Replit Auth
+✅ PostgreSQL database with Drizzle ORM
+✅ React + TypeScript frontend, Express backend
+Tech Stack:
+
+Frontend: React, TypeScript, Tailwind CSS, Shadcn UI, Wouter, TanStack Query
+Backend: Express.js, Drizzle ORM, PostgreSQL
+Auth: Replit Auth
+Validation: Zod
+Project Goals
+Target Market:
+
+Universities ($1,200-2,500/year institutional licenses)
+Individual professionals ($24.99/month subscriptions)
+Current Coverage: 85-90% of NCEES FS exam content
+Target Coverage: 95-100% before launch
+
+Competitive Position:
+
+NLC Prep charges $149/month for video-based courses
+My guide is interactive (better retention) at $24.99/month (83% cheaper)
+I have Domain 0 Math Foundations (competitors don't offer this)
+What We're Adding (End of Month When Credits Refresh)
+We have a comprehensive 28-task plan ready to execute:
+
+Content Gaps to Fill (Tasks 1-7):
+Professional Practice & Ethics - 5-6 lessons, ~40 questions
+
+Professional liability & standards of care
+Ethics scenarios & code of conduct
+Project management & scheduling
+Communication & conflict resolution
+Contract basics & professional responsibilities
+Advanced Boundary Law - 4-5 lessons, ~30 questions
+
+Real-world case studies with legal precedents
+PLSS corner restoration scenarios
+Conflicting deed analysis
+Adverse possession cases
+Expert witness & litigation basics
+GIS/CAD Applications - 3-4 lessons, ~20 questions
+
+Practical GIS spatial analysis
+Coordinate system transformations
+CAD drafting standards & exercises
+Data formats & interoperability
+Field Documentation - 2-3 lessons, ~15 questions
+
+Field book standards & best practices
+Survey documentation requirements
+Chain of custody & record keeping
+Quality control procedures
+Result: 83-86 total lessons, ~517 questions, 95-100% NCEES coverage
+
+Getting Started Flow (Tasks 8-16):
+9-page onboarding experience:
+
+Page 1: Welcome screen with overview
+Page 2: Pretest prompt and explanation
+Page 3: Pretest results with domain breakdown
+Page 4: Exam date picker with timeline calculator
+Page 5: Study schedule intensity selector (4 presets)
+Page 6: Daily routine display (weekday vs weekend)
+Page 7: Weekly/monthly milestones
+Page 8: Study tips (DO's and DON'Ts)
+Page 9: Final confirmation with personalized plan
+Study Schedule Presets (Task 12):
+Four intensity options with "Working Professional" as recommended default:
+
+Standard (7-8 hrs/week): 1 hour/day, 7 days/week, 16 weeks
+Working Professional (9-11 hrs/week) ← DEFAULT:
+1 hour/day Monday-Friday
+2-3 hours on weekends
+Perfect for full-time workers
+Accelerated (14-16 hrs/week): 2 hours/day, 7 days/week, 10-12 weeks
+Intensive (20+ hrs/week): 3-4 hours/day, 6 days/week, 6-8 weeks
+Working Professional Daily Breakdown:
+
+Weekdays (1 hour): 30 min lesson + 15 min flashcards + 10 min quiz + 5 min logging
+Weekends (2-3 hours): 60 min domain practice + 45 min review + 30 min weekly planning
+Study Strategy Page (Task 17):
+Comprehensive guidance page with:
+
+Detailed daily/weekly/monthly routines for each intensity
+DO's and DON'Ts for maximum retention
+Struggling student help (what to do if scoring <60%)
+Pre-exam preparation checklist (final 2 weeks)
+Study tips backed by learning science
+Progress Tracking Enhancements (Tasks 18-21):
+Domain Mastery Over Time:
+
+Line charts showing pretest → monthly practice exam scores per domain
+Visual trend indicators (improving ✅, stagnant ⚠️, declining ❌)
+Domain improvement alerts ("Domain 4 hasn't improved - focus here!")
+Mastery badges unlock at 85%+ consistency
+Monthly Checkpoints:
+
+Automated reminders to take full practice exams
+Compare domain scores month-over-month
+Track overall score improvement (goal: 5-10% per month)
+Implementation & Testing (Tasks 22-27):
+Database schema updates for study preferences
+End-to-end testing of Getting Started flow
+Lesson content validation
+Progress chart testing
+Documentation updates in replit.md
+Final Review (Task 28):
+Architect validation of:
+
+95-100% NCEES exam coverage
+Effective onboarding experience
+Working Professional schedule implementation
+Overall product readiness for launch
+Study Time Estimates
+Current guide (68 lessons):
+
+Bare minimum: 30-35 hours (40-50% pass rate)
+Realistic prep: 75-80 hours (70-75% pass rate)
+Recommended: 115-120 hours over 16 weeks (85%+ pass rate)
+After content gaps filled (~83 lessons):
+
+Comprehensive prep: 140-150 hours over 16 weeks (90-95% pass rate)
+Working Professional schedule: 9-11 hrs/week × 16 weeks = 144-176 hours ✅
+Key Decisions Made
+No videos needed - Interactive Duolingo-style format is superior to passive video watching (learning science supports this)
+Stay pure interactive - This is our competitive advantage vs NLC Prep's old-school videos
+Working Professional schedule as default - Most users are working full-time
+Fill content gaps before launch - Want 95-100% coverage to maximize pass rates
+Individual market first - Launch to professionals at $24.99/month, then pursue university partnerships after proving pass rates
+Important Files
+server/load-lessons.ts - All lesson content definitions
+server/storage.ts - Database storage interface
+server/routes.ts - API endpoints
+shared/schema.ts - Database schemas and types
+shared/domains.ts - NCEES domain mappings
+replit.md - Project documentation and preferences
+What I Need You to Do
+I'm ready to execute the comprehensive 28-task plan we created. Please:
+
+Review this context
+Confirm you understand the current state and goals
+Execute all 28 tasks to:
+Fill content gaps (Professional Practice, Boundary Law, GIS/CAD, Field Documentation)
+Build Getting Started onboarding flow (9 pages)
+Add Working Professional schedule preset
+Create Study Strategy page
+Enhance Progress tracking with Domain Mastery Over Time
+Test everything end-to-end
+Get architect validation
+Expected outcome: Production-ready FS exam study guide with 95-100% NCEES coverage, ready to launch and compete against NLC Prep.
+
+Let me know if you need any clarification, then let's get started! 🚀
