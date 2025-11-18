@@ -65,6 +65,12 @@ The application features a comprehensive UI/UX with domain-specific color coding
     -   State Management: useEffect syncs preferences when dialog opens; useMemo stabilizes prop references to prevent unwanted re-renders
     -   Backend: POST `/api/preferences/custom-plan` endpoint saves custom priorities and timeline
 
+## Future Enhancements
+-   **Lesson Randomization:** When the question pool grows large enough (3-5 variations per lesson topic), randomize which questions appear during each lesson attempt. This prevents memorization and enables users to retake lessons across multiple study cycles with fresh content.
+-   **Practical Word Problems:** Expand lesson content to include a mix of question types:
+    -   **Applied Calculation Problems:** Scenario-based word problems with numerical answers (e.g., "A surveyor needs to establish a property corner 450 feet from Point A at a bearing of N 45° 30' E. The ground slopes at 8%. What is the horizontal distance?")
+    -   **Conceptual/Judgment Questions:** Professional decision-making questions testing surveying knowledge and legal understanding without calculations (e.g., "During a boundary survey, you discover a fence line that doesn't match the deed description. What should you do first?")
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.
