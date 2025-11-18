@@ -157,7 +157,11 @@ async function seedLessons() {
   for (const lessonData of lessonsToCreate) {
     const { questions, ...lessonInfo } = lessonData;
     
+    // Generate deterministic ID: d{domain}-lesson-{orderIndex:02}
+    const lessonId = `d${lessonInfo.domainNumber}-lesson-${String(lessonInfo.orderIndex).padStart(2, '0')}`;
+    
     const [lesson] = await db.insert(lessons).values({
+      id: lessonId,
       domainNumber: lessonInfo.domainNumber,
       domain: lessonInfo.domain,
       title: lessonInfo.title,
