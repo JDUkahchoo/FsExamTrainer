@@ -74,8 +74,8 @@ export function CustomPlanBuilder({
       const weekKey = week.toString();
       const domains = weeklyDomains[weekKey] || [];
       
-      // Remove duplicates and filter out domain 0 if present
-      const uniqueDomains = Array.from(new Set(domains)).filter(d => d !== 0);
+      // Remove duplicates (keep all domains including Domain 0)
+      const uniqueDomains = Array.from(new Set(domains));
       
       // Only include weeks that have at least one domain assigned
       if (uniqueDomains.length > 0) {
@@ -154,9 +154,7 @@ export function CustomPlanBuilder({
                     <div className="space-y-3">
                       <Label className="font-semibold">Week {week}</Label>
                       <div className="grid grid-cols-1 gap-2">
-                        {allDomains
-                          .filter(d => d.number !== 0) // Exclude Domain 0
-                          .map((domain) => {
+                        {allDomains.map((domain) => {
                             const isSelected = selectedDomainsForWeek.includes(domain.number);
                             return (
                               <div
@@ -191,7 +189,7 @@ export function CustomPlanBuilder({
             <Info className="h-4 w-4" />
             <AlertDescription>
               {totalAssignedWeeks === 0 ? (
-                <span>Select domains for at least one week to create a custom study plan. Domain 0 (Math Foundations) will be distributed throughout the plan as needed.</span>
+                <span>Select domains for at least one week to create a custom study plan. All 8 domains (0-7) are available for you to assign.</span>
               ) : (
                 <span>
                   You've assigned domains to {totalAssignedWeeks} week{totalAssignedWeeks > 1 ? 's' : ''}. 
