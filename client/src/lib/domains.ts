@@ -70,8 +70,8 @@ export const DOMAIN_CONFIG: Record<Domain, DomainConfig> = {
     textColor: 'text-domain-practice-fg',
     borderColor: 'border-domain-practice-fg'
   },
-  'Geodesy, GPS, Astronomy': {
-    name: 'Geodesy, GPS, Astronomy',
+  'Applied Mathematics & Statistics': {
+    name: 'Applied Mathematics & Statistics',
     icon: Target,
     bgColor: 'bg-domain-geodesy',
     textColor: 'text-domain-geodesy-fg',

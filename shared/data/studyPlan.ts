@@ -58,7 +58,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 7,
     title: "Geodesy Fundamentals",
-    domains: ['Geodesy, GPS, Astronomy'],
+    domains: ['Applied Mathematics & Statistics'],
     read: ["ES15 Ch. 19 (Geodetic models)", "SRM Ch. 7 (Geodesy)", "NOAA NOS NGS 0005 (Introduction)"],
     focus: ["Ellipsoid vs. Geoid vs. Topographic surface", "Geoid heights and separation (N)", "Datums: NAD27, NAD83, NAVD88, NGVD29", "State Plane Coordinate concepts (Lambert vs Transverse Mercator)"],
     apply: ["Convert Orthometric height to Ellipsoid height using Geoid height", "Identify which projection Texas uses primarily (Lambert)"],
@@ -67,7 +67,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 8,
     title: "GNSS/GPS & Satellite Surveying",
-    domains: ['Geodesy, GPS, Astronomy'],
+    domains: ['Applied Mathematics & Statistics'],
     read: ["ES15 Ch. 13 (Global Navigation Satellite Systems), Ch. 14 (GNSS Surveys)", "SRM Ch. 7 (GPS section)"],
     focus: ["GNSS error sources (Multipath, PDOP/GDOP, Ionosphere)", "RTK vs. Static methods", "CORS networks (OPUS)", "Survey grades of GPS receivers"],
     apply: ["Interpret an OPUS report (simulated or real)", "Calculate best times for observation based on a DOP chart"],
@@ -139,7 +139,7 @@ export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 16,
     title: "Final Simulations & Exam Prep",
-    domains: ['Math & Basic Science', 'Field Data Acquisition', 'Surveying Principles', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Geodesy, GPS, Astronomy', 'Professional Practice'],
+    domains: ['Math & Basic Science', 'Field Data Acquisition', 'Surveying Principles', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Applied Mathematics & Statistics', 'Professional Practice'],
     read: ["NCEES Examinee Guide (Test day rules)"],
     focus: ["Test-taking strategy (triage questions, time management)", "Packing for exam day (approved calculator, ID)"],
     apply: ["Full NCEES Practice Exam (Timed, 5.5 hours simulated split)", "Analyze results and do final spot review"],

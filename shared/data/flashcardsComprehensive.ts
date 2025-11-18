@@ -598,277 +598,277 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
 
   // Domain 3: Plane Survey Computations (101-150) - Sample
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Latitude (Traverse)',
     back: 'Lat = D × cos(θ)\n\nNorth component of distance',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Departure (Traverse)',
     back: 'Dep = D × sin(θ)\n\nEast component of distance',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Linear Misclosure',
     back: '√(ΣΔLat² + ΣΔDep²)\n\nResultant error vector',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Relative Precision',
     back: 'Perimeter ÷ Misclosure\n\nQuality indicator for traverse',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Compass (Bowditch) Rule',
     back: 'Adjustment ∝ line length / total perimeter\n\nMost common adjustment method',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Transit Rule',
     back: 'Adjustment ∝ departure / Σdeparture\n\nUsed when angles more precise than distances',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Crandall Rule',
     back: 'Uses both linear and angular misclosures iteratively\n\nMost rigorous method',
     category: 'concept'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Angular Misclosure',
     back: 'Observed – (180(n–2))\n\nDifference from theoretical sum',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Adjusted Angle per Interior',
     back: 'Observed – (Total Misclosure / n)\n\nDistribute closure equally',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Azimuth from Coordinates',
     back: 'Az = atan(ΔE / ΔN)\n\nAdjust to proper quadrant',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Bearing from Azimuth',
     back: 'Quadrant-based:\n• NE = Az\n• SE = 180–Az\n• SW = Az–180\n• NW = 360–Az',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Area by Coordinates',
     back: 'A = ½ Σ(xᵢyᵢ₊₁ – xᵢ₊₁yᵢ)\n\nDouble Meridian Distance or Coordinate product',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Coordinate of Closing Point',
     back: 'ΣLat = 0, ΣDep = 0 after adjustment\n\nClosure check',
     category: 'concept'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Mean Elevation of Plane',
     back: '(Σ Elevations) / n\n\nSimple average',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Average End Area Volume',
     back: 'V = L × (A₁ + A₂)/2\n\nEarthwork calculation',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Prismoidal Volume',
     back: 'V = (L/6) × (A₁ + 4A_m + A₂)\n\nMore accurate than average end area',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Contour Interpolation',
     back: 'Linear between two elevations along slope line\n\nProportional distance',
     category: 'concept'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Slope Ratio',
     back: '(Δh / ΔL) × 100%\n\nPercent grade',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Mean Gradient',
     back: '(Total Δh / Total L) × 100%\n\nAverage slope',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Weighted Average Elevation',
     back: 'Σ(A×h) / ΣA\n\nArea-weighted mean',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Azimuth of Line AB',
     back: 'atan(ΔE / ΔN), adjusted to 0–360°\n\nQuadrant awareness required',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Forward vs Back Azimuth',
     back: 'Differ by 180° (±360 correction)\n\nReverse direction',
     category: 'concept'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Latitude Departure Check',
     back: 'ΣLat = 0, ΣDep = 0 (closure check)\n\nMust close for valid traverse',
     category: 'concept'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Circular Curve Length',
     back: 'L = (πRΔ) / 180\n\nWhere Δ in degrees',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Tangent (T)',
     back: 'R × tan(Δ/2)\n\nDistance from PC/PT to PI',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'External Distance (E)',
     back: 'R(sec(Δ/2) – 1)\n\nDistance from PI to curve',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Mid-ordinate (M)',
     back: 'R(1 – cos(Δ/2))\n\nPerpendicular from chord to curve',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Long Chord (LC)',
     back: '2R sin(Δ/2)\n\nChord from PC to PT',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Degree of Curve (Arc Definition)',
     back: 'D = (18000) / (πR)\n\nAngle subtended by 100 ft arc',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Degree of Curve (Chord Definition)',
     back: 'D = 5730 / R\n\nAngle subtended by 100 ft chord',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Stationing along Curve',
     back: 'PC to PT = L = (Δ/360) × 2πR\n\nArc length',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Deflection Angle per Station',
     back: 'Δ / (L / 100)\n\nFor 100 ft stations',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Sub-chord Deflection',
     back: '(Δ × C) / (2 × L)\n\nFor partial station',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Vertical Curve Equation',
     back: 'y = (g₁x / 100) + ((g₂ – g₁)x² / (200L))\n\nElevation at distance x',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'High/Low Point on Vertical Curve',
     back: 'x = (–g₁L) / (g₂ – g₁)\n\nWhere grade changes sign',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Curve Offset from Tangent',
     back: 'y = (x²) / (2R)\n\nApproximate offset',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Grade Intersection Point (PVI)',
     back: 'The vertex connecting tangents in vertical curves\n\nIntersection of grades',
     category: 'definition'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Tangent Elevation Formula',
     back: 'E = E_PVC + (g₁ × x / 100)\n\nElevation on entering tangent',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Offset to Curve',
     back: 'y = (g₂ – g₁) × x² / (200L)\n\nVertical curve offset',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Cross-Section Area (2-Point)',
     back: 'A = (h₁ + h₂)/2 × width\n\nTrapezoidal approximation',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Mass Diagram Use',
     back: 'Balances cut/fill for earthwork computation\n\nCumulative volume graph',
     category: 'concept'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Misclosure in Coordinates',
     back: '(ΣLat² + ΣDep²)½\n\nLinear error of closure',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Error Adjustment Ratio',
     back: 'Correction per leg = (Leg Length / Total Length) × Misclosure\n\nBowditch method',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Traverse Computation Order',
     back: 'Angles → Bearings → Coordinates → Area\n\nSystematic approach',
     category: 'concept'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Grid Azimuth Correction',
     back: 'True Az ± Convergence Angle\n\nGrid North vs True North',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Coordinate Transformation',
     back: 'x\' = ax + by + c\ny\' = –bx + ay + d\n\nRotation and translation',
     category: 'formula'
@@ -1480,301 +1480,301 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
 
   // Domain 6: Geodesy, GPS & Photogrammetry (251-300)
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Geodesy (Definition)',
     back: 'Science of measuring Earth\'s size, shape, and gravitational field',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Ellipsoid (Definition)',
     back: 'Mathematical model approximating Earth\'s shape\n\nFlattened sphere',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Common Ellipsoids',
     back: 'GRS80 (NAD83), WGS84 (GPS), Clarke 1866 (NAD27)',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Datum (Definition)',
     back: 'Reference system for defining positions on Earth\n\nOrigin + ellipsoid + orientation',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'NAD27 Reference',
     back: 'Based on Clarke 1866 ellipsoid\nMeades Ranch, Kansas origin',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'NAD83 Reference',
     back: 'Based on GRS80\nEarth-centered origin',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'WGS84 Reference',
     back: 'Used by GPS\nNearly identical to NAD83 in North America',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Datum Shift',
     back: 'Offset caused by using different ellipsoids\nCan be 100+ meters',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Local Datum',
     back: 'Optimized for one region\nExample: NAD27',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Geocentric Datum',
     back: 'Earth-centered reference\nNAD83, WGS84',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Geoid (Definition)',
     back: 'Surface of equal gravity\nApproximates mean sea level',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Orthometric Height (H)',
     back: 'Height above geoid\nMeasured by leveling',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Ellipsoidal Height (h)',
     back: 'GPS-derived height above ellipsoid\nDiffers from orthometric',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Geoid Height (N)',
     back: 'Separation between ellipsoid and geoid\n-100m to +100m globally',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Height Relationship Formula',
     back: 'h = H + N\n\nEllipsoidal = Orthometric + Geoid separation',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Gravity Anomaly',
     back: 'Difference between observed and theoretical gravity\nCauses geoid undulation',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Deflection of the Vertical',
     back: 'Angle between plumb line and ellipsoid normal\nCaused by mass irregularities',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Level Surface',
     back: 'Surface of equal potential energy (gravity)\nEquipotential surface',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Map Projection Distortion',
     back: 'Shape, area, distance, or direction errors\nCannot preserve all',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Conformal Projection',
     back: 'Preserves shape\nTransverse Mercator, Lambert Conformal',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Equal-Area Projection',
     back: 'Preserves area\nAlbers Equal Area',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Equidistant Projection',
     back: 'Preserves distance along certain lines\nNot all distances',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Azimuthal Projection',
     back: 'Projects surface onto plane\nFrom Earth\'s center',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'UTM System',
     back: '60 zones, each 6° wide\nBased on Transverse Mercator',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'UTM Scale Factor at Central Meridian',
     back: '0.9996\n\nSlightly smaller than 1.0',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'State Plane Coordinate System (SPCS)',
     back: 'High-accuracy local grid system for U.S.\nState-specific zones',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Lambert Conformal Conic Use',
     back: 'For east–west states like Texas\nTwo standard parallels',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Transverse Mercator Use',
     back: 'For north–south oriented states\nCentral meridian',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Grid-to-Ground Conversion',
     back: 'Ground = Grid / Combined Factor\n\nCombined Factor = m × k₀',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Combined Factor (CF)',
     back: 'CF = Elevation Factor × Scale Factor\n\nk = m × k₀',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'GNSS (Definition)',
     back: 'Global Navigation Satellite System\nGPS, GLONASS, Galileo, BeiDou',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'GPS (Definition)',
     back: 'U.S.-based GNSS\nProviding 3D positioning',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'GPS Observable Types',
     back: 'Code phase, carrier phase, Doppler shift\n\nCarrier most accurate',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'GPS Error Sources',
     back: 'Ionospheric delay, tropospheric delay, multipath, satellite clock error',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Differential GPS (DGPS)',
     back: 'Corrects GPS error using known base station\n\nSub-meter accuracy',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'RTK GPS (Real-Time Kinematic)',
     back: 'Uses carrier phase corrections\nCentimeter accuracy',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'PDOP / GDOP',
     back: 'Dilution of Precision\nSatellite geometry quality - lower is better',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Minimum Satellites for 3D Fix',
     back: '4 satellites\n\nx, y, z, and time',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Orthophoto (Definition)',
     back: 'Aerial photo corrected for tilt and scale\nTrue map projection',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Photogrammetry (Definition)',
     back: 'Measurement and mapping from photographs\nAerial or terrestrial',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Photo Scale Formula',
     back: 'Scale = f / H\n\nf = focal length\nH = flying height above ground',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Ground Distance from Photo',
     back: 'D_g = D_p × (H / f)\n\nPhoto distance × scale factor',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Relief Displacement (d)',
     back: 'd = (r × h) / H\n\nr = radial distance\nh = height diff\nH = flying height',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'End Lap Requirement',
     back: '60% overlap between successive photos\n\nStereoscopic coverage',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Side Lap Requirement',
     back: '20–30% between flight lines\n\nEnsures coverage',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Stereoscopic Coverage',
     back: 'Overlapping photos viewed in 3D\n\n60% overlap needed',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Base-Height Ratio (B/H)',
     back: 'Determines vertical exaggeration\n\nTypically 0.6',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Parallax (p)',
     back: 'Apparent shift between photo positions\nFor the same point',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Height Difference from Parallax',
     back: 'Δh = (H × Δp) / (p₁ – p₂)\n\nStereoscopic measurement',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'Aerial Triangulation',
     back: 'Process of extending control through overlapping photos\n\nDensifies control',
     category: 'concept'

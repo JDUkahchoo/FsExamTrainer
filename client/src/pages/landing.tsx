@@ -102,16 +102,17 @@ export default function Landing() {
 
         {/* Domains Covered */}
         <div className="mt-16 max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-8">All 7 NCEES Domains Covered</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">All 8 NCEES Domains Covered</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               'Math & Basic Science',
               'Field Data Acquisition',
-              'Plane Survey Computations',
               'Mapping, GIS, and CAD',
               'Boundary Law & PLSS',
-              'Geodesy, GPS, Astronomy',
-              'Professional Practice'
+              'Surveying Principles',
+              'Survey Computations & Applications',
+              'Professional Practice',
+              'Applied Mathematics & Statistics'
             ].map((domain) => (
               <div key={domain} className="flex items-center gap-3 p-4 bg-card rounded-lg border border-border">
                 <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />

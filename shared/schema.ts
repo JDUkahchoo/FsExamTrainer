@@ -14,7 +14,7 @@ export type Domain =
   | 'Surveying Principles'                    // NCEES Domain 4
   | 'Survey Computations & Applications'      // NCEES Domain 5
   | 'Professional Practice'                   // NCEES Domain 6
-  | 'Geodesy, GPS, Astronomy';                // NCEES Domain 7
+  | 'Applied Mathematics & Statistics';       // NCEES Domain 7
 
 export const DOMAINS: Domain[] = [
   'Math & Basic Science',
@@ -24,7 +24,7 @@ export const DOMAINS: Domain[] = [
   'Surveying Principles',
   'Survey Computations & Applications',
   'Professional Practice',
-  'Geodesy, GPS, Astronomy'
+  'Applied Mathematics & Statistics'
 ];
 
 // --- Replit Auth Tables (from blueprint:javascript_log_in_with_replit) ---

@@ -262,7 +262,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Plane Survey Computations - Easy
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'An azimuth of 270° is equivalent to what bearing?',
     options: ['Due West (N 90° W or S 90° W)', 'Due East', 'Due North', 'Due South'],
     correctAnswer: 0,
@@ -270,7 +270,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The bearing S 30° E is equivalent to what back bearing?',
     options: ['N 30° W', 'N 30° E', 'S 30° W', 'S 60° W'],
     correctAnswer: 0,
@@ -278,7 +278,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'In coordinate geometry, Latitude refers to:',
     options: ['North-South (Y) component', 'East-West (X) component', 'Elevation (Z) component', 'Angular position'],
     correctAnswer: 0,
@@ -286,7 +286,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'A closed traverse should have sum of interior angles equal to:',
     options: ['(n-2) × 180°', 'n × 180°', '(n+2) × 180°', '360°'],
     correctAnswer: 0,
@@ -294,7 +294,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Departure (ΔX) is calculated as:',
     options: ['Distance × sin(azimuth)', 'Distance × cos(azimuth)', 'Distance × tan(azimuth)', 'Distance × sec(azimuth)'],
     correctAnswer: 0,
@@ -304,7 +304,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Plane Survey Computations - Medium
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Compass rule adjustment distributes error proportional to:',
     options: ['Length of each course', 'Latitude of each course', 'Departure of each course', 'Angle at each vertex'],
     correctAnswer: 0,
@@ -312,7 +312,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Area by coordinates (DMD method): If ΣN·Dep - ΣS·Dep = +12,000, area is:',
     options: ['6,000 sq ft', '12,000 sq ft', '24,000 sq ft', '3,000 sq ft'],
     correctAnswer: 0,
@@ -320,7 +320,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Degree of curve (D) for a 5° curve with 100 ft arc definition:',
     options: ['5°', '2.5°', '10°', '1.25°'],
     correctAnswer: 0,
@@ -328,7 +328,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'For a curve with R = 1,000 ft and D = 5°44\', the curve length for Δ = 28°40\' is:',
     options: ['500 ft', '400 ft', '600 ft', '450 ft'],
     correctAnswer: 0,
@@ -336,7 +336,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Transit rule adjustment is preferred when:',
     options: ['Angles measured more precisely than distances', 'Distances measured more precisely than angles', 'All measurements equally precise', 'Traversing urban areas'],
     correctAnswer: 0,
@@ -346,7 +346,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Plane Survey Computations - Hard
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Spiral curve length (Ls) for a 60 mph highway with R=1,200 ft and superelevation rate 0.06:',
     options: ['Use Ls = 3.15V³/(RC) formula', 'Ls = 100 ft minimum', 'Ls = R/2', 'No spiral needed'],
     correctAnswer: 0,
@@ -354,7 +354,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'For coordinate transformation (rotation), new coordinates X\',Y\' from X,Y with angle θ:',
     options: ['X\'=X·cosθ - Y·sinθ, Y\'=X·sinθ + Y·cosθ', 'X\'=X·sinθ + Y·cosθ, Y\'=X·cosθ - Y·sinθ', 'X\'=X+θ, Y\'=Y+θ', 'X\'=X/cosθ, Y\'=Y/sinθ'],
     correctAnswer: 0,
@@ -362,7 +362,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'External distance (E) for a curve with R=800 ft and Δ=40°:',
     options: ['57.4 ft', '50.0 ft', '65.2 ft', '42.8 ft'],
     correctAnswer: 0,
@@ -370,7 +370,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Three-point resection requires solving:',
     options: ['Non-linear simultaneous equations', 'Simple proportion', 'Linear regression', 'Chi-square test'],
     correctAnswer: 0,
@@ -378,7 +378,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'For a reverse curve, the total deflection angle is:',
     options: ['Δ₁ + Δ₂', 'Δ₁ - Δ₂', '|Δ₁ - Δ₂|', '(Δ₁ + Δ₂)/2'],
     correctAnswer: 0,
@@ -640,7 +640,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Geodesy, GPS, Astronomy - Easy
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'GPS stands for:',
     options: ['Global Positioning System', 'Geodetic Positioning Service', 'Ground Position Sensor', 'Geometric Position System'],
     correctAnswer: 0,
@@ -648,7 +648,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The reference ellipsoid used in NAD83 and WGS84 is:',
     options: ['GRS80 (very similar for both)', 'Clarke 1866', 'Bessel 1841', 'Hayford'],
     correctAnswer: 0,
@@ -656,7 +656,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Geoid is best described as:',
     options: ['Equipotential surface (mean sea level extended)', 'Mathematical ellipsoid', 'Topographic surface', 'Magnetic field'],
     correctAnswer: 0,
@@ -664,7 +664,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'GPS requires a minimum of how many satellites for 3D position?',
     options: ['4 satellites', '3 satellites', '5 satellites', '6 satellites'],
     correctAnswer: 0,
@@ -672,7 +672,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Ellipsoid height (h) differs from orthometric height (H) by:',
     options: ['Geoid height (N): h = H + N', 'Datum shift', 'Scale factor', 'Convergence angle'],
     correctAnswer: 0,
@@ -682,7 +682,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Geodesy, GPS, Astronomy - Medium
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'RTK GPS provides:',
     options: ['Centimeter accuracy in real-time', 'Meter-level accuracy only', 'Sub-millimeter accuracy always', 'Works without base station'],
     correctAnswer: 0,
@@ -690,7 +690,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'PDOP (Position Dilution of Precision) indicates:',
     options: ['Satellite geometry quality (lower is better)', 'Accuracy of measurement (higher is better)', 'Number of satellites', 'Receiver quality'],
     correctAnswer: 0,
@@ -698,7 +698,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The primary GPS frequency L1 is:',
     options: ['1575.42 MHz', '1227.60 MHz', '2400 MHz', '915 MHz'],
     correctAnswer: 0,
@@ -706,7 +706,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Multipath error in GPS is caused by:',
     options: ['Signal reflection from surfaces', 'Satellite geometry', 'Ionospheric delay', 'Tropospheric delay'],
     correctAnswer: 0,
@@ -714,7 +714,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The geoid model used in the US (NAVD88 heights) is currently:',
     options: ['GEOID18 (or newer)', 'GEOID96', 'WGS84', 'NAD27'],
     correctAnswer: 0,
@@ -724,7 +724,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Geodesy, GPS, Astronomy - Hard
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Atmospheric delay in GPS signals is caused by:',
     options: ['Both ionosphere and troposphere', 'Ionosphere only', 'Troposphere only', 'Magnetosphere only'],
     correctAnswer: 0,
@@ -732,7 +732,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'CORS network provides:',
     options: ['Continuously Operating Reference Stations for post-processing', 'Portable base stations only', 'Satellite tracking only', 'Weather data only'],
     correctAnswer: 0,
@@ -740,7 +740,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The difference between NAD27 and NAD83 horizontal datums can be:',
     options: ['100+ meters in some areas', 'Always <1 meter', 'Exactly zero', 'Only vertical, no horizontal'],
     correctAnswer: 0,
@@ -748,7 +748,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Integer ambiguity resolution in carrier-phase GPS refers to:',
     options: ['Determining whole-number carrier wavelengths', 'Rounding coordinates to integers', 'Satellite selection algorithm', 'Coordinate system conversion'],
     correctAnswer: 0,
@@ -756,7 +756,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'PPP (Precise Point Positioning) differs from differential GPS by:',
     options: ['Uses precise satellite orbits/clocks, no local base needed', 'Requires local base station', 'Lower accuracy than DGPS', 'Works offline only'],
     correctAnswer: 0,
@@ -976,7 +976,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Additional Plane Survey Computations
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'For area calculation by coordinates, if going clockwise the calculated area will be:',
     options: ['Negative', 'Positive', 'Zero', 'Undefined'],
     correctAnswer: 0,
@@ -984,7 +984,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Middle ordinate (M) of a curve relates to External (E) by:',
     options: ['M < E (M is shorter)', 'M > E', 'M = E', 'No relationship'],
     correctAnswer: 0,
@@ -992,7 +992,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'A compound curve consists of:',
     options: ['Two or more simple curves with different radii', 'One curve with varying radius', 'Two parallel curves', 'A curve and a spiral'],
     correctAnswer: 0,
@@ -1000,7 +1000,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The tangent distance (T) of a curve with R=1000 ft and Δ=30° is approximately:',
     options: ['268 ft', '300 ft', '250 ft', '200 ft'],
     correctAnswer: 0,
@@ -1008,7 +1008,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Chord length (C) for a curve equals:',
     options: ['2R·sin(Δ/2)', 'R·Δ', '2R·tan(Δ/2)', 'R·sin(Δ)'],
     correctAnswer: 0,
@@ -1102,7 +1102,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
 
   // Additional Geodesy, GPS, Astronomy
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'GPS satellite orbit altitude is approximately:',
     options: ['20,200 km', '10,000 km', '36,000 km (GEO)', '400 km (ISS)'],
     correctAnswer: 0,
@@ -1110,7 +1110,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'WAAS (Wide Area Augmentation System) provides:',
     options: ['Differential GPS corrections via geostationary satellites', 'Satellite tracking', 'Weather data only', 'Internet connectivity'],
     correctAnswer: 0,
@@ -1118,7 +1118,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The semi-major axis of WGS84 ellipsoid is:',
     options: ['6,378,137 m', '6,356,752 m', '6,400,000 m', '6,300,000 m'],
     correctAnswer: 0,
@@ -1126,7 +1126,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The convergence angle between grid north and geodetic north is called:',
     options: ['Mapping angle (θ)', 'Declination', 'Azimuth', 'Bearing'],
     correctAnswer: 0,
@@ -1134,7 +1134,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Static GPS surveying typically requires observation time of:',
     options: ['30 min to several hours depending on baseline', '5 minutes', '24 hours always', '1 minute RTK'],
     correctAnswer: 0,
@@ -1202,7 +1202,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Azimuth from north to a line bearing S 45° W is:',
     options: ['225°', '135°', '315°', '45°'],
     correctAnswer: 0,
@@ -1226,7 +1226,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Dilution of Precision (DOP) values indicate:',
     options: ['Satellite geometry effect on accuracy', 'Signal strength', 'Number of satellites', 'Receiver quality'],
     correctAnswer: 0,
@@ -1258,7 +1258,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'Point of Curvature (PC) in horizontal curves is:',
     options: ['Where curve begins (tangent meets curve)', 'Midpoint of curve', 'Where curve ends', 'Center of curve radius'],
     correctAnswer: 0,
@@ -1282,7 +1282,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'GLONASS is:',
     options: ['Russian GNSS satellite system', 'European GPS', 'Chinese navigation', 'US military GPS'],
     correctAnswer: 0,

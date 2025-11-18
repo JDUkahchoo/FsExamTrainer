@@ -11,7 +11,7 @@ const DOMAIN_NUMBER_TO_UI_NAME: Record<number, Domain> = {
   4: "Surveying Principles",                    // NCEES: Surveying Principles
   5: "Survey Computations & Applications",      // NCEES: Survey Computations and Computer Applications
   6: "Professional Practice",                   // NCEES: Business Concepts
-  7: "Geodesy, GPS, Astronomy"                  // NCEES: Applied Mathematics and Statistics
+  7: "Applied Mathematics & Statistics"         // NCEES: Applied Mathematics and Statistics
 };
 
 // Lesson type matching backend

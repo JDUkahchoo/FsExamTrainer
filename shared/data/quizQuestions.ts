@@ -62,7 +62,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 
   // Plane Survey Computations
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The formula for interior angles of a polygon with n sides is:',
     options: ['(n-2) × 180°', '(n+2) × 180°', 'n × 180°', '(n-1) × 180°'],
     correctAnswer: 0,
@@ -70,7 +70,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'A bearing of N 45° 30\' E is equivalent to what azimuth from north?',
     options: ['45° 30\'', '45.5°', 'Both A and B', '315° 30\''],
     correctAnswer: 2,
@@ -78,7 +78,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'In traverse calculations, Latitude is calculated as:',
     options: ['Distance × sin(Azimuth)', 'Distance × cos(Azimuth)', 'Distance × tan(Azimuth)', 'Distance / cos(Azimuth)'],
     correctAnswer: 1,
@@ -140,7 +140,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 
   // Geodesy, GPS, Astronomy
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The relationship between ellipsoid height (h), orthometric height (H), and geoid height (N) is:',
     options: ['h = H + N', 'H = h + N', 'N = h + H', 'h = H - N'],
     correctAnswer: 0,
@@ -148,7 +148,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'NAD 83 is based on which ellipsoid?',
     options: ['Clarke 1866', 'GRS 80', 'WGS 84', 'Bessel'],
     correctAnswer: 1,
@@ -156,7 +156,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'PDOP (Position Dilution of Precision) indicates:',
     options: ['GPS signal strength', 'Satellite geometry quality', 'Atmospheric interference', 'Receiver accuracy'],
     correctAnswer: 1,
@@ -260,7 +260,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 
   // Additional Plane Survey Computations questions
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The Departure of a 200.00 ft line with azimuth 135° is:',
     options: ['+141.42 ft', '-141.42 ft', '+100.00 ft', '-100.00 ft'],
     correctAnswer: 0,
@@ -268,7 +268,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'A simple horizontal curve has a radius of 500 ft and a central angle of 45°. What is the length of the curve?',
     options: ['392.70 ft', '500.00 ft', '225.00 ft', '707.11 ft'],
     correctAnswer: 0,
@@ -276,7 +276,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The back azimuth of 45° 30\' is:',
     options: ['225° 30\'', '314° 30\'', '135° 30\'', '180° 00\''],
     correctAnswer: 0,
@@ -284,7 +284,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'In coordinate geometry, if Point A is at (1000, 2000) and Point B is at (1300, 2400), the distance AB is:',
     options: ['500.00 ft', '424.26 ft', '700.00 ft', '360.56 ft'],
     correctAnswer: 0,
@@ -362,7 +362,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 
   // Additional Geodesy, GPS, Astronomy questions
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'RTK (Real-Time Kinematic) GPS typically achieves accuracy of:',
     options: ['±10-30 meters', '±1-3 meters', '±1-3 centimeters', '±1-3 millimeters'],
     correctAnswer: 2,
@@ -370,7 +370,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The combined factor for converting GPS distance to State Plane distance includes:',
     options: ['Scale factor only', 'Elevation factor only', 'Both scale and elevation factors', 'Neither factor'],
     correctAnswer: 2,
@@ -378,7 +378,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'How many GPS satellites are required for a 3D position fix?',
     options: ['3 satellites', '4 satellites', '5 satellites', '6 satellites'],
     correctAnswer: 1,
@@ -386,7 +386,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The geoid is best described as:',
     options: ['A perfect sphere', 'An ellipsoid', 'An equipotential surface', 'A cylindrical projection'],
     correctAnswer: 2,
@@ -546,7 +546,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 
   // Additional Plane Survey Computations questions
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The tangent distance (T) for a horizontal curve with radius 500 ft and central angle 60° is:',
     options: ['288.68 ft', '500.00 ft', '433.01 ft', '250.00 ft'],
     correctAnswer: 0,
@@ -554,7 +554,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'A line has a bearing of S 30° W. What is its azimuth from north?',
     options: ['210°', '150°', '330°', '30°'],
     correctAnswer: 0,
@@ -562,7 +562,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The Latitude of a 300 ft line with azimuth 270° is:',
     options: ['0 ft', '-300 ft', '+300 ft', 'Cannot determine'],
     correctAnswer: 0,
@@ -570,7 +570,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'In the compass rule for traverse adjustment, corrections are proportional to:',
     options: ['The length of each course', 'The angle at each point', 'The error magnitude', 'The number of sides'],
     correctAnswer: 0,
@@ -578,7 +578,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The exterior angle of a closed traverse equals:',
     options: ['(n+2) × 180°', '(n-2) × 180°', 'n × 360°', '(n+2) × 360°'],
     correctAnswer: 0,
@@ -586,7 +586,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'For a circular curve, the degree of curve (arc definition) is the central angle subtended by:',
     options: ['100 ft arc', '50 ft arc', '1 ft arc', '1 station arc'],
     correctAnswer: 0,
@@ -594,7 +594,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'If Point A has coordinates (1000, 2000) and the azimuth to Point B is 45°, and distance is 141.42 ft, what are the coordinates of B?',
     options: ['(1100, 2100)', '(1141.42, 2000)', '(1000, 2141.42)', '(900, 1900)'],
     correctAnswer: 0,
@@ -720,7 +720,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 
   // Additional Geodesy, GPS, Astronomy questions
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'WGS 84 is primarily used for:',
     options: ['GPS positioning', 'State Plane Coordinates', 'Local site surveys', 'Building layout'],
     correctAnswer: 0,
@@ -728,7 +728,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'CORS stations provide:',
     options: ['Reference data for GPS corrections', 'Weather information', 'Satellite imagery', 'Topographic maps'],
     correctAnswer: 0,
@@ -736,7 +736,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The semi-major axis of the GRS 80 ellipsoid is approximately:',
     options: ['6,378,137 meters', '6,356,752 meters', '6,371,000 meters', '6,400,000 meters'],
     correctAnswer: 0,
@@ -744,7 +744,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Multipath error in GPS is caused by:',
     options: ['Signal reflections', 'Satellite geometry', 'Atmospheric delay', 'Clock errors'],
     correctAnswer: 0,
@@ -752,7 +752,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The flattening of the Earth ellipsoid is approximately:',
     options: ['1/298', '1/500', '1/100', '1/1000'],
     correctAnswer: 0,
@@ -760,7 +760,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'Static GPS surveying typically requires occupation times of:',
     options: ['30+ minutes', '30 seconds', '5 minutes', '2 hours minimum'],
     correctAnswer: 0,
@@ -768,7 +768,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'NAVD 88 is a:',
     options: ['Vertical datum', 'Horizontal datum', 'Combined datum', 'Coordinate system'],
     correctAnswer: 0,

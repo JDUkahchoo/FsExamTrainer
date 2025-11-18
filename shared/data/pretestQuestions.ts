@@ -78,7 +78,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
 
   // Plane Survey Computations (4 questions)
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'The formula for interior angles of a polygon with n sides is:',
     options: ['(n-2) × 180°', '(n+2) × 180°', 'n × 180°', '(n-1) × 180°'],
     correctAnswer: 0,
@@ -86,7 +86,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'A bearing of N 45° 30\' E is equivalent to what azimuth from north?',
     options: ['45° 30\'', '45.5°', 'Both A and B', '315° 30\''],
     correctAnswer: 2,
@@ -94,7 +94,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'In a closed traverse, the sum of north departures = +124.5 ft and south departures = -122.8 ft. The closure in the north direction is:',
     options: ['+1.7 ft', '-1.7 ft', '+247.3 ft', '0.0 ft'],
     correctAnswer: 0,
@@ -102,7 +102,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     question: 'For a circular curve, if the radius (R) = 500 ft and the central angle (Δ) = 30°, what is the length of the curve (L)?',
     options: ['261.8 ft', '523.6 ft', '150.0 ft', '785.4 ft'],
     correctAnswer: 0,
@@ -180,7 +180,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
 
   // Geodesy, GPS, Astronomy (4 questions)
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The geoid is best described as:',
     options: ['A mathematical ellipsoid', 'A surface of constant gravity potential', 'The Earth\'s actual physical surface', 'A coordinate system'],
     correctAnswer: 1,
@@ -188,7 +188,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
     difficulty: 'medium'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'How many GPS satellites are required for a 3D position fix?',
     options: ['3 satellites', '4 satellites', '5 satellites', '6 satellites'],
     correctAnswer: 1,
@@ -196,7 +196,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The most commonly used geodetic datum in North America (as of 2020s) is:',
     options: ['NAD27', 'NAD83', 'WGS84', 'ITRF'],
     correctAnswer: 1,
@@ -204,7 +204,7 @@ export const PRETEST_QUESTIONS: PretestQuestion[] = [
     difficulty: 'easy'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     question: 'The deflection of the vertical is the angle between:',
     options: ['True north and magnetic north', 'The geoid and ellipsoid normals', 'Grid north and true north', 'The horizon and zenith'],
     correctAnswer: 1,

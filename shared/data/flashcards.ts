@@ -55,31 +55,31 @@ export const FLASHCARDS: Omit<Flashcard, 'id'>[] = [
 
   // Plane Survey Computations
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Latitude & Departure Formulas',
     back: 'Lat = D × cos(Az)\nDep = D × sin(Az)\n\nWhere:\n• D = distance\n• Az = azimuth from north\n\n• N/S = Latitude\n• E/W = Departure',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Inverse Formula (Azimuth)',
     back: 'Az = atan(ΔE / ΔN)\n\nQuadrant adjustments:\n• NE: Az = atan(ΔE/ΔN)\n• SE: Az = 180° - atan(ΔE/|ΔN|)\n• SW: Az = 180° + atan(|ΔE|/|ΔN|)\n• NW: Az = 360° - atan(|ΔE|/ΔN)',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Horizontal Curve: Tangent Length (T)',
     back: 'T = R × tan(Δ/2)\n\nWhere:\n• R = radius\n• Δ = deflection angle\n\nT = distance from PI to PC or PT',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Horizontal Curve: Length (L)',
     back: 'L = (RΔπ) / 180°\n\nOr: L = 100Δ / D\n\nWhere:\n• R = radius\n• Δ = central angle (degrees)\n• D = degree of curve',
     category: 'formula'
   },
   {
-    domain: 'Plane Survey Computations',
+    domain: 'Survey Computations & Applications',
     front: 'Area by Coordinates (DMD Method)',
     back: 'Area = |Σ(DMD × Lat)| / 2\n\nDouble Meridian Distance:\n• First DMD = First Dep\n• Next DMD = Prev DMD + Prev Dep + Current Dep\n• Last DMD = Last Dep (check)',
     category: 'formula'
@@ -145,31 +145,31 @@ export const FLASHCARDS: Omit<Flashcard, 'id'>[] = [
 
   // Geodesy, GPS, Astronomy
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'h = H + N',
     back: 'Ellipsoid Height Relationship:\n\n• h = ellipsoid height (GPS)\n• H = orthometric height (elevation MSL)\n• N = geoid height (separation)\n\nTo get elevation from GPS:\nH = h - N',
     category: 'formula'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'NAD 27 vs NAD 83',
     back: 'NAD 27:\n• Clarke 1866 ellipsoid\n• Meades Ranch, KS origin\n• Horizontal datum\n\nNAD 83:\n• GRS 80 ellipsoid\n• Geocentric\n• Earth-centered\n\nShifts: typically 10-100m',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'NGVD 29 vs NAVD 88',
     back: 'NGVD 29:\n• Vertical datum\n• Based on mean sea level\n\nNAVD 88:\n• Current vertical datum\n• Helmert orthometric heights\n• Based on geoid model\n\nDifferences: up to 1+ meter',
     category: 'definition'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'DOP (Dilution of Precision)',
     back: 'Measures satellite geometry:\n\n• PDOP = Position (3D)\n• HDOP = Horizontal (2D)\n• VDOP = Vertical\n• GDOP = Geometric (overall)\n\nLower is better:\n< 2 = Excellent\n2-5 = Good\n5-10 = Moderate\n> 10 = Poor',
     category: 'concept'
   },
   {
-    domain: 'Geodesy, GPS, Astronomy',
+    domain: 'Applied Mathematics & Statistics',
     front: 'RTK vs Static GPS',
     back: 'RTK (Real-Time Kinematic):\n• Real-time corrections\n• cm accuracy\n• Radio/cellular link\n• Faster (minutes)\n\nSTATIC:\n• Post-processing\n• mm-cm accuracy\n• Longer sessions (20min-hours)\n• Better for control networks',
     category: 'concept'
