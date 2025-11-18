@@ -71,6 +71,100 @@ The application features a comprehensive UI/UX with domain-specific color coding
     -   **Applied Calculation Problems:** Scenario-based word problems with numerical answers (e.g., "A surveyor needs to establish a property corner 450 feet from Point A at a bearing of N 45° 30' E. The ground slopes at 8%. What is the horizontal distance?")
     -   **Conceptual/Judgment Questions:** Professional decision-making questions testing surveying knowledge and legal understanding without calculations (e.g., "During a boundary survey, you discover a fence line that doesn't match the deed description. What should you do first?")
 
+## Planned Upgrades (End of Month)
+Comprehensive upgrades planned to transform the study guide from "85-90% NCEES coverage" to "95-100% coverage" with market-leading features that exceed NLC Prep ($149/month) at $24.99/month pricing.
+
+### 1. Fill Content Gaps (Main Priority)
+Add **15-18 new lessons** to reach 95-100% NCEES exam coverage:
+-   **Professional Practice & Ethics** (5-6 lessons, ~40 questions)
+    -   Professional liability scenarios, ethics case studies, project management, communication standards
+-   **Advanced Boundary Law** (4-5 lessons, ~30 questions)
+    -   Legal precedents, PLSS corner restoration, conflicting deeds, case law analysis
+-   **GIS/CAD Applications** (3-4 lessons, ~20 questions)
+    -   Spatial analysis workflows, coordinate transformations, CAD standards compliance
+-   **Field Documentation** (2-3 lessons, ~15 questions)
+    -   Field book standards, documentation requirements, QC procedures, chain of custody
+-   **Expected Result:** 83-86 total lessons, ~517 questions, 95-100% NCEES exam coverage
+
+### 2. Getting Started Onboarding Flow
+9-page wizard for new users to optimize their study plan from day one:
+1.  **Welcome Screen** - Introduction to the study guide and core features
+2.  **Pretest Prompt** - Encourage baseline assessment to identify weak areas
+3.  **Results with Study Mode Recommendation** - Analyze pretest results and suggest Standard/Result-Driven/Custom mode
+4.  **Exam Date Picker** - Calendar widget to set target exam date
+5.  **Study Schedule Selector** - Choose from 4 intensity presets (including Working Professional)
+6.  **Daily Routine Display** - Visualize typical weekday/weekend study sessions
+7.  **Weekly/Monthly Milestones** - Set checkpoints for practice exams and domain reviews
+8.  **Study Tips** - Best practices for retention, time management, and exam strategies
+9.  **Personalized Plan Confirmation** - Summary page with "Start Studying" CTA
+
+### 3. Working Professional Schedule (Recommended Default)
+Add as the **recommended default study preset** for users balancing full-time work and exam prep:
+-   **Monday-Friday:** 1 hour/day after work (focused lessons and flashcards)
+-   **Weekends:** 2-3 hours (deep practice with quizzes and exams)
+-   **Total:** 9-11 hrs/week over 16 weeks
+-   **Perfect For:** Full-time workers who need structured yet flexible study routines
+-   **Includes:** Morning review prompts, evening study reminders, weekend deep-dive sessions
+
+### 4. Study Strategy Page
+Comprehensive "How to Use This Guide" resource with actionable study methods:
+-   **Daily/Weekly/Monthly Routines**
+    -   Detailed schedules for different time commitments (light, moderate, intense)
+    -   Morning review strategies, evening study sessions, weekend deep dives
+-   **DO's and DON'Ts for Maximum Retention**
+    -   Evidence-based techniques: spaced repetition, active recall, interleaved practice
+    -   Common pitfalls to avoid: cramming, passive reading, skipping weak domains
+-   **Help for Struggling Students**
+    -   Diagnostic tools to identify learning gaps
+    -   Study method adjustments for different learning styles
+    -   When to seek additional resources (tutoring, study groups)
+-   **Pre-Exam Prep Checklist**
+    -   Final 2-week countdown plan
+    -   Logistics preparation (exam site, calculator, required materials)
+    -   Mental preparation and test-day strategies
+
+### 5. Enhanced Progress Tracking
+**Domain Mastery Over Time** - Data-driven analytics for continuous improvement:
+-   **Line Charts** showing score progression per domain over time
+-   **Trend Analysis:** Pretest → Month 1 → Month 2 → Month 3 tracking
+    -   Visualize improvement curves for each of the 8 NCEES domains
+    -   Identify plateau periods where extra focus is needed
+-   **Improvement Alerts:** Smart notifications like "Domain 4 stagnant - focus here!"
+    -   Automated suggestions when scores haven't improved in 2+ weeks
+    -   Recommended actions: retake lessons, review flashcards, take domain-specific quiz
+-   **Mastery Badges:** Unlock visual rewards at 85%+ consistency
+    -   Gold badges for domains with sustained high performance
+    -   Progress rings showing path to mastery (70% → 75% → 80% → 85%+)
+
+### 6. Monthly Checkpoint System
+Structured monthly assessments to ensure steady progress toward exam readiness:
+-   **Practice Exam Reminders**
+    -   Automated prompts to take full 110-question exams at monthly intervals
+    -   Track completion rates and identify missed checkpoints
+-   **Automated Score Comparisons**
+    -   Compare current month performance vs. previous months
+    -   Generate improvement reports: "Month 2: 68% → Month 3: 73% (+5%)"
+    -   Highlight domains with significant gains or declines
+-   **Target Goal:** 5-10% improvement each month
+    -   Clear benchmarks: Month 1 baseline → Month 2 target → Month 3 target → Exam-ready (75%+)
+    -   Visual progress bars showing distance to passing score
+
+### Impact Summary
+**Before Upgrades:**
+-   68 lessons, 85-90% NCEES coverage
+-   Basic progress tracking with static metrics
+-   Good for individual learners, not university-ready
+
+**After Upgrades:**
+-   83-86 lessons, 95-100% NCEES coverage ✅
+-   Complete onboarding experience for new users ✅
+-   Perfect study schedule for working professionals ✅
+-   Advanced progress tracking with trend analysis and alerts ✅
+-   Better value than NLC Prep ($149/month) at $24.99/month ✅
+-   University-ready with proven pass rates and comprehensive coverage ✅
+
+**Bottom Line:** These upgrades transform the study guide from "pretty good exam prep" to "market-leading FS exam preparation that crushes the competition."
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.
