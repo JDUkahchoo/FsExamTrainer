@@ -30,7 +30,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Daily Logging System:** Integrated into the Study Plan for tracking daily activities, contributing to weekly completion and study streaks.
 -   **Progress Dashboard with Gamification:** Features a circular progress ring, study streak tracker, and an achievement badge system, with detailed history for quizzes, exams, domain mastery, and daily logs.
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
--   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by domain (0-7) with multiple question types, difficulty levels (easy/medium/hard), and suggested week assignments. Features progress indicators, real-time timers, immediate feedback, and auto-grading. **ALL 68 LESSONS COMPLETE (417 questions)!** **Domain 0 (Math Foundations) complete (10/10 lessons)! Domain 1 complete (7/7 lessons)! Domain 2 complete (7/7 lessons)! Domain 3 complete (7/7 lessons)! Domain 4 complete (7/7 lessons)! Domain 5 complete (12/12 lessons)! Domain 6 complete (6/6 lessons)! Domain 7 complete (12/12 lessons)!** 🎉 **PROJECT MILESTONE: 68/68 total lessons covering foundational math review + all 7 NCEES domains complete!**
+-   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by domain (0-7) with multiple question types, difficulty levels (easy/medium/hard), and suggested week assignments. Features progress indicators, real-time timers, immediate feedback, and auto-grading. **ALL 68 LESSONS COMPLETE (417 questions)!** **Domain 0 (Math & Science Foundations) complete (10/10 lessons)! Domain 1 (Surveying Processes and Methods) complete (7/7 lessons)! Domain 2 (Mapping Processes and Methods) complete (7/7 lessons)! Domain 3 (Boundary Law and Real Property Principles) complete (7/7 lessons)! Domain 4 (Surveying Principles) complete (7/7 lessons)! Domain 5 (Survey Computations and Computer Applications) complete (12/12 lessons)! Domain 6 (Business Concepts) complete (6/6 lessons)! Domain 7 (Applied Mathematics and Statistics) complete (12/12 lessons)!** 🎉 **PROJECT MILESTONE: 68/68 total lessons across all 8 NCEES domains (0-7) complete!**
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams, storing question text, selected/correct answers, domain, and explanations.
 
 **Technical Implementation:**
@@ -51,9 +51,9 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Study Cycles Architecture: Database tracks each cycle with unique (userId, cycleNumber) constraint; cycle completion calculates stats from data within that cycle's timeframe.
 -   Server-side validation and security measures for interactive lessons and detailed results, preventing answer leakage and ensuring data integrity.
 -   **Lesson Progress Persistence Fix (Nov 2025):** Modified `storage.upsertLessonProgress()` to explicitly update all critical fields (completed, score, totalPoints, attempts, timeSpentSeconds, lastAttemptAt, completedAt) in the UPDATE clause, ensuring lesson completion status and scores are correctly persisted to the database.
--   **Domain-Based Lesson Architecture:** Lessons organized by NCEES domain number (1-7) rather than week, enabling flexible study mode distribution:
-    -   Centralized domain mappings in `shared/domains.ts` prevent metadata drift
-    -   Lessons have domainNumber (1-7), difficulty (easy/medium/hard), and optional suggestedWeek
+-   **Domain-Based Lesson Architecture:** Lessons organized by NCEES domain number (0-7) rather than week, enabling flexible study mode distribution:
+    -   Centralized domain mappings in `shared/domains.ts` prevent metadata drift (8 total domains: Domain 0 for Math Foundations + 7 NCEES exam domains)
+    -   Lessons have domainNumber (0-7), difficulty (easy/medium/hard), and optional suggestedWeek
     -   Client-side study plan logic (`client/src/lib/study-plan-logic.ts`) distributes lessons across weeks based on study mode
     -   Single API endpoint (`GET /api/lessons`) fetches all lessons; client organizes by week
     -   Study modes stored in user preferences; Result-Driven mode uses pretest domain scores for prioritization; Custom mode uses manually selected domain priorities
