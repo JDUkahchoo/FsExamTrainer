@@ -438,22 +438,42 @@ export default function StudyPlan() {
     });
   };
 
-  // Convert custom weeks to WeekPlan format and merge with base weeks
+  // Generate dynamic weekly content based on study mode
   // MUST be before early return to maintain consistent hook order
-  const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => [
-    ...STUDY_PLAN,
-    ...customWeeks.map(cw => ({
-      week: cw.weekNumber,
-      title: cw.title,
-      domains: cw.domain ? [cw.domain as Domain] : [],
-      read: cw.readItems || [],
-      focus: cw.focusItems || [],
-      apply: cw.applyItems || [],
-      reinforce: cw.reinforceItems || [],
-      isCustom: true,
-      customId: cw.id
-    }))
-  ], [customWeeks]);
+  const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => {
+    let baseWeeks: WeekPlan[];
+    
+    // Determine base weeks based on study mode
+    if (preferences?.studyMode === 'custom' && 
+        preferences?.customWeeklyDomains && 
+        typeof preferences.customWeeklyDomains === 'object' && 
+        Object.keys(preferences.customWeeklyDomains).length > 0) {
+      // Custom mode: Generate weeks based on user's selected domains and timeline
+      baseWeeks = generateCustomWeekPlans(
+        preferences.customWeeklyDomains as Record<number, number[]>,
+        preferences.customTimeline || 16
+      );
+    } else {
+      // Standard/Result-Driven mode: Use default plan (lessons are already organized by mode)
+      baseWeeks = STUDY_PLAN;
+    }
+    
+    // Merge base weeks with manually added custom weeks
+    return [
+      ...baseWeeks,
+      ...customWeeks.map(cw => ({
+        week: cw.weekNumber,
+        title: cw.title,
+        domains: cw.domain ? [cw.domain as Domain] : [],
+        read: cw.readItems || [],
+        focus: cw.focusItems || [],
+        apply: cw.applyItems || [],
+        reinforce: cw.reinforceItems || [],
+        isCustom: true,
+        customId: cw.id
+      }))
+    ];
+  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, customWeeks]);
 
   if (isLoading) {
     return (
@@ -463,12 +483,17 @@ export default function StudyPlan() {
     );
   }
 
+  // Calculate actual timeline based on study mode
+  const actualTimeline = preferences?.studyMode === 'custom' && preferences?.customTimeline
+    ? preferences.customTimeline + customWeeks.length
+    : 16 + customWeeks.length;
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="heading-study-plan">
-            {customWeeks.length > 0 ? `${16 + customWeeks.length}-Week FS Exam Study Plan` : '16-Week FS Exam Study Plan'}
+            {actualTimeline}-Week FS Exam Study Plan
           </h1>
           <p className="text-muted-foreground">
             Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all 7 NCEES domains.
@@ -478,7 +503,11 @@ export default function StudyPlan() {
            typeof preferences.customWeeklyDomains === 'object' && 
            Object.keys(preferences.customWeeklyDomains).length > 0 ? (
             <Badge variant="secondary" className="mt-2">
-              Custom Plan Active: {Object.keys(preferences.customWeeklyDomains).length} Weeks Customized
+              Custom Plan Active
+            </Badge>
+          ) : preferences?.studyMode === 'result-driven' ? (
+            <Badge variant="secondary" className="mt-2">
+              Result-Driven Plan Active
             </Badge>
           ) : null}
         </div>
