@@ -128,9 +128,13 @@ export default function StudyPlanPage() {
   }, [pretestResult]);
 
   // Memoize custom plan builder props to prevent unnecessary re-renders
+  // Use a stable empty object reference to avoid triggering useEffect in CustomPlanBuilder
+  const EMPTY_WEEKLY_DOMAINS = useMemo(() => ({}), []);
+  
   const currentCustomWeeklyDomains = useMemo(() => {
-    return (preferences?.customWeeklyDomains as Record<string, number[]>) || {};
-  }, [preferences?.customWeeklyDomains]);
+    if (!preferences?.customWeeklyDomains) return EMPTY_WEEKLY_DOMAINS;
+    return preferences.customWeeklyDomains as Record<string, number[]>;
+  }, [preferences?.customWeeklyDomains, EMPTY_WEEKLY_DOMAINS]);
 
   const currentCustomTimeline = useMemo(() => {
     return preferences?.customTimeline || 12;

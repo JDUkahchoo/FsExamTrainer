@@ -751,7 +751,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/preferences", isAuthenticated, async (req: any, res) => {
+  // Shared handler for PUT and PATCH
+  const updatePreferences = async (req: any, res: any) => {
     try {
       const userId = req.user.claims.sub;
       
@@ -775,7 +776,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error updating user preferences:", error);
       res.status(400).json({ error: "Invalid preferences data" });
     }
-  });
+  };
+
+  app.put("/api/preferences", isAuthenticated, updatePreferences);
+  app.patch("/api/preferences", isAuthenticated, updatePreferences);
 
   // Daily Log routes
   app.get("/api/daily-logs", isAuthenticated, async (req: any, res) => {
