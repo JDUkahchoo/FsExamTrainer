@@ -41,7 +41,7 @@ import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, Prete
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 
-export default function StudyPlanPage() {
+export default function StudyPlan() {
   const [, navigate] = useLocation();
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
   const [expandedDailyLogs, setExpandedDailyLogs] = useState<number | null>(null);
@@ -438,15 +438,8 @@ export default function StudyPlanPage() {
     });
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
   // Convert custom weeks to WeekPlan format and merge with base weeks
+  // MUST be before early return to maintain consistent hook order
   const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => [
     ...STUDY_PLAN,
     ...customWeeks.map(cw => ({
@@ -461,6 +454,14 @@ export default function StudyPlanPage() {
       customId: cw.id
     }))
   ], [customWeeks]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">

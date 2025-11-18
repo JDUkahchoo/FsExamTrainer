@@ -9,7 +9,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
-import StudyPlanPage from "@/pages/study-plan";
+import StudyPlan from "@/pages/study-plan";
 import PracticeQuizPage from "@/pages/practice-quiz";
 import FlashcardsPage from "@/pages/flashcards";
 import PracticeExamPage from "@/pages/practice-exam";
@@ -38,8 +38,8 @@ function Router() {
         <Route path="/" component={Landing} />
       ) : (
         <>
-          <Route path="/" component={StudyPlanPage} />
-          <Route path="/study-plan" component={StudyPlanPage} />
+          <Route path="/" component={StudyPlan} />
+          <Route path="/study-plan" component={StudyPlan} />
           <Route path="/quiz" component={PracticeQuizPage} />
           <Route path="/flashcards" component={FlashcardsPage} />
           <Route path="/exam" component={PracticeExamPage} />
