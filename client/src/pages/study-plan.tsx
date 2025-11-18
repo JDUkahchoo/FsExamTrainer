@@ -127,6 +127,15 @@ export default function StudyPlanPage() {
     });
   }, [pretestResult]);
 
+  // Memoize custom plan builder props to prevent unnecessary re-renders
+  const currentCustomPriorities = useMemo(() => {
+    return (preferences?.customDomainPriorities as number[]) || [];
+  }, [preferences?.customDomainPriorities]);
+
+  const currentCustomTimeline = useMemo(() => {
+    return preferences?.customTimeline || 12;
+  }, [preferences?.customTimeline]);
+
   // Organize lessons by week based on study mode
   const weeklyLessonsMap = useMemo(() => {
     const studyMode = (preferences?.studyMode || 'standard') as import('@shared/schema').StudyMode;
@@ -471,8 +480,8 @@ export default function StudyPlanPage() {
             onSave={async (priorities, timeline) => {
               await saveCustomPlanMutation.mutateAsync({ priorities, timeline });
             }}
-            currentPriorities={(preferences?.customDomainPriorities as number[]) || []}
-            currentTimeline={preferences?.customTimeline || 12}
+            currentPriorities={currentCustomPriorities}
+            currentTimeline={currentCustomTimeline}
           />
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Check, GripVertical, Info } from 'lucide-react';
 import {
   Dialog,
@@ -38,6 +38,13 @@ export function CustomPlanBuilder({
   const [isSaving, setIsSaving] = useState(false);
 
   const allDomains = getAllDomains();
+
+  useEffect(() => {
+    if (open) {
+      setSelectedDomains(currentPriorities);
+      setTimeline(currentTimeline);
+    }
+  }, [open, currentPriorities, currentTimeline]);
 
   const toggleDomain = (domainNum: number) => {
     setSelectedDomains(prev => {
