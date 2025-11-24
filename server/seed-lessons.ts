@@ -2,6 +2,7 @@ import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { NCEES_DOMAINS } from "@shared/domains";
+import { practicalProblems } from "./practical-problems";
 
 // Use centralized domain definitions from shared/domains.ts
 const DOMAINS = NCEES_DOMAINS;

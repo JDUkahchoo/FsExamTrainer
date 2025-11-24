@@ -20,6 +20,7 @@ import ResourcesPage from "@/pages/resources";
 import PretestPage from "@/pages/pretest";
 import PretestResultsPage from "@/pages/pretest-results";
 import LessonPage from "@/pages/lesson";
+import StrategyPage from "@/pages/strategy";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -47,6 +48,7 @@ function Router() {
           <Route path="/notes" component={NotesPage} />
           <Route path="/progress" component={ProgressPage} />
           <Route path="/resources" component={ResourcesPage} />
+          <Route path="/strategy" component={StrategyPage} />
           <Route path="/pretest" component={PretestPage} />
           <Route path="/pretest/results" component={PretestResultsPage} />
           <Route path="/lesson/:id" component={LessonPage} />
@@ -90,7 +92,6 @@ function AppContent({ style }: { style: React.CSSProperties }) {
 
   return (
     <SidebarProvider style={style}>
-      <GettingStartedOnboarding />
       <WelcomeDialog />
       <div className="flex h-screen w-full">
         <AppSidebar />
