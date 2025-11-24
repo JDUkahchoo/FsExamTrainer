@@ -29,6 +29,7 @@ interface Lesson {
   title: string;
   description: string;
   content: string;
+  practicalProblem?: string;
   orderIndex: number;
   estimatedMinutes: number;
 }
@@ -377,12 +378,21 @@ export default function LessonPage() {
             <CardTitle>{lesson.title}</CardTitle>
             <p className="text-sm text-muted-foreground">{lesson.description}</p>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="prose dark:prose-invert max-w-none">
               <p className="text-base leading-relaxed" data-testid="text-lesson-content">
                 {lesson.content}
               </p>
             </div>
+            
+            {lesson.practicalProblem && (
+              <div className="mt-4 p-4 border rounded-lg bg-muted/50">
+                <h3 className="font-semibold text-sm mb-2">Real-World Application</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground" data-testid="text-practical-problem">
+                  {lesson.practicalProblem}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 

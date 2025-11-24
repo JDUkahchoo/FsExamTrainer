@@ -52,7 +52,11 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Getting Started Onboarding (Nov 24, 2025):** Added comprehensive 5-step onboarding tour for new users covering: Welcome intro, Study modes overview (Standard, Result-Driven, Working Professional, Custom), Diagnostic pretest guide, Dashboard features, and Key features overview. Multi-step modal with progress indicator, navigation controls, and skip option. Integrates with existing welcome flow using `hasSeenWelcome` preference flag.
 
 -   **Study Strategy Page (Nov 24, 2025):** Added comprehensive Study Strategy page (`/strategy` route) comparing all 4 study modes with time commitments, daily schedules, benefits, and use cases. Shows current user mode, allows mode switching, includes recommendations section with pretest link and study plan navigation. Helps users make informed decisions about study approach.
--   **Practical Word Problems for All 68 Lessons (Nov 24, 2025):** Created `server/practical-problems.ts` with 69 real-world surveying scenarios - one for each lesson. Problems tie theory to practical application (e.g., "A surveyor calculates distance using coordinates...", "A road grade is 5%..."). Ready for integration into lesson display and review content.
+-   **Practical Word Problems for All 68 Lessons (Nov 24, 2025):** Created `server/practical-problems.ts` with 69 real-world surveying scenarios - one for each lesson. Problems tie theory to practical application (e.g., "A surveyor calculates distance using coordinates...", "A road grade is 5%..."). Fully integrated into lesson display:
+    - Added `practicalProblem` field to lessons table schema
+    - Updated seed-lessons.ts to populate practical problems for all lessons
+    - Updated lesson UI to display practical problems in "Real-World Application" section below lesson content
+    - Problems visible to students during lesson study to enhance practical understanding
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

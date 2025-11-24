@@ -677,6 +677,7 @@ export const lessons = pgTable("lessons", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   content: text("content").notNull(), // Lesson content/explanation
+  practicalProblem: text("practical_problem"), // Real-world surveying scenario
   difficulty: text("difficulty").notNull().default('medium'), // 'easy', 'medium', 'hard'
   orderIndex: integer("order_index").notNull(), // Order within the domain
   estimatedMinutes: integer("estimated_minutes").notNull().default(15),

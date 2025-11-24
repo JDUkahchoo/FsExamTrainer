@@ -1257,7 +1257,8 @@ async function seedLessons() {
   ];
 
   // Create lessons with questions
-  for (const lessonData of lessonsToCreate) {
+  for (let idx = 0; idx < lessonsToCreate.length; idx++) {
+    const lessonData = lessonsToCreate[idx];
     const { questions, ...lessonInfo } = lessonData;
     
     // Generate deterministic ID: d{domain}-lesson-{orderIndex:02}
@@ -1270,6 +1271,7 @@ async function seedLessons() {
       title: lessonInfo.title,
       description: lessonInfo.description,
       content: lessonInfo.content,
+      practicalProblem: practicalProblems[idx],
       difficulty: lessonInfo.difficulty,
       orderIndex: lessonInfo.orderIndex,
       estimatedMinutes: lessonInfo.estimatedMinutes,
