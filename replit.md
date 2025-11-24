@@ -4,7 +4,7 @@
 This project is an interactive study guide for the Fundamentals of Surveying (FS) exam, designed to help surveying students prepare for the NCEES FS exam. It offers structured study plans, practice quizzes, flashcards, and full-length practice exams, covering all 7 NCEES domains. The application aims to be the first step for users towards becoming a professional licensed surveyor (PLS), providing a comprehensive and engaging learning experience with market-leading features and coverage.
 
 ## User Preferences
-I prefer simple language and detailed explanations. I want iterative development with frequent updates. Ask before making major architectural changes. Do not make changes to the `design_guidelines.md` file.
+I prefer simple language and detailed explanations. I want iterative development with frequent updates. Ask before making major architectural changes. Do not make changes to the `design_guidelines.md` file. Getting Started & Study Strategy should be the first/primary tab for users entering the app.
 
 ## System Architecture
 The application features a comprehensive UI/UX with domain-specific color coding, Inter font for UI, and JetBrains Mono for code/formulas, all designed responsively with dark mode support.
@@ -67,6 +67,17 @@ The application features a comprehensive UI/UX with domain-specific color coding
     - API routes: POST `/api/feedback`, GET/POST `/api/testimonials`
     - Updated sidebar with Community and Legal sections
     - All pages responsive and accessible
+
+-   **Getting Started & Study Strategy Page (Nov 24, 2025):** Combined comprehensive onboarding and study mode selection:
+    - **Getting Started Page** (`/getting-started`, default landing for authenticated users): 
+      - Quick Start guide with 4 essential steps (Take Pretest, Choose Mode, Follow Schedule, Review Progress)
+      - Study Tools overview with descriptions and direct links to all 7 tools (Study Plan, Quiz, Flashcards, Exam, Notes, Progress, Resources)
+      - Complete Study Strategy guide comparing all 4 modes (Standard, Result-Driven, Working Professional, Custom)
+      - Success tips and actionable recommendations
+      - Call-to-action buttons for pretest and study plan
+    - Set as the first/primary tab in the sidebar (replaces Study Plan as home page)
+    - Integrates both "how to use the guide" content with study strategy selection
+    - Responsive design with clear visual hierarchy and information architecture
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

@@ -21,6 +21,7 @@ import PretestPage from "@/pages/pretest";
 import PretestResultsPage from "@/pages/pretest-results";
 import LessonPage from "@/pages/lesson";
 import StrategyPage from "@/pages/strategy";
+import GettingStartedPage from "@/pages/getting-started";
 import FeedbackPage from "@/pages/feedback";
 import TestimonialsPage from "@/pages/testimonials";
 import PrivacyPolicyPage from "@/pages/privacy-policy";
@@ -44,7 +45,8 @@ function Router() {
         <Route path="/" component={Landing} />
       ) : (
         <>
-          <Route path="/" component={StudyPlan} />
+          <Route path="/" component={GettingStartedPage} />
+          <Route path="/getting-started" component={GettingStartedPage} />
           <Route path="/study-plan" component={StudyPlan} />
           <Route path="/quiz" component={PracticeQuizPage} />
           <Route path="/flashcards" component={FlashcardsPage} />

@@ -1,4 +1,4 @@
-import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import {
   Sidebar,
@@ -13,7 +13,8 @@ import {
 } from '@/components/ui/sidebar';
 
 const menuItems = [
-  { id: '/', icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan' },
+  { id: '/getting-started', icon: HelpCircle, label: 'Getting Started', testId: 'nav-getting-started' },
+  { id: '/study-plan', icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan' },
   { id: '/quiz', icon: Brain, label: 'Practice Quiz', testId: 'nav-quiz' },
   { id: '/flashcards', icon: ClipboardCheck, label: 'Flashcards', testId: 'nav-flashcards' },
   { id: '/exam', icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam' },
