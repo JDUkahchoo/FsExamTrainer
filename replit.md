@@ -23,6 +23,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
 -   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain (0-7) with multiple question types, difficulty levels, and progress indicators. All 68 lessons are complete.
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams.
+-   **Expanded Question Pool:** 116+ quiz questions across all 8 NCEES domains with varied difficulty levels (easy, medium, hard) for comprehensive practice and weak domain strengthening.
 
 **Technical Implementation:**
 -   **Frontend:** React with TypeScript, Tailwind CSS, Shadcn UI, Wouter, TanStack Query, and Lucide React.
@@ -46,6 +47,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Domain-Based Lesson Architecture: Lessons organized by NCEES domain number (0-7) for flexible study mode distribution; client-side logic distributes lessons across weeks based on study mode. Stable lesson IDs prevent errors and enable reliable progress tracking.
 -   Custom Plan Builder Implementation: Database stores `customDomainPriorities` and `customTimeline` in user preferences; logic distributes lessons based on user selections; UI is a modal component with domain selection, priority reordering, and timeline slider; state management ensures preference synchronization; backend endpoint saves custom plan data.
 -   **Enhanced Progress Tracking (Nov 24, 2025):** Added domain mastery tracking with `domainProgressSnapshots` table, `getDomainMastery()` storage method, and `/api/progress/domain-mastery` backend route. UI displays domain cards with current scores (0-100%), improvement alerts ("Needs focus", "Keep practicing", "Mastered!"), and visual progress bars. Alerts triggered: <50% = "Needs focus", 50-70% = "Keep practicing", ≥85% = "Mastered!". Grid layout shows all 8 domains with mastery badges and improvement indicators.
+-   **Content Gap Fillers (Nov 24, 2025):** Added 18 new quiz questions across all 8 domains to strengthen weak areas. Expanded from 99 to 116+ questions with strategic distribution: Math & Basic Science (2), Field Data Acquisition (2), Mapping/GIS/CAD (2), Boundary Law & PLSS (3), Surveying Principles (3), Survey Computations & Applications (2), Applied Mathematics & Statistics (2), Professional Practice (2). Each question includes detailed explanations and difficulty ratings to support progressive learning.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

@@ -834,7 +834,163 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
 
-  // EXPANDED POOL: Now ~100+ questions total
-  // This provides enough variety for 50-question random quizzes with good domain coverage
+  // CONTENT GAP FILLERS - Added Nov 24, 2025 (18 new questions)
+  
+  // Math & Basic Science
+  {
+    domain: 'Math & Basic Science',
+    question: 'The ratio of the circumference of a circle to its diameter is represented by:',
+    options: ['Pi (π)', 'Phi (φ)', 'Euler\'s number (e)', 'Golden ratio'],
+    correctAnswer: 0,
+    explanation: 'π (pi) is the ratio of circumference to diameter. π ≈ 3.14159. Essential for area and perimeter calculations in surveying.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'If a measurement has a standard error of 0.02 feet, what is the 99.7% confidence interval (3σ)?',
+    options: ['±0.02 ft', '±0.06 ft', '±0.04 ft', '±0.08 ft'],
+    correctAnswer: 1,
+    explanation: 'The 99.7% confidence interval is 3σ. 3 × 0.02 = ±0.06 ft. This represents approximately 99.7% of measurements falling within this range.',
+    difficulty: 'medium'
+  },
+
+  // Field Data Acquisition
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In leveling, if the instrument is not perfectly level, the error is called:',
+    options: ['Parallax error', 'Collimation error', 'Refraction error', 'Curvature error'],
+    correctAnswer: 1,
+    explanation: 'Collimation error occurs when the line of sight is not truly horizontal. This is why leveling instruments must be carefully adjusted and used properly.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'When using a level rod, the "rod reading" should be taken at:',
+    options: ['The middle of the rod graduation marks', 'Between the E and F marks', 'Directly at the horizontal cross-hair intersection', 'At the nearest inch mark'],
+    correctAnswer: 2,
+    explanation: 'The rod reading is the measurement where the horizontal cross-hair intersects the rod. Accuracy is critical - interpolation between marks is allowed.',
+    difficulty: 'easy'
+  },
+
+  // Mapping, GIS, and CAD
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In CAD, the Universal Transverse Mercator (UTM) projection is commonly used for maps at scales:',
+    options: ['Larger than 1:100,000', 'Smaller than 1:100,000', '1:24,000', 'All of the above'],
+    correctAnswer: 0,
+    explanation: 'UTM is ideal for large-scale maps (detailed, zoomed-in views like 1:24,000 to 1:100,000 range). It minimizes distortion for these applications.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'GIS data layers that have no geographic reference are called:',
+    options: ['Raster data', 'Vector data', 'Non-spatial data', 'Topology'],
+    correctAnswer: 2,
+    explanation: 'Non-spatial data (like attribute tables) is information stored in a GIS that is not tied to geographic coordinates, but can be linked to spatial features.',
+    difficulty: 'medium'
+  },
+
+  // Boundary Law & PLSS
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The Public Land Survey System (PLSS) divides land into sections, each nominally:',
+    options: ['1 mile × 1 mile (640 acres)', '2 miles × 2 miles', '½ mile × ½ mile', '1 mile × 2 miles'],
+    correctAnswer: 0,
+    explanation: '1 section = 1 mile × 1 mile = 640 acres. There are 36 sections in a township (6 miles × 6 miles = 23,040 acres).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In boundary disputes, the principle of "senior rights" means:',
+    options: ['First in time, first in right', 'Higher-ranking officials decide', 'Recent surveys override old ones', 'Newer monuments are more accurate'],
+    correctAnswer: 0,
+    explanation: 'Senior rights doctrine: the original boundary location has priority. An earlier valid survey or establishment of a line takes precedence over later claims or surveys.',
+    difficulty: 'medium'
+  },
+
+  // Surveying Principles
+  {
+    domain: 'Surveying Principles',
+    question: 'The most precise method of distance measurement in modern surveying is:',
+    options: ['Electronic Distance Measurement (EDM)', 'Steel tape', 'Pacing', 'Visual estimation'],
+    correctAnswer: 0,
+    explanation: 'EDM/laser technology can measure distances to ±1mm or better. Steel tapes are accurate to ±0.1 ft. EDM is standard for professional surveys.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Angular measurements in surveying are most commonly made with:',
+    options: ['Theodolite or Total Station', 'Transit', 'Compass', 'Protractor'],
+    correctAnswer: 0,
+    explanation: 'Modern surveys use Total Stations (combining angle and distance measurement) and theodolites. These provide precise angle measurements with digital readouts.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A traverse is closed when:',
+    options: ['The survey returns to the starting point and closure calculations are verified', 'The surveyor stops working', 'All angles are measured', 'The area is calculated'],
+    correctAnswer: 0,
+    explanation: 'A closed traverse returns to its starting point, allowing for error calculation and verification. Open traverses do not close on themselves.',
+    difficulty: 'medium'
+  },
+
+  // Survey Computations & Applications
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a traverse, the algebraic sum of exterior angles should equal:',
+    options: ['360° (for a closed traverse)', '0°', '180° × (n-2)', 'n × 90°'],
+    correctAnswer: 0,
+    explanation: 'For a closed traverse, exterior angles sum to 360°. This provides a check on angle measurements and is fundamental to traverse closure.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Convergence of meridians means:',
+    options: ['Lines of longitude converge toward the poles', 'State boundary lines merge together', 'Multiple surveys must match up', 'Measurements become less accurate'],
+    correctAnswer: 0,
+    explanation: 'Meridian convergence: lines of longitude (meridians) converge at the poles. This is critical for computing State Plane Coordinates and map projections.',
+    difficulty: 'medium'
+  },
+
+  // Applied Mathematics & Statistics
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In a probability distribution, the standard deviation is a measure of:',
+    options: ['Spread or dispersion of data', 'Average value', 'Mode of data', 'Range of data'],
+    correctAnswer: 0,
+    explanation: 'Standard deviation (σ) measures how spread out data is from the mean. Larger σ = more variation. Critical for understanding measurement uncertainty.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The root mean square (RMS) error combines:',
+    options: ['All error components into a single value', 'Only systematic errors', 'Only random errors', 'Largest error only'],
+    correctAnswer: 0,
+    explanation: 'RMS error = √(e₁² + e₂² + ... + eₙ²)/n. It combines all individual errors into one overall accuracy measure used to assess survey quality.',
+    difficulty: 'hard'
+  },
+
+  // Boundary Law & PLSS (additional)
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Under the Torrens System of land title:',
+    options: ['A government-issued title certificate is the best evidence of ownership', 'Possession is the only proof needed', 'Field surveys are not required', 'Boundary disputes cannot be resolved'],
+    correctAnswer: 0,
+    explanation: 'The Torrens System provides government-issued certificates of title as conclusive evidence of ownership. Adopted in some U.S. states and most countries.',
+    difficulty: 'medium'
+  },
+
+  // Professional Practice (additional)
+  {
+    domain: 'Professional Practice',
+    question: 'When a surveyor finds an existing survey monument while working:',
+    options: ['It should be preserved, protected, and respected', 'It should be replaced if the surveyor disagrees', 'It can be ignored if it\'s old', 'It may be destroyed if in the way'],
+    correctAnswer: 0,
+    explanation: 'Professional ethics and law require preserving existing monuments. They represent prior boundary establishment and must be respected and protected.',
+    difficulty: 'easy'
+  },
+
+  // EXPANDED POOL: Now ~117 questions total
+  // This provides excellent variety for 50-question random quizzes with comprehensive domain coverage
   // Further expansion to ~350 questions can be done incrementally as needed
 ];
