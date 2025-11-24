@@ -205,6 +205,69 @@ export function getCustomModeWeeklyLessons(
 }
 
 /**
+ * Working Professional Mode: Distributes lessons across 16 weeks for busy schedules
+ * ~1hr/day M-F (5 hrs/week) + 2-3hrs weekend (4-6 hrs/week) = ~9-11 hrs/week
+ * Focuses on spreading lessons evenly with manageable daily loads
+ */
+export function getWorkingProfessionalModeWeeklyLessons(allLessons: Lesson[]): Map<number, Lesson[]> {
+  const weeklyLessons = new Map<number, Lesson[]>();
+  
+  // Initialize all 16 weeks
+  for (let week = 1; week <= 16; week++) {
+    weeklyLessons.set(week, []);
+  }
+  
+  // Calculate lessons per week for even distribution
+  // Limit to ~2-3 lessons per week for manageable daily study
+  const lessonsPerWeek = Math.ceil(allLessons.length / 16);
+  const maxLessonsPerWeek = 3; // Cap at 3 lessons/week for working professionals
+  const adjustedLessonsPerWeek = Math.min(lessonsPerWeek, maxLessonsPerWeek);
+  
+  // Group lessons by domain for balanced weekly coverage
+  const lessonsByDomain = new Map<number, Lesson[]>();
+  allLessons.forEach((lesson) => {
+    if (!lessonsByDomain.has(lesson.domainNumber)) {
+      lessonsByDomain.set(lesson.domainNumber, []);
+    }
+    lessonsByDomain.get(lesson.domainNumber)!.push(lesson);
+  });
+  
+  // Sort each domain's lessons by difficulty (easy first for confidence building)
+  const difficultyOrder = { easy: 1, medium: 2, hard: 3 };
+  lessonsByDomain.forEach((lessons) => {
+    lessons.sort((a, b) => {
+      const diffA = difficultyOrder[a.difficulty];
+      const diffB = difficultyOrder[b.difficulty];
+      if (diffA !== diffB) return diffA - diffB;
+      return a.title.localeCompare(b.title);
+    });
+  });
+  
+  // Round-robin distribute lessons: cycle through domains to ensure variety each week
+  const sortedDomainNums = Array.from(lessonsByDomain.keys()).sort();
+  let currentDomainIndex = 0;
+  let currentWeek = 1;
+  let weekLessonCount = 0;
+  
+  for (const domainNum of sortedDomainNums) {
+    const domainLessons = lessonsByDomain.get(domainNum)!;
+    
+    for (const lesson of domainLessons) {
+      weeklyLessons.get(currentWeek)!.push(lesson);
+      weekLessonCount++;
+      
+      // Move to next week after reaching limit
+      if (weekLessonCount >= adjustedLessonsPerWeek) {
+        currentWeek = Math.min(16, currentWeek + 1);
+        weekLessonCount = 0;
+      }
+    }
+  }
+  
+  return weeklyLessons;
+}
+
+/**
  * Get weekly lessons based on study mode
  */
 export function getWeeklyLessonsByMode(
@@ -224,6 +287,9 @@ export function getWeeklyLessonsByMode(
         return getStandardModeWeeklyLessons(allLessons);
       }
       return getResultDrivenModeWeeklyLessons(allLessons, domainScores);
+    
+    case 'working-professional':
+      return getWorkingProfessionalModeWeeklyLessons(allLessons);
     
     case 'custom':
       return getCustomModeWeeklyLessons(allLessons, customWeeklyDomains, customTimeline);

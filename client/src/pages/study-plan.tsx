@@ -249,6 +249,16 @@ export default function StudyPlan() {
     }
   });
 
+  // Mutation to save study mode preference
+  const setStudyModeMutation = useMutation({
+    mutationFn: async (mode: import('@shared/schema').StudyMode) => {
+      return apiRequest('PATCH', '/api/preferences', { studyMode: mode });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+    }
+  });
+
   // Mutation to save custom study plan preferences
   const saveCustomPlanMutation = useMutation({
     mutationFn: async ({ weeklyDomains, timeline }: { weeklyDomains: Record<string, number[]>; timeline: number }) => {
@@ -509,10 +519,30 @@ export default function StudyPlan() {
             <Badge variant="secondary" className="mt-2">
               Result-Driven Plan Active
             </Badge>
+          ) : preferences?.studyMode === 'working-professional' ? (
+            <Badge variant="secondary" className="mt-2">
+              Working Professional Schedule
+            </Badge>
           ) : null}
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Select value={preferences?.studyMode || 'standard'} onValueChange={(val) => {
+              setStudyModeMutation.mutate(val as import('@shared/schema').StudyMode);
+            }}>
+              <SelectTrigger className="w-52" data-testid="select-study-mode">
+                <SelectValue placeholder="Select study mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="standard">Standard Mode</SelectItem>
+                <SelectItem value="result-driven">Result-Driven Mode</SelectItem>
+                <SelectItem value="working-professional">Working Professional</SelectItem>
+                <SelectItem value="custom">Custom Plan</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
           <CustomPlanBuilder 
             onSave={async (weeklyDomains, timeline) => {
               await saveCustomPlanMutation.mutateAsync({ weeklyDomains, timeline });

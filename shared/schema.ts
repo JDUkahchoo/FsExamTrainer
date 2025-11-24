@@ -559,7 +559,7 @@ export type PretestResult = typeof pretestResults.$inferSelect;
 
 // --- User Preferences ---
 
-export type StudyMode = 'standard' | 'result-driven' | 'custom';
+export type StudyMode = 'standard' | 'result-driven' | 'custom' | 'working-professional';
 
 export const userPreferences = pgTable("user_preferences", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
