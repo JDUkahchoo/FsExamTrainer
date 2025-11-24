@@ -942,8 +942,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/lessons/:id", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const lessonId = req.params.id;
-      const data = await storage.getLessonWithQuestions(lessonId);
+      
+      // Use randomized questions method to get different variations each time
+      const data = await storage.getLessonWithRandomizedQuestions(userId, lessonId);
       
       if (!data) {
         return res.status(404).json({ error: "Lesson not found" });
@@ -1073,6 +1076,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const attempts = (existingProgress?.attempts || 0) + 1;
       const completed = score >= totalPoints * 0.7; // 70% to pass
 
+      // Track which question variations were shown this attempt
+      const seenVariations = (existingProgress?.seenQuestionVariations as Record<string, string[]>) || {};
+      questions.forEach((q) => {
+        const groupKey = q.variationGroup.toString();
+        const seenIds = seenVariations[groupKey] || [];
+        if (!seenIds.includes(q.id)) {
+          seenIds.push(q.id);
+        }
+        seenVariations[groupKey] = seenIds;
+      });
+
       const progress = await storage.upsertLessonProgress({
         userId,
         lessonId,
@@ -1081,6 +1095,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalPoints,
         attempts,
         timeSpentSeconds: (existingProgress?.timeSpentSeconds || 0) + timeSpentSeconds,
+        seenQuestionVariations: seenVariations,
         lastAttemptAt: new Date(),
         completedAt: completed ? new Date() : existingProgress?.completedAt,
       });

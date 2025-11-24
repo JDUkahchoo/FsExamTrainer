@@ -167,6 +167,7 @@ export interface IStorage {
   // Interactive Lesson methods
   getLessonsByWeek(week: number): Promise<Lesson[]>;
   getLessonWithQuestions(lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
+  getLessonWithRandomizedQuestions(userId: string, lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
   getLessonProgress(userId: string, lessonId: string): Promise<LessonProgress | undefined>;
   getAllLessonProgress(userId: string): Promise<LessonProgress[]>;
   upsertLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
@@ -1106,6 +1107,71 @@ export class DatabaseStorage implements IStorage {
     return { lesson, questions };
   }
 
+  async getLessonWithRandomizedQuestions(userId: string, lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined> {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.id, lessonId));
+
+    if (!lesson) return undefined;
+
+    // Get all question variations for this lesson
+    const allQuestions = await db
+      .select()
+      .from(lessonQuestions)
+      .where(eq(lessonQuestions.lessonId, lessonId))
+      .orderBy(lessonQuestions.orderIndex, lessonQuestions.variationNumber);
+
+    // Safety check: if no questions found, return empty
+    if (allQuestions.length === 0) {
+      return { lesson, questions: [] };
+    }
+
+    // Get user's lesson progress to see which variations they've already seen
+    const progress = await this.getLessonProgress(userId, lessonId);
+    const seenVariations = (progress?.seenQuestionVariations as Record<string, string[]>) || {};
+
+    // Group questions by variationGroup
+    const questionGroups: Map<number, LessonQuestion[]> = new Map();
+    allQuestions.forEach(q => {
+      const group = questionGroups.get(q.variationGroup) || [];
+      group.push(q);
+      questionGroups.set(q.variationGroup, group);
+    });
+
+    // Safety check: if grouping failed or all questions have same group, fall back to ordered list
+    if (questionGroups.size === 1 && questionGroups.has(1) && allQuestions.length > 1) {
+      // This likely means variation_group wasn't properly set (all defaulted to 1)
+      // Fall back to returning all questions in order to prevent breaking lessons
+      console.warn(`Lesson ${lessonId}: All questions have variationGroup=1. Falling back to full question list.`);
+      return { lesson, questions: allQuestions };
+    }
+
+    // For each group, select one variation (prioritize unseen)
+    const selectedQuestions: LessonQuestion[] = [];
+    
+    questionGroups.forEach((variations, groupNum) => {
+      const groupKey = groupNum.toString();
+      const seenIds = seenVariations[groupKey] || [];
+      
+      // Filter to unseen variations, or use all if all have been seen
+      let availableVariations = variations.filter(v => !seenIds.includes(v.id));
+      if (availableVariations.length === 0) {
+        // All variations seen, reset and use all
+        availableVariations = variations;
+      }
+      
+      // Randomly select one variation
+      const randomIndex = Math.floor(Math.random() * availableVariations.length);
+      selectedQuestions.push(availableVariations[randomIndex]);
+    });
+
+    // Sort selected questions by their original orderIndex
+    selectedQuestions.sort((a, b) => a.orderIndex - b.orderIndex);
+
+    return { lesson, questions: selectedQuestions };
+  }
+
   async getLessonProgress(userId: string, lessonId: string): Promise<LessonProgress | undefined> {
     const [progress] = await db
       .select()
@@ -1136,6 +1202,7 @@ export class DatabaseStorage implements IStorage {
           totalPoints: progressData.totalPoints,
           attempts: progressData.attempts,
           timeSpentSeconds: progressData.timeSpentSeconds,
+          seenQuestionVariations: progressData.seenQuestionVariations,
           lastAttemptAt: progressData.lastAttemptAt,
           completedAt: progressData.completedAt,
         })

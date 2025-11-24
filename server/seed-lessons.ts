@@ -1291,10 +1291,12 @@ async function seedLessons() {
         correctAnswer: q.answer,
         explanation: q.explanation,
         orderIndex: i + 1,
+        variationGroup: i + 1, // Same as orderIndex - groups variations together
+        variationNumber: 1, // All existing questions are variation 1
         points: q.points
       });
     }
-    console.log(`  Added ${questions.length} questions`);
+    console.log(`  Added ${questions.length} questions (variation 1)`);
   }
 
   console.log("Lesson seeding completed!");

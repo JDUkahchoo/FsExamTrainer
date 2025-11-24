@@ -710,7 +710,9 @@ export const lessonQuestions = pgTable("lesson_questions", {
   options: jsonb("options"), // For multiple choice: string[], for drag_drop: { items: string[], correctOrder: number[] }
   correctAnswer: text("correct_answer").notNull(), // For MC: index as string, for fill_in: answer text, for drag: JSON array
   explanation: text("explanation").notNull(),
-  orderIndex: integer("order_index").notNull(), // Order within the lesson
+  orderIndex: integer("order_index").notNull(), // Order within the lesson (question slot: 1, 2, 3, etc.)
+  variationGroup: integer("variation_group").notNull().default(1), // Groups variations of the same question
+  variationNumber: integer("variation_number").notNull().default(1), // 1-5: which variation this is
   points: integer("points").notNull().default(10),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -741,6 +743,7 @@ export const lessonProgress = pgTable("lesson_progress", {
   totalPoints: integer("total_points"), // Total points possible
   attempts: integer("attempts").notNull().default(0),
   timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  seenQuestionVariations: jsonb("seen_question_variations").default(sql`'{}'::jsonb`), // Tracks variation IDs user has seen: { "1": [vid1, vid2], "2": [vid3] }
   lastAttemptAt: timestamp("last_attempt_at"),
   completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
