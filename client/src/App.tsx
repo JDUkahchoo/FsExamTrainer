@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { WelcomeDialog } from "@/components/welcome-dialog";
+import { GettingStartedOnboarding } from "@/components/getting-started-onboarding";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import StudyPlan from "@/pages/study-plan";
@@ -89,6 +90,7 @@ function AppContent({ style }: { style: React.CSSProperties }) {
 
   return (
     <SidebarProvider style={style}>
+      <GettingStartedOnboarding />
       <WelcomeDialog />
       <div className="flex h-screen w-full">
         <AppSidebar />
