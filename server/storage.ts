@@ -69,7 +69,9 @@ import {
   lessons,
   lessonQuestions,
   lessonProgress,
-  domainProgressSnapshots
+  domainProgressSnapshots,
+  feedback,
+  testimonials
 } from "@shared/schema";
 import { eq, and, desc, gte, sql } from "drizzle-orm";
 
@@ -170,6 +172,13 @@ export interface IStorage {
   upsertLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
   createLessonQuestion(question: InsertLessonQuestion): Promise<LessonQuestion>;
+
+  // Feedback methods
+  createFeedback(feedback: InsertFeedback): Promise<Feedback>;
+
+  // Testimonials methods
+  createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+  getApprovedTestimonials(): Promise<Testimonial[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1209,6 +1218,26 @@ export class DatabaseStorage implements IStorage {
     }
     
     return result;
+  }
+
+  // Feedback methods
+  async createFeedback(feedbackData: InsertFeedback): Promise<Feedback> {
+    const [newFeedback] = await db.insert(feedback).values(feedbackData).returning();
+    return newFeedback;
+  }
+
+  // Testimonials methods
+  async createTestimonial(testimonialData: InsertTestimonial): Promise<Testimonial> {
+    const [newTestimonial] = await db.insert(testimonials).values(testimonialData).returning();
+    return newTestimonial;
+  }
+
+  async getApprovedTestimonials(): Promise<Testimonial[]> {
+    return await db
+      .select()
+      .from(testimonials)
+      .where(eq(testimonials.approved, true))
+      .orderBy(desc(testimonials.createdAt));
   }
 }
 

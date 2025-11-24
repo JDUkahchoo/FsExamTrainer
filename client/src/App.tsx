@@ -21,6 +21,10 @@ import PretestPage from "@/pages/pretest";
 import PretestResultsPage from "@/pages/pretest-results";
 import LessonPage from "@/pages/lesson";
 import StrategyPage from "@/pages/strategy";
+import FeedbackPage from "@/pages/feedback";
+import TestimonialsPage from "@/pages/testimonials";
+import PrivacyPolicyPage from "@/pages/privacy-policy";
+import DisclaimerPage from "@/pages/disclaimer";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -49,6 +53,10 @@ function Router() {
           <Route path="/progress" component={ProgressPage} />
           <Route path="/resources" component={ResourcesPage} />
           <Route path="/strategy" component={StrategyPage} />
+          <Route path="/feedback" component={FeedbackPage} />
+          <Route path="/testimonials" component={TestimonialsPage} />
+          <Route path="/privacy" component={PrivacyPolicyPage} />
+          <Route path="/disclaimer" component={DisclaimerPage} />
           <Route path="/pretest" component={PretestPage} />
           <Route path="/pretest/results" component={PretestResultsPage} />
           <Route path="/lesson/:id" component={LessonPage} />

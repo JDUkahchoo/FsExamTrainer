@@ -58,6 +58,16 @@ The application features a comprehensive UI/UX with domain-specific color coding
     - Updated lesson UI to display practical problems in "Real-World Application" section below lesson content
     - Problems visible to students during lesson study to enhance practical understanding
 
+-   **Feedback, Testimonials, Privacy Policy & Disclaimer Pages (Nov 24, 2025):** Built complete community and legal infrastructure:
+    - **Feedback Page** (`/feedback`): Allows users to submit feedback, bug reports, feature requests, and content suggestions. Includes form validation and confirmation messaging.
+    - **Testimonials Page** (`/testimonials`): Users who passed the exam can share success stories. Displays student name, exam score, study mode used, and testimonial. Includes moderation flag for admin review.
+    - **Privacy Policy** (`/privacy`): Comprehensive privacy disclosure covering data collection, usage, security, third-party services, and user rights.
+    - **Disclaimer** (`/disclaimer`): Legal disclaimer covering educational use, no guarantees of success, accuracy of content, professional advice limits, and liability limits.
+    - Added feedback and testimonials tables to PostgreSQL schema
+    - API routes: POST `/api/feedback`, GET/POST `/api/testimonials`
+    - Updated sidebar with Community and Legal sections
+    - All pages responsive and accessible
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.

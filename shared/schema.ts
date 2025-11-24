@@ -797,3 +797,58 @@ export const insertDomainProgressSnapshotSchema = createInsertSchema(domainProgr
 
 export type InsertDomainProgressSnapshot = z.infer<typeof insertDomainProgressSnapshotSchema>;
 export type DomainProgressSnapshot = typeof domainProgressSnapshots.$inferSelect;
+
+// --- Feedback & Testimonials ---
+
+export const feedback = pgTable("feedback", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id, { onDelete: 'cascade' }),
+  email: varchar("email"),
+  name: varchar("name"),
+  message: text("message").notNull(),
+  category: varchar("category").notNull(), // 'bug', 'feature', 'content', 'general'
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const feedbackRelations = relations(feedback, ({ one }) => ({
+  user: one(users, {
+    fields: [feedback.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertFeedbackSchema = createInsertSchema(feedback).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
+export type Feedback = typeof feedback.$inferSelect;
+
+export const testimonials = pgTable("testimonials", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id, { onDelete: 'cascade' }),
+  name: varchar("name").notNull(),
+  email: varchar("email"),
+  examScore: integer("exam_score"), // Percentage score if they took the exam
+  passedExam: boolean("passed_exam").notNull().default(false),
+  message: text("message").notNull(),
+  studyMode: varchar("study_mode"), // Which study mode they used
+  approved: boolean("approved").notNull().default(false), // Moderation flag
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const testimonialsRelations = relations(testimonials, ({ one }) => ({
+  user: one(users, {
+    fields: [testimonials.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
+export type Testimonial = typeof testimonials.$inferSelect;

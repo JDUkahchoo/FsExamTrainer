@@ -1,4 +1,4 @@
-import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import {
   Sidebar,
@@ -20,6 +20,16 @@ const menuItems = [
   { id: '/notes', icon: FileText, label: 'Study Notes', testId: 'nav-notes' },
   { id: '/progress', icon: BarChart3, label: 'Progress', testId: 'nav-progress' },
   { id: '/resources', icon: BookMarked, label: 'Resources', testId: 'nav-resources' },
+];
+
+const communityItems = [
+  { id: '/testimonials', icon: Star, label: 'Testimonials', testId: 'nav-testimonials' },
+  { id: '/feedback', icon: MessageSquare, label: 'Feedback', testId: 'nav-feedback' },
+];
+
+const policyItems = [
+  { id: '/privacy', icon: FileText, label: 'Privacy Policy', testId: 'nav-privacy' },
+  { id: '/disclaimer', icon: FileText, label: 'Disclaimer', testId: 'nav-disclaimer' },
 ];
 
 export function AppSidebar() {
@@ -44,6 +54,42 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton asChild isActive={location === item.id} data-testid={item.testId}>
+                    <Link href={item.id}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Community</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {communityItems.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton asChild isActive={location === item.id} data-testid={item.testId}>
+                    <Link href={item.id}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Legal</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {policyItems.map((item) => (
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton asChild isActive={location === item.id} data-testid={item.testId}>
                     <Link href={item.id}>

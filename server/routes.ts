@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -1096,6 +1096,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error submitting lesson:", error);
       res.status(400).json({ error: error.message || "Failed to submit lesson" });
+    }
+  });
+
+  // Feedback routes
+  app.post("/api/feedback", async (req: any, res) => {
+    try {
+      const data = insertFeedbackSchema.parse(req.body);
+      const feedback = await storage.createFeedback(data);
+      res.json(feedback);
+    } catch (error) {
+      console.error("Error saving feedback:", error);
+      res.status(400).json({ error: "Invalid feedback data" });
+    }
+  });
+
+  // Testimonials routes
+  app.get("/api/testimonials", async (req: any, res) => {
+    try {
+      const testimonials = await storage.getApprovedTestimonials();
+      res.json(testimonials);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch testimonials" });
+    }
+  });
+
+  app.post("/api/testimonials", async (req: any, res) => {
+    try {
+      const data = insertTestimonialSchema.parse(req.body);
+      const testimonial = await storage.createTestimonial(data);
+      res.json(testimonial);
+    } catch (error) {
+      console.error("Error saving testimonial:", error);
+      res.status(400).json({ error: "Invalid testimonial data" });
     }
   });
 
