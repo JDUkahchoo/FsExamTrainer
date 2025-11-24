@@ -244,14 +244,32 @@ export default function LessonPage() {
                 
                 // Helper function to format answer based on question type
                 const formatAnswer = (answer: any, questionType: QuestionType, options?: any) => {
-                  if (questionType === 'multiple_choice' && options && Array.isArray(options)) {
-                    return options[answer] || `Option ${answer}`;
-                  } else if (questionType === 'fill_in_blank') {
-                    return answer;
-                  } else if (questionType === 'drag_drop') {
-                    return JSON.stringify(answer);
+                  try {
+                    if (questionType === 'multiple_choice') {
+                      // Ensure options is an array (handle if it's a string or undefined)
+                      const optionsArray = Array.isArray(options) 
+                        ? options 
+                        : typeof options === 'string' 
+                          ? JSON.parse(options)
+                          : [];
+                      
+                      if (optionsArray.length > 0 && answer !== undefined && answer !== null) {
+                        const answerIndex = parseInt(String(answer), 10);
+                        if (!isNaN(answerIndex) && answerIndex < optionsArray.length) {
+                          return optionsArray[answerIndex];
+                        }
+                      }
+                      return `Option ${answer}`;
+                    } else if (questionType === 'fill_in_blank') {
+                      return String(answer || '');
+                    } else if (questionType === 'drag_drop') {
+                      return Array.isArray(answer) ? answer.join(', ') : String(answer || '');
+                    }
+                    return String(answer || '');
+                  } catch (error) {
+                    console.error('Error formatting answer:', error);
+                    return String(answer || '');
                   }
-                  return JSON.stringify(answer);
                 };
 
                 return (
@@ -381,7 +399,7 @@ export default function LessonPage() {
             {/* Multiple Choice */}
             {currentQuestion.questionType === "multiple_choice" && currentQuestion.options && (
               <div className="space-y-3">
-                {(currentQuestion.options as string[]).map((option, index) => (
+                {Array.isArray(currentQuestion.options) && (currentQuestion.options as string[]).map((option, index) => (
                   <Button
                     key={index}
                     variant={answers[currentQuestion.id] === index ? "default" : "outline"}
@@ -410,7 +428,10 @@ export default function LessonPage() {
             {currentQuestion.questionType === "drag_drop" && currentQuestion.options && (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">Arrange the items in the correct order:</p>
-                {((currentQuestion.options as { items: string[] }).items || []).map((item, index) => (
+                {(Array.isArray(currentQuestion.options) 
+                  ? currentQuestion.options 
+                  : (currentQuestion.options as { items: string[] })?.items || []
+                ).map((item: string, index: number) => (
                   <div
                     key={index}
                     className="p-3 border rounded-md bg-card hover-elevate cursor-move"
