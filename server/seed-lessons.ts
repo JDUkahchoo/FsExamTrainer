@@ -1284,7 +1284,7 @@ async function seedLessons() {
         lessonId: lesson.id,
         questionType: q.type,
         questionText: q.text,
-        options: q.options ? JSON.stringify(q.options) : null,
+        options: q.options || null, // JSONB handles JSON automatically - don't stringify
         correctAnswer: q.answer,
         explanation: q.explanation,
         orderIndex: i + 1,
