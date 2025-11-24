@@ -79,6 +79,20 @@ The application features a comprehensive UI/UX with domain-specific color coding
     - Integrates both "how to use the guide" content with study strategy selection
     - Responsive design with clear visual hierarchy and information architecture
 
+-   **Question Pool Randomization System (Nov 24, 2025):** Implemented multi-variation question system to prevent answer memorization:
+    - **Database Schema:** Added `variationGroup` (groups variations of same question) and `variationNumber` (1-5) fields to `lessonQuestions` table
+    - **User Progress Tracking:** Added `seenQuestionVariations` JSONB field to `lessonProgress` to track which variations each user has seen
+    - **Smart Randomization Algorithm:** 
+      - Groups questions by `variationGroup` (each question slot has its own group)
+      - Prioritizes showing unseen variations to maximize variety
+      - Resets seen history when all variations have been shown
+      - Randomly selects one variation per group for fair distribution
+      - Includes safety fallback if variation metadata is missing (returns all questions in order)
+    - **Current State:** All 340 questions marked as variation 1, ready for content expansion (need ~1,088 more questions for variations 2-5)
+    - **Migration Tools:** Created `migrate-question-variations.ts` to backfill variation fields for existing data
+    - **Documentation:** Complete implementation guide in `QUESTION_POOL_SYSTEM.md` with guidelines for adding new variations
+    - **Benefits:** Prevents memorization, encourages concept mastery, supports multiple study cycles with fresh content each time
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.
