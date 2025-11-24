@@ -42,7 +42,9 @@ import type {
   LessonQuestion,
   InsertLessonQuestion,
   LessonProgress,
-  InsertLessonProgress
+  InsertLessonProgress,
+  DomainProgressSnapshot,
+  InsertDomainProgressSnapshot
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -66,7 +68,8 @@ import {
   studyCycles,
   lessons,
   lessonQuestions,
-  lessonProgress
+  lessonProgress,
+  domainProgressSnapshots
 } from "@shared/schema";
 import { eq, and, desc, gte, sql } from "drizzle-orm";
 
@@ -1156,6 +1159,56 @@ export class DatabaseStorage implements IStorage {
       .values(questionData)
       .returning();
     return question;
+  }
+
+  // Domain mastery tracking
+  async getDomainMastery(userId: string): Promise<Array<{
+    domainNumber: number;
+    domain: string;
+    currentScore: number;
+    isStagnant: boolean;
+    alert?: string;
+  }>> {
+    const DOMAINS_LIST = ['Math & Basic Science', 'Field Data Acquisition', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Surveying Principles', 'Survey Computations & Applications', 'Professional Practice', 'Applied Mathematics & Statistics'];
+    
+    const result: Array<any> = [];
+    
+    for (let i = 0; i < 8; i++) {
+      const domain = DOMAINS_LIST[i];
+      
+      // Get quiz results for this domain
+      const domainResults = await db.select()
+        .from(quizResults)
+        .where(and(eq(quizResults.userId, userId), eq(quizResults.domain, domain)));
+      
+      let currentScore = 0;
+      if (domainResults.length > 0) {
+        const correct = domainResults.filter((r: any) => r.isCorrect).length;
+        currentScore = Math.round((correct / domainResults.length) * 100);
+      }
+      
+      let isStagnant = false;
+      let alert: string | undefined;
+      
+      // Check if domain hasn't improved in 2 weeks
+      if (currentScore > 0 && currentScore < 70) {
+        alert = currentScore < 50 ? 'Needs focus' : 'Keep practicing';
+      }
+      
+      if (currentScore >= 85) {
+        alert = 'Mastered!';
+      }
+      
+      result.push({
+        domainNumber: i,
+        domain,
+        currentScore,
+        isStagnant,
+        alert
+      });
+    }
+    
+    return result;
   }
 }
 

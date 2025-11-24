@@ -30,6 +30,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Database:** PostgreSQL with Drizzle ORM.
 -   **Authentication:** Replit Auth.
 -   **Validation:** Zod.
+-   **Recent Additions:** Domain mastery tracking with `/api/progress/domain-mastery` endpoint returning domain scores, improvement alerts, and mastery badges (85%+).
 
 **System Design:**
 -   Separate question pools for quizzes and exams.
@@ -44,6 +45,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Lesson progress persistence explicitly updates critical fields to ensure correct completion status and scores.
 -   Domain-Based Lesson Architecture: Lessons organized by NCEES domain number (0-7) for flexible study mode distribution; client-side logic distributes lessons across weeks based on study mode. Stable lesson IDs prevent errors and enable reliable progress tracking.
 -   Custom Plan Builder Implementation: Database stores `customDomainPriorities` and `customTimeline` in user preferences; logic distributes lessons based on user selections; UI is a modal component with domain selection, priority reordering, and timeline slider; state management ensures preference synchronization; backend endpoint saves custom plan data.
+-   **Enhanced Progress Tracking (Nov 24, 2025):** Added domain mastery tracking with `domainProgressSnapshots` table, `getDomainMastery()` storage method, and `/api/progress/domain-mastery` backend route. UI displays domain cards with current scores (0-100%), improvement alerts ("Needs focus", "Keep practicing", "Mastered!"), and visual progress bars. Alerts triggered: <50% = "Needs focus", 50-70% = "Keep practicing", ≥85% = "Mastered!". Grid layout shows all 8 domains with mastery badges and improvement indicators.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

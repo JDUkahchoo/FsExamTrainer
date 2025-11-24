@@ -90,6 +90,17 @@ export default function ProgressPage() {
     refetchOnMount: 'always'
   });
 
+  const { data: domainMastery } = useQuery<Array<{
+    domainNumber: number;
+    domain: string;
+    currentScore: number;
+    isStagnant: boolean;
+    alert?: string;
+  }>>({
+    queryKey: ['/api/progress/domain-mastery'],
+    refetchOnMount: 'always'
+  });
+
   // Mutations
   const completeCycleMutation = useMutation({
     mutationFn: () => apiRequest('POST', '/api/study-cycles/complete', {}),
@@ -567,43 +578,53 @@ export default function ProgressPage() {
 
         {/* Domain Mastery Tab */}
         <TabsContent value="domain" className="space-y-4">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Performance by Domain
-            </h2>
-            <div className="space-y-6">
-              {DOMAINS.map((domain) => {
-                const config = getDomainConfig(domain as Domain);
-                const domainData = domainProgress[domain] || { answered: 0, correct: 0, accuracy: 0 };
-                const accuracy = domainData.accuracy;
-
-                return (
-                  <div key={domain} className="space-y-3" data-testid={`domain-${domain.toLowerCase().replace(/\s+/g, '-')}`}>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full ${config.bgColor}`} />
-                        <span className="font-semibold text-foreground">{domain}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Badge
-                          variant={accuracy >= 80 ? "default" : accuracy >= 60 ? "secondary" : "destructive"}
-                          className="min-w-[60px] justify-center"
-                        >
-                          {Math.round(accuracy)}%
-                        </Badge>
-                      </div>
+          {domainMastery && domainMastery.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {domainMastery.map((item) => (
+                <Card key={item.domainNumber} className="p-4 hover-elevate" data-testid={`domain-card-${item.domainNumber}`}>
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground text-sm line-clamp-2">{item.domain}</h3>
                     </div>
-                    <Progress value={accuracy} className="h-2" />
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{domainData.answered} questions answered</span>
-                      <span>{domainData.correct} correct</span>
-                    </div>
+                    {item.alert && (
+                      <Badge 
+                        variant={
+                          item.alert === 'Mastered!' ? 'default' :
+                          item.alert === 'Needs focus' ? 'destructive' :
+                          'secondary'
+                        }
+                        className="whitespace-nowrap text-xs"
+                        data-testid={`badge-alert-${item.domainNumber}`}
+                      >
+                        {item.alert}
+                      </Badge>
+                    )}
                   </div>
-                );
-              })}
+                  
+                  <div className="mb-3">
+                    <div className="flex items-end gap-2 mb-2">
+                      <span className="text-2xl font-bold text-foreground">{item.currentScore}%</span>
+                      <span className="text-xs text-muted-foreground mb-1">Mastery</span>
+                    </div>
+                    <Progress value={item.currentScore} className="h-2" />
+                  </div>
+
+                  {item.isStagnant && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
+                      <Target className="h-3 w-3" />
+                      Focus needed for improvement
+                    </p>
+                  )}
+                </Card>
+              ))}
             </div>
-          </Card>
+          ) : (
+            <Card className="p-6">
+              <p className="text-center text-muted-foreground py-8">
+                Complete quizzes to track domain mastery progress.
+              </p>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
 

@@ -137,6 +137,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Domain mastery tracking route
+  app.get("/api/progress/domain-mastery", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const domainMastery = await storage.getDomainMastery(userId);
+      res.json(domainMastery);
+    } catch (error) {
+      console.error("Error fetching domain mastery:", error);
+      res.status(500).json({ error: "Failed to fetch domain mastery data" });
+    }
+  });
+
   // Quiz Session routes
   app.get("/api/quiz/sessions", isAuthenticated, async (req: any, res) => {
     try {

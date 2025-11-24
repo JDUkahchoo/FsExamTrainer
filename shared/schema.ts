@@ -765,3 +765,34 @@ export const insertLessonProgressSchema = createInsertSchema(lessonProgress).omi
 
 export type InsertLessonProgress = z.infer<typeof insertLessonProgressSchema>;
 export type LessonProgress = typeof lessonProgress.$inferSelect;
+
+// --- Domain Progress Snapshots (for tracking mastery over time) ---
+
+export const domainProgressSnapshots = pgTable("domain_progress_snapshots", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  domainNumber: integer("domain_number").notNull(), // 0-7
+  domain: text("domain").notNull(),
+  score: integer("score").notNull(), // Percentage score (0-100)
+  totalQuestions: integer("total_questions").notNull(),
+  correctAnswers: integer("correct_answers").notNull(),
+  snapshotMonth: timestamp("snapshot_month").notNull(), // Monthly snapshot
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  uniqueSnapshot: sql`UNIQUE (user_id, domain_number, snapshot_month)`,
+}));
+
+export const domainProgressSnapshotsRelations = relations(domainProgressSnapshots, ({ one }) => ({
+  user: one(users, {
+    fields: [domainProgressSnapshots.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertDomainProgressSnapshotSchema = createInsertSchema(domainProgressSnapshots).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertDomainProgressSnapshot = z.infer<typeof insertDomainProgressSnapshotSchema>;
+export type DomainProgressSnapshot = typeof domainProgressSnapshots.$inferSelect;
