@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -814,38 +814,69 @@ export default function StudyPlan() {
                           const isCompleted = progress?.completed || false;
                           const hasAttempted = !!progress;
                           const percentage = progress ? Math.round((progress.score / progress.totalPoints) * 100) : 0;
-                          const passed = percentage >= 70;
+                          
+                          // Determine lesson status tier
+                          const isMastered = hasAttempted && percentage >= 90;
+                          const isPassed = hasAttempted && percentage >= 70 && percentage < 90;
+                          const isFailed = hasAttempted && percentage < 70;
+                          
+                          // Status-based styling
+                          let cardBgClass = "";
+                          let statusIcon = null;
+                          let statusLabel = "";
+                          
+                          if (isMastered) {
+                            cardBgClass = "bg-amber-50 dark:bg-amber-950/30 border-amber-400/50";
+                            statusIcon = <Crown className="h-5 w-5 text-amber-500 flex-shrink-0" data-testid={`icon-lesson-mastered-${lesson.id}`} />;
+                            statusLabel = "Mastered";
+                          } else if (isPassed) {
+                            cardBgClass = "bg-green-50 dark:bg-green-950/30 border-green-500/50";
+                            statusIcon = <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" data-testid={`icon-lesson-passed-${lesson.id}`} />;
+                            statusLabel = "Passed";
+                          } else if (isFailed) {
+                            cardBgClass = "bg-red-50 dark:bg-red-950/30 border-red-400/50";
+                            statusIcon = <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" data-testid={`icon-lesson-failed-${lesson.id}`} />;
+                            statusLabel = "Retry Needed";
+                          }
 
                           return (
-                            <Card key={lesson.id} className={isCompleted ? "border-green-500/50" : hasAttempted ? "border-yellow-500/50" : ""}>
+                            <Card key={lesson.id} className={cardBgClass}>
                               <div className="p-4 space-y-3">
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1">
                                     <h4 className="font-medium text-sm">{lesson.title}</h4>
                                     <p className="text-xs text-muted-foreground mt-1">{lesson.description}</p>
                                   </div>
-                                  {isCompleted ? (
-                                    <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" data-testid={`icon-lesson-completed-${lesson.id}`} />
-                                  ) : hasAttempted && (
-                                    <CheckCircle2 className="h-5 w-5 text-yellow-500 flex-shrink-0" data-testid={`icon-lesson-attempted-${lesson.id}`} />
-                                  )}
+                                  {statusIcon}
                                 </div>
                                 
                                 <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
                                   <span>{lesson.estimatedMinutes} min</span>
-                                  {progress && (
-                                    <span className={`font-medium ${passed ? 'text-green-600' : 'text-yellow-600'}`}>{percentage}%</span>
-                                  )}
+                                  <div className="flex items-center gap-2">
+                                    {hasAttempted && (
+                                      <span className={`font-medium ${isMastered ? 'text-amber-600 dark:text-amber-400' : isPassed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                        {percentage}%
+                                      </span>
+                                    )}
+                                    {statusLabel && (
+                                      <Badge 
+                                        variant="outline" 
+                                        className={`text-xs py-0 ${isMastered ? 'border-amber-400 text-amber-600 dark:text-amber-400' : isPassed ? 'border-green-500 text-green-600 dark:text-green-400' : 'border-red-400 text-red-600 dark:text-red-400'}`}
+                                      >
+                                        {statusLabel}
+                                      </Badge>
+                                    )}
+                                  </div>
                                 </div>
 
                                 <Button
                                   size="sm"
                                   className="w-full"
-                                  variant={isCompleted ? "outline" : "default"}
+                                  variant={isMastered || isPassed ? "outline" : "default"}
                                   onClick={() => navigate(`/lesson/${lesson.id}`)}
                                   data-testid={`button-lesson-${lesson.id}`}
                                 >
-                                  {isCompleted ? 'Review Lesson' : hasAttempted ? 'Retry Lesson' : 'Start Lesson'}
+                                  {isMastered ? 'Review Lesson' : isPassed ? 'Improve Score' : isFailed ? 'Retry Lesson' : 'Start Lesson'}
                                 </Button>
                               </div>
                             </Card>
