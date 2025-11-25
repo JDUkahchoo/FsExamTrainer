@@ -1191,33 +1191,51 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertLessonProgress(progressData: InsertLessonProgress): Promise<LessonProgress> {
-    const existing = await this.getLessonProgress(progressData.userId, progressData.lessonId);
+    try {
+      console.log(`[Storage] upsertLessonProgress called with:`, {
+        userId: progressData.userId,
+        lessonId: progressData.lessonId,
+        completed: progressData.completed,
+        score: progressData.score,
+        totalPoints: progressData.totalPoints,
+      });
+      
+      const existing = await this.getLessonProgress(progressData.userId, progressData.lessonId);
+      console.log(`[Storage] Existing progress:`, existing ? 'Found' : 'Not found');
 
-    if (existing) {
-      const [updated] = await db
-        .update(lessonProgress)
-        .set({
-          completed: progressData.completed,
-          score: progressData.score,
-          totalPoints: progressData.totalPoints,
-          attempts: progressData.attempts,
-          timeSpentSeconds: progressData.timeSpentSeconds,
-          seenQuestionVariations: progressData.seenQuestionVariations,
-          lastAttemptAt: progressData.lastAttemptAt,
-          completedAt: progressData.completedAt,
-        })
-        .where(and(
-          eq(lessonProgress.userId, progressData.userId),
-          eq(lessonProgress.lessonId, progressData.lessonId)
-        ))
-        .returning();
-      return updated;
-    } else {
-      const [created] = await db
-        .insert(lessonProgress)
-        .values(progressData)
-        .returning();
-      return created;
+      if (existing) {
+        console.log(`[Storage] Updating existing progress...`);
+        const [updated] = await db
+          .update(lessonProgress)
+          .set({
+            completed: progressData.completed,
+            score: progressData.score,
+            totalPoints: progressData.totalPoints,
+            attempts: progressData.attempts,
+            timeSpentSeconds: progressData.timeSpentSeconds,
+            seenQuestionVariations: progressData.seenQuestionVariations,
+            lastAttemptAt: progressData.lastAttemptAt,
+            completedAt: progressData.completedAt,
+          })
+          .where(and(
+            eq(lessonProgress.userId, progressData.userId),
+            eq(lessonProgress.lessonId, progressData.lessonId)
+          ))
+          .returning();
+        console.log(`[Storage] Progress updated successfully:`, updated?.id);
+        return updated;
+      } else {
+        console.log(`[Storage] Creating new progress record...`);
+        const [created] = await db
+          .insert(lessonProgress)
+          .values(progressData)
+          .returning();
+        console.log(`[Storage] Progress created successfully:`, created?.id);
+        return created;
+      }
+    } catch (error) {
+      console.error(`[Storage] ERROR in upsertLessonProgress:`, error);
+      throw error;
     }
   }
 
