@@ -44,7 +44,11 @@ import type {
   LessonProgress,
   InsertLessonProgress,
   DomainProgressSnapshot,
-  InsertDomainProgressSnapshot
+  InsertDomainProgressSnapshot,
+  Feedback,
+  InsertFeedback,
+  Testimonial,
+  InsertTestimonial
 } from "@shared/schema";
 import { db } from "./db";
 import {
