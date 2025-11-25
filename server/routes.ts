@@ -932,7 +932,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/lessons/progress", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      console.log(`[Get Progress] Fetching progress for userId: ${userId}`);
       const progress = await storage.getAllLessonProgress(userId);
+      console.log(`[Get Progress] Found ${progress.length} progress records`);
       res.json(progress);
     } catch (error) {
       console.error("Error fetching lesson progress:", error);
@@ -989,6 +991,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const lessonId = req.params.id;
       const { answers, timeSpentSeconds = 0 } = req.body;
+      
+      console.log(`[Submit Lesson] userId: ${userId}, lessonId: ${lessonId}`);
 
       // Get lesson with questions
       const lessonData = await storage.getLessonWithQuestions(lessonId);
@@ -1087,6 +1091,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         seenVariations[groupKey] = seenIds;
       });
 
+      console.log(`[Submit Lesson] Saving progress - score: ${score}/${totalPoints}, passed: ${completed}`);
+      
       const progress = await storage.upsertLessonProgress({
         userId,
         lessonId,
@@ -1099,6 +1105,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastAttemptAt: new Date(),
         completedAt: completed ? new Date() : existingProgress?.completedAt,
       });
+      
+      console.log(`[Submit Lesson] Progress saved:`, progress);
 
       res.json({
         progress,
