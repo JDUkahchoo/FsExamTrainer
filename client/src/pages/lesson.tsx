@@ -193,13 +193,47 @@ export default function LessonPage() {
   };
 
   const handleSubmit = () => {
+    // Validate all answers are properly set before submission
+    const validAnswers: Record<string, any> = {};
+    let isValid = true;
+    
+    questions.forEach((q) => {
+      const answer = answers[q.id];
+      
+      // Validate answer exists and is valid
+      if (answer === undefined || answer === null) {
+        console.warn(`Question ${q.id} has no answer`);
+        isValid = false;
+      } else if (typeof answer === 'string' && answer.trim() === '') {
+        console.warn(`Question ${q.id} has empty string answer`);
+        isValid = false;
+      } else {
+        // Answer is valid - store it
+        validAnswers[q.id] = answer;
+      }
+    });
+    
+    if (!isValid) {
+      toast({
+        title: "Incomplete Answers",
+        description: "Please answer all questions before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const timeSpentSeconds = Math.floor((Date.now() - startTime) / 1000);
-    submitMutation.mutate({ answers, timeSpentSeconds });
+    console.log(`Submitting ${Object.keys(validAnswers).length} answers:`, validAnswers);
+    submitMutation.mutate({ answers: validAnswers, timeSpentSeconds });
     setSubmitted(true);
   };
 
-  const canProceed = answers[currentQuestion?.id] !== undefined && answers[currentQuestion?.id] !== "";
-  const allAnswered = questions.every((q) => answers[q.id] !== undefined && answers[q.id] !== "");
+  const canProceed = answers[currentQuestion?.id] !== undefined && answers[currentQuestion?.id] !== null && (
+    typeof answers[currentQuestion?.id] === 'number' ? true : answers[currentQuestion?.id] !== ""
+  );
+  const allAnswered = questions.every((q) => answers[q.id] !== undefined && answers[q.id] !== null && (
+    typeof answers[q.id] === 'number' ? true : answers[q.id] !== ""
+  ));
 
   if (showResults) {
     return (
@@ -246,6 +280,11 @@ export default function LessonPage() {
                 // Helper function to format answer based on question type
                 const formatAnswer = (answer: any, questionType: QuestionType, options?: any) => {
                   try {
+                    // Handle undefined/null answers
+                    if (answer === undefined || answer === null) {
+                      return "No answer provided";
+                    }
+                    
                     if (questionType === 'multiple_choice') {
                       // Ensure options is an array (handle if it's a string or undefined)
                       const optionsArray = Array.isArray(options) 
@@ -254,22 +293,22 @@ export default function LessonPage() {
                           ? JSON.parse(options)
                           : [];
                       
-                      if (optionsArray.length > 0 && answer !== undefined && answer !== null) {
+                      if (optionsArray.length > 0) {
                         const answerIndex = parseInt(String(answer), 10);
-                        if (!isNaN(answerIndex) && answerIndex < optionsArray.length) {
+                        if (!isNaN(answerIndex) && answerIndex >= 0 && answerIndex < optionsArray.length) {
                           return optionsArray[answerIndex];
                         }
                       }
-                      return `Option ${answer}`;
+                      return `Option ${answer || 'undefined'}`;
                     } else if (questionType === 'fill_in_blank') {
-                      return String(answer || '');
+                      return String(answer || 'No answer provided');
                     } else if (questionType === 'drag_drop') {
-                      return Array.isArray(answer) ? answer.join(', ') : String(answer || '');
+                      return Array.isArray(answer) ? answer.join(', ') : String(answer || 'No answer provided');
                     }
-                    return String(answer || '');
+                    return String(answer || 'No answer provided');
                   } catch (error) {
                     console.error('Error formatting answer:', error);
-                    return String(answer || '');
+                    return String(answer || 'No answer provided');
                   }
                 };
 

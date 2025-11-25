@@ -1051,14 +1051,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const results = questions.map((question) => {
         const userAnswer = answers[question.id];
         let isCorrect = false;
+        
+        // Validate answer is not undefined
+        if (userAnswer === undefined || userAnswer === null) {
+          console.warn(`[Submit Lesson] Question ${question.id} has undefined answer`);
+        }
 
         // Check answer based on question type
         if (question.questionType === 'multiple_choice') {
           isCorrect = String(userAnswer) === question.correctAnswer;
         } else if (question.questionType === 'fill_in_blank') {
-          isCorrect = compareFillInBlank(userAnswer, question.correctAnswer);
+          isCorrect = userAnswer && compareFillInBlank(userAnswer, question.correctAnswer);
         } else if (question.questionType === 'drag_drop') {
-          isCorrect = JSON.stringify(userAnswer) === question.correctAnswer;
+          isCorrect = userAnswer && JSON.stringify(userAnswer) === question.correctAnswer;
         }
 
         if (isCorrect) {
@@ -1067,7 +1072,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         return {
           questionId: question.id,
-          userAnswer,
+          userAnswer: userAnswer !== undefined ? userAnswer : null,
           correctAnswer: question.correctAnswer,
           isCorrect,
           explanation: question.explanation,
@@ -1152,6 +1157,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error saving testimonial:", error);
       res.status(400).json({ error: "Invalid testimonial data" });
+    }
+  });
+
+  // Audit endpoint - check all lessons for data integrity
+  app.get("/api/admin/audit/lessons", isAuthenticated, async (req: any, res) => {
+    try {
+      const allLessons = await storage.getAllLessons();
+      const issues: any[] = [];
+      
+      for (const lesson of allLessons) {
+        const lessonData = await storage.getLessonWithQuestions(lesson.id);
+        if (!lessonData) continue;
+        
+        const { questions } = lessonData;
+        if (questions.length === 0) continue;
+        
+        questions.forEach((q, idx) => {
+          // Check for missing options in multiple choice
+          if (q.questionType === 'multiple_choice') {
+            if (!q.options || (Array.isArray(q.options) && q.options.length === 0)) {
+              issues.push({
+                lessonId: lesson.id,
+                questionId: q.id,
+                issue: "Multiple choice question has no options",
+                questionIndex: idx,
+              });
+            }
+          }
+          
+          // Check for missing correct answer
+          if (!q.correctAnswer || q.correctAnswer === 'undefined') {
+            issues.push({
+              lessonId: lesson.id,
+              questionId: q.id,
+              issue: "Question has no/undefined correct answer",
+              questionIndex: idx,
+            });
+          }
+        });
+      }
+      
+      res.json({
+        totalLessons: allLessons.length,
+        issuesFound: issues.length,
+        issues: issues.slice(0, 50), // Return first 50 issues
+      });
+    } catch (error) {
+      console.error("Error auditing lessons:", error);
+      res.status(500).json({ error: "Failed to audit lessons" });
     }
   });
 
