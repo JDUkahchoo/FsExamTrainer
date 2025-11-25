@@ -992,9 +992,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lessonId = req.params.id;
       const { answers, timeSpentSeconds = 0 } = req.body;
       
-      console.log(`[Submit Lesson] userId: ${userId}, lessonId: ${lessonId}, timeSpent: ${timeSpentSeconds}`);
-      console.log(`[Submit Lesson] Received answers object:`, JSON.stringify(answers, null, 2));
-      console.log(`[Submit Lesson] Answer keys:`, Object.keys(answers));
+      console.log(`[Submit Lesson] userId: ${userId}, lessonId: ${lessonId}, answerCount: ${Object.keys(answers).length}`);
 
       // Get lesson with questions
       const lessonData = await storage.getLessonWithQuestions(lessonId);
@@ -1009,17 +1007,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Lesson has no questions" });
       }
       
-      console.log(`[Submit Lesson] Question count: ${questions.length}`);
-      console.log(`[Submit Lesson] Question IDs:`, questions.map(q => q.id));
-      console.log(`[Submit Lesson] Question ID match check:`, {
-        answersKeys: Object.keys(answers),
-        questionIds: questions.map(q => q.id),
-        matches: questions.map(q => ({
-          questionId: q.id,
-          hasAnswer: q.id in answers,
-          answer: answers[q.id]
-        }))
-      });
+      console.log(`[Submit Lesson] Loaded ${questions.length} questions from database`);
 
       // Helper function to compare fill-in-blank answers
       const compareFillInBlank = (userAnswer: string, correctAnswer: string): boolean => {
@@ -1062,22 +1050,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate score
       let score = 0;
       const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
-      const results = questions.map((question) => {
+      const results = questions.map((question, idx) => {
         const userAnswer = answers[question.id];
         let isCorrect = false;
         
-        // Validate answer is not undefined
+        // Log each question processing
+        const logPrefix = `[Submit Lesson Q${idx + 1}]`;
+        
         if (userAnswer === undefined || userAnswer === null) {
-          console.warn(`[Submit Lesson] Question ${question.id} has undefined answer`);
+          console.log(`${logPrefix} No answer for ${question.id} (type: ${question.questionType})`);
+        } else {
+          console.log(`${logPrefix} Answer provided for ${question.id}: ${userAnswer}`);
         }
 
         // Check answer based on question type
         if (question.questionType === 'multiple_choice') {
           isCorrect = String(userAnswer) === question.correctAnswer;
+          console.log(`${logPrefix} MC: user=${userAnswer}, correct=${question.correctAnswer}, match=${isCorrect}`);
         } else if (question.questionType === 'fill_in_blank') {
           isCorrect = userAnswer && compareFillInBlank(userAnswer, question.correctAnswer);
+          console.log(`${logPrefix} FIB: user="${userAnswer}", correct="${question.correctAnswer}", match=${isCorrect}`);
         } else if (question.questionType === 'drag_drop') {
           isCorrect = userAnswer && JSON.stringify(userAnswer) === question.correctAnswer;
+          console.log(`${logPrefix} DD: user=${userAnswer}, correct=${question.correctAnswer}, match=${isCorrect}`);
         }
 
         if (isCorrect) {
