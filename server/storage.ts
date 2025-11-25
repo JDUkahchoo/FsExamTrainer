@@ -1112,12 +1112,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLessonWithRandomizedQuestions(userId: string, lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined> {
+    console.log(`[Storage] getLessonWithRandomizedQuestions called with lessonId: ${lessonId}`);
+    
     const [lesson] = await db
       .select()
       .from(lessons)
       .where(eq(lessons.id, lessonId));
 
-    if (!lesson) return undefined;
+    if (!lesson) {
+      console.log(`[Storage] Lesson not found for ID: ${lessonId}`);
+      return undefined;
+    }
+    
+    console.log(`[Storage] Found lesson: ${lesson.title}`);
 
     // Get all question variations for this lesson
     const allQuestions = await db
