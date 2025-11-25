@@ -992,7 +992,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lessonId = req.params.id;
       const { answers, timeSpentSeconds = 0 } = req.body;
       
-      console.log(`[Submit Lesson] userId: ${userId}, lessonId: ${lessonId}`);
+      console.log(`[Submit Lesson] userId: ${userId}, lessonId: ${lessonId}, timeSpent: ${timeSpentSeconds}`);
+      console.log(`[Submit Lesson] Received answers object:`, JSON.stringify(answers, null, 2));
+      console.log(`[Submit Lesson] Answer keys:`, Object.keys(answers));
 
       // Get lesson with questions
       const lessonData = await storage.getLessonWithQuestions(lessonId);
@@ -1006,6 +1008,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (questions.length === 0) {
         return res.status(400).json({ error: "Lesson has no questions" });
       }
+      
+      console.log(`[Submit Lesson] Question count: ${questions.length}`);
+      console.log(`[Submit Lesson] Question IDs:`, questions.map(q => q.id));
+      console.log(`[Submit Lesson] Question ID match check:`, {
+        answersKeys: Object.keys(answers),
+        questionIds: questions.map(q => q.id),
+        matches: questions.map(q => ({
+          questionId: q.id,
+          hasAnswer: q.id in answers,
+          answer: answers[q.id]
+        }))
+      });
 
       // Helper function to compare fill-in-blank answers
       const compareFillInBlank = (userAnswer: string, correctAnswer: string): boolean => {

@@ -77,8 +77,17 @@ export default function LessonPage() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: { answers: Record<string, any>; timeSpentSeconds: number }) => {
+      console.log('[Lesson Submit] Sending data to server:', {
+        lessonId,
+        answerCount: Object.keys(data.answers).length,
+        answerKeys: Object.keys(data.answers),
+        answers: data.answers,
+        timeSpent: data.timeSpentSeconds,
+      });
       const response = await apiRequest('POST', `/api/lessons/${lessonId}/submit`, data);
-      return await response.json() as SubmitResponse;
+      const result = await response.json() as SubmitResponse;
+      console.log('[Lesson Submit] Response from server:', result);
+      return result;
     },
     onSuccess: (data) => {
       setResults(data.results);
