@@ -1195,51 +1195,89 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertLessonProgress(progressData: InsertLessonProgress): Promise<LessonProgress> {
+    const operationId = Date.now().toString(36);
+    console.log(`[Storage:${operationId}] upsertLessonProgress ENTRY`, JSON.stringify({
+      userId: progressData.userId,
+      lessonId: progressData.lessonId,
+      completed: progressData.completed,
+      score: progressData.score,
+      totalPoints: progressData.totalPoints,
+      attempts: progressData.attempts,
+    }));
+    
     try {
-      console.log(`[Storage] upsertLessonProgress called with:`, {
-        userId: progressData.userId,
-        lessonId: progressData.lessonId,
-        completed: progressData.completed,
-        score: progressData.score,
-        totalPoints: progressData.totalPoints,
-      });
+      if (!progressData.userId || typeof progressData.userId !== 'string') {
+        throw new Error(`Invalid userId: ${progressData.userId}`);
+      }
+      if (!progressData.lessonId || typeof progressData.lessonId !== 'string') {
+        throw new Error(`Invalid lessonId: ${progressData.lessonId}`);
+      }
       
-      const existing = await this.getLessonProgress(progressData.userId, progressData.lessonId);
-      console.log(`[Storage] Existing progress:`, existing ? 'Found' : 'Not found');
-
-      if (existing) {
-        console.log(`[Storage] Updating existing progress...`);
-        const [updated] = await db
-          .update(lessonProgress)
-          .set({
-            completed: progressData.completed,
-            score: progressData.score,
-            totalPoints: progressData.totalPoints,
-            attempts: progressData.attempts,
-            timeSpentSeconds: progressData.timeSpentSeconds,
-            seenQuestionVariations: progressData.seenQuestionVariations,
-            lastAttemptAt: progressData.lastAttemptAt,
-            completedAt: progressData.completedAt,
-          })
+      const savedProgress = await db.transaction(async (tx) => {
+        const [existing] = await tx
+          .select()
+          .from(lessonProgress)
           .where(and(
             eq(lessonProgress.userId, progressData.userId),
             eq(lessonProgress.lessonId, progressData.lessonId)
-          ))
-          .returning();
-        console.log(`[Storage] Progress updated successfully:`, updated?.id);
-        return updated;
-      } else {
-        console.log(`[Storage] Creating new progress record...`);
-        const [created] = await db
-          .insert(lessonProgress)
-          .values(progressData)
-          .returning();
-        console.log(`[Storage] Progress created successfully:`, created?.id);
-        return created;
-      }
-    } catch (error) {
-      console.error(`[Storage] ERROR in upsertLessonProgress:`, error);
-      throw error;
+          ));
+        
+        console.log(`[Storage:${operationId}] Existing record check: ${existing ? 'FOUND id=' + existing.id : 'NOT_FOUND'}`);
+
+        if (existing) {
+          console.log(`[Storage:${operationId}] Executing UPDATE...`);
+          const result = await tx
+            .update(lessonProgress)
+            .set({
+              completed: progressData.completed,
+              score: progressData.score,
+              totalPoints: progressData.totalPoints,
+              attempts: progressData.attempts,
+              timeSpentSeconds: progressData.timeSpentSeconds,
+              seenQuestionVariations: progressData.seenQuestionVariations,
+              lastAttemptAt: progressData.lastAttemptAt,
+              completedAt: progressData.completedAt,
+            })
+            .where(and(
+              eq(lessonProgress.userId, progressData.userId),
+              eq(lessonProgress.lessonId, progressData.lessonId)
+            ))
+            .returning();
+          
+          if (!result || result.length === 0) {
+            throw new Error(`UPDATE returned 0 rows for userId=${progressData.userId}, lessonId=${progressData.lessonId}`);
+          }
+          
+          console.log(`[Storage:${operationId}] UPDATE SUCCESS: id=${result[0].id}, rows=${result.length}`);
+          return result[0];
+        } else {
+          console.log(`[Storage:${operationId}] Executing INSERT...`);
+          const result = await tx
+            .insert(lessonProgress)
+            .values(progressData)
+            .returning();
+          
+          if (!result || result.length === 0) {
+            throw new Error(`INSERT returned 0 rows for userId=${progressData.userId}, lessonId=${progressData.lessonId}`);
+          }
+          
+          console.log(`[Storage:${operationId}] INSERT SUCCESS: id=${result[0].id}, rows=${result.length}`);
+          return result[0];
+        }
+      });
+      
+      console.log(`[Storage:${operationId}] upsertLessonProgress EXIT SUCCESS: id=${savedProgress.id}`);
+      return savedProgress;
+    } catch (error: any) {
+      console.error(`[Storage:${operationId}] ERROR:`, {
+        message: error?.message,
+        code: error?.code,
+        detail: error?.detail,
+        stack: error?.stack?.split('\n').slice(0, 3).join('\n'),
+      });
+      const wrappedError = new Error(`Failed to save lesson progress: ${error?.message || 'Unknown error'}`);
+      (wrappedError as any).cause = error;
+      throw wrappedError;
     }
   }
 
