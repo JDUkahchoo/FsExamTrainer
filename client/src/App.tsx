@@ -26,6 +26,7 @@ import FeedbackPage from "@/pages/feedback";
 import TestimonialsPage from "@/pages/testimonials";
 import PrivacyPolicyPage from "@/pages/privacy-policy";
 import DisclaimerPage from "@/pages/disclaimer";
+import ReferenceCompanionPage from "@/pages/reference-companion";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -59,6 +60,7 @@ function Router() {
           <Route path="/testimonials" component={TestimonialsPage} />
           <Route path="/privacy" component={PrivacyPolicyPage} />
           <Route path="/disclaimer" component={DisclaimerPage} />
+          <Route path="/reference-companion" component={ReferenceCompanionPage} />
           <Route path="/pretest" component={PretestPage} />
           <Route path="/pretest/results" component={PretestResultsPage} />
           <Route path="/lesson/:id" component={LessonPage} />

@@ -1,4 +1,4 @@
-import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import {
   Sidebar,
@@ -21,6 +21,7 @@ const menuItems = [
   { id: '/notes', icon: FileText, label: 'Study Notes', testId: 'nav-notes' },
   { id: '/progress', icon: BarChart3, label: 'Progress', testId: 'nav-progress' },
   { id: '/resources', icon: BookMarked, label: 'Resources', testId: 'nav-resources' },
+  { id: '/reference-companion', icon: Library, label: 'Reference Companion', testId: 'nav-reference-companion' },
 ];
 
 const communityItems = [
