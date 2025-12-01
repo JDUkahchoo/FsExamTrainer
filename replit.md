@@ -93,6 +93,20 @@ The application features a comprehensive UI/UX with domain-specific color coding
     - **Documentation:** Complete implementation guide in `QUESTION_POOL_SYSTEM.md` with guidelines for adding new variations
     - **Benefits:** Prevents memorization, encourages concept mastery, supports multiple study cycles with fresh content each time
 
+-   **Surveying Principles Flashcards Fix (Dec 1, 2025):** Fixed missing "Surveying Principles" (NCEES Domain 4) flashcards:
+    - **Root Cause:** Surveying Principles domain had 0 flashcards in both decks while all other 7 domains had 46-50 cards
+    - **Comprehensive Deck:** Added 48 Surveying Principles flashcards covering:
+      - Types of surveys (boundary, topographic, construction, route, geodetic)
+      - Horizontal and vertical control methods
+      - Differential leveling (HI, BS, FS, TP concepts)
+      - EDM and total station fundamentals
+      - Traverse calculations and adjustments (compass rule, transit rule)
+      - Error analysis (precision vs accuracy, systematic vs random)
+      - Coordinate systems (SPCS, Lambert, Transverse Mercator)
+      - Field procedures and equipment calibration
+    - **Original Deck:** Added 6 Surveying Principles flashcards with essential formulas
+    - **Files Modified:** `shared/data/flashcardsComprehensive.ts`, `shared/data/flashcards.ts`
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.

@@ -2081,4 +2081,293 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'Maintain proficiency in evolving technologies and laws\n\nContinuous improvement',
     category: 'concept'
   },
+  // Domain 5: Surveying Principles (50 cards)
+  {
+    domain: 'Surveying Principles',
+    front: 'Types of Surveys',
+    back: 'Boundary, Topographic, Construction, Route, Hydrographic, Geodetic\n\nEach serves different purposes',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Boundary Survey',
+    back: 'Establishes property lines and corners\nRequires deed research and monumentation\n\nLegal document',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Topographic Survey',
+    back: 'Maps surface features, contours, and elevations\nUsed for design and planning\n\nShows terrain',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Construction Survey',
+    back: 'Stakes out design locations on ground\nProvides grades, alignments, offsets\n\nGuides builders',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Route Survey',
+    back: 'Linear projects: roads, pipelines, utilities\nIncludes alignment, grades, cross-sections\n\nCorridors',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Geodetic Survey',
+    back: 'Large-scale surveys accounting for Earth curvature\nEstablishes control networks\n\nHigh precision',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Horizontal Control',
+    back: 'Network of known X,Y positions\nTraverse, triangulation, trilateration, GPS\n\nReference framework',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Vertical Control',
+    back: 'Network of known elevations (benchmarks)\nDifferential leveling, trigonometric leveling\n\nHeight reference',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Benchmark (BM)',
+    back: 'Permanent point of known elevation\nUsed as vertical reference\n\nTypically brass disk or monument',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Differential Leveling',
+    back: 'Determines elevation differences using level and rod\nBS - FS = elevation change\n\nMost accurate method',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Backsight (BS)',
+    back: 'Rod reading on known elevation point\nAdded to known elevation = HI\n\nFirst reading at setup',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Foresight (FS)',
+    back: 'Rod reading on unknown point\nHI - FS = new elevation\n\nDetermines unknown elevations',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Height of Instrument (HI)',
+    back: 'Elevation of telescope line of sight\nHI = Known elev + BS\n\nReference for all foresights',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Turning Point (TP)',
+    back: 'Temporary point used to transfer elevation\nStable, identifiable surface\n\nUsed in level loops',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Level Loop Closure',
+    back: 'Return to starting BM to check accuracy\nMisclosure = calculated - known\n\nQuality check',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Allowable Leveling Error',
+    back: 'C × √(miles) or C × √(km)\nC depends on survey order\n\nFirst order: 0.017 ft/√mi',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Electronic Distance Measurement (EDM)',
+    back: 'Measures distance using electromagnetic waves\nPhase shift or pulse timing\n\nHigh precision',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Total Station',
+    back: 'Combines EDM + theodolite + data collector\nMeasures angles and distances\n\nModern surveying workhorse',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Prism Constant',
+    back: 'Offset correction for EDM prism\nTypically -30mm to -40mm\n\nMust match instrument settings',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Atmospheric Corrections (EDM)',
+    back: 'Temperature and pressure affect EDM\nPPM correction applied\n\nCritical for long distances',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Traverse',
+    back: 'Series of connected lines with known angles and distances\nOpen or closed\n\nBasic control method',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Closed Traverse',
+    back: 'Returns to starting point or closes on known point\nAllows error checking\n\nPreferred for control',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Open Traverse',
+    back: 'Does not close on known point\nNo check on accumulated errors\n\nRoute surveys, preliminary',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Angular Misclosure',
+    back: 'Difference between measured and theoretical angle sum\nFor polygon: (n-2) × 180°\n\nCheck before adjusting',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Precision vs Accuracy',
+    back: 'Precision: consistency of measurements\nAccuracy: closeness to true value\n\nCan be precise but not accurate',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Systematic Errors',
+    back: 'Consistent, predictable errors\nCan be corrected with calibration\n\nExample: tape length error',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Random Errors',
+    back: 'Unpredictable, follow normal distribution\nReduced by multiple measurements\n\nCannot be eliminated',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Blunders (Mistakes)',
+    back: 'Human errors, gross mistakes\nDetected by checking, not by statistics\n\nMust be eliminated',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Least Squares Adjustment',
+    back: 'Minimizes sum of squared residuals\nOptimal distribution of errors\n\nStatistical method',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Compass Rule Adjustment',
+    back: 'Distributes error proportional to leg length\nAssumes equal angle and distance precision\n\nSimple traverse adjustment',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Transit Rule Adjustment',
+    back: 'Corrections proportional to latitudes and departures\nAssumes angles more precise than distances\n\nAlternative to compass rule',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'State Plane Coordinate System (SPCS)',
+    back: 'Projects Earth surface onto plane\nConformal projection (Lambert or TM)\n\nUS grid system',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Lambert Conformal Conic',
+    back: 'Projection for E-W oriented states\nTwo standard parallels\n\nPreserves angles',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Transverse Mercator',
+    back: 'Projection for N-S oriented states\nCentral meridian\n\nPreserves angles',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Grid vs Ground Distance',
+    back: 'Grid = map distance\nGround = actual surface distance\nScale factor relates them',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Combined Scale Factor',
+    back: 'Grid scale factor × Elevation factor\nConverts ground to grid distance\n\nCSF = GSF × EF',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Elevation Factor',
+    back: 'R / (R + h)\nWhere R = Earth radius, h = elevation\n\nReduces horizontal distance to ellipsoid',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Convergence Angle',
+    back: 'Angle between grid north and true north\nVaries with location\n\nMapping angle correction',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Horizontal Angle Measurement',
+    back: 'Direct and reverse readings averaged\nEliminates systematic errors\n\nCircle left and circle right',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Zenith Angle',
+    back: 'Vertical angle from zenith (straight up)\n0° = directly overhead\n90° = horizontal',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Vertical Angle',
+    back: 'Angle above (+) or below (-) horizontal\n+90° = zenith, -90° = nadir\n\nUsed in trigonometric leveling',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Trigonometric Leveling',
+    back: 'Elevation from slope distance and vertical angle\nΔh = S × cos(zenith) or S × sin(vertical)\n\nAlternative to differential',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Stadia',
+    back: 'Distance from rod intercept between stadia hairs\nD = K × i + C (K typically 100)\n\nRapid topo method',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Radial Survey',
+    back: 'Single setup with radiating shots\nFast for detail surveys\n\nTotal station or GPS',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Control Point Monumentation',
+    back: 'Permanent markers for future use\nBrass cap, iron rod, concrete monument\n\nMust be stable and recoverable',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Field Book Requirements',
+    back: 'Neat, legible, permanent ink\nDated, signed, no erasures\n\nLegal document',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Collimation Error',
+    back: 'Line of sight not perpendicular to horizontal axis\nEliminated by averaging direct/reverse\n\nInstrument maladjustment',
+    category: 'definition'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Two-Peg Test',
+    back: 'Field check for level collimation error\nCompare readings at equal and unequal distances\n\nCalibration check',
+    category: 'concept'
+  },
 ];

@@ -200,4 +200,42 @@ export const FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'Requirements (OCEAN):\n• Open & Notorious\n• Continuous\n• Exclusive\n• Adverse/Hostile\n• Under claim of right\n\nTypically 10-20 years\n(varies by state)',
     category: 'concept'
   },
+
+  // Surveying Principles
+  {
+    domain: 'Surveying Principles',
+    front: 'Differential Leveling Formula',
+    back: 'HI = Known Elev + BS\nNew Elev = HI - FS\n\nWhere:\n• HI = Height of Instrument\n• BS = Backsight\n• FS = Foresight',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Traverse Closure Error',
+    back: 'E = √[(ΣLat)² + (ΣDep)²]\n\nPrecision = Perimeter / E\n\nExample: 1:10,000 means\n1 unit error per 10,000 units',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Angular Misclosure (Polygon)',
+    back: 'Theoretical sum = (n-2) × 180°\n\nWhere n = number of sides\n\nMisclosure = Measured - Theoretical',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Precision vs Accuracy',
+    back: 'PRECISION:\n• Consistency of measurements\n• Repeatability\n\nACCURACY:\n• Closeness to true value\n• Can be precise but not accurate',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Types of Survey Errors',
+    back: 'SYSTEMATIC:\n• Predictable, correctable\n• Same direction\n\nRANDOM:\n• Unpredictable\n• Normal distribution\n\nBLUNDERS:\n• Mistakes, must eliminate',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Total Station Components',
+    back: 'Combines:\n• EDM (distance)\n• Theodolite (angles)\n• Data collector\n\nMeasures horizontal & vertical angles plus slope distance',
+    category: 'definition'
+  },
 ];
