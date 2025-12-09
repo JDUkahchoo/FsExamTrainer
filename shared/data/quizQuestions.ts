@@ -1656,7 +1656,329 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
 
-  // EXPANDED POOL: Now ~200+ questions total
-  // Coverage: All 8 NCEES domains with SRM Topics 2, 3, 4, 5 content
-  // Includes word problems and practical applications
+  // === SRM TOPIC 6: LAND PLANNING AND DEVELOPMENT (Chapters 32-33) ===
+  
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The act of subdivision is defined as:',
+    options: ['Division of a tract into two or more parts for sale or building development', 'Combining multiple parcels into one', 'Rezoning agricultural land', 'Creating a topographic map'],
+    correctAnswer: 0,
+    explanation: 'Subdivision: dividing any tract or parcel of land into two or more parts for the purpose of sale or building development.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The first step in the subdivision surveying process is:',
+    options: ['A boundary survey of the exterior lines', 'Staking interior lots', 'Recording the final plat', 'Installing drainage pipes'],
+    correctAnswer: 0,
+    explanation: 'Boundary survey first: establish and monument exterior boundaries before detailed planning. Interior monuments come after platting.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A preliminary plat for a subdivision includes all EXCEPT:',
+    options: ['Final recorded deed references', 'Street locations and dimensions', 'Lot and block numbers', 'Contour lines and drainage structures'],
+    correctAnswer: 0,
+    explanation: 'Preliminary plat shows proposed layout (streets, lots, drainage, contours). Final recorded deed references come with the final plat after approval.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Platting laws regulate:',
+    options: ['Recording of the subdivision plat, monumenting parcels, and survey accuracy', 'Only the size of lots', 'Only street names', 'Federal land transfers'],
+    correctAnswer: 0,
+    explanation: 'Platting laws: regulations for recording the plat, monumenting the parcels, establishing survey accuracy, and identifying parcels and dimensions.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In residential planning, lots should drain:',
+    options: ['Away from the house to the street or rear drainage collector', 'Toward the house foundation', 'Onto neighboring properties', 'Into the sanitary sewer'],
+    correctAnswer: 0,
+    explanation: 'Lots should slope away from the house in all directions, draining to the street in front and to a drainage collector at rear if available.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The minimum street grade to avoid water pooling is:',
+    options: ['0.3% to 0.5%', '5% to 10%', '0% (flat is acceptable)', '15% minimum'],
+    correctAnswer: 0,
+    explanation: 'Streets should have minimum 0.3% grade, preferably 0.5%, to ensure water flows along gutters and does not collect in pools.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A cul-de-sac in subdivision design is:',
+    options: ['A dead-end street with a turnaround at the end', 'A main arterial street', 'A drainage channel', 'A type of easement'],
+    correctAnswer: 0,
+    explanation: 'Cul-de-sac: dead-end street with turnaround. Popular for single-family residences due to privacy and reduced traffic noise. Max length ~1000 ft.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Restrictive covenants in a subdivision deed may include:',
+    options: ['Minimum setback distances and building restrictions', 'Maximum property taxes', 'Required surveyor certification', 'Public road maintenance schedules'],
+    correctAnswer: 0,
+    explanation: 'Covenants: restrictions on construction type, setback distances, advertising, mobile homes, commercial enterprises to protect neighborhood character.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Sanitary sewer velocity should be between:',
+    options: ['2 ft/sec and 10 ft/sec', '0.5 ft/sec and 1 ft/sec', '20 ft/sec and 50 ft/sec', 'Any velocity is acceptable'],
+    correctAnswer: 0,
+    explanation: 'Sanitary sewer velocity: 2-10 ft/sec. Too slow causes settling; too fast causes erosion. Manholes at grade changes and junctions.',
+    difficulty: 'hard'
+  },
+
+  // === SRM TOPIC 7: MAPPING (Chapter 34) ===
+  
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Cartography is defined as:',
+    options: ['The profession of making maps', 'The study of earthquakes', 'Land surveying for boundaries', 'GPS satellite positioning'],
+    correctAnswer: 0,
+    explanation: 'Cartography: the profession of making maps. Topographic maps show plan view of earth surface with natural and constructed features.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A strip map is typically used for:',
+    options: ['Highways, railroads, pipelines, and powerlines', 'Subdivisions and shopping centers', 'City-wide planning', 'Geological surveys'],
+    correctAnswer: 0,
+    explanation: 'Strip map: narrow width, long length projects (highways, railroads, pipelines, canals). Area maps for subdivisions, shopping centers, airports.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Horizontal control in topographic surveying consists of:',
+    options: ['A series of points accurately fixed by distance and direction', 'Elevation benchmarks only', 'Aerial photographs', 'GPS satellites'],
+    correctAnswer: 0,
+    explanation: 'Horizontal control: series of points fixed in position by distance and direction. Traverses furnish satisfactory control for most topographic surveying.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The right-angle offset method of ties is most commonly used in:',
+    options: ['Route surveying for strip maps', 'Boundary surveys', 'GPS positioning', 'Hydrographic surveys'],
+    correctAnswer: 0,
+    explanation: 'Right-angle offset: most common for route surveying strip maps. Tape stretched between stations, objects tied perpendicular to centerline.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The stadia method in surveying is used to:',
+    options: ['Measure horizontal distances using telescope optics', 'Record property boundaries', 'Calculate land values', 'Determine magnetic declination'],
+    correctAnswer: 0,
+    explanation: 'Stadia: system for measuring horizontal distances based on transit telescope optics. Also called tacheometry. Eliminates need for horizontal taping.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Contour lines on a topographic map represent:',
+    options: ['Lines of equal elevation', 'Property boundaries', 'Magnetic north lines', 'Underground utilities'],
+    correctAnswer: 0,
+    explanation: 'Contour lines connect points of equal elevation. Closely spaced = steep slope; widely spaced = gentle slope.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Index contours on a map are typically:',
+    options: ['Every fifth contour line, drawn heavier with elevation labeled', 'Property corner markers', 'Drainage patterns', 'Road centerlines'],
+    correctAnswer: 0,
+    explanation: 'Index contours: every fifth contour line drawn heavier/bolder with elevation labeled for easy reading of the map.',
+    difficulty: 'easy'
+  },
+
+  // === SRM TOPIC 8: SPECIALTY SURVEYING (Chapters 38-40) ===
+  
+  {
+    domain: 'Surveying Principles',
+    question: 'Construction surveying involves:',
+    options: ['Locating and marking locations of structures to be built (line and grade)', 'Only measuring existing buildings', 'Aerial photography', 'GPS satellite tracking'],
+    correctAnswer: 0,
+    explanation: 'Construction surveying: locating/marking planned structures. "Line and grade" = horizontal alignment (transit) and elevation (level).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Hub stakes in construction staking are:',
+    options: ['2x2 inch stakes driven flush with ground, usually with a tack marking precise position', 'Tall marker stakes', 'Wooden posts for fencing', 'Temporary benchmarks'],
+    correctAnswer: 0,
+    explanation: 'Hub stakes: 2x2 inch, driven flush, tack in top marks precise position. Reference stakes with no markings; identified by witness stakes.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Witness stakes (guard stakes) serve to:',
+    options: ['Locate and identify nearby hub stakes', 'Mark property corners permanently', 'Indicate underground utilities', 'Show elevation benchmarks'],
+    correctAnswer: 0,
+    explanation: 'Witness stakes: locate and identify hub stakes. Front/back provide location info; narrow edge shows elevations when needed.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Slope stakes indicate:',
+    options: ['The intersection of natural ground and proposed cut or fill (catch point)', 'Property line corners', 'Utility easements', 'Traffic control locations'],
+    correctAnswer: 0,
+    explanation: 'Slope stakes: mark catch point where natural ground meets proposed cut/fill slope. Marked "C" for cut or "F" for fill.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'When setting stakes for pavement curves, the offset line:',
+    options: ['Has the same central angle as the design curve but different arc length', 'Has a different central angle', 'Must be exactly on the centerline', 'Is always 100 ft from centerline'],
+    correctAnswer: 0,
+    explanation: 'Parallel offset curves have same central angle but different radii/lengths. PC and PT stations same as design curve; deflection angles same.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In construction staking, converting feet and inches to decimal feet, 5 ft 7-3/4 in equals:',
+    options: ['5.65 ft', '5.75 ft', '5.58 ft', '5.07 ft'],
+    correctAnswer: 0,
+    explanation: '7.75 inches ÷ 12 = 0.646 ft. Total = 5 + 0.646 = 5.65 ft. Common conversion for construction stakes.',
+    difficulty: 'medium'
+  },
+
+  // === SRM TOPIC 9: ACCURACY STANDARDS (Chapter 41) ===
+  
+  {
+    domain: 'Professional Practice',
+    question: 'The distinction between accuracy and precision is:',
+    options: ['Precision measures consistency; accuracy measures nearness to true value', 'They mean the same thing', 'Precision is for angles only', 'Accuracy applies only to distances'],
+    correctAnswer: 0,
+    explanation: 'Precision: consistency between observations. Accuracy: nearness to true value. Many standards are really precision standards.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The U.S. National Map Accuracy Standards require that for maps at 1:20,000 or larger scale:',
+    options: ['Not more than 10% of tested points can be in error by more than 1/30 inch', 'All points must be exactly correct', 'Only elevation accuracy matters', 'No testing is required'],
+    correctAnswer: 0,
+    explanation: 'National Map Accuracy: for scales larger than 1:20,000, max 10% of points in error by >1/30 inch measured on map.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'FEMA LiDAR accuracy standards require elevation data to have maximum RMSE of:',
+    options: ['15 cm (about 0.5 ft)', '1 meter', '1 inch', '10 feet'],
+    correctAnswer: 0,
+    explanation: 'FEMA LiDAR: max RMSE of 15 cm for elevation data. RMSE = root-mean-squared error compared to higher-accuracy check points.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'In accuracy standards, the "2 sigma error" represents:',
+    options: ['1.96 times the RMSE, containing 95% of errors', 'The maximum allowable error', 'The average error', 'One standard deviation'],
+    correctAnswer: 0,
+    explanation: '2 sigma = 1.96 × RMSE. Based on normal distribution, 95% of errors fall within this range.',
+    difficulty: 'hard'
+  },
+
+  // === SRM TOPIC 10: BUSINESS MANAGEMENT (Chapters 42-44) ===
+  
+  {
+    domain: 'Professional Practice',
+    question: 'In job costing, direct labor costs are:',
+    options: ['Wages paid to employees for work on specific projects', 'Office rent and utilities', 'Marketing expenses', 'Equipment depreciation'],
+    correctAnswer: 0,
+    explanation: 'Direct labor: salary/wages for work on specific projects. Indirect costs (overhead) spread across multiple projects.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Overhead rate is calculated by:',
+    options: ['Total indirect costs divided by total direct labor costs', 'Revenue divided by expenses', 'Profit divided by costs', 'Direct costs times markup'],
+    correctAnswer: 0,
+    explanation: 'Overhead rate = total indirect costs / total direct labor costs. Typical surveying firms: 150-200% overhead rate.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'If a surveying firm has 170% overhead rate and direct labor for a project is $5,000, the overhead charge is:',
+    options: ['$8,500', '$5,000', '$3,500', '$1,700'],
+    correctAnswer: 0,
+    explanation: 'Overhead = direct labor × overhead rate = $5,000 × 1.70 = $8,500.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Under Federal Acquisition Regulations, a fair operating margin for surveying services is typically:',
+    options: ['6-15% of total fee', '50% of costs', '1% maximum', 'No profit allowed'],
+    correctAnswer: 0,
+    explanation: 'FAR assumes fair operating margin of 6-15% of total fee. Represents return on investment and recovery of unallowable indirect costs.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The Brooks Act requires federal agencies to:',
+    options: ['Negotiate surveying contracts based on estimated value of services', 'Accept lowest bidder only', 'Use only government surveyors', 'Avoid using professional services'],
+    correctAnswer: 0,
+    explanation: 'Brooks Act (40 USC): federal agencies must negotiate professional services contracts (including surveying) based on qualifications and estimated value.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Which costs are typically excluded from overhead rate calculations under Federal Acquisition Regulations?',
+    options: ['Entertainment, country club dues, and bank loan interest', 'Employee wages', 'Office rent', 'Survey equipment'],
+    correctAnswer: 0,
+    explanation: 'FAR excludes: entertainment costs, country club dues, certain interest expenses from allowable overhead costs.',
+    difficulty: 'hard'
+  },
+
+  // === SRM TOPIC 11: CONVERSIONS AND CONSTANTS ===
+  
+  {
+    domain: 'Math & Basic Science',
+    question: 'The coefficient of thermal expansion for steel tape is approximately:',
+    options: ['0.00000645 per degree F', '0.0000001 per degree F', '0.001 per degree F', '0.1 per degree F'],
+    correctAnswer: 0,
+    explanation: 'Steel tape expansion: 0.00000645 per °F. Invar tape: 0.0000001 per °F (about 3% of steel). Critical for precise measurements.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One minute of latitude equals approximately:',
+    options: ['1.15 statute miles', '1 foot', '100 meters', '10 chains'],
+    correctAnswer: 0,
+    explanation: '1 minute of latitude ≈ 1.15 statute miles ≈ 1 nautical mile. Useful for rough distance estimates on maps.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A vara (Texas) equals:',
+    options: ['33-1/3 inches', '36 inches', '12 inches', '66 feet'],
+    correctAnswer: 0,
+    explanation: 'Texas vara = 33-1/3 inches (33.33 in). California vara = 33 inches. Important for interpreting old Spanish land grants.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One link (surveyor\'s) equals:',
+    options: ['7.92 inches', '12 inches', '1 foot', '100 feet'],
+    correctAnswer: 0,
+    explanation: 'Surveyor\'s link = 7.92 inches. 100 links = 1 chain = 66 ft. Gunter\'s chain used in PLSS surveys.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One rod (or pole or perch) equals:',
+    options: ['16.5 feet', '100 feet', '66 feet', '10 feet'],
+    correctAnswer: 0,
+    explanation: 'Rod = pole = perch = 16.5 ft = 1/4 chain. 4 rods = 1 chain = 66 ft. Common in old deed descriptions.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One hectare equals approximately:',
+    options: ['2.47 acres', '1 acre', '10 acres', '100 acres'],
+    correctAnswer: 0,
+    explanation: 'Hectare = 10,000 m² = 2.471 acres. Common metric unit for land area. 1 acre = 0.4047 hectares.',
+    difficulty: 'easy'
+  },
+
+  // EXPANDED POOL: Now 240+ questions total
+  // Coverage: All 8 NCEES domains with SRM Topics 2-11 content
+  // Includes word problems, practical applications, and professional practice
 ];
