@@ -728,22 +728,6 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
       }
     ]
   },
-  {
-    lessonId: "d3-lesson-08",
-    domainNumber: 3,
-    lessonTitle: "Subdivision Regulations",
-    references: [
-      {
-        bookId: "SRM",
-        bookTitle: "Surveyor Reference Manual",
-        bookAuthor: "George M. Cole",
-        edition: "7th Edition",
-        chapter: 32,
-        chapterTitle: "Subdivisions",
-        topics: ["Subdivision plats", "Regulations", "Approvals"]
-      }
-    ]
-  },
 
   // ========== DOMAIN 4: Surveying Principles ==========
   {
@@ -1044,6 +1028,95 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
       }
     ]
   },
+  {
+    lessonId: "d5-lesson-08",
+    domainNumber: 5,
+    lessonTitle: "Least Squares Adjustment Concepts",
+    references: [
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 11,
+        chapterTitle: "Statistics of Measurements",
+        topics: ["Least squares principles", "Weighted observations", "Residuals"]
+      },
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 17,
+        chapterTitle: "Traverses",
+        topics: ["Traverse adjustment", "Angular closure"]
+      }
+    ]
+  },
+  {
+    lessonId: "d5-lesson-09",
+    domainNumber: 5,
+    lessonTitle: "Spreadsheet Applications in Surveying",
+    references: [
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 41,
+        chapterTitle: "Accuracy Standards",
+        topics: ["Data processing", "Computational tools", "Quality verification"]
+      }
+    ]
+  },
+  {
+    lessonId: "d5-lesson-10",
+    domainNumber: 5,
+    lessonTitle: "Survey Data Collectors and Processing",
+    references: [
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 41,
+        chapterTitle: "Accuracy Standards",
+        topics: ["Data collection", "Field-to-finish", "Processing workflows"]
+      }
+    ]
+  },
+  {
+    lessonId: "d5-lesson-11",
+    domainNumber: 5,
+    lessonTitle: "Error Propagation in Computations",
+    references: [
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 11,
+        chapterTitle: "Statistics of Measurements",
+        topics: ["Error propagation", "Combined uncertainties", "Precision analysis"]
+      }
+    ]
+  },
+  {
+    lessonId: "d5-lesson-12",
+    domainNumber: 5,
+    lessonTitle: "Programming and Automation",
+    references: [
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 41,
+        chapterTitle: "Accuracy Standards",
+        topics: ["Automation", "Scripting", "Quality control processes"]
+      }
+    ]
+  },
 
   // ========== DOMAIN 6: Business Concepts ==========
   {
@@ -1139,22 +1212,6 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
         chapter: 43,
         chapterTitle: "Economic Analysis",
         topics: ["Risk assessment", "Insurance", "Liability"]
-      }
-    ]
-  },
-  {
-    lessonId: "d6-lesson-07",
-    domainNumber: 6,
-    lessonTitle: "Client Relations and Communication",
-    references: [
-      {
-        bookId: "SRM",
-        bookTitle: "Surveyor Reference Manual",
-        bookAuthor: "George M. Cole",
-        edition: "7th Edition",
-        chapter: 44,
-        chapterTitle: "Ethics for Surveyors",
-        topics: ["Client communication", "Professional conduct"]
       }
     ]
   },
@@ -1326,6 +1383,38 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
         chapter: 10,
         chapterTitle: "Analytical Geometry",
         topics: ["Conic sections", "Transformations", "Advanced COGO"]
+      }
+    ]
+  },
+  {
+    lessonId: "d7-lesson-11",
+    domainNumber: 7,
+    lessonTitle: "Regression and Correlation",
+    references: [
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 11,
+        chapterTitle: "Statistics of Measurements",
+        topics: ["Regression analysis", "Correlation coefficients", "Curve fitting"]
+      }
+    ]
+  },
+  {
+    lessonId: "d7-lesson-12",
+    domainNumber: 7,
+    lessonTitle: "Numerical Methods and Interpolation",
+    references: [
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 12,
+        chapterTitle: "Introduction to Calculus",
+        topics: ["Interpolation", "Numerical integration", "Iterative methods"]
       }
     ]
   }
