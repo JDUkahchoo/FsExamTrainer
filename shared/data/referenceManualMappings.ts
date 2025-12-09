@@ -174,6 +174,15 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
         chapter: 1,
         chapterTitle: "Algebra",
         topics: ["Fractions", "Decimals", "Conversions"]
+      },
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 0,
+        chapterTitle: "Appendices",
+        topics: ["Appendix A: Conversion Factors", "Unit conversions", "Measurement equivalents"]
       }
     ]
   },
@@ -190,6 +199,15 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
         chapter: 1,
         chapterTitle: "Algebra",
         topics: ["Percentages", "Ratios", "Proportions"]
+      },
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 0,
+        chapterTitle: "Appendices",
+        topics: ["Appendix A: Conversion Factors", "Scale ratios", "Mensuration formulas"]
       }
     ]
   },
@@ -725,6 +743,15 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
         chapter: 30,
         chapterTitle: "Land Descriptions",
         topics: ["Deed interpretation", "Legal descriptions"]
+      },
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 32,
+        chapterTitle: "Subdivisions",
+        topics: ["Subdivision plats", "Lot descriptions", "Block layouts"]
       }
     ]
   },
@@ -1164,6 +1191,15 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
         chapter: 38,
         chapterTitle: "Construction Staking",
         topics: ["Plans", "Specifications", "Contracts"]
+      },
+      {
+        bookId: "SRM",
+        bookTitle: "Surveyor Reference Manual",
+        bookAuthor: "George M. Cole",
+        edition: "7th Edition",
+        chapter: 33,
+        chapterTitle: "Residential Planning",
+        topics: ["Development planning", "Site layouts", "Project specifications"]
       }
     ]
   },
