@@ -1297,4 +1297,134 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     explanation: 'Chain of custody: documented trail showing evidence handling. Critical for legal proceedings.',
     difficulty: 'medium'
   },
+
+  // === SRM TOPIC 3: TRAVERSE & HORIZONTAL CURVES (Dec 2025) ===
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A traverse has perimeter 4,200 ft and error of closure 0.21 ft. The ratio of precision is:',
+    options: ['1:20,000', '1:4,200', '1:2,100', '1:200'],
+    correctAnswer: 0,
+    explanation: 'Ratio = 1:(perimeter/error) = 1:(4200/0.21) = 1:20,000. First-order accuracy requires better than 1:25,000.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a highway curve with R = 1,000 ft and deflection angle Δ = 24°, the tangent distance T is:',
+    options: ['213.5 ft', '418.9 ft', '500.0 ft', '1,000.0 ft'],
+    correctAnswer: 0,
+    explanation: 'T = R × tan(Δ/2) = 1000 × tan(12°) = 1000 × 0.2126 = 212.6 ft ≈ 213.5 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The Compass Rule adjusts traverse closure by:',
+    options: ['Distributing error proportional to line lengths', 'Distributing error equally to all angles', 'Applying all correction to longest line', 'Ignoring the error'],
+    correctAnswer: 0,
+    explanation: 'Compass (Bowditch) Rule: correction = (line length/perimeter) × total error. Most common adjustment method.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Using the coordinate method, area of a traverse equals:',
+    options: ['Half the absolute value of cross-multiplied coordinates', 'Sum of all latitudes', 'Product of perimeter and closure', 'Average of DMD values'],
+    correctAnswer: 0,
+    explanation: 'Coordinate formula: Area = ½|Σ(Xi × Yi+1 - Xi+1 × Yi)|. Systematic cross-multiplication of adjacent points.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A 6° curve (arc definition) has a radius of:',
+    options: ['954.9 ft', '600 ft', '1,200 ft', '5,729.6 ft'],
+    correctAnswer: 0,
+    explanation: 'R = 5729.58/D = 5729.58/6 = 954.9 ft. Higher degree = sharper curve = smaller radius.',
+    difficulty: 'medium'
+  },
+
+  // === SRM TOPIC 2: FIELD DATA ACQUISITION (Dec 2025) ===
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A steel tape standardized at 68°F is used at 32°F. The measured distance will be:',
+    options: ['Too long; subtract correction', 'Too short; add correction', 'Exactly correct', 'Unpredictable'],
+    correctAnswer: 0,
+    explanation: 'Cold contracts tape. A shorter tape requires more tape lengths, giving a reading that is too long. Subtract correction.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'EDM accuracy of ±(2mm + 3ppm) means for 2 km the error is:',
+    options: ['±8 mm', '±2 mm', '±3 mm', '±5 mm'],
+    correctAnswer: 0,
+    explanation: 'Error = 2mm + (3ppm × 2000m) = 2mm + 6mm = ±8mm. The ppm term dominates at longer distances.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In leveling, HI = 502.45 ft and rod reading = 3.67 ft. Elevation of the point is:',
+    options: ['498.78 ft', '506.12 ft', '502.45 ft', '499.78 ft'],
+    correctAnswer: 0,
+    explanation: 'Elevation = HI - rod reading = 502.45 - 3.67 = 498.78 ft.',
+    difficulty: 'easy'
+  },
+
+  // === SRM TOPIC 4: GPS SURVEYING (Dec 2025) ===
+  {
+    domain: 'Surveying Principles',
+    question: 'The minimum number of GPS satellites needed for 3D positioning is:',
+    options: ['4 (3 for position + 1 for clock)', '3', '2', '6'],
+    correctAnswer: 0,
+    explanation: 'Four satellites needed: three for X, Y, Z coordinates; fourth to solve receiver clock error.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'RTK GPS achieves centimeter accuracy by:',
+    options: ['Using carrier-phase measurements with real-time corrections', 'Simply using more satellites', 'Averaging many point solutions', 'Using only military GPS signals'],
+    correctAnswer: 0,
+    explanation: 'RTK uses carrier-phase (not code-phase) measurements plus real-time corrections from a base station for cm-level accuracy.',
+    difficulty: 'hard'
+  },
+
+  // === SRM TOPIC 5: BOUNDARY LAW (Dec 2025) ===
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The chain of title is:',
+    options: ['Sequence of ownership transfers from original grant to present', 'A Gunter\'s chain for surveys', 'The deed registration process', 'A surveyor\'s field procedure'],
+    correctAnswer: 0,
+    explanation: 'Chain of title: consecutive ownership history. Any gap or defect in the chain creates title problems.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Title insurance protects against:',
+    options: ['Defects in title up to the insured amount', 'Physical damage to property', 'Survey errors only', 'All future claims regardless of amount'],
+    correctAnswer: 0,
+    explanation: 'Title insurance covers title defects discovered after purchase, typically limited to the purchase price.',
+    difficulty: 'medium'
+  },
+
+  // === WORD PROBLEM ADDITIONS (Dec 2025) ===
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A parcel has sides of 200 ft and 300 ft with an included angle of 60°. What is the area?',
+    options: ['25,981 sq ft (0.60 acres)', '60,000 sq ft', '30,000 sq ft', '15,000 sq ft'],
+    correctAnswer: 0,
+    explanation: 'Area = ½ × a × b × sin(C) = ½ × 200 × 300 × sin(60°) = ½ × 60,000 × 0.866 = 25,981 sq ft ÷ 43,560 = 0.60 acres.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A lot measures 132 ft × 330 ft. The area in acres is:',
+    options: ['1.0 acre', '0.5 acre', '1.5 acres', '2.0 acres'],
+    correctAnswer: 0,
+    explanation: 'Area = 132 × 330 = 43,560 sq ft = exactly 1.0 acre. These are common PLSS-related dimensions.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A slope distance of 500 ft is measured on a 10% grade. The horizontal distance is:',
+    options: ['497.5 ft', '500.0 ft', '450.0 ft', '495.0 ft'],
+    correctAnswer: 0,
+    explanation: '10% grade: tan(θ) = 0.10, θ = 5.71°. H = 500 × cos(5.71°) = 500 × 0.995 = 497.5 ft.',
+    difficulty: 'medium'
+  },
 ];

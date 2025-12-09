@@ -1359,7 +1359,304 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
 
-  // EXPANDED POOL: Now ~160+ questions total
-  // Coverage: All 8 NCEES domains with emphasis on SRM Topic 3 content
-  // Further expansion continues with additional SRM topics
+  // === SRM TOPIC 2: FIELD DATA ACQUISITION (Chapters 13-16) ===
+  
+  // TAPING (Chapter 13) - Word Problems
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A Gunter\'s chain is how long, and how many links does it contain?',
+    options: ['66 ft with 100 links', '100 ft with 66 links', '50 ft with 100 links', '100 ft with 100 links'],
+    correctAnswer: 0,
+    explanation: 'Gunter\'s chain = 66 ft = 100 links (each link = 7.92 in). One chain = 1/80 mile. 10 square chains = 1 acre (43,560 sq ft).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor measures a slope distance of 250.00 ft on ground with a 15% grade. What is the horizontal distance?',
+    options: ['247.2 ft', '250.0 ft', '237.5 ft', '212.5 ft'],
+    correctAnswer: 0,
+    explanation: '15% grade means vertical = 0.15 × horizontal. Using H = S × cos(θ) where tan(θ) = 0.15: θ = 8.53°, H = 250 × cos(8.53°) = 247.2 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A 100 ft steel tape is standardized at 68°F. If used at 95°F, what happens to measurements?',
+    options: ['Measured distances are too short; add a correction', 'Measured distances are too long; subtract a correction', 'No change needed', 'Measured distances are exactly correct'],
+    correctAnswer: 0,
+    explanation: 'Higher temperature causes tape expansion. An expanded tape covers more ground per tape length, so measured distances are too short. Add temperature correction.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'When "breaking tape" on steep terrain, what is the correct procedure?',
+    options: ['Hold tape horizontally and measure partial lengths, using a plumb bob to mark points', 'Measure the full length along the slope and calculate correction later', 'Only measure downhill, never uphill', 'Use an electronic distance meter instead'],
+    correctAnswer: 0,
+    explanation: 'Breaking tape: on steep slopes, hold tape horizontally, measure partial lengths (usually ending in 0 or 5 ft), use plumb bob to mark ground points.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'An Invar tape is used primarily because it:',
+    options: ['Has minimal thermal expansion (about 3% of steel)', 'Is stronger than steel tape', 'Is cheaper than steel tape', 'Can measure longer distances'],
+    correctAnswer: 0,
+    explanation: 'Invar (35% nickel alloy) has thermal expansion only 3% of steel, making it ideal for precise baseline measurements and calibrating steel tapes.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor applies 20 lbf tension to a 100 ft tape standardized at 10 lbf. The tape will:',
+    options: ['Stretch and give a distance reading that is too short', 'Contract and give a distance reading that is too long', 'Not be affected by tension differences', 'Break under the extra tension'],
+    correctAnswer: 0,
+    explanation: 'Extra tension stretches the tape, covering more ground. Fewer tape lengths = shorter recorded distance. Tension correction must be added.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor measures 326.18 ft using an "add tape." The whole foot reading was 326 ft. What was the reading at the graduated end?',
+    options: ['0.18 ft beyond zero', '0.82 ft from 327 ft mark', '326 ft exactly', '3.26 ft'],
+    correctAnswer: 0,
+    explanation: 'Add tape: extra graduated foot beyond zero. Distance = whole feet (326) + extra reading (0.18) = 326.18 ft.',
+    difficulty: 'medium'
+  },
+
+  // LEVELING (Chapter 15) - Word Problems
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In differential leveling, if HI = 453.25 ft and the rod reading (FS) is 4.82 ft, what is the elevation of the foresight point?',
+    options: ['448.43 ft', '458.07 ft', '453.25 ft', '449.43 ft'],
+    correctAnswer: 0,
+    explanation: 'Elevation of FS point = HI - FS = 453.25 - 4.82 = 448.43 ft. The height of instrument minus the foresight reading gives point elevation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A level loop closes with an error of 0.03 ft over a total distance of 2 miles. What is the order of accuracy?',
+    options: ['Second-order or better (error within allowable limits)', 'Third-order', 'Fourth-order', 'Unacceptable accuracy'],
+    correctAnswer: 0,
+    explanation: 'Allowable closure for second-order leveling ≈ 0.017√M ft (M in miles). For 2 mi: 0.017 × √2 = 0.024 ft. At 0.03 ft, this is close to second-order.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A turning point (TP) in leveling serves to:',
+    options: ['Transfer elevation from one instrument setup to another', 'Mark the final benchmark', 'Correct for curvature and refraction', 'Check the level bubble'],
+    correctAnswer: 0,
+    explanation: 'Turning point: stable point used to transfer elevation between instrument setups. Take FS from one setup, then BS from next setup on same point.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The combined effect of Earth curvature and atmospheric refraction causes a level line of sight to:',
+    options: ['Depart downward from a horizontal plane, but less than curvature alone', 'Rise above the horizontal', 'Remain perfectly horizontal', 'Curve upward initially then downward'],
+    correctAnswer: 0,
+    explanation: 'Curvature makes targets appear lower; refraction partially compensates by bending light downward. Net effect: C&R ≈ 0.067M² ft (M in miles).',
+    difficulty: 'hard'
+  },
+
+  // EDM (Chapter 14) - Word Problems
+  {
+    domain: 'Field Data Acquisition',
+    question: 'An EDM measures distance by timing the return of:',
+    options: ['Electromagnetic waves (infrared, laser, or microwave)', 'Sound waves', 'Mechanical pulses through the tape', 'GPS satellite signals'],
+    correctAnswer: 0,
+    explanation: 'EDM (Electronic Distance Measurement) uses electromagnetic radiation (typically infrared or laser). Distance = (c × t)/2 where c = speed of light.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor\'s EDM has a stated accuracy of ±(3mm + 2ppm). For a 1 km measurement, the expected accuracy is:',
+    options: ['±5 mm', '±3 mm', '±2 mm', '±6 mm'],
+    correctAnswer: 0,
+    explanation: 'Accuracy = 3mm + (2ppm × 1000m) = 3mm + 2mm = ±5mm. The ppm component scales with distance.',
+    difficulty: 'hard'
+  },
+
+  // === SRM TOPIC 4: GEODESY AND GPS (Chapter 22) ===
+  
+  {
+    domain: 'Surveying Principles',
+    question: 'GPS satellites orbit at approximately what altitude?',
+    options: ['12,000 miles', '100 miles', '22,000 miles', '600 miles'],
+    correctAnswer: 0,
+    explanation: 'GPS satellites orbit at ~12,000 miles (20,200 km) altitude, completing one orbit every ~12 hours. This allows visibility from most points on Earth.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'How many satellites must be visible for a GPS receiver to determine a 3D position?',
+    options: ['At least 4 satellites', 'At least 3 satellites', 'At least 2 satellites', 'Only 1 satellite'],
+    correctAnswer: 0,
+    explanation: 'Four satellites needed: 3 for X, Y, Z position, plus 1 to solve for receiver clock error. With 4 satellites, you get latitude, longitude, and elevation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'The fundamental GPS distance measurement uses the formula d = v × t. If signal transit time is 0.070 seconds, what is the distance to the satellite?',
+    options: ['Approximately 13,020 miles', 'Approximately 1,302 miles', 'Approximately 130 miles', 'Approximately 70 miles'],
+    correctAnswer: 0,
+    explanation: 'd = v × t = 186,000 mi/sec × 0.070 sec = 13,020 miles. GPS measures tiny time delays to calculate distance from each satellite.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Differential GPS (DGPS) improves accuracy by:',
+    options: ['Using a base station at a known location to calculate corrections', 'Using more satellites than autonomous GPS', 'Measuring only during daylight hours', 'Eliminating the need for post-processing'],
+    correctAnswer: 0,
+    explanation: 'DGPS uses a base station at known coordinates to compute corrections from the same satellites, which are then applied to the rover receiver.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Autonomous (stand-alone) GPS typically achieves accuracy of:',
+    options: ['A few meters', 'A few centimeters', 'Sub-millimeter', 'A few kilometers'],
+    correctAnswer: 0,
+    explanation: 'Autonomous GPS without corrections typically achieves 3-5 meter accuracy. Survey-grade applications require differential techniques for cm-level accuracy.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A dual-frequency GPS receiver offers advantages because:',
+    options: ['It can measure and remove ionospheric delay errors', 'It costs less than single-frequency', 'It requires fewer satellites', 'It only works with newer satellites'],
+    correctAnswer: 0,
+    explanation: 'Dual-frequency receivers (L1 and L2) can compute ionospheric delay corrections, improving accuracy and reducing occupation time.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Real-Time Kinematic (RTK) GPS can achieve what level of accuracy?',
+    options: ['Centimeter-level in real time', 'Meter-level only', 'Kilometer-level', 'Sub-millimeter level'],
+    correctAnswer: 0,
+    explanation: 'RTK GPS uses carrier-phase measurements and real-time corrections from a base station to achieve 1-2 cm horizontal accuracy.',
+    difficulty: 'medium'
+  },
+
+  // === SRM TOPIC 5: CADASTRAL AND BOUNDARY LAW (Chapters 24-31) ===
+  
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The Statute of Frauds (1677) established that:',
+    options: ['All land transfers must be in writing', 'Oral land agreements are valid', 'The king owns all land', 'Surveys are not required for transfers'],
+    correctAnswer: 0,
+    explanation: 'The English Statute of Frauds prohibited oral land transfers; all conveyances must be in writing. This principle is fundamental to U.S. property law.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Under the feudal system in medieval England:',
+    options: ['Land belonged to the sovereign and was held by nobles and vassals through allegiance', 'Peasants owned their land outright', 'Land could be freely bought and sold', 'There was no concept of property ownership'],
+    correctAnswer: 0,
+    explanation: 'Feudal system: the Crown owned all land. Nobles held land in exchange for allegiance and military service; vassals (peasants) worked the land but could not own it.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The term "fee ownership" refers to:',
+    options: ['Ownership of land without obligation to a lord, with right to dispose of it freely', 'Rental of land from the government', 'Temporary use of public lands', 'Joint ownership with the sovereign'],
+    correctAnswer: 0,
+    explanation: 'Fee ownership (fee simple): the most complete form of ownership, free from feudal obligations, with the right to sell, transfer, or bequeath the land.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'A "cloud on title" is:',
+    options: ['A claim that, if valid, would impair the title to land', 'A weather-related survey delay', 'Missing property boundaries', 'An unsigned deed'],
+    correctAnswer: 0,
+    explanation: 'Cloud on title: any encumbrance (lien, judgment, mortgage, adverse claim) that, if valid, would affect ownership rights. Must be cleared before sale.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The "chain of title" refers to:',
+    options: ['The sequence of ownership transfers from original grant to present owner', 'A Gunter\'s chain used in surveys', 'The physical boundary monuments', 'The deed recording process'],
+    correctAnswer: 0,
+    explanation: 'Chain of title: the consecutive sequence of transfers (deeds) from the original patent/grant to the current owner. Any break in the chain creates title problems.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The doctrine of "stare decisis" means that:',
+    options: ['Courts will follow precedent from similar previous cases', 'All property must be surveyed', 'The government owns all land', 'Oral agreements are binding'],
+    correctAnswer: 0,
+    explanation: 'Stare decisis (Latin: "to stand by decided matters"): courts follow precedent when facts are substantially similar. Foundation of common law system.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Real property is distinguished from personal property because it:',
+    options: ['Is immovable and includes land, buildings, and fixtures', 'Can be easily transported', 'Has no monetary value', 'Cannot be owned by individuals'],
+    correctAnswer: 0,
+    explanation: 'Real property: immovable (land, structures, trees, fixtures). Personal property: movable goods. Real property law is primarily state law.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Title insurance protects the buyer by:',
+    options: ['Guaranteeing good title up to the purchase price amount', 'Eliminating the need for a survey', 'Replacing the deed', 'Transferring ownership automatically'],
+    correctAnswer: 0,
+    explanation: 'Title insurance: company researches title and insures against defects. Coverage typically limited to purchase price. Has replaced abstract and opinion in many areas.',
+    difficulty: 'medium'
+  },
+
+  // === MORE WORD PROBLEMS: PRACTICAL APPLICATIONS ===
+  
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A surveyor needs to stake a 3° highway curve. Using the arc definition, what is the radius?',
+    options: ['1,909.9 ft', '300 ft', '573.0 ft', '5,729.6 ft'],
+    correctAnswer: 0,
+    explanation: 'R = 5729.58/D = 5729.58/3 = 1,909.9 ft. A 3° curve is relatively gentle with a large radius.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A property owner wants to know the area of a triangular parcel. Two sides measure 400 ft and 350 ft, and the included angle is 72°. What is the area?',
+    options: ['66,574 sq ft (about 1.53 acres)', '70,000 sq ft', '140,000 sq ft', '35,000 sq ft'],
+    correctAnswer: 0,
+    explanation: 'Area = ½ × a × b × sin(C) = ½ × 400 × 350 × sin(72°) = ½ × 140,000 × 0.951 = 66,574 sq ft ÷ 43,560 = 1.53 acres.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor sets up a level and reads a backsight of 6.42 ft on a benchmark with elevation 523.18 ft. What is the height of instrument (HI)?',
+    options: ['529.60 ft', '516.76 ft', '523.18 ft', '536.02 ft'],
+    correctAnswer: 0,
+    explanation: 'HI = BM elevation + BS = 523.18 + 6.42 = 529.60 ft. The height of instrument is the elevation of the line of sight.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A subdivision lot is described as 120 ft × 165 ft. How many acres is this?',
+    options: ['0.45 acres', '0.55 acres', '0.35 acres', '0.65 acres'],
+    correctAnswer: 0,
+    explanation: 'Area = 120 × 165 = 19,800 sq ft. Acres = 19,800 ÷ 43,560 = 0.45 acres.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A GPS survey is planned in a canyon with steep walls. What is the primary concern?',
+    options: ['Reduced satellite visibility due to obstructions', 'Temperature effects on the receiver', 'Wind interference with signals', 'Battery life of equipment'],
+    correctAnswer: 0,
+    explanation: 'Canyons, buildings, and tree canopy block satellite signals, reducing the number of visible satellites. May require longer occupation or post-processing.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A traverse line has latitude of +425.5 ft and departure of +378.1 ft. What is the length of this line?',
+    options: ['569.3 ft', '803.6 ft', '425.5 ft', '378.1 ft'],
+    correctAnswer: 0,
+    explanation: 'Length = √(lat² + dep²) = √(425.5² + 378.1²) = √(181,050 + 142,960) = √324,010 = 569.3 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A client asks a surveyor to move an iron pin 2 feet to include more land in their property. The surveyor should:',
+    options: ['Refuse, as this would be fraudulent and unethical', 'Move it if the client pays extra', 'Move it only if no one is watching', 'Move it and not tell anyone'],
+    correctAnswer: 0,
+    explanation: 'Moving monuments to falsify boundaries is fraud. Professional ethics require surveyors to preserve monuments and accurately represent boundaries.',
+    difficulty: 'easy'
+  },
+
+  // EXPANDED POOL: Now ~200+ questions total
+  // Coverage: All 8 NCEES domains with SRM Topics 2, 3, 4, 5 content
+  // Includes word problems and practical applications
 ];
