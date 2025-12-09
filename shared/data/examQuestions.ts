@@ -1427,4 +1427,256 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     explanation: '10% grade: tan(θ) = 0.10, θ = 5.71°. H = 500 × cos(5.71°) = 500 × 0.995 = 497.5 ft.',
     difficulty: 'medium'
   },
+
+  // === SRM TOPIC 6: LAND PLANNING & DEVELOPMENT (Dec 2025) ===
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A subdivision is legally defined as:',
+    options: ['Division of a tract into two or more parts for sale or development', 'A single parcel with no divisions', 'A government land survey', 'A topographic map'],
+    correctAnswer: 0,
+    explanation: 'Subdivision: dividing any tract into two or more parts for sale or building development.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The first step in subdivision surveying is:',
+    options: ['Boundary survey of exterior lines', 'Recording the final plat', 'Installing utilities', 'Staking interior lots'],
+    correctAnswer: 0,
+    explanation: 'Boundary survey first: establish and monument exterior boundaries before interior work.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Minimum street grade to prevent water pooling is:',
+    options: ['0.3% to 0.5%', '5% to 10%', '0% (flat)', '15% minimum'],
+    correctAnswer: 0,
+    explanation: 'Streets need minimum 0.3-0.5% grade for proper drainage along gutters.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A cul-de-sac is:',
+    options: ['A dead-end street with turnaround', 'A main highway', 'An underground utility', 'A drainage structure'],
+    correctAnswer: 0,
+    explanation: 'Cul-de-sac: dead-end street with turnaround, popular for residential privacy. Max ~1000 ft.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Sanitary sewer design velocity should be:',
+    options: ['2-10 ft/sec', '0.1-0.5 ft/sec', '20-50 ft/sec', 'Any velocity'],
+    correctAnswer: 0,
+    explanation: 'Sanitary sewer: 2-10 ft/sec. Too slow = settling; too fast = erosion.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Residential lots should drain:',
+    options: ['Away from house to street or rear collector', 'Toward foundation', 'Onto neighboring lots', 'Into sanitary sewer'],
+    correctAnswer: 0,
+    explanation: 'Lots slope away from house in all directions - to street in front, rear collector if available.',
+    difficulty: 'easy'
+  },
+
+  // === SRM TOPIC 7: MAPPING (Dec 2025) ===
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A strip map is typically used for:',
+    options: ['Highways, railroads, and pipelines', 'Shopping centers', 'City planning', 'Subdivision layouts'],
+    correctAnswer: 0,
+    explanation: 'Strip map: narrow/long projects (highways, railroads, pipelines). Area maps for subdivisions.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Index contours are:',
+    options: ['Every fifth line, heavier, with elevation labeled', 'Property corners', 'Underground utilities', 'Road centerlines'],
+    correctAnswer: 0,
+    explanation: 'Index contours: every fifth contour, drawn heavier/bolder with elevation labeled.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The stadia method measures:',
+    options: ['Horizontal distance using telescope optics', 'Angles only', 'Property values', 'Magnetic declination'],
+    correctAnswer: 0,
+    explanation: 'Stadia (tacheometry): measures horizontal distances using transit telescope optics.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Closely spaced contour lines indicate:',
+    options: ['Steep slope', 'Gentle slope', 'Flat terrain', 'Water bodies'],
+    correctAnswer: 0,
+    explanation: 'Close contours = steep slope; wide spacing = gentle slope.',
+    difficulty: 'easy'
+  },
+
+  // === SRM TOPIC 8: CONSTRUCTION SURVEYING (Dec 2025) ===
+  {
+    domain: 'Surveying Principles',
+    question: '"Line and grade" in construction surveying refers to:',
+    options: ['Horizontal alignment and elevation', 'Property corners', 'GPS coordinates', 'Magnetic bearings'],
+    correctAnswer: 0,
+    explanation: 'Line = horizontal alignment (transit); grade = elevation (level). Core construction surveying.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Hub stakes are typically:',
+    options: ['2x2 inch, driven flush, with tack marking precise position', 'Tall marker posts', 'Metal pins', 'Concrete monuments'],
+    correctAnswer: 0,
+    explanation: 'Hub stakes: 2x2 inch wood, driven flush, tack in top marks exact position.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Witness stakes serve to:',
+    options: ['Locate and identify nearby hub stakes', 'Mark property corners permanently', 'Show utility locations', 'Indicate benchmarks'],
+    correctAnswer: 0,
+    explanation: 'Witness (guard) stakes: locate/identify hub stakes with written information.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Slope stakes mark:',
+    options: ['Where natural ground meets proposed cut/fill (catch point)', 'Property corners', 'Utility easements', 'Traffic control'],
+    correctAnswer: 0,
+    explanation: 'Slope stakes: catch point where natural ground intersects proposed slope. Marked C (cut) or F (fill).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Convert 5 ft 9-1/2 in to decimal feet:',
+    options: ['5.79 ft', '5.95 ft', '5.50 ft', '5.09 ft'],
+    correctAnswer: 0,
+    explanation: '9.5 in ÷ 12 = 0.792 ft. Total = 5 + 0.792 = 5.79 ft.',
+    difficulty: 'easy'
+  },
+
+  // === SRM TOPIC 9: ACCURACY STANDARDS (Dec 2025) ===
+  {
+    domain: 'Professional Practice',
+    question: 'The difference between accuracy and precision is:',
+    options: ['Precision = consistency; accuracy = nearness to true value', 'They are identical', 'Precision is for angles only', 'Accuracy is for distances only'],
+    correctAnswer: 0,
+    explanation: 'Precision: consistency/repeatability. Accuracy: closeness to true value.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'FEMA LiDAR elevation accuracy requires RMSE of:',
+    options: ['15 cm maximum', '1 meter', '1 inch', '10 feet'],
+    correctAnswer: 0,
+    explanation: 'FEMA LiDAR: max RMSE of 15 cm (about 0.5 ft) for elevation data.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'National Map Accuracy Standards for maps 1:20,000 or larger require:',
+    options: ['Max 10% of points in error by more than 1/30 inch', '100% perfect accuracy', 'Only vertical accuracy', 'No testing required'],
+    correctAnswer: 0,
+    explanation: 'NMAS: no more than 10% of tested points can exceed 1/30 inch error on the map.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'In statistics, 2-sigma error represents:',
+    options: ['1.96 × RMSE, containing 95% of errors', 'Maximum error', 'Average error', 'One standard deviation'],
+    correctAnswer: 0,
+    explanation: '2-sigma = 1.96 × RMSE. 95% of errors fall within this range (normal distribution).',
+    difficulty: 'hard'
+  },
+
+  // === SRM TOPIC 10: BUSINESS MANAGEMENT (Dec 2025) ===
+  {
+    domain: 'Professional Practice',
+    question: 'Overhead rate is calculated as:',
+    options: ['Total indirect costs ÷ total direct labor costs', 'Revenue ÷ expenses', 'Profit ÷ costs', 'Direct costs × markup'],
+    correctAnswer: 0,
+    explanation: 'Overhead rate = indirect costs / direct labor. Typical surveying: 150-200%.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A firm has 180% overhead. Direct labor is $4,000. The overhead charge is:',
+    options: ['$7,200', '$4,000', '$2,222', '$1,800'],
+    correctAnswer: 0,
+    explanation: 'Overhead = $4,000 × 1.80 = $7,200.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The Brooks Act requires federal agencies to:',
+    options: ['Negotiate professional services based on qualifications and value', 'Accept lowest bidder only', 'Use only government surveyors', 'Avoid professional services'],
+    correctAnswer: 0,
+    explanation: 'Brooks Act (40 USC): federal agencies select A/E services based on qualifications, then negotiate fee.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'FAR typically allows operating margin of:',
+    options: ['6-15% of total fee', '50% of costs', '1% maximum', 'No profit allowed'],
+    correctAnswer: 0,
+    explanation: 'Federal Acquisition Regulations: fair margin 6-15% for return on investment.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Which costs are typically excluded from overhead under FAR?',
+    options: ['Entertainment, country club dues, certain interest', 'Employee wages', 'Office rent', 'Survey equipment'],
+    correctAnswer: 0,
+    explanation: 'FAR excludes entertainment, country club dues, and certain interest from allowable overhead.',
+    difficulty: 'hard'
+  },
+
+  // === SRM TOPIC 11: CONVERSIONS (Dec 2025) ===
+  {
+    domain: 'Math & Basic Science',
+    question: 'Steel tape thermal expansion coefficient is approximately:',
+    options: ['0.00000645 per °F', '0.0000001 per °F', '0.001 per °F', '0.1 per °F'],
+    correctAnswer: 0,
+    explanation: 'Steel: 0.00000645 per °F. Invar: about 0.0000001 per °F (much less expansion).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One minute of latitude equals approximately:',
+    options: ['1.15 statute miles', '1 foot', '100 meters', '10 chains'],
+    correctAnswer: 0,
+    explanation: '1 minute of latitude ≈ 1.15 statute miles ≈ 1 nautical mile.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A Texas vara equals:',
+    options: ['33-1/3 inches', '36 inches', '12 inches', '66 feet'],
+    correctAnswer: 0,
+    explanation: 'Texas vara = 33.33 inches. California vara = 33 inches. Important for Spanish land grants.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One rod (pole or perch) equals:',
+    options: ['16.5 feet', '100 feet', '66 feet', '10 feet'],
+    correctAnswer: 0,
+    explanation: 'Rod = pole = perch = 16.5 ft = 1/4 chain. Common in old deed descriptions.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One surveyor\'s link equals:',
+    options: ['7.92 inches', '12 inches', '1 foot', '100 feet'],
+    correctAnswer: 0,
+    explanation: 'Surveyor\'s link = 7.92 inches. 100 links = 1 chain = 66 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One hectare equals approximately:',
+    options: ['2.47 acres', '1 acre', '10 acres', '100 acres'],
+    correctAnswer: 0,
+    explanation: 'Hectare = 10,000 m² = 2.471 acres. 1 acre = 0.4047 hectares.',
+    difficulty: 'easy'
+  },
 ];
