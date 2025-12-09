@@ -990,7 +990,376 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   },
 
-  // EXPANDED POOL: Now ~117 questions total
-  // This provides excellent variety for 50-question random quizzes with comprehensive domain coverage
-  // Further expansion to ~350 questions can be done incrementally as needed
+  // EXPANDED POOL FROM SRM TOPIC 3: Plane Survey Calculations
+  // Added December 2025 - Traverse, Area, Partitioning, Horizontal Curves
+
+  // === TRAVERSE CALCULATIONS (Chapter 17) ===
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'When computing latitude in a traverse, the formula Latitude = Distance × cos(Bearing) gives:',
+    options: ['The north-south component of the line', 'The east-west component of the line', 'The total line length', 'The bearing angle'],
+    correctAnswer: 0,
+    explanation: 'Latitude (ΔN) = d × cos(azimuth) represents the north-south projection of a traverse line. Positive = north, negative = south.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Departure in traverse computation represents:',
+    options: ['The east-west component of a line', 'The north-south component of a line', 'The slope distance', 'The elevation difference'],
+    correctAnswer: 0,
+    explanation: 'Departure (ΔE) = d × sin(azimuth) represents the east-west projection of a traverse line. Positive = east, negative = west.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a closed traverse, the sum of all latitudes should theoretically equal:',
+    options: ['Zero', 'The perimeter', 'The total area', 'The number of stations'],
+    correctAnswer: 0,
+    explanation: 'In a perfect closed traverse, ΣLatitudes = 0 and ΣDepartures = 0. Any non-zero sum indicates error of closure.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The angular closure error in a closed traverse is calculated by comparing the sum of interior angles to:',
+    options: ['(n-2) × 180°, where n is the number of sides', '360°', 'n × 180°', '(n+2) × 180°'],
+    correctAnswer: 0,
+    explanation: 'The sum of interior angles in a polygon = (n-2) × 180°. For a 5-sided traverse: (5-2) × 180° = 540°.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The error of closure in a traverse is computed as:',
+    options: ['√(ΣLatitude² + ΣDeparture²)', 'ΣLatitude + ΣDeparture', '(ΣLatitude + ΣDeparture)/2', 'ΣLatitude × ΣDeparture'],
+    correctAnswer: 0,
+    explanation: 'Error of closure = √(Σlat² + Σdep²). This is the linear distance between where the traverse should close and where it actually closes.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The ratio of precision for a traverse is expressed as:',
+    options: ['1:perimeter/error', 'Error/perimeter', 'Perimeter × error', 'Error × number of stations'],
+    correctAnswer: 0,
+    explanation: 'Ratio of precision = 1:(perimeter/error of closure). Example: 5000 ft perimeter with 0.25 ft error = 1:20,000.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The Compass Rule for adjusting a traverse distributes the closure error:',
+    options: ['In proportion to the lengths of traverse sides', 'Equally to each angle', 'Only to the longest side', 'In proportion to the angles'],
+    correctAnswer: 0,
+    explanation: 'Compass Rule (Bowditch): Correction = (length of side/perimeter) × total error. Adjusts proportionally to line lengths.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'If a traverse line has bearing N 45°30\' E and distance 250.00 ft, the departure is approximately:',
+    options: ['178.4 ft', '176.0 ft', '250.0 ft', '125.0 ft'],
+    correctAnswer: 0,
+    explanation: 'Departure = d × sin(bearing) = 250 × sin(45°30\') = 250 × 0.7133 = 178.3 ft (east). The sine gives the east-west component.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'When computing an inverse (finding bearing from coordinates), if ΔE is positive and ΔN is positive, the bearing is in which quadrant?',
+    options: ['Northeast', 'Southeast', 'Southwest', 'Northwest'],
+    correctAnswer: 0,
+    explanation: 'Positive ΔN = north, positive ΔE = east, so the bearing is in the NE quadrant (N x° E). Use tan⁻¹(ΔE/ΔN) for the angle.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A closed traverse has angular misclosure of 30 seconds with 6 angles. How much correction per angle?',
+    options: ['5 seconds', '30 seconds', '6 seconds', '3 seconds'],
+    correctAnswer: 0,
+    explanation: 'Angular correction = total error / number of angles = 30"/6 = 5" per angle. Distribute equally or proportionally.',
+    difficulty: 'medium'
+  },
+
+  // === AREA CALCULATIONS (Chapter 18) ===
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In the DMD (Double Meridian Distance) method for area calculation, the DMD of the first line equals:',
+    options: ['The departure of that line', 'The latitude of that line', 'Zero', 'The perimeter'],
+    correctAnswer: 0,
+    explanation: 'DMD of first line = departure of first line. For subsequent lines: DMD = DMD of previous line + departure of previous line + departure of current line.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Using the coordinate method, the area of a traverse can be computed by:',
+    options: ['Taking half the absolute value of cross-multiplied coordinate differences', 'Adding all coordinates together', 'Multiplying all X by all Y coordinates', 'Summing all latitudes and departures'],
+    correctAnswer: 0,
+    explanation: 'Coordinate method: Area = ½|Σ(Xᵢ × Yᵢ₊₁ - Xᵢ₊₁ × Yᵢ)|. Uses cross-multiplication of adjacent coordinates.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In the DMD method, double area equals:',
+    options: ['Σ(DMD × Latitude)', 'Σ(DMD × Departure)', 'Σ(Latitude × Departure)', 'DMD × perimeter'],
+    correctAnswer: 0,
+    explanation: 'Double Area = Σ(DMD × Latitude) for each traverse line. Divide by 2 for actual area. Use absolute value.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'To convert square feet to acres, divide by:',
+    options: ['43,560', '5,280', '640', '4,840'],
+    correctAnswer: 0,
+    explanation: '1 acre = 43,560 sq ft. Example: 217,800 sq ft ÷ 43,560 = 5.0 acres. Critical conversion for land area.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The area of a triangle given two sides a and b and included angle C is:',
+    options: ['½ × a × b × sin(C)', 'a × b × cos(C)', 'a + b + C', '½ × (a + b) × C'],
+    correctAnswer: 0,
+    explanation: 'Area = ½ab sin(C). For example, sides of 100 ft and 150 ft with 60° angle: Area = ½(100)(150)sin(60°) = 6,495 sq ft.',
+    difficulty: 'medium'
+  },
+
+  // === HORIZONTAL CURVES (Chapter 20) ===
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The degree of curve (arc definition) is the central angle subtended by:',
+    options: ['A 100-foot arc', 'A 100-foot chord', 'A 50-foot arc', 'A full circle'],
+    correctAnswer: 0,
+    explanation: 'Arc definition (highway): D° subtends a 100 ft arc. Used for most highway curves. D = 5729.58/R.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a horizontal curve, the relationship between radius R and degree of curve D (arc definition) is:',
+    options: ['R = 5729.58/D', 'R = D × 100', 'R = D/360', 'R = 100/D'],
+    correctAnswer: 0,
+    explanation: 'R = 5729.58/D (arc basis) where D is in degrees. A 6° curve has radius 5729.58/6 = 954.9 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The tangent distance (T) from the PI to the PC or PT is calculated by:',
+    options: ['T = R × tan(Δ/2)', 'T = R × sin(Δ)', 'T = R × cos(Δ)', 'T = 2R × tan(Δ)'],
+    correctAnswer: 0,
+    explanation: 'T = R × tan(Δ/2), where Δ is the deflection angle (intersection angle). The tangent is always measured from the PI.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The length of a horizontal curve (arc length) is calculated by:',
+    options: ['L = (π × R × Δ)/180°', 'L = R × Δ', 'L = 2πR', 'L = R/Δ'],
+    correctAnswer: 0,
+    explanation: 'L = πRΔ/180° (with Δ in degrees) or L = RΔ (with Δ in radians). This is the arc distance from PC to PT.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The long chord (LC) of a horizontal curve is computed by:',
+    options: ['LC = 2R × sin(Δ/2)', 'LC = R × tan(Δ)', 'LC = πRΔ/180', 'LC = R × cos(Δ)'],
+    correctAnswer: 0,
+    explanation: 'LC = 2R × sin(Δ/2). This is the straight-line distance from PC to PT, always shorter than the arc.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The external distance (E) from the PI to the middle of the curve is:',
+    options: ['E = R × (sec(Δ/2) - 1)', 'E = R × tan(Δ/2)', 'E = R × sin(Δ/2)', 'E = R × cos(Δ/2)'],
+    correctAnswer: 0,
+    explanation: 'E = R(sec(Δ/2) - 1) = R(exsec(Δ/2)). The external distance extends from PI radially inward to the curve.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The middle ordinate (M) of a horizontal curve is:',
+    options: ['The distance from long chord midpoint to curve midpoint', 'The radius of the curve', 'The tangent distance', 'The external distance'],
+    correctAnswer: 0,
+    explanation: 'Middle ordinate M = R(1 - cos(Δ/2)) = R × vers(Δ/2). It measures from the midpoint of the long chord perpendicular to the curve.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'PC and PT in horizontal curve terminology stand for:',
+    options: ['Point of Curvature and Point of Tangency', 'Perpendicular Coordinate and Parallel Tangent', 'Principal Control and Primary Target', 'Point of Contact and Point of Transition'],
+    correctAnswer: 0,
+    explanation: 'PC = Point of Curvature (where curve begins), PT = Point of Tangency (where curve ends). PI = Point of Intersection (where tangents meet).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a 4° curve (arc definition), what is the radius?',
+    options: ['1,432.4 ft', '400 ft', '573.0 ft', '2,864.8 ft'],
+    correctAnswer: 0,
+    explanation: 'R = 5729.58/D = 5729.58/4 = 1,432.4 ft. Higher degree = sharper curve = smaller radius.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The deflection angle method for staking curves uses:',
+    options: ['Half the arc angle for each chord point', 'The full central angle', 'Random angles', 'Only the tangent direction'],
+    correctAnswer: 0,
+    explanation: 'Deflection from tangent at PC = ½ × arc angle. For a D° curve with 100 ft stations: deflection per station = D/2.',
+    difficulty: 'hard'
+  },
+
+  // === PARTITIONING OF LAND (Chapter 19) ===
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A cutoff line in land partitioning is:',
+    options: ['A line used to divide a tract into two parts for calculation', 'A line marking property boundaries', 'A contour line', 'A reference meridian'],
+    correctAnswer: 0,
+    explanation: 'A cutoff line divides a traverse into two sub-traverses for area computation. Used when partitioning irregular tracts.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'When dividing a tract by a line from one corner to cut off a specific area, which method is commonly used?',
+    options: ['Law of Sines with the triangle area formula', 'Simple averaging', 'Parallel line method only', 'Random point selection'],
+    correctAnswer: 0,
+    explanation: 'Area of triangle = ½ × a × b × sin(C). Solve for unknown side using A = ½(known side)(unknown side)sin(angle).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'To divide a tract into two equal parts with a line parallel to one side, you would typically:',
+    options: ['Use a trapezoid area formula and solve for the unknown altitude', 'Draw a diagonal and bisect it', 'Use only the perimeter', 'Ignore the original shape'],
+    correctAnswer: 0,
+    explanation: 'For parallel division: set up trapezoid ABLK with known half-area, then solve quadratic equation for altitude r.',
+    difficulty: 'hard'
+  },
+
+  // === ADDITIONAL FIELD CALCULATIONS ===
+  {
+    domain: 'Surveying Principles',
+    question: 'When computing coordinates from a traverse, the coordinates of point B given point A are:',
+    options: ['Nᵦ = Nₐ + Latitude, Eᵦ = Eₐ + Departure', 'Nᵦ = Nₐ × Latitude, Eᵦ = Eₐ × Departure', 'Nᵦ = Latitude - Nₐ, Eᵦ = Departure - Eₐ', 'Nᵦ = Nₐ/Latitude, Eᵦ = Eₐ/Departure'],
+    correctAnswer: 0,
+    explanation: 'Coordinate geometry: N(new) = N(old) + latitude, E(new) = E(old) + departure. Latitudes and departures are signed values.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The versed sine (vers) of an angle θ equals:',
+    options: ['1 - cos(θ)', 'sin(θ) - 1', 'tan(θ) + 1', 'cos(θ) + 1'],
+    correctAnswer: 0,
+    explanation: 'Versed sine: vers θ = 1 - cos θ. Used in curve calculations. Example: vers 30° = 1 - 0.866 = 0.134.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The external secant (exsec) of an angle θ equals:',
+    options: ['sec(θ) - 1', 'sec(θ) + 1', '1/cos(θ)', 'tan(θ) - 1'],
+    correctAnswer: 0,
+    explanation: 'External secant: exsec θ = sec θ - 1 = (1/cos θ) - 1. Used in external distance calculations for curves.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a forward traverse calculation from A to B, if the bearing is S 35° W and distance is 400 ft, the latitude is:',
+    options: ['−327.7 ft (south)', '+327.7 ft (north)', '−229.4 ft', '+400.0 ft'],
+    correctAnswer: 0,
+    explanation: 'Latitude = d × cos(bearing) = 400 × cos(35°) = 327.7 ft. Since bearing is S, latitude is negative (south).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The Law of Cosines states that for a triangle with sides a, b, c and angle C opposite side c:',
+    options: ['c² = a² + b² - 2ab cos(C)', 'c = a + b - cos(C)', 'c² = a² + b² + 2ab cos(C)', 'c = a × b × cos(C)'],
+    correctAnswer: 0,
+    explanation: 'Law of Cosines: c² = a² + b² - 2ab cos(C). Essential for solving triangles when you know two sides and included angle.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The Law of Sines states:',
+    options: ['a/sin(A) = b/sin(B) = c/sin(C)', 'a × sin(A) = b × sin(B)', 'sin(A)/a = cos(B)/b', 'a + sin(A) = b + sin(B)'],
+    correctAnswer: 0,
+    explanation: 'Law of Sines: a/sin(A) = b/sin(B) = c/sin(C). Use when you know angle-side-angle or angle-angle-side.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'If a traverse has a perimeter of 3,500 ft and an error of closure of 0.14 ft, the ratio of precision is:',
+    options: ['1:25,000', '1:3,500', '1:14,000', '1:250'],
+    correctAnswer: 0,
+    explanation: 'Ratio = 1:(perimeter/error) = 1:(3500/0.14) = 1:25,000. Higher ratio = better precision.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'When adjusting a traverse by the compass rule, the latitude correction for a line is:',
+    options: ['(Line length/Perimeter) × Total latitude error', 'Total error/Number of lines', 'Line length × Total error', 'Perimeter/Line length'],
+    correctAnswer: 0,
+    explanation: 'Compass Rule correction: Cₗₐₜ = (Line length/Perimeter) × ΣLatitude error. Distributes proportionally to line lengths.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A compound curve consists of:',
+    options: ['Two or more simple curves of different radii curving in the same direction', 'Two curves curving in opposite directions', 'A straight line and a curve', 'A single curve with constant radius'],
+    correctAnswer: 0,
+    explanation: 'Compound curve: two+ simple curves with different radii, same direction, with a common tangent point. Used in mountainous terrain.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A reverse curve is characterized by:',
+    options: ['Two curves of the same or different radii curving in opposite directions', 'A single curve with constant radius', 'Two curves with the same radius curving the same way', 'A spiral transition'],
+    correctAnswer: 0,
+    explanation: 'Reverse curve: two curves with a common tangent point, curving in opposite directions. Creates an S-shape. Generally avoided on highways.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Spiral or transition curves are used to:',
+    options: ['Gradually change curvature from straight to circular', 'Create a constant radius curve', 'Measure deflection angles', 'Calculate area'],
+    correctAnswer: 0,
+    explanation: 'Spiral curves provide gradual curvature transition from tangent (infinite radius) to circular arc (finite radius). Improves vehicle dynamics.',
+    difficulty: 'medium'
+  },
+
+  // === APPLIED MATHEMATICS ===
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'When solving a quadratic equation ax² + bx + c = 0, the quadratic formula gives:',
+    options: ['x = (-b ± √(b²-4ac))/2a', 'x = -b/2a', 'x = (b ± √(b²+4ac))/2a', 'x = a² + b² - c'],
+    correctAnswer: 0,
+    explanation: 'Quadratic formula: x = (-b ± √(b²-4ac))/2a. Used in partitioning problems and curve calculations.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The discriminant (b² - 4ac) of a quadratic equation tells us:',
+    options: ['How many real solutions exist', 'The exact solution value', 'The area under the curve', 'The maximum value'],
+    correctAnswer: 0,
+    explanation: 'Discriminant > 0: two real solutions. Discriminant = 0: one solution. Discriminant < 0: no real solutions.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'To find the angle when given opposite and adjacent sides, use:',
+    options: ['tan⁻¹(opposite/adjacent)', 'sin⁻¹(adjacent/opposite)', 'cos⁻¹(opposite/hypotenuse)', 'tan(opposite × adjacent)'],
+    correctAnswer: 0,
+    explanation: 'tan θ = opposite/adjacent, so θ = tan⁻¹(opp/adj). Critical for computing bearings from coordinate differences.',
+    difficulty: 'easy'
+  },
+
+  // === FIELD DATA ACQUISITION ===
+  {
+    domain: 'Field Data Acquisition',
+    question: 'When measuring angles in a traverse, taking both direct and reverse readings helps eliminate:',
+    options: ['Instrument systematic errors', 'Random pointing errors only', 'Distance measurement errors', 'Temperature effects'],
+    correctAnswer: 0,
+    explanation: 'Direct and reverse (D&R) readings average out systematic instrumental errors like axis misalignment and circle graduation errors.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The purpose of balancing angles before computing traverse coordinates is to:',
+    options: ['Ensure the traverse will close mathematically', 'Increase measurement speed', 'Reduce the number of calculations', 'Eliminate the need for distance measurement'],
+    correctAnswer: 0,
+    explanation: 'Angular balance ensures interior angles sum to (n-2)×180°, which is necessary for the traverse to close properly when computing coordinates.',
+    difficulty: 'medium'
+  },
+
+  // EXPANDED POOL: Now ~160+ questions total
+  // Coverage: All 8 NCEES domains with emphasis on SRM Topic 3 content
+  // Further expansion continues with additional SRM topics
 ];
