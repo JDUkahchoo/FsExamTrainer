@@ -107,6 +107,13 @@ The application features a comprehensive UI/UX with domain-specific color coding
     - **Original Deck:** Added 6 Surveying Principles flashcards with essential formulas
     - **Files Modified:** `shared/data/flashcardsComprehensive.ts`, `shared/data/flashcards.ts`
 
+-   **Reference Manual Companion - Complete Mappings (Dec 9, 2025):** All 68 lessons now have SRM chapter references:
+    - **SRM Topics I-XI:** Complete coverage of Surveyor Reference Manual 7th Edition (Chapters 1-44 + Appendices)
+    - **Domain Coverage:** All 8 NCEES domains mapped to appropriate SRM chapters
+    - **New Mappings Added:** d5-lesson-08 to d5-lesson-12 (Least Squares, Spreadsheets, Data Collectors, Error Propagation, Programming), d7-lesson-11 to d7-lesson-12 (Regression, Numerical Methods)
+    - **Data Cleanup:** Removed orphaned mappings for non-existent lessons (d3-lesson-08, d6-lesson-07)
+    - **Files Modified:** `shared/data/referenceManualMappings.ts`
+
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
 -   **Replit Auth:** Used for user authentication and managing user sessions.
