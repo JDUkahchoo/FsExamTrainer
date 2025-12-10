@@ -77,7 +77,7 @@ import {
   feedback,
   testimonials
 } from "@shared/schema";
-import { eq, and, desc, gte, sql } from "drizzle-orm";
+import { eq, and, desc, gte, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User methods (required for Replit Auth)
@@ -172,6 +172,7 @@ export interface IStorage {
   getLessonsByWeek(week: number): Promise<Lesson[]>;
   getLessonWithQuestions(lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
   getLessonWithRandomizedQuestions(userId: string, lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
+  getQuestionsByIds(questionIds: string[]): Promise<LessonQuestion[]>;
   getLessonProgress(userId: string, lessonId: string): Promise<LessonProgress | undefined>;
   getAllLessonProgress(userId: string): Promise<LessonProgress[]>;
   upsertLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
@@ -1109,6 +1110,19 @@ export class DatabaseStorage implements IStorage {
       .orderBy(lessonQuestions.orderIndex);
 
     return { lesson, questions };
+  }
+
+  async getQuestionsByIds(questionIds: string[]): Promise<LessonQuestion[]> {
+    if (questionIds.length === 0) return [];
+    
+    const questions = await db
+      .select()
+      .from(lessonQuestions)
+      .where(inArray(lessonQuestions.id, questionIds));
+    
+    // Preserve the order of questionIds
+    const questionMap = new Map(questions.map(q => [q.id, q]));
+    return questionIds.map(id => questionMap.get(id)).filter((q): q is LessonQuestion => q !== undefined);
   }
 
   async getLessonWithRandomizedQuestions(userId: string, lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined> {

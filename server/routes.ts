@@ -990,24 +990,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const lessonId = req.params.id;
-      const { answers, timeSpentSeconds = 0 } = req.body;
+      const { answers, questionIds, timeSpentSeconds = 0 } = req.body;
       
       console.log(`[Submit Lesson] userId: ${userId}, lessonId: ${lessonId}, answerCount: ${Object.keys(answers).length}`);
 
-      // Get lesson with questions
+      // Validate we have question IDs from the frontend
+      if (!questionIds || !Array.isArray(questionIds) || questionIds.length === 0) {
+        return res.status(400).json({ error: "No question IDs provided" });
+      }
+
+      // Get the lesson to verify it exists
       const lessonData = await storage.getLessonWithQuestions(lessonId);
       if (!lessonData) {
         return res.status(404).json({ error: "Lesson not found" });
       }
+      const { lesson } = lessonData;
 
-      const { lesson, questions } = lessonData;
+      // Fetch the specific questions that were shown to the user
+      const questions = await storage.getQuestionsByIds(questionIds);
 
-      // Validate lesson has questions
+      // Validate we got the questions
       if (questions.length === 0) {
-        return res.status(400).json({ error: "Lesson has no questions" });
+        return res.status(400).json({ error: "Questions not found" });
+      }
+
+      // Security check: verify all questions belong to this lesson
+      const invalidQuestions = questions.filter(q => q.lessonId !== lessonId);
+      if (invalidQuestions.length > 0) {
+        console.log(`[Submit Lesson] Security violation: ${invalidQuestions.length} questions don't belong to lesson ${lessonId}`);
+        return res.status(400).json({ error: "Invalid question IDs for this lesson" });
       }
       
-      console.log(`[Submit Lesson] Loaded ${questions.length} questions from database`);
+      console.log(`[Submit Lesson] Loaded ${questions.length} questions by IDs`);
 
       // Helper function to compare fill-in-blank answers
       const compareFillInBlank = (userAnswer: string, correctAnswer: string): boolean => {

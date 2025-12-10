@@ -78,12 +78,13 @@ export default function LessonPage() {
   });
 
   const submitMutation = useMutation({
-    mutationFn: async (data: { answers: Record<string, any>; timeSpentSeconds: number }) => {
+    mutationFn: async (data: { answers: Record<string, any>; questionIds: string[]; timeSpentSeconds: number }) => {
       console.log('[Lesson Submit] Sending data to server:', {
         lessonId,
         answerCount: Object.keys(data.answers).length,
         answerKeys: Object.keys(data.answers),
         answers: data.answers,
+        questionIds: data.questionIds,
         timeSpent: data.timeSpentSeconds,
       });
       const response = await apiRequest('POST', `/api/lessons/${lessonId}/submit`, data);
@@ -234,8 +235,9 @@ export default function LessonPage() {
     }
     
     const timeSpentSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const questionIds = questions.map(q => q.id);
     console.log(`Submitting ${Object.keys(validAnswers).length} answers:`, validAnswers);
-    submitMutation.mutate({ answers: validAnswers, timeSpentSeconds });
+    submitMutation.mutate({ answers: validAnswers, questionIds, timeSpentSeconds });
     setSubmitted(true);
   };
 
