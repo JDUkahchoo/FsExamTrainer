@@ -1280,10 +1280,13 @@ async function seedLessons() {
 
     console.log(`Created lesson: ${lesson.title}`);
 
-    // Create questions for this lesson
+    // Create questions for this lesson with deterministic IDs
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
+      // Generate deterministic question ID: {lessonId}-q{index+1}-v1
+      const questionId = `${lesson.id}-q${String(i + 1).padStart(2, '0')}-v1`;
       await db.insert(lessonQuestions).values({
+        id: questionId,
         lessonId: lesson.id,
         questionType: q.type,
         questionText: q.text,
