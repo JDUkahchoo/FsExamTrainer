@@ -115,10 +115,14 @@ export interface IStorage {
   createPracticeExam(exam: InsertPracticeExam): Promise<PracticeExam>;
   createPracticeExamResult(result: InsertPracticeExamResult): Promise<PracticeExamResult>;
 
-  // Study Notes methods
-  getStudyNote(userId: string, week: number): Promise<StudyNote | undefined>;
+  // Study Notes methods (enhanced with multi-page support)
+  getStudyNote(userId: string, noteId: string): Promise<StudyNote | undefined>;
   getAllStudyNotes(userId: string): Promise<StudyNote[]>;
-  upsertStudyNote(note: InsertStudyNote): Promise<StudyNote>;
+  getStudyNotesByWeek(userId: string, week: number): Promise<StudyNote[]>;
+  getStudyNotesByDay(userId: string, week: number, dayOfWeek: string): Promise<StudyNote[]>;
+  createStudyNote(note: InsertStudyNote): Promise<StudyNote>;
+  updateStudyNote(userId: string, noteId: string, updates: Partial<InsertStudyNote>): Promise<StudyNote>;
+  deleteStudyNote(userId: string, noteId: string): Promise<void>;
 
   // Daily Activity methods
   getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
@@ -432,12 +436,12 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  // Study Notes methods
-  async getStudyNote(userId: string, week: number): Promise<StudyNote | undefined> {
+  // Study Notes methods (enhanced with multi-page support)
+  async getStudyNote(userId: string, noteId: string): Promise<StudyNote | undefined> {
     const [note] = await db
       .select()
       .from(studyNotes)
-      .where(and(eq(studyNotes.userId, userId), eq(studyNotes.week, week)));
+      .where(and(eq(studyNotes.userId, userId), eq(studyNotes.id, noteId)));
     return note || undefined;
   }
 
@@ -445,29 +449,51 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(studyNotes)
-      .where(eq(studyNotes.userId, userId));
+      .where(eq(studyNotes.userId, userId))
+      .orderBy(desc(studyNotes.updatedAt));
   }
 
-  async upsertStudyNote(note: InsertStudyNote): Promise<StudyNote> {
-    const existing = await this.getStudyNote(note.userId, note.week);
-    
-    if (existing) {
-      const [updated] = await db
-        .update(studyNotes)
-        .set({ content: note.content, updatedAt: new Date() })
-        .where(and(
-          eq(studyNotes.userId, note.userId),
-          eq(studyNotes.week, note.week)
-        ))
-        .returning();
-      return updated;
-    } else {
-      const [created] = await db
-        .insert(studyNotes)
-        .values({ ...note, updatedAt: new Date() })
-        .returning();
-      return created;
-    }
+  async getStudyNotesByWeek(userId: string, week: number): Promise<StudyNote[]> {
+    return await db
+      .select()
+      .from(studyNotes)
+      .where(and(eq(studyNotes.userId, userId), eq(studyNotes.week, week)))
+      .orderBy(desc(studyNotes.updatedAt));
+  }
+
+  async getStudyNotesByDay(userId: string, week: number, dayOfWeek: string): Promise<StudyNote[]> {
+    return await db
+      .select()
+      .from(studyNotes)
+      .where(and(
+        eq(studyNotes.userId, userId),
+        eq(studyNotes.week, week),
+        eq(studyNotes.dayOfWeek, dayOfWeek)
+      ))
+      .orderBy(desc(studyNotes.updatedAt));
+  }
+
+  async createStudyNote(note: InsertStudyNote): Promise<StudyNote> {
+    const [created] = await db
+      .insert(studyNotes)
+      .values({ ...note, createdAt: new Date(), updatedAt: new Date() })
+      .returning();
+    return created;
+  }
+
+  async updateStudyNote(userId: string, noteId: string, updates: Partial<InsertStudyNote>): Promise<StudyNote> {
+    const [updated] = await db
+      .update(studyNotes)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(and(eq(studyNotes.userId, userId), eq(studyNotes.id, noteId)))
+      .returning();
+    return updated;
+  }
+
+  async deleteStudyNote(userId: string, noteId: string): Promise<void> {
+    await db
+      .delete(studyNotes)
+      .where(and(eq(studyNotes.userId, userId), eq(studyNotes.id, noteId)));
   }
 
   // Daily Activity methods

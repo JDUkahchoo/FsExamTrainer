@@ -288,13 +288,17 @@ export const clientPretestQuestionResultSchema = z.object({
 export type ClientPretestQuestionResult = z.infer<typeof clientPretestQuestionResultSchema>;
 export type PretestQuestionResult = typeof pretestQuestionResults.$inferSelect;
 
-// --- Study Notes ---
+// --- Study Notes (Enhanced with multi-page, day tracking, domain tagging) ---
 
 export const studyNotes = pgTable("study_notes", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  week: integer("week").notNull(),
+  title: text("title").notNull().default('Untitled Note'), // User-defined title for the note page
+  week: integer("week"), // Optional week number (1-16+), null for general notes
+  dayOfWeek: text("day_of_week"), // Optional: 'monday', 'tuesday', etc.
+  domainNumber: integer("domain_number"), // Optional domain tagging (0-7)
   content: text("content").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
@@ -307,11 +311,16 @@ export const studyNotesRelations = relations(studyNotes, ({ one }) => ({
 
 export const insertStudyNoteSchema = createInsertSchema(studyNotes).omit({
   id: true,
+  createdAt: true,
   updatedAt: true,
 });
 
 export type InsertStudyNote = z.infer<typeof insertStudyNoteSchema>;
 export type StudyNote = typeof studyNotes.$inferSelect;
+
+// Day of week options for UI
+export const DAYS_OF_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+export type DayOfWeek = typeof DAYS_OF_WEEK[number];
 
 // --- Quiz Drafts (for resume functionality) ---
 
