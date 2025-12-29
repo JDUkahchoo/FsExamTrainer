@@ -414,7 +414,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Study Notes routes
+  // Study Notes routes (enhanced with multi-page, day tracking, domain tagging)
+  
+  // Get all notes for user
   app.get("/api/notes", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -425,26 +427,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/notes/:week", isAuthenticated, async (req: any, res) => {
+  // Get notes by week
+  app.get("/api/notes/week/:week", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const week = parseInt(req.params.week);
-      const note = await storage.getStudyNote(userId, week);
+      const notes = await storage.getStudyNotesByWeek(userId, week);
+      res.json(notes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch study notes for week" });
+    }
+  });
+
+  // Get notes by week and day
+  app.get("/api/notes/week/:week/day/:day", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = parseInt(req.params.week);
+      const day = req.params.day;
+      const notes = await storage.getStudyNotesByDay(userId, week, day);
+      res.json(notes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch study notes for day" });
+    }
+  });
+
+  // Get single note by ID
+  app.get("/api/notes/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const noteId = req.params.id;
+      const note = await storage.getStudyNote(userId, noteId);
       res.json(note || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch study note" });
     }
   });
 
+  // Create new note
   app.post("/api/notes", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const data = insertStudyNoteSchema.parse({ ...req.body, userId });
-      const note = await storage.upsertStudyNote(data);
+      const note = await storage.createStudyNote(data);
       res.json(note);
     } catch (error) {
-      console.error("Error saving note:", error);
+      console.error("Error creating note:", error);
       res.status(400).json({ error: "Invalid study note data" });
+    }
+  });
+
+  // Update existing note
+  app.patch("/api/notes/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const noteId = req.params.id;
+      const updates = req.body;
+      const note = await storage.updateStudyNote(userId, noteId, updates);
+      res.json(note);
+    } catch (error) {
+      console.error("Error updating note:", error);
+      res.status(400).json({ error: "Failed to update study note" });
+    }
+  });
+
+  // Delete note
+  app.delete("/api/notes/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const noteId = req.params.id;
+      await storage.deleteStudyNote(userId, noteId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      res.status(400).json({ error: "Failed to delete study note" });
     }
   });
 
