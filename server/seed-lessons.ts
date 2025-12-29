@@ -3,6 +3,7 @@ import { lessons, lessonQuestions } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { NCEES_DOMAINS } from "@shared/domains";
 import { practicalProblems } from "./practical-problems";
+import { allArchetypes, generateLessonVariations } from "@shared/questionArchetypes";
 
 // Use centralized domain definitions from shared/domains.ts
 const DOMAINS = NCEES_DOMAINS;
@@ -1280,26 +1281,50 @@ async function seedLessons() {
 
     console.log(`Created lesson: ${lesson.title}`);
 
-    // Create questions for this lesson with deterministic IDs
-    for (let i = 0; i < questions.length; i++) {
-      const q = questions[i];
-      // Generate deterministic question ID: {lessonId}-q{index+1}-v1
-      const questionId = `${lesson.id}-q${String(i + 1).padStart(2, '0')}-v1`;
-      await db.insert(lessonQuestions).values({
-        id: questionId,
-        lessonId: lesson.id,
-        questionType: q.type,
-        questionText: q.text,
-        options: q.options || null, // JSONB handles JSON automatically - don't stringify
-        correctAnswer: q.answer,
-        explanation: q.explanation,
-        orderIndex: i + 1,
-        variationGroup: i + 1, // Same as orderIndex - groups variations together
-        variationNumber: 1, // All existing questions are variation 1
-        points: q.points
-      });
+    // Check if this lesson has archetypes for variation generation
+    const archetypes = allArchetypes[lesson.id];
+    
+    if (archetypes && archetypes.length === questions.length) {
+      // Use archetype system to generate all 5 variations per question
+      const allVariations = generateLessonVariations(lesson.id);
+      
+      for (const variation of allVariations) {
+        await db.insert(lessonQuestions).values({
+          id: variation.id,
+          lessonId: lesson.id,
+          questionType: variation.questionType,
+          questionText: variation.questionText,
+          options: variation.options,
+          correctAnswer: variation.correctAnswer,
+          explanation: variation.explanation,
+          orderIndex: variation.variationGroup, // orderIndex matches variationGroup
+          variationGroup: variation.variationGroup,
+          variationNumber: variation.variationNumber,
+          points: variation.points
+        });
+      }
+      console.log(`  Added ${allVariations.length} questions (5 variations × ${questions.length} questions)`);
+    } else {
+      // Fallback: Create only variation 1 for lessons without archetypes
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const questionId = `${lesson.id}-q${String(i + 1).padStart(2, '0')}-v1`;
+        await db.insert(lessonQuestions).values({
+          id: questionId,
+          lessonId: lesson.id,
+          questionType: q.type,
+          questionText: q.text,
+          options: q.options || null,
+          correctAnswer: q.answer,
+          explanation: q.explanation,
+          orderIndex: i + 1,
+          variationGroup: i + 1,
+          variationNumber: 1,
+          points: q.points
+        });
+      }
+      console.log(`  Added ${questions.length} questions (variation 1 only - no archetypes)`);
     }
-    console.log(`  Added ${questions.length} questions (variation 1)`);
   }
 
   console.log("Lesson seeding completed!");
