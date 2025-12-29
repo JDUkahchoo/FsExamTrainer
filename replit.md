@@ -17,7 +17,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Flashcard System:** Two decks with card flip animations, spaced repetition, and mastery tracking, including coverage for all NCEES domains.
 -   **Study Resources:** Library with formula sheets, memory techniques, and professional references.
 -   **Practice Exam Simulator:** Full 110-question exam with timer, unique questions, domain-based score breakdown, and analytics.
--   **Study Notes:** Rich text note-taking with auto-save for each week.
+-   **Study Notes (Enhanced):** Multi-page note-taking system with week selector, Mon-Sun day filtering, optional domain tagging, auto-save, and CRUD operations for managing multiple notes per week.
 -   **Daily Logging System:** Integrated into the Study Plan for tracking activities and contributing to study streaks.
 -   **Progress Dashboard with Gamification:** Circular progress ring, study streak tracker, achievement badges, and detailed history, including domain mastery tracking.
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
