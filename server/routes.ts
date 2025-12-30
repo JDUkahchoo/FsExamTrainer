@@ -1067,7 +1067,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Validate we got the questions
       if (questions.length === 0) {
-        return res.status(400).json({ error: "Questions not found" });
+        console.error(`[Submit Lesson] No questions found for IDs: ${questionIds.join(', ')}`);
+        return res.status(400).json({ 
+          error: "Questions not found in database. The database may need to be reseeded.",
+          questionIds: questionIds.slice(0, 3) // Show first 3 for debugging
+        });
       }
 
       // Security check: verify all questions belong to this lesson

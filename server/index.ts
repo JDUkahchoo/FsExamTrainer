@@ -2,7 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { db } from "./db";
-import { lessons } from "@shared/schema";
+import { lessons, lessonQuestions } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { count } from "drizzle-orm";
 
@@ -51,17 +51,27 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Auto-seed lessons if database is empty (for production deployments)
+  // Auto-seed lessons if database is empty or missing questions (for production deployments)
   try {
-    const result = await db.select({ count: count() }).from(lessons);
-    const lessonCount = result[0]?.count || 0;
+    const lessonResult = await db.select({ count: count() }).from(lessons);
+    const lessonCount = lessonResult[0]?.count || 0;
     
-    if (lessonCount === 0) {
-      log("📚 Database is empty. Auto-seeding lessons...");
+    const questionResult = await db.select({ count: count() }).from(lessonQuestions);
+    const questionCount = questionResult[0]?.count || 0;
+    
+    // Expected: 68 lessons, ~1700 questions (5 per archetype × 5 archetypes × 68 lessons)
+    const needsSeeding = lessonCount === 0 || questionCount < 1000;
+    
+    if (needsSeeding) {
+      log(`📚 Database needs seeding (lessons: ${lessonCount}, questions: ${questionCount}). Auto-seeding...`);
       await seedLessons();
-      log("✅ Auto-seeding completed! 68 lessons loaded.");
+      
+      // Verify seeding worked
+      const newLessonResult = await db.select({ count: count() }).from(lessons);
+      const newQuestionResult = await db.select({ count: count() }).from(lessonQuestions);
+      log(`✅ Auto-seeding completed! ${newLessonResult[0]?.count} lessons, ${newQuestionResult[0]?.count} questions loaded.`);
     } else {
-      log(`✅ Database ready with ${lessonCount} lessons`);
+      log(`✅ Database ready with ${lessonCount} lessons and ${questionCount} questions`);
     }
   } catch (error) {
     console.error("⚠️ Error checking/seeding lessons:", error);
