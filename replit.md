@@ -23,7 +23,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
 -   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain with multiple question types, difficulty levels, and progress indicators. Includes practical word problems for real-world application.
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams.
--   **Expanded Question Pool:** 233 quiz questions and 185+ exam questions across all 8 NCEES domains with varied difficulty levels, covering a wide range of surveying topics. Implements a multi-variation question system to prevent memorization.
+-   **Expanded Question Pool:** 1,680+ lesson questions generated from 340 question archetypes (5 per lesson × 68 lessons × 5 variations = 1,700 theoretical max). Uses archetype-based variation system with seeded random number generation for deterministic, reproducible question variations. Prevents memorization through computational parameter variations and curated alternative phrasings.
 -   **Getting Started & Study Strategy Page:** Comprehensive onboarding for new users, offering a quick start guide, study tool overview, detailed study strategy comparisons, and success tips. Also includes Feedback, Testimonials, Privacy Policy, and Disclaimer pages.
 -   **Reference Manual Companion:** All 68 lessons are mapped to the Surveyor Reference Manual (SRM) 7th Edition chapters for comprehensive cross-referencing.
 
@@ -46,6 +46,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Custom Plan Builder Implementation: Database stores `customDomainPriorities` and `customTimeline` in user preferences; UI is a modal component with state management; backend endpoint saves custom plan data.
 -   Progress tracking includes `domainProgressSnapshots` table and an API for domain mastery.
 -   Question pool randomization system utilizes `variationGroup` and `variationNumber` fields, tracking `seenQuestionVariations` to prioritize unseen variations.
+-   **Question Archetype System:** Template-based question generation in `shared/questionArchetypes.ts`. Uses `FillInBlankArchetype` (computational with paramRanges), `MultipleChoiceArchetype` (5 curated question variants), and `ConceptualFillInBlankArchetype` patterns. Seeded RNG (mulberry32) ensures deterministic variations. Archetype IDs follow pattern: `d{domain}-lesson-{order:02}-q{num:02}-v{variation}`.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

@@ -4356,7 +4356,3129 @@ export const d4_lesson07_archetypes: QuestionArchetype[] = [
       "A sounding is a measured water depth"
     ],
     points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Tidal benchmarks are used for:",
+      "The purpose of tidal benchmarks is to:",
+      "Tidal benchmarks establish:",
+      "Why are tidal benchmarks important in hydrographic surveying?",
+      "Tidal benchmarks provide:"
+    ],
+    optionSets: [
+      ["Measuring land elevation", "Establishing vertical datum for water levels", "Setting property corners", "Determining horizontal position"],
+      ["Horizontal control", "Vertical reference for tidal measurements", "Property surveys", "GPS calibration"],
+      ["Land boundaries", "A consistent reference for water level measurements", "Topographic contours", "Building setbacks"],
+      ["They define horizontal control", "They establish a vertical reference for depth measurements", "They mark property corners", "They indicate magnetic north"],
+      ["Horizontal positions", "Consistent vertical reference for tidal data", "Bearing references", "Distance measurements"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Tidal benchmarks establish vertical datum for water level measurements",
+      "Tidal benchmarks provide vertical reference for tidal measurements",
+      "Tidal benchmarks establish a consistent reference for water level measurements",
+      "Tidal benchmarks establish a vertical reference for depth measurements",
+      "Tidal benchmarks provide consistent vertical reference for tidal data"
+    ],
+    points: 10
   }
+];
+
+// ============================================================================
+// DOMAIN 5: SURVEY COMPUTATIONS AND COMPUTER APPLICATIONS - QUESTION ARCHETYPES
+// ============================================================================
+
+// Lesson 1: Coordinate Computations: Bearings and Azimuths
+export const d5_lesson01_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "Convert bearing N {angle}° E to azimuth: ___ degrees",
+    paramRanges: { angle: [15, 30, 45, 60, 75] },
+    computeAnswer: (p) => String(p.angle),
+    computeExplanation: (p, ans) => `N ${p.angle}° E = azimuth of ${ans}° (measured clockwise from north, same as the bearing angle in NE quadrant)`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is the azimuth of due east?",
+      "Due east corresponds to what azimuth?",
+      "An azimuth of 90° points:",
+      "Which direction has an azimuth of 90°?",
+      "The azimuth for east is:"
+    ],
+    optionSets: [
+      ["0°", "90°", "180°", "270°"],
+      ["North", "East", "South", "West"],
+      ["North", "East", "South", "West"],
+      ["Due North", "Due East", "Due South", "Due West"],
+      ["45°", "90°", "135°", "180°"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Due east has an azimuth of 90° measured clockwise from north",
+      "East corresponds to an azimuth of 90°",
+      "An azimuth of 90° points due east",
+      "Due East has an azimuth of 90°",
+      "The azimuth for east is 90°"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Convert bearing S {angle}° W to azimuth: ___ degrees",
+    paramRanges: { angle: [20, 30, 45, 55, 70] },
+    computeAnswer: (p) => String(180 + p.angle),
+    computeExplanation: (p, ans) => `S ${p.angle}° W = 180° + ${p.angle}° = ${ans}° azimuth (SW quadrant adds angle to 180°)`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A bearing of S 45° E converts to what azimuth?",
+      "What is the azimuth equivalent of S 30° E?",
+      "Convert bearing S 60° E to azimuth:",
+      "The azimuth for S 15° E is:",
+      "S 75° E equals what azimuth?"
+    ],
+    optionSets: [
+      ["45°", "135°", "225°", "315°"],
+      ["30°", "120°", "150°", "210°"],
+      ["60°", "120°", "150°", "240°"],
+      ["15°", "105°", "165°", "195°"],
+      ["75°", "105°", "165°", "285°"]
+    ],
+    correctAnswers: ["1", "2", "1", "2", "1"],
+    explanationVariants: [
+      "S 45° E = 180° - 45° = 135° azimuth",
+      "S 30° E = 180° - 30° = 150° azimuth",
+      "S 60° E = 180° - 60° = 120° azimuth",
+      "S 15° E = 180° - 15° = 165° azimuth",
+      "S 75° E = 180° - 75° = 105° azimuth"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Convert azimuth {az}° to bearing quadrant angle: ___ degrees (just the angle, not full bearing)",
+    paramRanges: { az: [225, 250, 280, 310, 340] },
+    computeAnswer: (p) => {
+      if (p.az <= 270) return String(p.az - 180);
+      return String(360 - p.az);
+    },
+    computeExplanation: (p, ans) => {
+      if (p.az <= 270) return `Azimuth ${p.az}° is in SW quadrant: ${p.az}° - 180° = ${ans}° (bearing S ${ans}° W)`;
+      return `Azimuth ${p.az}° is in NW quadrant: 360° - ${p.az}° = ${ans}° (bearing N ${ans}° W)`;
+    },
+    points: 10
+  }
+];
+
+// Lesson 2: Traverse Computations: Latitudes and Departures
+export const d5_lesson02_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "A line with distance {dist} ft and azimuth 0° has latitude = ___ ft (north is positive)",
+    paramRanges: { dist: [100, 150, 200, 250, 300] },
+    computeAnswer: (p) => String(p.dist),
+    computeExplanation: (p, ans) => `Latitude = distance × cos(azimuth) = ${p.dist} × cos(0°) = ${p.dist} × 1 = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Latitude in traverse computations represents:",
+      "The north-south component of a traverse line is called:",
+      "Which formula calculates latitude?",
+      "A positive latitude indicates movement:",
+      "Latitude uses which trigonometric function?"
+    ],
+    optionSets: [
+      ["East-west distance", "North-south distance", "Total distance", "Horizontal angle"],
+      ["Departure", "Latitude", "Bearing", "Azimuth"],
+      ["Distance × sin(azimuth)", "Distance × cos(azimuth)", "Distance × tan(azimuth)", "Distance / sin(azimuth)"],
+      ["East", "West", "North", "South"],
+      ["Sine", "Cosine", "Tangent", "Cotangent"]
+    ],
+    correctAnswers: ["1", "1", "1", "2", "1"],
+    explanationVariants: [
+      "Latitude is the north-south component of a traverse line",
+      "The north-south component is called latitude",
+      "Latitude = Distance × cos(azimuth)",
+      "Positive latitude indicates northward movement",
+      "Latitude = Distance × cosine(azimuth)"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A line with distance {dist} ft and azimuth 90° has departure = ___ ft",
+    paramRanges: { dist: [100, 125, 150, 175, 200] },
+    computeAnswer: (p) => String(p.dist),
+    computeExplanation: (p, ans) => `Departure = distance × sin(azimuth) = ${p.dist} × sin(90°) = ${p.dist} × 1 = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Departure in traverse computations represents:",
+      "The east-west component of a traverse line is called:",
+      "Which formula calculates departure?",
+      "A negative departure indicates movement:",
+      "Departure uses which trigonometric function?"
+    ],
+    optionSets: [
+      ["North-south distance", "East-west distance", "Slope distance", "Vertical distance"],
+      ["Latitude", "Departure", "Azimuth", "Bearing"],
+      ["Distance × cos(azimuth)", "Distance × sin(azimuth)", "Distance × tan(azimuth)", "Distance / cos(azimuth)"],
+      ["North", "South", "East", "West"],
+      ["Cosine", "Sine", "Tangent", "Secant"]
+    ],
+    correctAnswers: ["1", "1", "1", "3", "1"],
+    explanationVariants: [
+      "Departure is the east-west component of a traverse line",
+      "The east-west component is called departure",
+      "Departure = Distance × sin(azimuth)",
+      "Negative departure indicates westward movement",
+      "Departure = Distance × sine(azimuth)"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "For azimuth 45° and distance {dist} ft, latitude = ___ ft (round to 1 decimal)",
+    paramRanges: { dist: [100, 141, 200, 282] },
+    computeAnswer: (p) => (p.dist * Math.cos(45 * Math.PI / 180)).toFixed(1),
+    computeExplanation: (p, ans) => `Latitude = ${p.dist} × cos(45°) = ${p.dist} × 0.7071 = ${ans} ft`,
+    points: 10
+  }
+];
+
+// Lesson 3: Traverse Closure and Adjustment
+export const d5_lesson03_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "If sum of latitudes = {lat} and sum of departures = {dep}, the linear error of closure = ___ ft (round to 2 decimals)",
+    paramRanges: { lat: [0.3, 0.4, 0.5, 0.6], dep: [0.4, 0.3, 0.5, 0.8] },
+    computeAnswer: (p) => Math.sqrt(p.lat * p.lat + p.dep * p.dep).toFixed(2),
+    computeExplanation: (p, ans) => `Linear error = √(ΣLat² + ΣDep²) = √(${p.lat}² + ${p.dep}²) = √(${(p.lat*p.lat).toFixed(2)} + ${(p.dep*p.dep).toFixed(2)}) = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "For a closed traverse, the sum of latitudes should equal:",
+      "In a properly closed traverse, the sum of departures should be:",
+      "Error of closure is calculated using:",
+      "A traverse with 1:10,000 precision has error of:",
+      "The Compass Rule adjustment distributes error proportional to:"
+    ],
+    optionSets: [
+      ["The total distance", "Zero", "The perimeter", "The largest latitude"],
+      ["The total distance", "The perimeter", "Zero", "Positive"],
+      ["Sum of distances", "Pythagorean theorem on lat/dep errors", "Average of angles", "Sum of angles"],
+      ["1 ft per 10,000 ft", "10 ft per 1,000 ft", "0.1 ft per 100 ft", "10,000 ft per 1 ft"],
+      ["Angle size", "Line length", "Number of sides", "Azimuth value"]
+    ],
+    correctAnswers: ["1", "2", "1", "0", "1"],
+    explanationVariants: [
+      "In a closed traverse, sum of latitudes = 0 (north equals south)",
+      "In a closed traverse, sum of departures = 0 (east equals west)",
+      "Error of closure = √(ΣLatitude² + ΣDeparture²)",
+      "1:10,000 precision means 1 ft error per 10,000 ft of traverse",
+      "Compass Rule distributes error proportionally to line length"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Traverse perimeter = {perim} ft, error of closure = {error} ft. Precision ratio = 1:___",
+    paramRanges: { perim: [2000, 2500, 3000, 4000, 5000], error: [0.2, 0.25, 0.3, 0.4, 0.5] },
+    computeAnswer: (p) => String(Math.round(p.perim / p.error)),
+    computeExplanation: (p, ans) => `Precision = 1:(perimeter/error) = 1:(${p.perim}/${p.error}) = 1:${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The Transit Rule adjusts coordinates based on:",
+      "Which adjustment method weights by latitude for latitude corrections?",
+      "The Compass Rule is also known as:",
+      "For most land surveys, which precision is considered acceptable?",
+      "After adjustment, a closed traverse should have:"
+    ],
+    optionSets: [
+      ["Line length only", "Latitude and departure magnitudes", "Angle values", "Distance only"],
+      ["Compass Rule", "Transit Rule", "Crandall Method", "Least Squares"],
+      ["Bowditch Rule", "Transit Rule", "Crandall Rule", "Least Squares"],
+      ["1:500", "1:5,000", "1:100", "1:50"],
+      ["Positive error", "Negative error", "Zero closure error", "Maximum error"]
+    ],
+    correctAnswers: ["1", "1", "0", "1", "2"],
+    explanationVariants: [
+      "Transit Rule adjusts based on latitude/departure magnitudes",
+      "Transit Rule uses latitude magnitude for latitude corrections",
+      "Compass Rule is also called the Bowditch Rule",
+      "1:5,000 or better is typical for boundary surveys",
+      "After adjustment, a closed traverse has zero closure error"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Using Compass Rule: line length = {len} ft, perimeter = {perim} ft, lat error = {err} ft. Latitude correction = ___ ft (round to 3 decimals)",
+    paramRanges: { len: [200, 300, 400, 500], perim: [2000, 2000, 2000, 2000], err: [0.4, 0.5, 0.6, 0.8] },
+    computeAnswer: (p) => (p.len / p.perim * p.err).toFixed(3),
+    computeExplanation: (p, ans) => `Compass Rule correction = (line length / perimeter) × error = (${p.len}/${p.perim}) × ${p.err} = ${ans} ft`,
+    points: 10
+  }
+];
+
+// Lesson 4: Coordinate Inverse Calculations
+export const d5_lesson04_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "Points at (0, 0) and ({x}, 0). Distance = ___ ft",
+    paramRanges: { x: [100, 150, 200, 250, 300] },
+    computeAnswer: (p) => String(p.x),
+    computeExplanation: (p, ans) => `Distance = √[(${p.x}-0)² + (0-0)²] = √[${p.x}²] = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The inverse calculation determines:",
+      "Given coordinates of two points, inverse finds:",
+      "Inverse computations solve for:",
+      "From known coordinates, inverse calculation gives:",
+      "The inverse problem in surveying finds:"
+    ],
+    optionSets: [
+      ["Coordinates from distance/bearing", "Distance and direction from coordinates", "Angles only", "Elevations only"],
+      ["New coordinates", "Distance and bearing between points", "Latitude only", "Departure only"],
+      ["Coordinates of new points", "Distance and azimuth from coordinates", "Area only", "Perimeter only"],
+      ["Distance and direction", "New point locations", "Traverse adjustment", "Error of closure"],
+      ["Distance and azimuth between two points", "New traverse stations", "Adjusted coordinates", "Angular misclosure"]
+    ],
+    correctAnswers: ["1", "1", "1", "0", "0"],
+    explanationVariants: [
+      "Inverse calculation finds distance and direction from coordinates",
+      "Inverse finds distance and bearing between two known points",
+      "Inverse computations solve for distance and azimuth",
+      "From coordinates, inverse gives distance and direction",
+      "Inverse problem finds distance and azimuth between points"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Point A (1000, 1000), Point B (1000, 1{dy}00). Azimuth from A to B = ___ degrees",
+    paramRanges: { dy: [1, 2, 3, 4, 5] },
+    computeAnswer: (p) => "0",
+    computeExplanation: (p, ans) => `ΔX = 0, ΔY > 0 (due north). Azimuth = ${ans}° (or 360°)`,
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Point A ({x1}, {y1}), Point B ({x2}, {y2}). Distance = ___ ft (round to 1 decimal)",
+    paramRanges: { x1: [1000, 1000, 1000, 1000], y1: [1000, 1000, 1000, 1000], x2: [1030, 1040, 1060, 1080], y2: [1040, 1030, 1080, 1060] },
+    computeAnswer: (p) => Math.sqrt(Math.pow(p.x2 - p.x1, 2) + Math.pow(p.y2 - p.y1, 2)).toFixed(1),
+    computeExplanation: (p, ans) => `Distance = √[(${p.x2}-${p.x1})² + (${p.y2}-${p.y1})²] = √[${p.x2-p.x1}² + ${p.y2-p.y1}²] = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The formula for azimuth from coordinates uses:",
+      "To find bearing from ΔX and ΔY:",
+      "If ΔX = 100 and ΔY = 100, the azimuth is:",
+      "When ΔX is positive and ΔY is negative, the azimuth is in:",
+      "arctan(ΔX/ΔY) gives the azimuth when:"
+    ],
+    optionSets: [
+      ["arctan(ΔY/ΔX)", "arctan(ΔX/ΔY)", "arcsin(ΔX/distance)", "arccos(ΔY/distance)"],
+      ["arctan(ΔY/ΔX)", "arctan(ΔX/ΔY)", "ΔX + ΔY", "ΔX × ΔY"],
+      ["0°", "45°", "90°", "135°"],
+      ["NE quadrant (0-90°)", "SE quadrant (90-180°)", "SW quadrant (180-270°)", "NW quadrant (270-360°)"],
+      ["Point is in NE quadrant", "Point is in any quadrant", "Point is due east", "Point is due north"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "0"],
+    explanationVariants: [
+      "Azimuth = arctan(ΔX/ΔY), with quadrant adjustments",
+      "Bearing angle = arctan(ΔX/ΔY)",
+      "arctan(100/100) = arctan(1) = 45°",
+      "Positive ΔX (east) and negative ΔY (south) = SE quadrant",
+      "arctan(ΔX/ΔY) gives correct azimuth directly in NE quadrant"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 5: Area Calculations by Coordinates
+export const d5_lesson05_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "Triangle with vertices (0,0), ({x},0), (0,{y}). Area = ___ sq ft",
+    paramRanges: { x: [100, 120, 150, 200], y: [80, 100, 120, 150] },
+    computeAnswer: (p) => String(p.x * p.y / 2),
+    computeExplanation: (p, ans) => `Using coordinate formula or base×height/2: Area = ${p.x} × ${p.y} / 2 = ${ans} sq ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The coordinate method for area uses:",
+      "The formula 0.5 × |Σ(Xi(Yi+1 - Yi-1))| is called:",
+      "Double meridian distance (DMD) method calculates:",
+      "Area by coordinates works for:",
+      "The cross-multiplication method multiplies:"
+    ],
+    optionSets: [
+      ["Distances only", "Coordinates of vertices", "Angles only", "Elevations"],
+      ["Pythagorean theorem", "Coordinate area formula", "Distance formula", "Bearing formula"],
+      ["Distance", "Azimuth", "Area", "Angle"],
+      ["Only triangles", "Only rectangles", "Any closed polygon", "Only regular shapes"],
+      ["X of one point by Y of next point", "Adjacent X coordinates", "Adjacent Y coordinates", "Distances"]
+    ],
+    correctAnswers: ["1", "1", "2", "2", "0"],
+    explanationVariants: [
+      "Coordinate method uses X,Y coordinates of all vertices",
+      "This is the coordinate area formula (shoelace formula)",
+      "DMD method calculates area from departures",
+      "Coordinate area method works for any closed polygon",
+      "Cross-multiply Xi by Yi+1 and Xi+1 by Yi"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Rectangle vertices: (0,0), ({x},0), ({x},{y}), (0,{y}). Area = ___ sq ft",
+    paramRanges: { x: [100, 150, 200, 250], y: [50, 75, 100, 125] },
+    computeAnswer: (p) => String(p.x * p.y),
+    computeExplanation: (p, ans) => `Rectangle area = length × width = ${p.x} × ${p.y} = ${ans} sq ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "To convert square feet to acres, divide by:",
+      "One acre equals how many square feet?",
+      "43,560 sq ft equals:",
+      "A parcel of 87,120 sq ft is how many acres?",
+      "To convert acres to square feet, multiply by:"
+    ],
+    optionSets: [
+      ["4,356", "43,560", "435,600", "4,000"],
+      ["4,356", "10,000", "43,560", "40,000"],
+      ["0.5 acres", "1 acre", "2 acres", "10 acres"],
+      ["0.5 acres", "1 acre", "2 acres", "3 acres"],
+      ["4,356", "10,000", "43,560", "100,000"]
+    ],
+    correctAnswers: ["1", "2", "1", "2", "2"],
+    explanationVariants: [
+      "1 acre = 43,560 sq ft, so divide by 43,560",
+      "One acre = 43,560 square feet",
+      "43,560 sq ft = 1 acre",
+      "87,120 / 43,560 = 2 acres",
+      "Multiply acres by 43,560 to get square feet"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A parcel measures {sqft} square feet. Convert to acres: ___ acres (round to 2 decimals)",
+    paramRanges: { sqft: [21780, 43560, 65340, 87120, 108900] },
+    computeAnswer: (p) => (p.sqft / 43560).toFixed(2),
+    computeExplanation: (p, ans) => `Acres = ${p.sqft} sq ft / 43,560 sq ft/acre = ${ans} acres`,
+    points: 10
+  }
+];
+
+// Lesson 6: Intersection and Resection Problems
+export const d5_lesson06_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Intersection uses observations from:",
+      "In intersection problems, the unknown point is located by:",
+      "The minimum number of known points for intersection is:",
+      "Intersection is commonly used when:",
+      "Which measurements are needed for intersection?"
+    ],
+    optionSets: [
+      ["Unknown point to known points", "Known points to unknown point", "Two unknown points", "GPS only"],
+      ["Measuring distances", "Measuring angles from known stations", "Measuring elevations", "Measuring only one angle"],
+      ["One", "Two", "Three", "Four"],
+      ["The unknown point is inaccessible", "All points are accessible", "No instruments available", "Only GPS is available"],
+      ["Distances from unknown point", "Angles/bearings from known points", "Elevations only", "Time measurements"]
+    ],
+    correctAnswers: ["1", "1", "1", "0", "1"],
+    explanationVariants: [
+      "Intersection observes from known points toward unknown point",
+      "Intersection locates point by angles measured from known stations",
+      "Minimum two known points needed for intersection",
+      "Intersection is used when the unknown point cannot be occupied",
+      "Intersection uses angles or bearings from known points"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Resection uses observations from:",
+      "In resection, the surveyor occupies:",
+      "The minimum number of known points for resection is:",
+      "Resection determines:",
+      "The three-point resection problem is solved using:"
+    ],
+    optionSets: [
+      ["Known points toward unknown", "Unknown point toward known points", "Two unknown points", "Aerial photos only"],
+      ["A known control point", "The unknown point to be located", "Multiple unknown points", "No point"],
+      ["One", "Two", "Three", "Five"],
+      ["Angles between known points", "Position of the occupied station", "Distance to unknown point", "Elevation only"],
+      ["Distance measurements only", "Angles to three or more known points", "GPS coordinates", "Magnetic compass"]
+    ],
+    correctAnswers: ["1", "1", "2", "1", "1"],
+    explanationVariants: [
+      "Resection observes from unknown point to known points",
+      "In resection, the surveyor occupies the unknown point",
+      "Minimum three known points for resection (or two with distance)",
+      "Resection determines position of the occupied station",
+      "Three-point resection uses angles to three known points"
+    ],
+    points: 10
+  },
+  {
+    type: 'conceptual_fill_in_blank',
+    questionVariants: [
+      "The 'danger circle' in three-point resection occurs when all ___ points lie on a circle.",
+      "In resection, if all points lie on a circle passing through the unknown point, the solution is ___.",
+      "To avoid the danger circle, ensure the unknown point is not ___ the circle through the known points.",
+      "The danger circle problem means the resection has ___ solutions.",
+      "Strong resection geometry avoids the ___ circle condition."
+    ],
+    answerVariants: ["four", "indeterminate", "on", "infinite", "danger"],
+    explanationVariants: [
+      "Danger circle occurs when all four points (3 known + 1 unknown) are concyclic",
+      "When on the danger circle, the resection solution is indeterminate",
+      "Avoid having the unknown point on the circle through known points",
+      "Danger circle creates infinite possible solutions",
+      "Avoid the danger circle for a unique solution"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Bearing-bearing intersection requires:",
+      "Distance-distance intersection is called:",
+      "Angle-distance intersection combines:",
+      "For intersection, better geometry occurs when:",
+      "Weak intersection geometry occurs when:"
+    ],
+    optionSets: [
+      ["Two distances", "Two bearings from different points", "One distance and one angle", "GPS positions"],
+      ["Triangulation", "Trilateration", "Resection", "Traverse"],
+      ["Angle from one point, distance from another", "Two angles only", "Two distances only", "GPS only"],
+      ["Lines intersect at 90°", "Lines are nearly parallel", "Points are close together", "Only one known point"],
+      ["Intersection angle is near 90°", "Intersection angle is very small", "Points are far apart", "Using GPS"]
+    ],
+    correctAnswers: ["1", "1", "0", "0", "1"],
+    explanationVariants: [
+      "Bearing-bearing intersection uses bearings from two known points",
+      "Distance-distance intersection is called trilateration",
+      "Angle-distance uses angle from one point and distance from another",
+      "Best geometry when lines intersect near 90°",
+      "Weak geometry when intersection angle is very small"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Combined intersection uses:",
+      "The strength of a resection solution depends on:",
+      "A four-point resection provides:",
+      "In GPS surveying, resection is similar to:",
+      "Modern total stations can perform resection using:"
+    ],
+    optionSets: [
+      ["Only angles", "Only distances", "Both angles and distances", "Only coordinates"],
+      ["Number of decimal places", "Geometry of control points", "Brand of instrument", "Time of day"],
+      ["Redundancy and error checking", "Less accuracy", "No solution", "Only one angle"],
+      ["Triangulation", "Trilateration from satellites", "Compass surveying", "Chain surveying"],
+      ["Manual calculations only", "Built-in software and multiple targets", "Paper and pencil", "External computer"]
+    ],
+    correctAnswers: ["2", "1", "0", "1", "1"],
+    explanationVariants: [
+      "Combined intersection uses both angles and distances",
+      "Resection strength depends on geometry of control points",
+      "Four-point resection provides redundancy for error checking",
+      "GPS resection is similar to trilateration from satellites",
+      "Modern total stations have built-in resection software"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 7: Horizontal Curve Calculations and Stakeout
+export const d5_lesson07_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "Curve with radius {r} ft and central angle 90°. Arc length = ___ ft (round to 1 decimal, use π=3.1416)",
+    paramRanges: { r: [200, 300, 400, 500] },
+    computeAnswer: (p) => (p.r * 90 * 3.1416 / 180).toFixed(1),
+    computeExplanation: (p, ans) => `Arc length L = R × Δ (radians) = ${p.r} × (90° × π/180°) = ${p.r} × 1.5708 = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The degree of curve (D) is defined as:",
+      "In highway curves, a sharper curve has:",
+      "The point where a tangent meets a curve is called:",
+      "PC stands for:",
+      "PT stands for:"
+    ],
+    optionSets: [
+      ["Angle subtended by 100 ft arc", "Total curve length", "Curve radius", "Tangent length"],
+      ["Smaller degree of curve", "Larger degree of curve", "Longer radius", "No relationship"],
+      ["Point of Intersection", "Point of Curvature", "Point of Tangent", "Curve midpoint"],
+      ["Point of Curvature", "Point of Curve", "Principal Corner", "Precise Control"],
+      ["Point of Tangent", "Principal Target", "Precise Turning", "Point Terminal"]
+    ],
+    correctAnswers: ["0", "1", "1", "0", "0"],
+    explanationVariants: [
+      "Degree of curve is the central angle subtended by 100 ft arc",
+      "Sharper curves have larger degree of curve (smaller radius)",
+      "Point of Curvature (PC) is where tangent meets curve",
+      "PC = Point of Curvature (beginning of curve)",
+      "PT = Point of Tangent (end of curve)"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Tangent length T for radius {r} ft and central angle 60°: T = ___ ft (round to 1 decimal)",
+    paramRanges: { r: [300, 400, 500, 600] },
+    computeAnswer: (p) => (p.r * Math.tan(30 * Math.PI / 180)).toFixed(1),
+    computeExplanation: (p, ans) => `T = R × tan(Δ/2) = ${p.r} × tan(30°) = ${p.r} × 0.5774 = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The external distance (E) is measured from:",
+      "The middle ordinate (M) is measured from:",
+      "The chord length formula for a circular curve is:",
+      "For curve stakeout, deflection angles are measured from:",
+      "The formula D = 5729.58/R relates:"
+    ],
+    optionSets: [
+      ["PC to PT", "PI to curve midpoint", "Chord to curve", "Tangent to tangent"],
+      ["PI to curve", "Chord midpoint to curve midpoint", "PC to PI", "PT to tangent"],
+      ["C = 2R × sin(Δ/2)", "C = R × Δ", "C = 2πR", "C = R × tan(Δ)"],
+      ["The PT", "The PI", "The tangent at PC", "The chord"],
+      ["Degree of curve and radius", "Arc and chord", "Tangent and radius", "External and middle ordinate"]
+    ],
+    correctAnswers: ["1", "1", "0", "2", "0"],
+    explanationVariants: [
+      "External distance E is from PI to curve midpoint",
+      "Middle ordinate M is from chord midpoint to curve midpoint",
+      "Long chord C = 2R × sin(Δ/2)",
+      "Deflection angles are measured from tangent at PC",
+      "D = 5729.58/R relates degree of curve to radius"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "For radius R = {r} ft, degree of curve D = ___ degrees (round to 2 decimals, use 5729.58/R)",
+    paramRanges: { r: [286, 382, 573, 1146] },
+    computeAnswer: (p) => (5729.58 / p.r).toFixed(2),
+    computeExplanation: (p, ans) => `D = 5729.58 / R = 5729.58 / ${p.r} = ${ans}°`,
+    points: 10
+  }
+];
+
+// Lesson 8: Vertical Curves and Grade Changes
+export const d5_lesson08_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "Grade in = +{g1}%, grade out = -{g2}%. Algebraic difference A = ___% ",
+    paramRanges: { g1: [2, 3, 4, 5], g2: [2, 3, 4, 5] },
+    computeAnswer: (p) => String(p.g1 + p.g2),
+    computeExplanation: (p, ans) => `A = |g2 - g1| = |-${p.g2} - (+${p.g1})| = |-${p.g2 + p.g1}| = ${ans}%`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A crest vertical curve occurs when:",
+      "A sag vertical curve occurs when:",
+      "The PVI on a vertical curve is the:",
+      "Vertical curve length is measured:",
+      "The K value for vertical curves represents:"
+    ],
+    optionSets: [
+      ["Upgrade meets downgrade", "Downgrade meets upgrade", "Two upgrades meet", "Two downgrades meet"],
+      ["Upgrade meets downgrade", "Downgrade meets upgrade", "Road is flat", "Only on hills"],
+      ["Beginning of curve", "End of curve", "Point of Vertical Intersection", "Lowest point"],
+      ["Along the curve arc", "Horizontally", "Vertically", "Along the slope"],
+      ["Curve sharpness", "Horizontal feet per 1% grade change", "Vertical rise", "Tangent length"]
+    ],
+    correctAnswers: ["0", "1", "2", "1", "1"],
+    explanationVariants: [
+      "Crest curve: upgrade meets downgrade (convex up)",
+      "Sag curve: downgrade meets upgrade (concave up)",
+      "PVI = Point of Vertical Intersection of tangent grades",
+      "Vertical curve length is measured horizontally",
+      "K = horizontal distance per 1% change in grade"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Vertical curve length L = {l} ft, A = {a}%. K value = ___ (round to nearest whole number)",
+    paramRanges: { l: [200, 300, 400, 500, 600], a: [4, 5, 6, 8, 10] },
+    computeAnswer: (p) => String(Math.round(p.l / p.a)),
+    computeExplanation: (p, ans) => `K = L / A = ${p.l} / ${p.a} = ${ans} ft per 1% grade change`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Stopping sight distance controls design of:",
+      "Headlight sight distance is critical for:",
+      "The minimum K value for crest curves depends on:",
+      "For sag curves, design is often controlled by:",
+      "Higher design speed requires:"
+    ],
+    optionSets: [
+      ["Sag curves", "Crest curves", "Horizontal curves", "Tangent sections"],
+      ["Crest curves", "Sag curves at night", "Horizontal alignment", "Superelevation"],
+      ["Pavement type", "Design speed and sight distance", "Weather only", "Traffic volume only"],
+      ["Drainage and headlights", "Sight distance over hill", "Sun angle", "Wind load"],
+      ["Shorter vertical curves", "Longer vertical curves", "Steeper grades", "No change"]
+    ],
+    correctAnswers: ["1", "1", "1", "0", "1"],
+    explanationVariants: [
+      "Stopping sight distance controls crest curve design",
+      "Headlight sight distance is critical for sag curves at night",
+      "Minimum K depends on design speed and required sight distance",
+      "Sag curves designed for drainage and headlight illumination",
+      "Higher speeds require longer (larger K) vertical curves"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "At station {sta}+00 (PVC), elevation = {elev} ft, g1 = +{g}%. Elevation at {sta}+50 on tangent = ___ ft (round to 1 decimal)",
+    paramRanges: { sta: [10, 15, 20, 25], elev: [100, 150, 200, 250], g: [2, 3, 4, 5] },
+    computeAnswer: (p) => (p.elev + 50 * p.g / 100).toFixed(1),
+    computeExplanation: (p, ans) => `Tangent elevation = PVC elev + (distance × grade) = ${p.elev} + (50 × ${p.g}/100) = ${p.elev} + ${50 * p.g / 100} = ${ans} ft`,
+    points: 10
+  }
+];
+
+// Lesson 9: Earthwork Volume Calculations
+export const d5_lesson09_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "Average end area: A1 = {a1} sq ft, A2 = {a2} sq ft, length = {l} ft. Volume = ___ cubic yards (round to nearest whole, divide cu ft by 27)",
+    paramRanges: { a1: [100, 150, 200, 250], a2: [120, 180, 220, 280], l: [50, 100, 100, 100] },
+    computeAnswer: (p) => String(Math.round((p.a1 + p.a2) / 2 * p.l / 27)),
+    computeExplanation: (p, ans) => `V = [(A1 + A2)/2] × L = [(${p.a1} + ${p.a2})/2] × ${p.l} = ${(p.a1 + p.a2) / 2 * p.l} cu ft / 27 = ${ans} cu yd`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The average end area method assumes:",
+      "Prismoidal formula is more accurate when:",
+      "Cut refers to:",
+      "Fill refers to:",
+      "A mass diagram shows:"
+    ],
+    optionSets: [
+      ["Cross sections vary linearly", "Cross sections are identical", "Only triangular areas", "Circular cross sections"],
+      ["End areas are equal", "End areas are very different", "Only for fill", "Only for cut"],
+      ["Adding material", "Removing material", "Level ground", "Water drainage"],
+      ["Removing material", "Adding material to raise grade", "Excavation", "Rock removal"],
+      ["Cross section shapes", "Cumulative cut and fill volumes", "Slope angles", "Road profile only"]
+    ],
+    correctAnswers: ["0", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Average end area assumes linear variation between sections",
+      "Prismoidal formula is more accurate when end areas differ significantly",
+      "Cut = excavation (removing material)",
+      "Fill = embankment (adding material to raise grade)",
+      "Mass diagram shows cumulative earthwork volumes along the project"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Cross section area: base = {b} ft, height = {h} ft, side slopes 2:1. Area = ___ sq ft (use trapezoidal approximation: A = h(b + 2h))",
+    paramRanges: { b: [20, 24, 28, 32], h: [4, 5, 6, 8] },
+    computeAnswer: (p) => String(p.h * (p.b + 2 * p.h)),
+    computeExplanation: (p, ans) => `Area = h(b + 2h) = ${p.h}(${p.b} + 2×${p.h}) = ${p.h}(${p.b + 2*p.h}) = ${ans} sq ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Shrinkage factor accounts for:",
+      "Swell factor applies to:",
+      "A shrinkage factor of 0.9 means:",
+      "Borrow pit volumes are measured:",
+      "Bank cubic yards refer to:"
+    ],
+    optionSets: [
+      ["Material expanding after excavation", "Compacted fill being denser than natural soil", "Wet soil conditions", "Rocky material"],
+      ["Compacted material", "Excavated loose material", "Water content", "Frozen ground"],
+      ["10% volume loss after compaction", "10% volume gain", "90% is rock", "90% is water"],
+      ["After compaction", "In-place before excavation", "Only when dry", "At night"],
+      ["Compacted volume", "Loose volume", "Volume in natural state", "Volume after swell"]
+    ],
+    correctAnswers: ["1", "1", "0", "1", "2"],
+    explanationVariants: [
+      "Shrinkage: compacted fill is denser than original excavated material",
+      "Swell factor applies to excavated loose material (it expands)",
+      "0.9 shrinkage means 10% volume reduction after compaction",
+      "Borrow quantities measured in-place before excavation",
+      "Bank cubic yards = volume in natural undisturbed state"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Need {fill} cu yd compacted fill. Shrinkage = 15%. Bank volume required = ___ cu yd (round to nearest whole)",
+    paramRanges: { fill: [1000, 1500, 2000, 2500] },
+    computeAnswer: (p) => String(Math.round(p.fill / 0.85)),
+    computeExplanation: (p, ans) => `Bank volume = compacted / (1 - shrinkage) = ${p.fill} / 0.85 = ${ans} cu yd`,
+    points: 10
+  }
+];
+
+// Lesson 10: COGO and Missing Data Problems
+export const d5_lesson10_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "COGO stands for:",
+      "Coordinate Geometry is used for:",
+      "A missing data problem typically involves:",
+      "COGO software can calculate:",
+      "The inverse function in COGO determines:"
+    ],
+    optionSets: [
+      ["Computer Geometry Operations", "Coordinate Geometry", "Control Ground Operations", "Computed Ground Orientation"],
+      ["Only GPS processing", "Survey calculations using coordinates", "Photo editing", "Map coloring"],
+      ["Finding unknown distances or directions", "Satellite positioning", "Weather prediction", "Traffic analysis"],
+      ["Intersections, inverses, and traverses", "Only horizontal distances", "Only elevations", "Only angles"],
+      ["New coordinates", "Distance and bearing from coordinates", "Area only", "Volume only"]
+    ],
+    correctAnswers: ["1", "1", "0", "0", "1"],
+    explanationVariants: [
+      "COGO = Coordinate Geometry",
+      "COGO is used for survey calculations using coordinates",
+      "Missing data problems find unknown distances or directions",
+      "COGO calculates intersections, inverses, traverses, and more",
+      "Inverse function finds distance and bearing from coordinates"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "To solve a missing side in a traverse:",
+      "The bearing-bearing intersection finds:",
+      "Distance-distance intersection requires:",
+      "A closed traverse with one missing line can be solved if:",
+      "COGO point storage uses:"
+    ],
+    optionSets: [
+      ["GPS is required", "Close the traverse and solve for the unknown", "Angles are not needed", "Only one point is known"],
+      ["Point from two bearings", "Distance between two points", "Area of a parcel", "Elevation difference"],
+      ["Two distances from two known points", "Only one distance", "Only bearings", "Only angles"],
+      ["Bearing is known", "All other sides are known", "No data is available", "Only coordinates exist"],
+      ["Random numbering", "Sequential point numbers and coordinates", "Only descriptions", "Only elevations"]
+    ],
+    correctAnswers: ["1", "0", "0", "1", "1"],
+    explanationVariants: [
+      "Close the traverse mathematically to find the missing line",
+      "Bearing-bearing intersection finds a point from two bearings",
+      "Distance-distance needs two distances from two known points",
+      "One missing line can be solved if all other sides are known",
+      "COGO stores points by number with their coordinates"
+    ],
+    points: 10
+  },
+  {
+    type: 'conceptual_fill_in_blank',
+    questionVariants: [
+      "In COGO, the ___ function calculates coordinates from distance and bearing.",
+      "The traverse function in COGO computes ___ coordinates at each station.",
+      "COGO software stores points in a ___ database.",
+      "Missing bearing can be found if the missing ___ and all other data is known.",
+      "COGO ___ functions work with existing coordinate data."
+    ],
+    answerVariants: ["forward", "running", "coordinate", "distance", "inverse"],
+    explanationVariants: [
+      "Forward (or direct) function calculates new coordinates from distance and bearing",
+      "Traverse function computes running coordinates at each station",
+      "COGO uses a coordinate database to store points",
+      "Missing bearing can be found if distance and closure are known",
+      "Inverse functions work with existing coordinates to find distance/bearing"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Traverse closure: known ΣLat = {lat}, known ΣDep = {dep}. Missing line latitude = ___ (to close)",
+    paramRanges: { lat: [120.5, 150.3, 200.4, 175.2], dep: [80.2, 95.4, 110.6, 130.8] },
+    computeAnswer: (p) => String(-p.lat),
+    computeExplanation: (p, ans) => `For closure, ΣLat = 0, so missing latitude = -${p.lat} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Radial stakeout in COGO calculates:",
+      "COGO offset functions determine:",
+      "The sideshot function calculates:",
+      "COGO line-line intersection finds:",
+      "Perpendicular offset in COGO gives:"
+    ],
+    optionSets: [
+      ["Distance and bearing to stake points", "Only angles", "Only areas", "Only volumes"],
+      ["Points offset from a line", "Time delays", "Weather data", "Traffic counts"],
+      ["Point from occupied station, distance, and direction", "Area only", "Volume only", "Grade only"],
+      ["Where two lines cross", "Parallel lines", "Line length", "Line grade"],
+      ["Distance from point to line at right angle", "Curve data", "Grade percentage", "Horizontal angle"]
+    ],
+    correctAnswers: ["0", "0", "0", "0", "0"],
+    explanationVariants: [
+      "Radial stakeout calculates distance and bearing to stake points",
+      "Offset functions determine points at specified distance from a line",
+      "Sideshot calculates point from station, distance, and direction",
+      "Line-line intersection finds where two lines cross",
+      "Perpendicular offset is distance from point to line at right angle"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 11: State Plane Coordinates
+export const d5_lesson11_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "State Plane Coordinate Systems are based on:",
+      "The two projection types used in SPCS are:",
+      "Lambert Conformal Conic projection is used for zones that are:",
+      "Transverse Mercator projection is used for zones that are:",
+      "SPCS zones are designed to limit:"
+    ],
+    optionSets: [
+      ["Local assumed coordinates", "Map projections from geodetic coordinates", "GPS only", "Magnetic bearings"],
+      ["Mercator and Polar", "Lambert Conic and Transverse Mercator", "Cylindrical and Azimuthal", "Gnomonic and Stereographic"],
+      ["Wider east-west", "Longer north-south", "Circular", "Small islands"],
+      ["Wider east-west", "Longer north-south", "Perfectly square", "Coastal only"],
+      ["Scale distortion to acceptable levels", "Number of surveyors", "Project costs", "Weather effects"]
+    ],
+    correctAnswers: ["1", "1", "0", "1", "0"],
+    explanationVariants: [
+      "SPCS uses map projections to convert geodetic to plane coordinates",
+      "SPCS uses Lambert Conformal Conic and Transverse Mercator",
+      "Lambert projection is for zones wider east-west",
+      "Transverse Mercator is for zones longer north-south",
+      "SPCS zones limit scale distortion (typically 1:10,000)"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The scale factor in SPCS:",
+      "A combined scale factor includes:",
+      "At the central meridian of a TM zone:",
+      "NAD 83 is:",
+      "SPCS coordinates are typically expressed in:"
+    ],
+    optionSets: [
+      ["Is always exactly 1.0", "Varies with position in zone", "Is only for elevations", "Is only for angles"],
+      ["Grid scale and elevation factor", "Only horizontal distance", "Only vertical distance", "Only angles"],
+      ["Scale factor is minimum (less than 1)", "Scale factor is maximum", "Scale factor is exactly 1", "No scale factor applies"],
+      ["A local datum", "North American Datum of 1983", "Old obsolete system", "European datum"],
+      ["Degrees and minutes", "Feet or meters (northing/easting)", "Miles only", "Acres only"]
+    ],
+    correctAnswers: ["1", "0", "0", "1", "1"],
+    explanationVariants: [
+      "Scale factor varies with position within the zone",
+      "Combined factor = grid scale factor × elevation factor",
+      "At central meridian of TM, scale factor is minimum (about 0.9999)",
+      "NAD 83 = North American Datum of 1983",
+      "SPCS coordinates are northing and easting in feet or meters"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Ground distance = {gnd} ft, combined scale factor = 0.9999{sf}. Grid distance = ___ ft (round to 2 decimals)",
+    paramRanges: { gnd: [1000, 1500, 2000, 2500], sf: [1, 2, 3, 4] },
+    computeAnswer: (p) => (p.gnd * (0.99991 + p.sf * 0.00001)).toFixed(2),
+    computeExplanation: (p, ans) => `Grid distance = ground distance × combined factor = ${p.gnd} × 0.9999${p.sf} = ${ans} ft`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Convergence angle is the difference between:",
+      "Grid north and true north differ by:",
+      "In SPCS, the Y-axis points:",
+      "False easting and northing are used to:",
+      "Zone boundaries are typically based on:"
+    ],
+    optionSets: [
+      ["Grid north and true north", "Magnetic north and true north", "Two bearings", "Latitude and longitude"],
+      ["The convergence angle", "Exactly 180°", "Always zero", "Magnetic declination"],
+      ["East", "West", "North", "South"],
+      ["Create negative coordinates", "Ensure all coordinates are positive", "Measure angles", "Calculate areas"],
+      ["Political boundaries (states/counties)", "Longitude lines only", "Magnetic zones", "Time zones"]
+    ],
+    correctAnswers: ["0", "0", "2", "1", "0"],
+    explanationVariants: [
+      "Convergence is the angle between grid north and true north",
+      "Grid north differs from true north by the convergence angle",
+      "In SPCS, Y-axis (northing) points north",
+      "False origin ensures all coordinates are positive",
+      "Zones often follow state or county boundaries"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Elevation = {elev} ft, average earth radius = 20,906,000 ft. Elevation factor = ___ (round to 6 decimals)",
+    paramRanges: { elev: [500, 1000, 2000, 3000, 5000] },
+    computeAnswer: (p) => (20906000 / (20906000 + p.elev)).toFixed(6),
+    computeExplanation: (p, ans) => `Elevation factor = R / (R + h) = 20,906,000 / (20,906,000 + ${p.elev}) = ${ans}`,
+    points: 10
+  }
+];
+
+// Lesson 12: Least Squares Adjustment Basics
+export const d5_lesson12_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Least squares adjustment minimizes:",
+      "The principle of least squares finds:",
+      "Redundant observations in surveying provide:",
+      "Least squares is preferred over simple averaging because:",
+      "The residual in least squares is:"
+    ],
+    optionSets: [
+      ["The sum of observations", "The sum of squared residuals", "The number of measurements", "The equipment cost"],
+      ["The single best answer", "Best fit solution minimizing squared errors", "The largest error", "The average value only"],
+      ["Extra work only", "Error checking and improved accuracy", "Confusion", "No benefit"],
+      ["It is faster", "It properly weights observations and uses all data", "It uses less data", "It requires no math"],
+      ["The difference between observed and adjusted value", "The total distance", "The angle sum", "The coordinate"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "0"],
+    explanationVariants: [
+      "Least squares minimizes the sum of squared residuals",
+      "Least squares finds best fit solution by minimizing squared errors",
+      "Redundant observations allow error detection and improved accuracy",
+      "Least squares properly weights observations and uses all data optimally",
+      "Residual = observed value - adjusted value"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Weighting in least squares is based on:",
+      "Higher precision measurements receive:",
+      "The weight matrix in least squares contains:",
+      "Standard error of unit weight describes:",
+      "A priori vs a posteriori refers to:"
+    ],
+    optionSets: [
+      ["Random selection", "Measurement precision/variance", "Distance only", "Time of day"],
+      ["Lower weights", "Higher weights", "No weight", "Negative weights"],
+      ["Only distances", "Weights for each observation", "Only angles", "Only coordinates"],
+      ["Individual measurement error", "Overall adjustment quality", "Equipment cost", "Weather conditions"],
+      ["Before and after adjustment estimates", "Morning and evening work", "Indoor and outdoor surveys", "North and south observations"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "0"],
+    explanationVariants: [
+      "Weights are based on measurement precision (inversely proportional to variance)",
+      "Higher precision measurements get higher weights",
+      "Weight matrix contains weights for each observation",
+      "Standard error of unit weight indicates overall adjustment quality",
+      "A priori = before adjustment estimates; a posteriori = after adjustment"
+    ],
+    points: 10
+  },
+  {
+    type: 'conceptual_fill_in_blank',
+    questionVariants: [
+      "Least squares requires more observations than unknowns, called ___ observations.",
+      "The ___ matrix relates observations to unknown parameters.",
+      "In network adjustment, the ___ of freedom equals observations minus unknowns.",
+      "Least squares produces ___ that indicate observation quality.",
+      "The ___ test can detect blunders in least squares adjustment."
+    ],
+    answerVariants: ["redundant", "design", "degrees", "residuals", "chi-square"],
+    explanationVariants: [
+      "Redundant observations = more observations than minimum required",
+      "Design matrix (A or Jacobian) relates observations to unknowns",
+      "Degrees of freedom = number of observations minus number of unknowns",
+      "Residuals indicate how well each observation fits the adjustment",
+      "Chi-square test detects blunders and validates the adjustment"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "In a level network adjustment:",
+      "Horizontal network adjustment solves for:",
+      "3D network adjustment includes:",
+      "The normal equations in least squares are:",
+      "Iteration in least squares is needed for:"
+    ],
+    optionSets: [
+      ["Only angles are adjusted", "Elevations are adjusted", "Only horizontal positions", "GPS only"],
+      ["Elevations only", "Horizontal coordinates (N, E)", "Vertical angles only", "Time zones"],
+      ["Only horizontal", "Only vertical", "Horizontal, vertical, and sometimes scale", "Magnetic bearings"],
+      ["A'PA = A'Pl", "Simple addition", "Just averaging", "Distance formula"],
+      ["Linear problems only", "Nonlinear problems like coordinates", "Simple averaging", "No reason"]
+    ],
+    correctAnswers: ["1", "1", "2", "0", "1"],
+    explanationVariants: [
+      "Level network adjustment solves for adjusted elevations",
+      "Horizontal network adjustment solves for N and E coordinates",
+      "3D adjustment includes horizontal, vertical, and possibly scale",
+      "Normal equations: A'PA x = A'Pl (or N x = U)",
+      "Iteration needed for nonlinear problems (coordinates involve trig)"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Network has {obs} observations and {unk} unknowns. Degrees of freedom = ___",
+    paramRanges: { obs: [15, 20, 25, 30, 40], unk: [6, 8, 10, 12, 15] },
+    computeAnswer: (p) => String(p.obs - p.unk),
+    computeExplanation: (p, ans) => `Degrees of freedom = observations - unknowns = ${p.obs} - ${p.unk} = ${ans}`,
+    points: 10
+  }
+];
+
+// ============================================================================
+// DOMAIN 6: BUSINESS CONCEPTS - QUESTION ARCHETYPES
+// ============================================================================
+
+// Lesson 1: Professional Licensing and Ethics
+export const d6_lesson01_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is the primary purpose of professional licensing for surveyors?",
+      "Why do states require surveyors to be licensed?",
+      "Professional licensing for surveyors exists primarily to:",
+      "The main reason for surveyor licensing requirements is:",
+      "State licensing boards for surveyors are established to:"
+    ],
+    optionSets: [
+      ["To limit competition", "To protect the public health, safety, and welfare", "To increase surveyor salaries", "To make surveying exclusive"],
+      ["To collect fees from practitioners", "To protect public welfare and ensure competency", "To reduce the number of surveyors", "To standardize equipment"],
+      ["Generate revenue for the state", "Protect the public by ensuring practitioner competency", "Create barriers to entry", "Promote surveying education"],
+      ["Increasing surveyor income", "Protecting public health, safety, and welfare", "Limiting out-of-state competition", "Standardizing fees"],
+      ["Collect licensing fees", "Protect the public through competency standards", "Regulate surveying prices", "Limit the surveying profession"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Professional licensing protects the public by ensuring surveyors meet minimum competency standards",
+      "Licensing requirements ensure surveyors are competent to protect public welfare",
+      "The primary purpose is public protection through competency verification",
+      "Licensing exists to protect public health, safety, and welfare",
+      "State boards protect the public by enforcing competency standards"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Which of the following is a common requirement for surveyor licensure?",
+      "To become a licensed surveyor, one typically must:",
+      "A standard requirement for professional surveyor licensing includes:",
+      "Which is typically required before obtaining a surveyor license?",
+      "Surveyor licensure requirements commonly include:"
+    ],
+    optionSets: [
+      ["Only a high school diploma", "Education, experience, and passing an examination", "Just paying a fee", "Only work experience"],
+      ["Only passing an exam", "Complete education, gain experience, and pass exams", "Only having a degree", "Only working for 10 years"],
+      ["Just a bachelor's degree", "Combination of education, experience, and examination", "Only fieldwork experience", "Only classroom education"],
+      ["Passing the FS exam only", "Education, supervised experience, and passing the PS exam", "Only completing an internship", "Only having references"],
+      ["Just an associate degree", "Education, experience under a licensed surveyor, and examinations", "Only online courses", "Only military experience"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Licensure typically requires education, supervised experience, and passing examinations",
+      "The path to licensure includes education, experience, and examination requirements",
+      "All three components—education, experience, and examination—are typically required",
+      "Licensure requires completing education, gaining supervised experience, and passing exams",
+      "The standard path includes education, experience under a licensed surveyor, and examinations"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What ethical obligation does a surveyor have when discovering a boundary discrepancy?",
+      "When a surveyor finds conflicting evidence at a boundary, they should:",
+      "A surveyor's ethical duty when finding boundary conflicts includes:",
+      "How should a surveyor ethically handle discovered boundary discrepancies?",
+      "When boundary evidence conflicts, an ethical surveyor must:"
+    ],
+    optionSets: [
+      ["Ignore it if it favors their client", "Disclose findings and resolve using proper legal principles", "Always favor the client who hired them", "Change the evidence to match the deed"],
+      ["Hide unfavorable findings", "Analyze all evidence and apply proper boundary law principles", "Favor the party paying more", "Defer to the neighbor's surveyor"],
+      ["Only report favorable findings", "Investigate thoroughly and disclose all relevant evidence", "Accept bribes to favor one party", "Ignore historical evidence"],
+      ["Favor the hiring party", "Disclose all findings and apply legal principles objectively", "Destroy conflicting evidence", "Always split the difference"],
+      ["Support whoever pays more", "Evaluate all evidence objectively and disclose findings", "Hide evidence that hurts their client", "Automatically favor senior rights"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Surveyors must disclose all findings and resolve conflicts using proper legal principles",
+      "Ethical practice requires analyzing all evidence and applying proper boundary law",
+      "Professional ethics require thorough investigation and disclosure of all relevant evidence",
+      "Surveyors must objectively apply legal principles and disclose all findings",
+      "Ethical surveyors evaluate all evidence objectively regardless of who hired them"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What does 'responsible charge' mean in surveying practice?",
+      "A surveyor in 'responsible charge' is one who:",
+      "The concept of 'responsible charge' refers to:",
+      "Being in 'responsible charge' of surveying work means:",
+      "'Responsible charge' in professional surveying indicates:"
+    ],
+    optionSets: [
+      ["Billing clients directly", "Having direct control and supervision of the work", "Owning the surveying company", "Being the oldest surveyor on staff"],
+      ["Managing the office", "Personally directing and having control over professional decisions", "Collecting payment from clients", "Owning surveying equipment"],
+      ["Financial responsibility only", "Direct supervision and control of professional surveying work", "Insurance liability", "Equipment ownership"],
+      ["Paying employees", "Direct control, supervision, and accountability for professional work", "Building ownership", "Vehicle fleet management"],
+      ["Client relations only", "Personal involvement in and control of professional surveying decisions", "Marketing the firm", "Scheduling appointments"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Responsible charge means having direct control and personal supervision of the surveying work",
+      "It refers to personally directing the work and controlling professional decisions",
+      "Responsible charge means direct supervision and control of professional surveying activities",
+      "It means having direct control, supervision, and accountability for the professional work",
+      "Responsible charge indicates personal involvement in and control of professional decisions"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Which action would constitute an ethical violation for a licensed surveyor?",
+      "A surveyor commits an ethical violation by:",
+      "Which behavior violates surveyor professional ethics?",
+      "An ethical breach occurs when a surveyor:",
+      "Professional surveyor ethics are violated when:"
+    ],
+    optionSets: [
+      ["Charging fair market rates", "Signing and sealing work not performed under their supervision", "Declining work outside their expertise", "Maintaining proper records"],
+      ["Refusing work they're not qualified for", "Certifying work they did not personally supervise", "Charging competitive fees", "Using modern equipment"],
+      ["Consulting with colleagues", "Sealing documents for work done without their direct oversight", "Taking continuing education", "Joining professional organizations"],
+      ["Maintaining errors and omissions insurance", "Signing off on work completed without their responsible charge", "Keeping detailed field notes", "Using quality control procedures"],
+      ["Following state regulations", "Affixing their seal to work not under their direct control", "Reporting boundary discrepancies", "Using proper monuments"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Signing and sealing work not personally supervised violates professional ethics and law",
+      "Certifying work not performed under their supervision is a serious ethical violation",
+      "Sealing documents for unsupervised work violates professional ethics",
+      "Signing work not under their responsible charge is unethical and often illegal",
+      "Affixing a seal to work not under direct control violates professional standards"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 2: Contracts and Proposals
+export const d6_lesson02_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What are the essential elements of a valid contract?",
+      "A legally binding contract requires:",
+      "Which elements must be present for a contract to be enforceable?",
+      "The basic requirements for a valid contract include:",
+      "For a contract to be legally binding, it must have:"
+    ],
+    optionSets: [
+      ["Just a handshake", "Offer, acceptance, consideration, and legal capacity", "Only a written document", "Just verbal agreement"],
+      ["Only mutual agreement", "Offer, acceptance, consideration, capacity, and legality", "Just a signature", "Only a witness"],
+      ["Only payment", "Mutual assent, consideration, capacity, and lawful purpose", "Just a written promise", "Only a notary seal"],
+      ["Only a verbal promise", "Offer, acceptance, exchange of value, and competent parties", "Just good intentions", "Only trust"],
+      ["Only one party's signature", "Mutual agreement, consideration, legal capacity, and lawful object", "Just a proposal", "Only a timeline"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Valid contracts require offer, acceptance, consideration, and legal capacity of parties",
+      "Contracts need offer, acceptance, consideration, capacity, and legal purpose",
+      "Essential elements are mutual assent, consideration, capacity, and lawful purpose",
+      "Contracts require offer, acceptance, exchange of value, and competent parties",
+      "Binding contracts need mutual agreement, consideration, capacity, and lawful object"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What should a surveying proposal include?",
+      "A professional surveying proposal typically contains:",
+      "Which items should be included in a surveying service proposal?",
+      "A comprehensive surveying proposal should address:",
+      "Key components of a surveying proposal include:"
+    ],
+    optionSets: [
+      ["Only the total price", "Scope of work, deliverables, timeline, and fee structure", "Just the surveyor's name", "Only the client's address"],
+      ["Just a date", "Project scope, methodology, timeline, fees, and terms", "Only equipment list", "Just the survey type"],
+      ["Only payment terms", "Scope, deliverables, schedule, pricing, and conditions", "Just the start date", "Only the map scale"],
+      ["Just the location", "Work description, timeline, costs, and professional terms", "Only the number of corners", "Just the acreage"],
+      ["Only insurance info", "Scope of services, schedule, fees, and contractual terms", "Just the datum used", "Only the monuments"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Proposals should include scope, deliverables, timeline, and fee structure",
+      "Complete proposals contain scope, methodology, timeline, fees, and terms",
+      "Proposals should address scope, deliverables, schedule, pricing, and conditions",
+      "Comprehensive proposals include work description, timeline, costs, and terms",
+      "Key components are scope of services, schedule, fees, and contractual terms"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is a 'scope of work' in a surveying contract?",
+      "The 'scope of work' defines:",
+      "In surveying contracts, the scope of work refers to:",
+      "A scope of work in a surveying agreement specifies:",
+      "The purpose of defining scope of work is to:"
+    ],
+    optionSets: [
+      ["Only the price", "The specific services, tasks, and deliverables to be provided", "Just the survey date", "Only the equipment used"],
+      ["Just the client name", "What work will be performed and what will be delivered", "Only the location", "Just the surveyor's qualifications"],
+      ["Only insurance requirements", "The detailed description of services and expected outcomes", "Just the payment schedule", "Only the project timeline"],
+      ["Just the contract duration", "Specific tasks, services, deliverables, and project boundaries", "Only the number of workers", "Just the survey method"],
+      ["Only legal terms", "Clearly identify what is and is not included in the service", "Just the completion date", "Only the map scale"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Scope of work defines the specific services, tasks, and deliverables",
+      "It specifies what work will be performed and what will be delivered",
+      "Scope of work is the detailed description of services and expected outcomes",
+      "It specifies tasks, services, deliverables, and project boundaries",
+      "The scope clearly identifies what is and is not included in the service"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Why is it important to document changes to a survey contract?",
+      "Contract modifications should be documented because:",
+      "Written change orders are important for:",
+      "Documenting changes to the original scope protects:",
+      "Change orders in surveying contracts serve to:"
+    ],
+    optionSets: [
+      ["It's optional", "To protect both parties and avoid disputes", "Only to increase fees", "Just for record keeping"],
+      ["It's unnecessary", "To clearly define modified terms and prevent misunderstandings", "Only to satisfy regulators", "Just for billing purposes"],
+      ["Not required", "Clarifying expectations and protecting against disputes", "Only to slow down the project", "Just for the surveyor's benefit"],
+      ["It's a formality", "Both parties by documenting agreed-upon modifications", "Only the client", "Just the surveyor"],
+      ["They're optional extras", "Formally document scope changes and adjust terms accordingly", "Only increase project cost", "Just delay the project"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Documentation protects both parties and helps avoid disputes",
+      "Written modifications clearly define terms and prevent misunderstandings",
+      "Change orders clarify expectations and protect against disputes",
+      "Documentation protects both parties by recording agreed-upon changes",
+      "Change orders formally document scope changes and adjust terms"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What should be considered when determining surveying fees?",
+      "Factors affecting surveying service fees include:",
+      "Pricing for surveying services should consider:",
+      "When setting fees, a surveyor should evaluate:",
+      "Surveying fee estimation involves considering:"
+    ],
+    optionSets: [
+      ["Only the distance to the site", "Project complexity, time required, overhead, and market rates", "Just the property size", "Only the equipment needed"],
+      ["Just the number of corners", "Scope complexity, labor, equipment, overhead, and profit margin", "Only travel time", "Just the deed research time"],
+      ["Only the survey type", "Complexity, time, expertise required, costs, and reasonable profit", "Just the number of monuments", "Only the map production"],
+      ["Just the terrain", "Project scope, required expertise, costs, liability, and fair compensation", "Only the weather conditions", "Just the season"],
+      ["Only the client's budget", "Complexity, time, equipment, overhead, liability, and profit", "Just the competition's prices", "Only the urgency"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Fee considerations include complexity, time, overhead, and market rates",
+      "Pricing factors include scope, labor, equipment, overhead, and profit margin",
+      "Pricing should consider complexity, time, expertise, costs, and profit",
+      "Fee evaluation includes scope, expertise, costs, liability, and compensation",
+      "Fee estimation considers complexity, time, equipment, overhead, and profit"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 3: Project Management Basics
+export const d6_lesson03_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What are the main phases of project management?",
+      "The project management lifecycle typically includes:",
+      "Standard project management phases are:",
+      "Which represents the correct project management phases?",
+      "The basic stages of project management include:"
+    ],
+    optionSets: [
+      ["Only start and finish", "Initiation, planning, execution, monitoring, and closing", "Just planning and execution", "Only fieldwork and reporting"],
+      ["Just beginning and end", "Initiation, planning, implementation, control, and closure", "Only research and delivery", "Just proposal and completion"],
+      ["Only design and build", "Starting, planning, executing, controlling, and completing", "Just field and office work", "Only survey and deliver"],
+      ["Only collect and process", "Initiate, plan, execute, monitor and control, close", "Just measure and map", "Only observe and compute"],
+      ["Only schedule and perform", "Initiating, planning, executing, monitoring, and closing", "Just start and stop", "Only plan and do"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Project management includes initiation, planning, execution, monitoring, and closing",
+      "The lifecycle includes initiation, planning, implementation, control, and closure",
+      "Standard phases are starting, planning, executing, controlling, and completing",
+      "Correct phases are initiate, plan, execute, monitor/control, and close",
+      "Basic stages are initiating, planning, executing, monitoring, and closing"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is a critical path in project scheduling?",
+      "The critical path represents:",
+      "In project management, critical path refers to:",
+      "A critical path analysis identifies:",
+      "The critical path in a project is:"
+    ],
+    optionSets: [
+      ["The shortest route to the site", "The longest sequence of dependent tasks determining minimum duration", "The easiest tasks to complete", "The most expensive activities"],
+      ["The first tasks to start", "The sequence of tasks that determines project completion time", "The optional activities", "The least important work"],
+      ["Tasks that can be delayed", "The chain of dependent activities with zero float time", "Activities with the most slack", "The simplest work packages"],
+      ["The cheapest route", "The sequence of activities that cannot be delayed without extending the project", "Tasks that are optional", "The backup plan"],
+      ["The fastest tasks", "The longest path through the project network determining duration", "Non-essential activities", "The contingency plan"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "The critical path is the longest sequence of dependent tasks determining minimum project duration",
+      "It represents the sequence of tasks that determines overall project completion time",
+      "Critical path is the chain of dependent activities with no float (slack) time",
+      "It identifies activities that cannot be delayed without extending the project duration",
+      "The critical path is the longest path through the project network"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is the purpose of a work breakdown structure (WBS)?",
+      "A work breakdown structure is used to:",
+      "The WBS in project management helps:",
+      "Creating a WBS allows project managers to:",
+      "A work breakdown structure serves to:"
+    ],
+    optionSets: [
+      ["Only list employee names", "Decompose the project into manageable work packages", "Just calculate costs", "Only schedule meetings"],
+      ["Only assign blame", "Divide project scope into smaller, manageable components", "Just create a budget", "Only determine staffing"],
+      ["Only track expenses", "Organize and define the total scope of the project", "Just manage risks", "Only schedule equipment"],
+      ["Only communicate with clients", "Break down deliverables into smaller, manageable pieces", "Just document lessons learned", "Only manage quality"],
+      ["Only file documents", "Hierarchically organize all project work into defined packages", "Just handle changes", "Only process invoices"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "WBS decomposes the project into smaller, manageable work packages",
+      "It divides project scope into smaller, manageable components",
+      "WBS helps organize and define the total scope of the project",
+      "It allows breaking deliverables into smaller, manageable pieces",
+      "WBS hierarchically organizes all project work into defined packages"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What should be included in a project schedule?",
+      "A comprehensive project schedule contains:",
+      "Key elements of a project schedule include:",
+      "Project scheduling should address:",
+      "An effective project schedule includes:"
+    ],
+    optionSets: [
+      ["Only the start date", "Tasks, durations, dependencies, resources, and milestones", "Just the end date", "Only the total hours"],
+      ["Just task names", "Activities, time estimates, sequences, resources, and deadlines", "Only the budget", "Just the team members"],
+      ["Only the contract value", "Work activities, duration estimates, dependencies, and target dates", "Just the scope", "Only the location"],
+      ["Just the field days", "Tasks, time frames, resource assignments, and critical milestones", "Only the equipment", "Just the deliverables"],
+      ["Only the office work", "Activities, durations, logical relationships, and key dates", "Just the client meetings", "Only the reviews"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Schedules include tasks, durations, dependencies, resources, and milestones",
+      "Comprehensive schedules contain activities, estimates, sequences, resources, and deadlines",
+      "Key elements are work activities, duration estimates, dependencies, and target dates",
+      "Scheduling addresses tasks, time frames, resources, and critical milestones",
+      "Effective schedules include activities, durations, relationships, and key dates"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "How should a project manager handle scope creep?",
+      "Scope creep is best managed by:",
+      "To prevent scope creep, a project manager should:",
+      "Dealing with scope creep requires:",
+      "The best approach to scope creep is to:"
+    ],
+    optionSets: [
+      ["Ignore it", "Document changes and evaluate impacts through formal change control", "Always refuse additional work", "Accept all client requests"],
+      ["Accept all changes freely", "Use a formal change request process and assess impacts", "Never modify the original plan", "Only focus on the budget"],
+      ["Never communicate about it", "Clearly define scope upfront and manage changes formally", "Always increase the fee", "Just work longer hours"],
+      ["Hide it from the client", "Assess change impacts, document, and adjust scope/schedule/budget", "Refuse to discuss changes", "Only blame the client"],
+      ["Pretend it doesn't exist", "Identify changes early, evaluate impacts, and use formal approval", "Always say yes", "Only focus on schedule"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Document changes and evaluate impacts through formal change control processes",
+      "Use a formal change request process and assess schedule/budget impacts",
+      "Define scope clearly upfront and manage all changes through formal processes",
+      "Assess change impacts, document modifications, and adjust scope/schedule/budget",
+      "Identify changes early, evaluate their impacts, and use formal approval processes"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 4: Quality Control and Quality Assurance
+export const d6_lesson04_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is the difference between quality assurance and quality control?",
+      "Quality assurance differs from quality control in that:",
+      "QA and QC in surveying are different because:",
+      "The distinction between quality assurance and quality control is:",
+      "Quality assurance focuses on ___ while quality control focuses on ___:"
+    ],
+    optionSets: [
+      ["They are the same thing", "QA is process-focused while QC is product-focused", "QC is done first, then QA", "QA is cheaper than QC"],
+      ["No difference exists", "QA prevents defects through process; QC detects defects in output", "QC prevents defects; QA detects them", "QA is optional; QC is required"],
+      ["Both are identical", "QA ensures proper processes; QC verifies product quality", "QC uses checklists; QA doesn't", "QA is fieldwork; QC is office work"],
+      ["They're interchangeable", "QA is proactive process improvement; QC is reactive product inspection", "QC is planning; QA is execution", "QA costs more than QC"],
+      ["Same meaning", "Processes and prevention; products and detection", "Detection and prevention; processes and products", "Products and processes; detection and prevention"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "QA is process-focused (preventing defects) while QC is product-focused (detecting defects)",
+      "QA prevents defects through proper processes; QC detects defects in final products",
+      "QA ensures proper processes are followed; QC verifies product quality",
+      "QA is proactive process improvement; QC is reactive product inspection",
+      "QA focuses on processes and prevention; QC focuses on products and detection"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is a common quality control practice in surveying?",
+      "Quality control in surveying typically includes:",
+      "A standard QC procedure in surveying is:",
+      "Which represents a quality control activity in surveying?",
+      "Quality control practices in surveying include:"
+    ],
+    optionSets: [
+      ["Skipping field checks", "Independent verification of measurements and calculations", "Never reviewing data", "Ignoring discrepancies"],
+      ["Only trusting initial readings", "Checking measurements, calculations, and final products for errors", "Never rechecking work", "Accepting all data without review"],
+      ["Using only one method", "Comparing redundant measurements and reviewing computations", "Never using calibrated equipment", "Ignoring closure errors"],
+      ["No documentation", "Field verification, mathematical checks, and peer review", "Never checking monuments", "Ignoring field conditions"],
+      ["Single measurements only", "Redundant observations, calculation verification, and document review", "No independent checks", "Ignoring standards"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "QC includes independent verification of measurements and calculations",
+      "QC typically includes checking measurements, calculations, and products for errors",
+      "Standard QC includes comparing redundant measurements and reviewing computations",
+      "QC activities include field verification, mathematical checks, and peer review",
+      "QC practices include redundant observations, calculation verification, and review"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Why is calibration of surveying equipment important for quality?",
+      "Equipment calibration contributes to quality by:",
+      "Calibration of surveying instruments ensures:",
+      "Regular equipment calibration is important because:",
+      "The quality benefit of equipment calibration is:"
+    ],
+    optionSets: [
+      ["It's just a formality", "Ensuring measurements are accurate and traceable to standards", "It's only required by law", "It makes equipment look new"],
+      ["Only to satisfy inspectors", "Verifying instrument accuracy and maintaining measurement quality", "It's unnecessary for modern equipment", "It only affects old instruments"],
+      ["Just for documentation", "Instruments provide reliable, accurate measurements within specifications", "It's only needed annually", "It doesn't affect accuracy"],
+      ["Only for legal protection", "It maintains measurement accuracy and identifies instrument drift", "Modern equipment doesn't need it", "It only matters for GPS"],
+      ["It's optional", "Accurate, reliable measurements that meet professional standards", "It's only for total stations", "It doesn't improve quality"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Calibration ensures measurements are accurate and traceable to standards",
+      "It verifies instrument accuracy and maintains measurement quality",
+      "Calibration ensures instruments provide reliable, accurate measurements",
+      "It maintains measurement accuracy and identifies instrument drift",
+      "Calibration ensures accurate, reliable measurements meeting standards"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is the purpose of peer review in surveying quality assurance?",
+      "Peer review in surveying serves to:",
+      "The value of peer review for surveying quality is:",
+      "Peer review contributes to quality by:",
+      "Why implement peer review in surveying practice?"
+    ],
+    optionSets: [
+      ["To find someone to blame", "To catch errors before delivery and improve work quality", "Just to meet requirements", "To slow down projects"],
+      ["To create paperwork", "To have independent verification and identify potential issues", "Just to involve more people", "To reduce individual responsibility"],
+      ["Only for training purposes", "Providing independent review to catch errors and improve quality", "Just to comply with regulations", "To delay project completion"],
+      ["To criticize colleagues", "To identify errors, improve quality, and share knowledge", "Just to document reviews", "To assign blame for mistakes"],
+      ["It's unnecessary", "To ensure accuracy, catch errors, and maintain professional standards", "Just to add cost", "To complicate the process"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Peer review catches errors before delivery and improves work quality",
+      "It provides independent verification and identifies potential issues",
+      "Peer review provides independent review to catch errors and improve quality",
+      "It identifies errors, improves quality, and facilitates knowledge sharing",
+      "Peer review ensures accuracy, catches errors, and maintains standards"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What documentation is essential for demonstrating quality in surveying?",
+      "Quality documentation in surveying should include:",
+      "Essential records for surveying quality assurance include:",
+      "Which documentation supports surveying quality claims?",
+      "Quality documentation for surveyors should contain:"
+    ],
+    optionSets: [
+      ["Only the final map", "Field notes, calculations, calibration records, and checklists", "Just the invoice", "Only the contract"],
+      ["Just the client signature", "Observation records, computations, equipment logs, and QC records", "Only the fee structure", "Just the proposal"],
+      ["Only the certificate", "Field data, processing records, calibration certificates, and reviews", "Just the boundary description", "Only the monument record"],
+      ["Just the legal description", "Raw data, calculations, equipment records, and quality verification", "Only the plat", "Just the report cover"],
+      ["Only the signature block", "Field notes, adjustment records, calibration data, and review documentation", "Just the date", "Only the seal"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Essential documentation includes field notes, calculations, calibration records, and checklists",
+      "Quality documentation should include observations, computations, equipment logs, and QC records",
+      "Essential records include field data, processing records, certificates, and reviews",
+      "Supporting documentation includes raw data, calculations, equipment records, and verification",
+      "Documentation should contain field notes, adjustments, calibration data, and reviews"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 5: Professional Liability and Insurance
+export const d6_lesson05_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What type of insurance protects surveyors against professional negligence claims?",
+      "Professional liability insurance (E&O) protects against:",
+      "Errors and omissions insurance covers:",
+      "A surveyor should carry E&O insurance to protect against:",
+      "Professional liability coverage for surveyors addresses:"
+    ],
+    optionSets: [
+      ["Auto insurance", "Claims arising from professional errors or negligent work", "Worker injuries", "Equipment theft"],
+      ["Health insurance", "Allegations of negligent professional services", "Property damage to office", "Employee dishonesty"],
+      ["Life insurance", "Financial losses claimed due to professional mistakes", "Fire damage", "Natural disasters"],
+      ["Disability insurance", "Lawsuits alleging professional negligence or errors", "Vehicle accidents", "Flood damage"],
+      ["Homeowner's insurance", "Professional negligence, errors, and omissions claims", "Personal injury at home", "Identity theft"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "E&O insurance protects against claims arising from professional errors",
+      "It protects against allegations of negligent professional services",
+      "E&O covers financial losses claimed due to professional mistakes",
+      "It protects against lawsuits alleging professional negligence",
+      "Professional liability addresses negligence, errors, and omissions claims"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is professional negligence in surveying?",
+      "A surveyor may be found negligent if they:",
+      "Professional negligence occurs when a surveyor:",
+      "Negligence in surveying practice means:",
+      "A negligence claim against a surveyor requires proof that:"
+    ],
+    optionSets: [
+      ["Any minor mistake", "Failed to meet the standard of care expected of a competent surveyor", "Made any error at all", "Charged too much for services"],
+      ["Worked too slowly", "Did not perform work as a reasonably prudent surveyor would", "Used older equipment", "Disagreed with the client"],
+      ["Took too long on a project", "Failed to exercise the skill and care of a competent professional", "Made an honest mistake", "Couldn't find a monument"],
+      ["Made any calculation error", "Failed to perform to the accepted standard of professional practice", "Missed a deadline", "Charged for research time"],
+      ["Made a typo", "The surveyor breached the duty of care causing damages", "Used a different method", "Worked on a difficult project"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Negligence means failing to meet the standard of care of a competent surveyor",
+      "Negligence occurs when a surveyor doesn't perform as a reasonably prudent professional",
+      "It means failing to exercise the skill and care of a competent professional",
+      "Negligence is failing to perform to the accepted standard of practice",
+      "Negligence requires proof the surveyor breached duty of care causing damages"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What is the 'standard of care' in professional surveying?",
+      "Standard of care for surveyors refers to:",
+      "The professional standard of care means:",
+      "A surveyor's standard of care is defined as:",
+      "Standard of care in surveying is:"
+    ],
+    optionSets: [
+      ["The cheapest acceptable method", "The level of competence a reasonable professional would exercise", "The fastest way to complete work", "The minimum legal requirement"],
+      ["Just following state rules", "What a competent surveyor in similar circumstances would do", "Using the most expensive equipment", "Working the longest hours"],
+      ["Only using the newest technology", "The degree of care and skill expected of a competent practitioner", "Doing exactly what the client wants", "Using only traditional methods"],
+      ["Following client instructions exactly", "The skill and diligence of a reasonably competent surveyor", "The absolute minimum work required", "Using the most employees"],
+      ["The strictest possible standard", "What a prudent professional in the same field would do", "Perfect work with no errors", "The highest possible accuracy"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Standard of care is the level of competence a reasonable professional would exercise",
+      "It refers to what a competent surveyor in similar circumstances would do",
+      "It means the degree of care and skill expected of a competent practitioner",
+      "It's the skill and diligence of a reasonably competent surveyor",
+      "Standard of care is what a prudent professional in the same field would do"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What are common risk management practices for surveyors?",
+      "Surveyors can reduce liability risk by:",
+      "Risk management in surveying practice includes:",
+      "To minimize professional liability, surveyors should:",
+      "Effective risk management for surveyors involves:"
+    ],
+    optionSets: [
+      ["Avoiding all projects", "Clear contracts, documentation, QC procedures, and continuing education", "Never putting anything in writing", "Only doing simple projects"],
+      ["Working without contracts", "Written agreements, thorough documentation, and quality procedures", "Avoiding communication with clients", "Never carrying insurance"],
+      ["Ignoring client concerns", "Clear scope definition, proper documentation, and professional practices", "Refusing to answer questions", "Working alone without review"],
+      ["Never admitting mistakes", "Proper contracts, detailed records, quality control, and insurance", "Hiding problems from clients", "Avoiding difficult projects"],
+      ["Doing minimal documentation", "Clear communications, documented procedures, and professional standards", "Working without insurance", "Avoiding continuing education"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Risk management includes clear contracts, documentation, QC procedures, and education",
+      "Reduce risk through written agreements, thorough documentation, and quality procedures",
+      "Risk management includes clear scope definition, proper documentation, and professional practices",
+      "Minimize liability with proper contracts, detailed records, QC, and insurance",
+      "Effective risk management involves clear communications, documented procedures, and standards"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What should a surveyor do when they discover an error in completed work?",
+      "If a surveyor finds an error in delivered work, they should:",
+      "Upon discovering an error in finished work, a surveyor must:",
+      "When a past error is discovered, professional practice requires:",
+      "The ethical response to discovering an error in completed work is to:"
+    ],
+    optionSets: [
+      ["Ignore it and hope no one notices", "Promptly notify affected parties and take steps to correct it", "Destroy the evidence", "Blame someone else"],
+      ["Cover it up", "Disclose the error, notify the client, and work to remedy it", "Wait until someone complains", "Deny any responsibility"],
+      ["Hide it from the client", "Notify the client and affected parties and correct the error", "Only fix it if caught", "Transfer blame to others"],
+      ["Pretend it didn't happen", "Promptly disclose, notify affected parties, and take corrective action", "Wait for a lawsuit", "Blame the equipment"],
+      ["Keep it secret", "Disclose the error and take responsibility for correction", "Only act if discovered", "Blame field conditions"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Promptly notify affected parties and take steps to correct the error",
+      "Disclose the error, notify the client, and work to remedy it",
+      "Notify the client and affected parties and correct the error",
+      "Promptly disclose, notify affected parties, and take corrective action",
+      "Disclose the error and take responsibility for correction"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 6: Business Operations and Billing
+export const d6_lesson06_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What are common billing methods for surveying services?",
+      "Surveyors typically charge clients using:",
+      "Fee structures for surveying services include:",
+      "Common surveying pricing methods are:",
+      "Billing approaches in surveying practice include:"
+    ],
+    optionSets: [
+      ["Only barter", "Fixed fee, hourly rate, or cost-plus arrangements", "Only credit cards", "Only monthly subscriptions"],
+      ["Only trade exchange", "Lump sum, time and materials, or per-unit pricing", "Only cash payments", "Only annual contracts"],
+      ["Only future payments", "Flat fee, hourly billing, or cost-reimbursable contracts", "Only deferred billing", "Only commission-based"],
+      ["Only equity stakes", "Fixed price, time-based, or cost-plus-fee arrangements", "Only performance bonuses", "Only contingency fees"],
+      ["Only donations", "Lump sum, hourly rates, or time and materials pricing", "Only tips", "Only royalties"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Common billing methods include fixed fee, hourly rate, or cost-plus arrangements",
+      "Surveyors typically use lump sum, time and materials, or per-unit pricing",
+      "Fee structures include flat fee, hourly billing, or cost-reimbursable contracts",
+      "Common methods are fixed price, time-based, or cost-plus-fee arrangements",
+      "Billing approaches include lump sum, hourly rates, or time and materials pricing"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What overhead costs must a surveying business consider?",
+      "Overhead expenses for a surveying firm include:",
+      "Business overhead in surveying encompasses:",
+      "A surveying company's overhead typically includes:",
+      "Overhead costs for surveyors consist of:"
+    ],
+    optionSets: [
+      ["Only equipment costs", "Rent, insurance, utilities, software, vehicles, and administrative costs", "Only salaries", "Only fuel"],
+      ["Only field supplies", "Office expenses, insurance, equipment maintenance, and support staff", "Only survey monuments", "Only drafting supplies"],
+      ["Only GPS subscriptions", "Facilities, vehicles, insurance, technology, and administrative support", "Only paper and ink", "Only calibration fees"],
+      ["Only legal fees", "Rent, utilities, vehicles, insurance, software, and office operations", "Only professional dues", "Only continuing education"],
+      ["Only marketing", "Fixed costs including rent, insurance, equipment, and administration", "Only travel", "Only phone bills"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Overhead includes rent, insurance, utilities, software, vehicles, and administrative costs",
+      "Overhead expenses include office costs, insurance, equipment maintenance, and support staff",
+      "Business overhead encompasses facilities, vehicles, insurance, technology, and administration",
+      "Overhead typically includes rent, utilities, vehicles, insurance, software, and operations",
+      "Overhead consists of fixed costs including rent, insurance, equipment, and administration"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A surveying firm has annual overhead of ${overhead} and {hours} billable hours. The hourly overhead rate is $___ per hour.",
+    paramRanges: {
+      overhead: [150000, 180000, 200000, 250000],
+      hours: [3000, 3500, 4000, 5000]
+    },
+    computeAnswer: (p) => String(Math.round(p.overhead / p.hours)),
+    computeExplanation: (p, ans) => `Hourly overhead rate = Annual overhead ÷ Billable hours = $${p.overhead} ÷ ${p.hours} = $${ans}/hour`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "What financial records should a surveying business maintain?",
+      "Essential financial documentation for a survey firm includes:",
+      "A surveying business should keep financial records including:",
+      "Important financial records for surveyors include:",
+      "Financial documentation requirements for survey firms include:"
+    ],
+    optionSets: [
+      ["Only bank statements", "Income, expenses, payroll, taxes, accounts receivable, and project costs", "Only receipts", "Only contracts"],
+      ["Only invoices", "Revenue tracking, expense reports, tax records, and project accounting", "Only canceled checks", "Only time sheets"],
+      ["Only profit summaries", "Billing records, expense documentation, payroll, and tax filings", "Only annual reports", "Only budgets"],
+      ["Only loan documents", "Income statements, expense records, payroll data, and tax documentation", "Only insurance policies", "Only leases"],
+      ["Only credit card statements", "Accounts receivable, expenses, payroll records, and tax returns", "Only utility bills", "Only rent receipts"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Records should include income, expenses, payroll, taxes, receivables, and project costs",
+      "Essential documentation includes revenue tracking, expenses, tax records, and project accounting",
+      "Keep records including billing, expenses, payroll, and tax filings",
+      "Important records include income statements, expenses, payroll, and tax documentation",
+      "Requirements include accounts receivable, expenses, payroll records, and tax returns"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "If a surveyor's labor cost is ${labor}/hr, overhead multiplier is {mult}, and profit margin is {profit}%, the billing rate is $___ per hour.",
+    paramRanges: {
+      labor: [35, 40, 45, 50],
+      mult: [2.0, 2.2, 2.5, 2.8],
+      profit: [10, 15, 20]
+    },
+    computeAnswer: (p) => String(Math.round(p.labor * p.mult * (1 + p.profit / 100))),
+    computeExplanation: (p, ans) => `Billing rate = Labor × Overhead multiplier × (1 + Profit%) = $${p.labor} × ${p.mult} × ${1 + p.profit/100} = $${ans}/hr`,
+    points: 10
+  }
+];
+
+// ============================================================================
+// DOMAIN 7: APPLIED MATHEMATICS AND STATISTICS - QUESTION ARCHETYPES
+// ============================================================================
+
+// Lesson 1: Advanced Trigonometry and Identities
+export const d7_lesson01_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "Using the double angle formula, sin(2 × {angle}°) = 2 × sin({angle}°) × cos({angle}°). If sin({angle}°) = 0.5 and cos({angle}°) = {cos}, calculate sin(2 × {angle}°) = ___",
+    paramRanges: {
+      angle: [30],
+      cos: [0.866]
+    },
+    computeAnswer: (p) => (2 * 0.5 * p.cos).toFixed(3),
+    computeExplanation: (p, ans) => `sin(2 × ${p.angle}°) = 2 × sin(${p.angle}°) × cos(${p.angle}°) = 2 × 0.5 × ${p.cos} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The Pythagorean identity states that sin²θ + cos²θ equals:",
+      "According to the fundamental trigonometric identity, sin²θ + cos²θ = :",
+      "The sum of sin²θ and cos²θ always equals:",
+      "For any angle θ, sin²θ + cos²θ is:",
+      "The basic Pythagorean trigonometric identity gives sin²θ + cos²θ = :"
+    ],
+    optionSets: [
+      ["0", "1", "2", "θ"],
+      ["θ", "1", "0", "-1"],
+      ["2", "0", "1", "π"],
+      ["Always 1", "Always 0", "Depends on θ", "Always 2"],
+      ["-1", "0", "1", "2π"]
+    ],
+    correctAnswers: ["1", "1", "2", "0", "2"],
+    explanationVariants: [
+      "The Pythagorean identity: sin²θ + cos²θ = 1 for all angles",
+      "The fundamental identity states sin²θ + cos²θ = 1",
+      "sin²θ + cos²θ = 1 is always true",
+      "sin²θ + cos²θ = 1 regardless of the angle",
+      "The Pythagorean identity gives sin²θ + cos²θ = 1"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Using cos(A - B) = cosA·cosB + sinA·sinB, find cos({a}° - {b}°) = cos(___°)",
+    paramRanges: {
+      a: [60, 75, 90, 120],
+      b: [30, 15, 45, 30]
+    },
+    computeAnswer: (p) => String(p.a - p.b),
+    computeExplanation: (p, ans) => `cos(${p.a}° - ${p.b}°) = cos(${ans}°)`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The Law of Sines relates sides and angles as:",
+      "In any triangle, the Law of Sines states:",
+      "The Law of Sines formula is:",
+      "According to the Law of Sines:",
+      "The sine rule for triangles is expressed as:"
+    ],
+    optionSets: [
+      ["a + b = c", "a/sinA = b/sinB = c/sinC", "a² + b² = c²", "sinA + sinB = sinC"],
+      ["a × b = c", "a/sinA = b/sinB = c/sinC", "a - b = c", "tanA = tanB"],
+      ["a² = b² + c²", "a/sinA = b/sinB = c/sinC", "cosA = cosB", "A + B = C"],
+      ["Side equals angle", "Side/sine of opposite angle is constant", "All sides are equal", "All angles are equal"],
+      ["a = b = c", "a/sinA = b/sinB = c/sinC", "sinA = sinB = sinC", "A = B = C"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Law of Sines: a/sinA = b/sinB = c/sinC",
+      "In any triangle: a/sinA = b/sinB = c/sinC",
+      "The Law of Sines formula is a/sinA = b/sinB = c/sinC",
+      "Each side divided by sine of its opposite angle is constant",
+      "The sine rule: a/sinA = b/sinB = c/sinC"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Using Law of Cosines: c² = a² + b² - 2ab·cos(C). If a = {a}, b = {b}, C = 60°, find c² = ___ (cos 60° = 0.5)",
+    paramRanges: {
+      a: [5, 6, 8, 10],
+      b: [6, 8, 10, 12]
+    },
+    computeAnswer: (p) => String(p.a * p.a + p.b * p.b - 2 * p.a * p.b * 0.5),
+    computeExplanation: (p, ans) => `c² = ${p.a}² + ${p.b}² - 2×${p.a}×${p.b}×0.5 = ${p.a*p.a} + ${p.b*p.b} - ${p.a*p.b} = ${ans}`,
+    points: 10
+  }
+];
+
+// Lesson 2: Vectors and Components
+export const d7_lesson02_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "A vector has magnitude {mag} and direction {dir}°. The x-component (East) = magnitude × cos(direction) = ___ (round to 2 decimals, use cos {dir}° = {cos})",
+    paramRanges: {
+      mag: [100, 150, 200, 250],
+      dir: [30, 45, 60],
+      cos: [0.866, 0.707, 0.500]
+    },
+    computeAnswer: (p) => (p.mag * p.cos).toFixed(2),
+    computeExplanation: (p, ans) => `x-component = ${p.mag} × cos(${p.dir}°) = ${p.mag} × ${p.cos} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A vector has magnitude {mag} and direction {dir}°. The y-component (North) = magnitude × sin(direction) = ___ (round to 2 decimals, use sin {dir}° = {sin})",
+    paramRanges: {
+      mag: [100, 150, 200, 250],
+      dir: [30, 45, 60],
+      sin: [0.500, 0.707, 0.866]
+    },
+    computeAnswer: (p) => (p.mag * p.sin).toFixed(2),
+    computeExplanation: (p, ans) => `y-component = ${p.mag} × sin(${p.dir}°) = ${p.mag} × ${p.sin} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "To find the magnitude of a vector from components (x, y), use:",
+      "Vector magnitude from components is calculated as:",
+      "Given x and y components, the vector magnitude is:",
+      "The formula for vector magnitude from components is:",
+      "To compute resultant magnitude from components:"
+    ],
+    optionSets: [
+      ["x + y", "√(x² + y²)", "x × y", "x - y"],
+      ["x/y", "√(x² + y²)", "x² + y²", "(x + y)/2"],
+      ["(x + y)²", "√(x² + y²)", "|x| + |y|", "x² - y²"],
+      ["x + y", "√(x² + y²)", "xy", "x/y"],
+      ["max(x, y)", "√(x² + y²)", "min(x, y)", "x² × y²"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Magnitude = √(x² + y²) using Pythagorean theorem",
+      "Vector magnitude = √(x² + y²)",
+      "The magnitude is √(x² + y²)",
+      "The formula is magnitude = √(x² + y²)",
+      "Resultant magnitude = √(x² + y²)"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Vector components: ΔE = {de}, ΔN = {dn}. Magnitude = √(ΔE² + ΔN²) = √({de}² + {dn}²) = ___",
+    paramRanges: {
+      de: [30, 40, 60, 80],
+      dn: [40, 30, 80, 60]
+    },
+    computeAnswer: (p) => String(Math.sqrt(p.de * p.de + p.dn * p.dn)),
+    computeExplanation: (p, ans) => `Magnitude = √(${p.de}² + ${p.dn}²) = √(${p.de*p.de} + ${p.dn*p.dn}) = √${p.de*p.de + p.dn*p.dn} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "In surveying, traverse latitudes and departures represent:",
+      "Latitudes and departures are vector components in:",
+      "Traverse computations use latitudes (N/S) and departures (E/W) as:",
+      "Latitudes and departures in traverse calculations are:",
+      "The latitude and departure of a traverse line are:"
+    ],
+    optionSets: [
+      ["Angles only", "North-South and East-West components of each course", "Elevations only", "Curve data only"],
+      ["Curve parameters", "Y and X components of each traverse leg", "Horizontal angles", "Vertical angles"],
+      ["Areas", "Components of each line in the N/S and E/W directions", "Volumes", "Grades"],
+      ["Distances only", "Vector components representing N/S and E/W displacements", "Bearings only", "Azimuths only"],
+      ["Elevation changes", "The y-component (latitude) and x-component (departure)", "Magnetic readings", "Declination values"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Latitudes (N/S) and departures (E/W) are components of each traverse course",
+      "They are the Y and X components of each traverse leg",
+      "They are components in the N/S and E/W directions for each line",
+      "They represent N/S (latitude) and E/W (departure) vector components",
+      "Latitude is the y-component (N/S) and departure is the x-component (E/W)"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 3: Calculus Fundamentals for Surveying
+export const d7_lesson03_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The derivative of a function represents:",
+      "In calculus, the derivative gives:",
+      "Taking the derivative of a function tells us:",
+      "The derivative of f(x) represents:",
+      "Differentiation calculates:"
+    ],
+    optionSets: [
+      ["The total area", "The instantaneous rate of change", "The average value", "The maximum value"],
+      ["The sum of values", "The slope at any point", "The minimum value", "The total distance"],
+      ["The integral", "The rate of change at any point", "The constant value", "The zero crossing"],
+      ["Total change", "Instantaneous slope or rate of change", "Average rate", "Cumulative sum"],
+      ["The antiderivative", "The instantaneous rate of change of the function", "The area under the curve", "The y-intercept"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "The derivative represents the instantaneous rate of change",
+      "The derivative gives the slope at any point on the curve",
+      "Taking the derivative tells us the rate of change at any point",
+      "The derivative represents instantaneous slope or rate of change",
+      "Differentiation calculates the instantaneous rate of change"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Integration in surveying is commonly used to calculate:",
+      "The integral is used in surveying for:",
+      "Surveyors use integration to find:",
+      "Integration helps surveyors calculate:",
+      "Areas in surveying can be computed using:"
+    ],
+    optionSets: [
+      ["Angles only", "Areas under curves and volumes", "Bearings only", "Distances only"],
+      ["Azimuths", "Areas, volumes, and accumulated quantities", "Declinations", "Elevations only"],
+      ["Magnetic variation", "Earthwork volumes and cross-sectional areas", "Star positions", "GPS signals"],
+      ["Bearing closures", "Areas from coordinates and earthwork volumes", "Angle closures", "Distance closures"],
+      ["Only point locations", "Areas and volumes by integration methods", "Only linear measurements", "Only angular measurements"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Integration is used to calculate areas under curves and volumes",
+      "The integral finds areas, volumes, and accumulated quantities",
+      "Integration is used for earthwork volumes and cross-sectional areas",
+      "Integration helps calculate areas from coordinates and earthwork volumes",
+      "Areas and volumes can be computed using integration methods"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "The derivative of f(x) = {a}x² is f'(x) = {ans}x. What is {ans}?",
+    paramRanges: {
+      a: [2, 3, 4, 5, 6],
+      ans: [4, 6, 8, 10, 12]
+    },
+    computeAnswer: (p) => String(2 * p.a),
+    computeExplanation: (p, ans) => `Using the power rule: d/dx(${p.a}x²) = ${p.a} × 2x = ${ans}x`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The coordinate method for area uses which mathematical principle?",
+      "Double meridian distance method relates to:",
+      "Area by coordinates is an application of:",
+      "The shoelace formula for polygon area is based on:",
+      "Computing area from coordinates involves:"
+    ],
+    optionSets: [
+      ["Differentiation", "Integration and cross products", "Trigonometry only", "Statistics"],
+      ["Derivatives", "Summation representing integration", "Probability", "Matrices only"],
+      ["Differential equations", "Discrete integration over polygon vertices", "Curve fitting", "Interpolation"],
+      ["Slope calculations", "Cross-multiplication summed over vertices", "Error propagation", "Regression"],
+      ["Rate of change", "Summing cross products of coordinates", "Standard deviation", "Correlation"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Coordinate area method uses integration and cross products",
+      "DMD method is a form of summation representing integration",
+      "Coordinate area is discrete integration over polygon vertices",
+      "Shoelace formula uses cross-multiplication summed over vertices",
+      "Area from coordinates involves summing cross products"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Using trapezoidal rule: Area ≈ (h/2) × (y₀ + 2y₁ + y₂). If h = {h}, y₀ = {y0}, y₁ = {y1}, y₂ = {y2}, Area = ___",
+    paramRanges: {
+      h: [10, 20, 25, 50],
+      y0: [5, 8, 10, 12],
+      y1: [10, 12, 15, 18],
+      y2: [6, 9, 11, 14]
+    },
+    computeAnswer: (p) => String((p.h / 2) * (p.y0 + 2 * p.y1 + p.y2)),
+    computeExplanation: (p, ans) => `Area = (${p.h}/2) × (${p.y0} + 2×${p.y1} + ${p.y2}) = ${p.h/2} × ${p.y0 + 2*p.y1 + p.y2} = ${ans}`,
+    points: 10
+  }
+];
+
+// Lesson 4: Series and Sequences
+export const d7_lesson04_archetypes: QuestionArchetype[] = [
+  {
+    type: 'fill_in_blank',
+    template: "An arithmetic sequence has first term a₁ = {a1} and common difference d = {d}. The 5th term a₅ = a₁ + 4d = ___",
+    paramRanges: {
+      a1: [5, 10, 15, 20],
+      d: [2, 3, 4, 5]
+    },
+    computeAnswer: (p) => String(p.a1 + 4 * p.d),
+    computeExplanation: (p, ans) => `a₅ = a₁ + (5-1)d = ${p.a1} + 4×${p.d} = ${p.a1} + ${4*p.d} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "In a geometric sequence, each term is found by:",
+      "A geometric sequence has terms related by:",
+      "The relationship between consecutive terms in a geometric sequence is:",
+      "Geometric sequences differ from arithmetic sequences because:",
+      "To find the next term in a geometric sequence, you:"
+    ],
+    optionSets: [
+      ["Adding a constant", "Multiplying by a constant ratio", "Subtracting a constant", "Dividing randomly"],
+      ["Addition", "Multiplication by common ratio", "Subtraction", "Square root"],
+      ["Adding common difference", "Multiplying by common ratio", "Random changes", "Constant terms"],
+      ["Terms are added", "Terms are multiplied by a ratio", "Terms alternate", "Terms are squared"],
+      ["Add the common difference", "Multiply by the common ratio", "Subtract the previous term", "Take the square root"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Each term in a geometric sequence is found by multiplying by a constant ratio",
+      "Terms are related by multiplication by the common ratio",
+      "Consecutive terms have a constant ratio (multiply to get next)",
+      "Geometric sequences multiply by a ratio; arithmetic add a difference",
+      "Multiply the current term by the common ratio to get the next term"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Sum of arithmetic series: S = (n/2)(first + last). For {n} terms from {first} to {last}, S = ___",
+    paramRanges: {
+      n: [5, 6, 8, 10],
+      first: [1, 2, 5, 10],
+      last: [9, 12, 21, 28]
+    },
+    computeAnswer: (p) => String((p.n / 2) * (p.first + p.last)),
+    computeExplanation: (p, ans) => `S = (${p.n}/2)(${p.first} + ${p.last}) = ${p.n/2} × ${p.first + p.last} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Taylor series are used in surveying calculations for:",
+      "Surveyors use series approximations to:",
+      "Power series expansions help in surveying for:",
+      "Series approximations in surveying are useful for:",
+      "Truncated series are used in surveying to:"
+    ],
+    optionSets: [
+      ["Measuring angles", "Approximating trigonometric and other functions", "Setting monuments", "Reading levels"],
+      ["Painting marks", "Computing approximate values of complex functions", "Mixing concrete", "Recording deeds"],
+      ["Buying equipment", "Evaluating functions like sin, cos, and log", "Training staff", "Filing reports"],
+      ["Boundary disputes", "Simplifying complex calculations and function evaluation", "Title searches", "Witness testimony"],
+      ["Legal descriptions", "Approximate complex calculations efficiently", "Writing reports", "Client billing"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Taylor series approximate trigonometric and other functions",
+      "Series approximations compute approximate values of complex functions",
+      "Power series help evaluate functions like sin, cos, and log",
+      "Series simplify complex calculations and function evaluation",
+      "Truncated series approximate complex calculations efficiently"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Geometric series sum: S = a(1-rⁿ)/(1-r). If a = {a}, r = {r}, n = {n}, and (1-rⁿ) = {factor}, S = ___",
+    paramRanges: {
+      a: [2, 3, 5],
+      r: [2],
+      n: [4, 5],
+      factor: [15, 31]
+    },
+    computeAnswer: (p) => String(p.a * p.factor / (1 - p.r)),
+    computeExplanation: (p, ans) => `S = ${p.a} × ${p.factor} / (1 - ${p.r}) = ${p.a * p.factor} / ${1 - p.r} = ${ans}`,
+    points: 10
+  }
+];
+
+// Lesson 5: Differential Equations in Surveying
+export const d7_lesson05_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Differential equations in surveying help model:",
+      "Surveyors encounter differential equations when analyzing:",
+      "Differential equations are used in surveying for:",
+      "Applications of differential equations in surveying include:",
+      "Modeling with differential equations in surveying applies to:"
+    ],
+    optionSets: [
+      ["Paint colors", "Rates of change and dynamic systems", "Office supplies", "Vehicle colors"],
+      ["Stationery", "Deflection curves and settlement rates", "Furniture", "Clothing"],
+      ["Food costs", "Deformation analysis and time-dependent processes", "Entertainment", "Training"],
+      ["Office decor", "Vertical curve equations and dynamic behavior", "Parking lots", "Break rooms"],
+      ["Coffee breaks", "Curve geometry and deformation over time", "Lunch menus", "Vacation schedules"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Differential equations model rates of change and dynamic systems",
+      "They analyze deflection curves and settlement rates",
+      "They're used for deformation analysis and time-dependent processes",
+      "Applications include vertical curve equations and dynamic behavior",
+      "They apply to curve geometry and deformation over time"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The vertical curve equation used in highway design is based on:",
+      "Parabolic vertical curves are derived from:",
+      "Vertical curve geometry uses which mathematical concept?",
+      "The rate of change of grade in vertical curves relates to:",
+      "Highway vertical curves are modeled using:"
+    ],
+    optionSets: [
+      ["Linear equations", "Second-order differential equations (parabolic)", "Random functions", "Step functions"],
+      ["Cubic equations", "Parabolic equations from constant rate of grade change", "Exponential decay", "Logarithmic functions"],
+      ["Statistics", "Calculus and differential equations", "Set theory", "Number theory"],
+      ["Straight lines", "Second derivative being constant (parabola)", "Circles", "Ellipses"],
+      ["Trigonometry only", "Parabolic equations from integration", "Probability", "Matrices only"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Vertical curves are based on second-order differential equations (parabolas)",
+      "Parabolic curves come from constant rate of grade change",
+      "Vertical curve geometry uses calculus and differential equations",
+      "Constant second derivative gives a parabola",
+      "Vertical curves are modeled using parabolic equations from integration"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "For a vertical curve, if g₁ = {g1}% and g₂ = {g2}%, the algebraic difference A = g₂ - g₁ = ___%",
+    paramRanges: {
+      g1: [2, 3, 4],
+      g2: [-1, -2, 1]
+    },
+    computeAnswer: (p) => String(p.g2 - p.g1),
+    computeExplanation: (p, ans) => `A = g₂ - g₁ = ${p.g2}% - ${p.g1}% = ${ans}%`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "First-order differential equations can model:",
+      "A first-order ODE in surveying might represent:",
+      "Exponential decay, modeled by first-order ODEs, applies to:",
+      "First-order differential equations in surveying describe:",
+      "Simple rate-of-change problems in surveying use:"
+    ],
+    optionSets: [
+      ["Complex vibrations", "Simple rate processes like settlement decay", "Three-body problems", "Quantum states"],
+      ["Orbital mechanics", "Rate of settlement or decay over time", "Molecular structure", "Weather patterns globally"],
+      ["Particle physics", "Error reduction with averaging and time decay", "Nuclear reactions", "Galaxy formation"],
+      ["Wave interference", "Processes where rate depends on current value", "String theory", "Black holes"],
+      ["Relativity", "First-order differential equations", "Thermodynamics", "Electromagnetism"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "First-order ODEs model simple rate processes like settlement decay",
+      "They can represent rate of settlement or decay over time",
+      "Exponential decay applies to error reduction and time decay",
+      "First-order ODEs describe processes where rate depends on current value",
+      "Simple rate-of-change problems use first-order differential equations"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Vertical curve elevation: y = y₀ + g₁x + (A/2L)x². If y₀ = {y0}, g₁ = 0.0{g1}, A = -0.0{a}, L = {L}, and x = {x}, the elevation term g₁x = ___",
+    paramRanges: {
+      y0: [100, 150, 200],
+      g1: [3, 4, 5],
+      a: [6, 8],
+      L: [200, 400],
+      x: [50, 100]
+    },
+    computeAnswer: (p) => (0.01 * p.g1 * p.x).toFixed(2),
+    computeExplanation: (p, ans) => `g₁x = 0.0${p.g1} × ${p.x} = ${ans}`,
+    points: 10
+  }
+];
+
+// Lesson 6: Statistical Process Control
+export const d7_lesson06_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Statistical Process Control (SPC) in surveying is used to:",
+      "SPC methods help surveyors:",
+      "The purpose of SPC in surveying practice is to:",
+      "Control charts in surveying are used to:",
+      "Surveyors apply SPC to:"
+    ],
+    optionSets: [
+      ["Predict lottery numbers", "Monitor process consistency and detect unusual variation", "Choose paint colors", "Select office furniture"],
+      ["Plan vacations", "Identify when a measurement process is out of control", "Schedule meetings", "Order supplies"],
+      ["Entertainment", "Ensure measurement processes remain stable and consistent", "Social events", "Training seminars"],
+      ["Decorate offices", "Detect when measurements deviate from expected variation", "Plan parties", "Organize files"],
+      ["Personal budgets", "Monitor and control measurement quality over time", "Hobby planning", "Travel booking"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "SPC monitors process consistency and detects unusual variation",
+      "SPC identifies when a measurement process is out of control",
+      "SPC ensures measurement processes remain stable and consistent",
+      "Control charts detect when measurements deviate from expected variation",
+      "SPC monitors and controls measurement quality over time"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Control chart limits: UCL = x̄ + {k}σ and LCL = x̄ - {k}σ. If x̄ = {xbar} and σ = {sigma}, UCL = ___",
+    paramRanges: {
+      k: [3],
+      xbar: [100, 150, 200],
+      sigma: [2, 3, 5]
+    },
+    computeAnswer: (p) => String(p.xbar + p.k * p.sigma),
+    computeExplanation: (p, ans) => `UCL = x̄ + ${p.k}σ = ${p.xbar} + ${p.k}×${p.sigma} = ${p.xbar} + ${p.k * p.sigma} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A point outside control limits indicates:",
+      "When a measurement falls outside control limits, it suggests:",
+      "Points beyond the control limits signal:",
+      "An out-of-control signal on a control chart means:",
+      "If data points exceed control limits, this indicates:"
+    ],
+    optionSets: [
+      ["Normal operation", "The process may have special cause variation", "Expected results", "Standard procedure"],
+      ["Routine work", "A potential problem requiring investigation", "Normal variation", "Standard deviation"],
+      ["Expected behavior", "Possible assignable cause requiring attention", "Random chance", "Normal fluctuation"],
+      ["Everything is fine", "The process is potentially out of statistical control", "Continue as normal", "Ignore it"],
+      ["Good quality", "Special cause variation that needs investigation", "Random variation", "No action needed"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Points outside limits indicate special cause variation",
+      "It suggests a potential problem requiring investigation",
+      "It signals possible assignable cause requiring attention",
+      "It means the process is potentially out of statistical control",
+      "It indicates special cause variation needing investigation"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "For {k}σ control limits, approximately {pct}% of data should fall within limits under normal conditions.",
+    paramRanges: {
+      k: [2, 3],
+      pct: [95.45, 99.73]
+    },
+    computeAnswer: (p) => String(p.pct),
+    computeExplanation: (p, ans) => `${p.k}σ limits contain approximately ${ans}% of normally distributed data`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Common cause variation in surveying represents:",
+      "The difference between common cause and special cause variation is:",
+      "Random measurement variation in a stable process is called:",
+      "Inherent variability in a controlled surveying process is:",
+      "Natural variation present in all measurements is:"
+    ],
+    optionSets: [
+      ["Errors to be eliminated", "Natural inherent variation in a stable process", "Equipment failures", "Human mistakes"],
+      ["No difference", "Common is inherent; special is unusual/assignable", "Both are errors", "Both should be eliminated"],
+      ["Special cause", "Common cause variation", "Systematic error", "Blunder"],
+      ["Blunder", "Common cause variation", "Mistake", "Special cause"],
+      ["Systematic error", "Common cause variation", "Assignable cause", "Equipment failure"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Common cause is natural inherent variation in a stable process",
+      "Common is inherent variation; special is unusual/assignable",
+      "Random variation in a stable process is common cause variation",
+      "Inherent variability in a controlled process is common cause",
+      "Natural variation is common cause variation"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 7: Error Propagation and Analysis
+export const d7_lesson07_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Error propagation determines how:",
+      "The purpose of error propagation analysis is to:",
+      "Surveyors use error propagation to:",
+      "Error propagation theory explains how:",
+      "Understanding error propagation helps surveyors:"
+    ],
+    optionSets: [
+      ["Errors disappear", "Uncertainties in input values affect output uncertainties", "Errors are ignored", "Errors cancel automatically"],
+      ["Eliminate all errors", "Calculate resulting uncertainty from combined measurements", "Hide errors", "Prevent all mistakes"],
+      ["Remove uncertainty", "Estimate final accuracy from measurement precisions", "Ignore precision", "Guarantee perfect results"],
+      ["Errors self-correct", "Input uncertainties combine to affect output uncertainty", "Errors are unimportant", "Precision doesn't matter"],
+      ["Avoid calculations", "Predict final precision from individual measurement errors", "Skip quality control", "Ignore random errors"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Error propagation shows how input uncertainties affect output uncertainties",
+      "It calculates resulting uncertainty from combined measurements",
+      "It helps estimate final accuracy from measurement precisions",
+      "Input uncertainties combine to affect output uncertainty",
+      "It predicts final precision from individual measurement errors"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "For addition/subtraction (Z = A + B), σZ = √(σA² + σB²). If σA = {sa} and σB = {sb}, σZ = ___",
+    paramRanges: {
+      sa: [3, 4, 5, 6],
+      sb: [4, 3, 12, 8]
+    },
+    computeAnswer: (p) => String(Math.sqrt(p.sa * p.sa + p.sb * p.sb)),
+    computeExplanation: (p, ans) => `σZ = √(${p.sa}² + ${p.sb}²) = √(${p.sa*p.sa} + ${p.sb*p.sb}) = √${p.sa*p.sa + p.sb*p.sb} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "For independent random errors, when adding measurements:",
+      "When combining independent measurements, errors propagate by:",
+      "The error in a sum of independent measurements is:",
+      "Random errors in addition combine according to:",
+      "When independent measurements are added, total error:"
+    ],
+    optionSets: [
+      ["Simply add the errors", "Take the square root of sum of squared errors", "Multiply the errors", "Divide the errors"],
+      ["Addition", "Root sum of squares (RSS)", "Subtraction", "Division"],
+      ["The sum of errors", "The square root of sum of squared individual errors", "The difference of errors", "The product of errors"],
+      ["Linear addition", "Quadrature (root sum of squares)", "Simple average", "Geometric mean"],
+      ["Equals the largest error", "Is found by RSS (root sum squares)", "Cancels out", "Doubles"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Errors combine by taking the square root of sum of squared errors",
+      "Independent errors propagate by root sum of squares (RSS)",
+      "The total error is √(σ₁² + σ₂² + ...)",
+      "Random errors combine in quadrature (root sum of squares)",
+      "Total error is found by RSS method"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A distance of {dist}m ± {err}m is measured. The relative precision (error/distance) expressed as 1:x is 1:{ratio}. What is {ratio}?",
+    paramRanges: {
+      dist: [1000, 2000, 5000],
+      err: [0.05, 0.10, 0.25],
+      ratio: [20000, 20000, 20000]
+    },
+    computeAnswer: (p) => String(Math.round(p.dist / p.err)),
+    computeExplanation: (p, ans) => `Relative precision = distance/error = ${p.dist}/${p.err} = ${ans}, so 1:${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Systematic errors in surveying are characterized by:",
+      "The difference between systematic and random errors is:",
+      "Systematic errors can be handled by:",
+      "Unlike random errors, systematic errors:",
+      "Systematic errors in measurements are:"
+    ],
+    optionSets: [
+      ["Random distribution", "Consistent bias in one direction", "Canceling with averaging", "Following normal distribution"],
+      ["They are identical", "Systematic are consistent; random are variable", "Both are unpredictable", "Both cancel with averaging"],
+      ["Only averaging", "Calibration, correction, or modeling", "Ignoring them", "Taking more measurements"],
+      ["Cancel with more measurements", "Remain consistent and don't reduce with averaging", "Are always larger", "Are always smaller"],
+      ["Always random", "Consistent, repeatable, and correctable", "Impossible to measure", "Self-correcting"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Systematic errors have consistent bias in one direction",
+      "Systematic errors are consistent; random errors are variable",
+      "Systematic errors are handled by calibration, correction, or modeling",
+      "Systematic errors remain consistent and don't reduce with averaging",
+      "Systematic errors are consistent, repeatable, and correctable"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 8: Matrix Operations for Adjustments
+export const d7_lesson08_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Matrices are used in least squares adjustment to:",
+      "The purpose of matrices in survey adjustments is to:",
+      "Matrix operations in adjustment computations help:",
+      "Surveyors use matrices for adjustments because they:",
+      "Matrix algebra in least squares provides:"
+    ],
+    optionSets: [
+      ["Store field notes", "Organize and solve systems of equations efficiently", "Draw maps", "Calculate areas only"],
+      ["Keep records", "Handle multiple equations and unknowns simultaneously", "Mark boundaries", "Measure angles"],
+      ["File documents", "Systematically solve overdetermined systems", "Set monuments", "Record bearings"],
+      ["Track expenses", "Efficiently handle large systems of observation equations", "Schedule crews", "Order equipment"],
+      ["Color coding", "A systematic method for solving large adjustment problems", "Font selection", "Line styles"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Matrices organize and solve systems of equations efficiently",
+      "They handle multiple equations and unknowns simultaneously",
+      "Matrix operations systematically solve overdetermined systems",
+      "Matrices efficiently handle large systems of observation equations",
+      "Matrix algebra provides a systematic method for large adjustment problems"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A 2×2 matrix multiplied by a 2×1 vector produces a ___×___ result.",
+    paramRanges: {},
+    computeAnswer: () => "2×1",
+    computeExplanation: () => "Matrix multiplication: (m×n)(n×p) = (m×p), so (2×2)(2×1) = (2×1)",
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The normal equations in least squares adjustment are:",
+      "In matrix form, least squares normal equations are written as:",
+      "The normal equation matrix form is:",
+      "To solve least squares, we form normal equations:",
+      "Least squares normal equations in matrix form:"
+    ],
+    optionSets: [
+      ["A = B", "AᵀPA x = AᵀPl (or Nx = U)", "x = y", "Simple addition"],
+      ["Just averaging", "(AᵀWA)x = AᵀWl", "Direct division", "x = A/B"],
+      ["Subtraction only", "Nx = U where N = AᵀPA", "Multiplication only", "x = A × B"],
+      ["No equations needed", "AᵀPA x = AᵀPl", "Just observation", "Random guessing"],
+      ["Simple average", "Normal matrix N times x equals U", "Weighted mean only", "Geometric mean"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Normal equations: AᵀPA x = AᵀPl (or Nx = U)",
+      "In matrix form: (AᵀWA)x = AᵀWl",
+      "Normal equations: Nx = U where N = AᵀPA",
+      "We form AᵀPA x = AᵀPl",
+      "Normal equations: Nx = U"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "The inverse of matrix A is denoted A⁻¹. If Ax = b, then x = ___.",
+    paramRanges: {},
+    computeAnswer: () => "A⁻¹b",
+    computeExplanation: () => "To solve Ax = b, multiply both sides by A⁻¹: x = A⁻¹b",
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The weight matrix in least squares represents:",
+      "Weights in the P or W matrix indicate:",
+      "The diagonal elements of the weight matrix are:",
+      "In least squares, larger weights mean:",
+      "The weight matrix P relates to measurement precision by:"
+    ],
+    optionSets: [
+      ["Equipment mass", "Relative precision of observations", "Observer weight", "Distance traveled"],
+      ["Physical weight", "Measurement reliability (inverse of variance)", "Bulk of equipment", "Team size"],
+      ["Random values", "Reciprocals of variances (1/σ²)", "Equipment costs", "Travel times"],
+      ["Less importance", "Higher precision and more influence on solution", "Heavier equipment", "More distance"],
+      ["No relation", "Weight = 1/variance (more precise = higher weight)", "Random assignment", "Linear scaling"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "The weight matrix represents relative precision of observations",
+      "Weights indicate measurement reliability (inverse of variance)",
+      "Diagonal elements are reciprocals of variances (1/σ²)",
+      "Larger weights mean higher precision and more influence on solution",
+      "Weight = 1/variance, so more precise measurements have higher weight"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 9: Probability and Distributions
+export const d7_lesson09_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The normal distribution in surveying describes:",
+      "Surveying measurements typically follow a normal distribution because:",
+      "The bell curve (normal distribution) applies to surveying errors because:",
+      "Random measurement errors follow a normal distribution due to:",
+      "Surveyors assume normal distribution for random errors because:"
+    ],
+    optionSets: [
+      ["Equipment costs", "The pattern of random measurement errors", "Weather patterns", "Traffic flow"],
+      ["Laws require it", "Multiple small random effects combine to create normal pattern", "Convenience only", "Historical tradition"],
+      ["It looks nice", "Many small random errors combine according to central limit theorem", "Regulations mandate it", "Equipment design"],
+      ["Government rules", "Many independent small effects combining", "Training requirements", "Software limitations"],
+      ["No particular reason", "Central limit theorem shows combined random effects are normal", "It's arbitrary", "Historical convention only"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Normal distribution describes the pattern of random measurement errors",
+      "Multiple small random effects combine to create a normal pattern",
+      "Many small random errors combine per central limit theorem",
+      "Many independent small effects combine to produce normal distribution",
+      "Central limit theorem shows combined random effects follow normal distribution"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "In a normal distribution, approximately {pct}% of values fall within ±{k} standard deviations of the mean.",
+    paramRanges: {
+      pct: [68, 95, 99.7],
+      k: [1, 2, 3]
+    },
+    computeAnswer: (p) => String(p.pct),
+    computeExplanation: (p, ans) => `${p.k}σ contains approximately ${ans}% of normally distributed data (68-95-99.7 rule)`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The standard deviation measures:",
+      "In surveying, standard deviation indicates:",
+      "Standard deviation of measurements represents:",
+      "A smaller standard deviation in measurements means:",
+      "The meaning of standard deviation in survey data is:"
+    ],
+    optionSets: [
+      ["The mean value", "The spread or dispersion of values around the mean", "The maximum value", "The minimum value"],
+      ["Total distance", "Measurement precision (smaller = more precise)", "Project cost", "Time required"],
+      ["Average error", "Dispersion of observations from their mean", "Systematic error", "Blunder magnitude"],
+      ["Lower accuracy", "Higher precision (less scatter in measurements)", "More errors", "Worse quality"],
+      ["The median", "Variability or spread of the measurements", "The mode", "The range only"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Standard deviation measures the spread or dispersion around the mean",
+      "It indicates measurement precision (smaller = more precise)",
+      "It represents dispersion of observations from their mean",
+      "Smaller standard deviation means higher precision",
+      "It measures variability or spread of the measurements"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "If measurements have mean = {mean} and σ = {sigma}, approximately 95% fall between {lower} and ___",
+    paramRanges: {
+      mean: [100, 150, 200],
+      sigma: [2, 3, 5],
+      lower: [96, 144, 190]
+    },
+    computeAnswer: (p) => String(p.mean + 2 * p.sigma),
+    computeExplanation: (p, ans) => `95% is within ±2σ: ${p.mean} ± 2×${p.sigma} = ${p.mean - 2*p.sigma} to ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The probability that a random error exceeds 3σ is approximately:",
+      "For normally distributed errors, the chance of exceeding 3σ is:",
+      "Errors greater than 3 standard deviations occur with probability:",
+      "The 3σ rule indicates errors beyond this range occur about:",
+      "Probability of a measurement error exceeding 3σ is roughly:"
+    ],
+    optionSets: [
+      ["50%", "0.3% (about 3 in 1000)", "10%", "25%"],
+      ["5%", "About 0.27% (very rare)", "20%", "15%"],
+      ["1%", "Less than 0.3%", "2%", "5%"],
+      ["10% of the time", "Less than 1% of the time (rare)", "Always", "Never"],
+      ["Common (25%)", "Very rare (about 0.3%)", "Frequent (10%)", "Half the time"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Errors exceeding 3σ occur about 0.3% of the time (very rare)",
+      "The chance is about 0.27% (3 in 1000)",
+      "Less than 0.3% of errors exceed 3σ",
+      "Errors beyond 3σ are very rare (less than 1%)",
+      "Very rare—about 0.3% of measurements exceed 3σ"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 10: Hypothesis Testing and Confidence Intervals
+export const d7_lesson10_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A confidence interval provides:",
+      "The purpose of a confidence interval is to:",
+      "Confidence intervals in surveying indicate:",
+      "A 95% confidence interval means:",
+      "Surveyors use confidence intervals to:"
+    ],
+    optionSets: [
+      ["An exact value", "A range likely to contain the true value", "A random guess", "A maximum limit only"],
+      ["Guarantee accuracy", "Quantify uncertainty in an estimate", "Eliminate all error", "Set legal boundaries"],
+      ["Exact measurements", "The range within which the true value likely falls", "Zero error", "Maximum precision"],
+      ["100% certainty", "95% probability the interval contains the true value", "Guaranteed accuracy", "Perfect precision"],
+      ["Avoid uncertainty", "Express the precision of estimates", "Eliminate variation", "Guarantee results"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "A confidence interval provides a range likely to contain the true value",
+      "It quantifies uncertainty in an estimate",
+      "It indicates the range within which the true value likely falls",
+      "95% CI means 95% probability the interval contains the true value",
+      "Confidence intervals express the precision of estimates"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A 95% confidence interval for a mean is x̄ ± t × (s/√n). If x̄ = {xbar}, t×(s/√n) = {margin}, the interval is {lower} to ___",
+    paramRanges: {
+      xbar: [100, 150, 200],
+      margin: [2, 3, 5],
+      lower: [98, 147, 195]
+    },
+    computeAnswer: (p) => String(p.xbar + p.margin),
+    computeExplanation: (p, ans) => `CI = x̄ ± margin = ${p.xbar} ± ${p.margin} = ${p.xbar - p.margin} to ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Hypothesis testing in surveying is used to:",
+      "The purpose of a hypothesis test is to:",
+      "Surveyors perform hypothesis tests to:",
+      "Statistical hypothesis testing helps determine:",
+      "Hypothesis tests are used in surveying to:"
+    ],
+    optionSets: [
+      ["Always reject data", "Determine if differences are statistically significant", "Accept all measurements", "Avoid decision making"],
+      ["Guarantee results", "Evaluate whether observed differences are due to chance", "Eliminate uncertainty", "Prove theories correct"],
+      ["Ignore outliers", "Assess whether measurement differences are significant", "Accept all data", "Avoid analysis"],
+      ["Perfect accuracy", "Whether observed effects are real or due to random variation", "Zero error", "Eliminate blunders"],
+      ["Skip quality control", "Test whether differences are real or due to random chance", "Accept all results", "Avoid calculations"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Hypothesis testing determines if differences are statistically significant",
+      "It evaluates whether observed differences are due to chance",
+      "It assesses whether measurement differences are significant",
+      "It determines whether observed effects are real or due to random variation",
+      "It tests whether differences are real or due to random chance"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A Type I error (α) in hypothesis testing is:",
+      "Rejecting a true null hypothesis is called:",
+      "A false positive in statistical testing means:",
+      "Type I error occurs when:",
+      "The probability of Type I error is controlled by:"
+    ],
+    optionSets: [
+      ["Missing a true difference", "Rejecting H₀ when it is actually true", "Correct decision", "Accepting H₀"],
+      ["Type II error", "Type I error (false positive)", "Correct rejection", "True negative"],
+      ["Correct detection", "Incorrectly concluding a difference exists", "Proper analysis", "Valid conclusion"],
+      ["Correctly accepting H₀", "Incorrectly rejecting a true H₀", "Correctly rejecting H₀", "Accepting false H₀"],
+      ["Sample size alone", "The significance level (α)", "Random chance", "Standard deviation"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Type I error is rejecting H₀ when it is actually true",
+      "Rejecting a true null hypothesis is Type I error (false positive)",
+      "False positive means incorrectly concluding a difference exists",
+      "Type I error occurs when incorrectly rejecting a true H₀",
+      "The significance level (α) controls Type I error probability"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "If the test statistic |t| = {t_calc} and critical value t_crit = {t_crit}, the null hypothesis is ___ (rejected or not rejected).",
+    paramRanges: {
+      t_calc: [2.5, 3.1, 4.2],
+      t_crit: [2.0, 2.0, 2.0]
+    },
+    computeAnswer: (p) => p.t_calc > p.t_crit ? "rejected" : "not rejected",
+    computeExplanation: (p, ans) => `Since |t| = ${p.t_calc} > t_crit = ${p.t_crit}, H₀ is ${ans}`,
+    points: 10
+  }
+];
+
+// Lesson 11: Regression and Correlation
+export const d7_lesson11_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Linear regression is used in surveying to:",
+      "The purpose of regression analysis in surveying is to:",
+      "Surveyors use regression to:",
+      "Regression analysis helps surveyors:",
+      "Linear regression in surveying applications:"
+    ],
+    optionSets: [
+      ["Measure angles", "Model relationships between variables and predict values", "Set monuments", "Record bearings"],
+      ["Draw contours", "Find best-fit lines through data points", "Measure distances", "Calculate areas"],
+      ["File records", "Establish mathematical relationships between measurements", "Order supplies", "Schedule crews"],
+      ["Hire staff", "Fit models to data and make predictions", "Plan vacations", "Buy equipment"],
+      ["Paint marks", "Establishes equations relating variables", "Mix concrete", "Dig holes"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Regression models relationships between variables and predicts values",
+      "It finds best-fit lines through data points",
+      "Regression establishes mathematical relationships between measurements",
+      "It helps fit models to data and make predictions",
+      "It establishes equations relating variables"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The correlation coefficient (r) measures:",
+      "An r value close to +1 indicates:",
+      "The correlation coefficient indicates:",
+      "If r = 0.95, this means:",
+      "Correlation coefficient ranges from:"
+    ],
+    optionSets: [
+      ["Exact values", "The strength and direction of linear relationship", "Distance only", "Angle measurements"],
+      ["No relationship", "Strong positive linear relationship", "Weak relationship", "Negative relationship"],
+      ["Slope of line", "How closely data follow a linear pattern", "Y-intercept", "Standard deviation"],
+      ["No correlation", "Very strong positive linear correlation", "Random scatter", "Negative correlation"],
+      ["0 to infinity", "-1 to +1", "-100 to +100", "0 to 100"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "r measures the strength and direction of linear relationship",
+      "r close to +1 indicates strong positive linear relationship",
+      "It indicates how closely data follow a linear pattern",
+      "r = 0.95 means very strong positive linear correlation",
+      "Correlation coefficient ranges from -1 to +1"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A linear regression equation y = {a} + {b}x predicts y when x = {x}. y = ___",
+    paramRanges: {
+      a: [10, 15, 20],
+      b: [2, 3, 4],
+      x: [5, 10, 15]
+    },
+    computeAnswer: (p) => String(p.a + p.b * p.x),
+    computeExplanation: (p, ans) => `y = ${p.a} + ${p.b}×${p.x} = ${p.a} + ${p.b * p.x} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The coefficient of determination (R²) represents:",
+      "R² in regression indicates:",
+      "An R² value of 0.85 means:",
+      "The R² statistic tells us:",
+      "R-squared measures:"
+    ],
+    optionSets: [
+      ["Correlation direction", "Proportion of variance explained by the model", "Slope of the line", "Number of data points"],
+      ["Sample size", "How much of the variation is accounted for by the regression", "Residual error", "Standard deviation"],
+      ["15% is explained", "85% of the variance is explained by the model", "85% error", "15% fit"],
+      ["Slope value", "What fraction of variability the model explains", "Y-intercept", "X-intercept"],
+      ["Number of variables", "The proportion of variance accounted for by the fit", "Maximum value", "Minimum value"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "R² represents the proportion of variance explained by the model",
+      "It indicates how much variation is accounted for by the regression",
+      "R² = 0.85 means 85% of variance is explained by the model",
+      "R² tells us what fraction of variability the model explains",
+      "R² measures the proportion of variance accounted for by the fit"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "If r = {r}, then R² = ___% (round to nearest whole number)",
+    paramRanges: {
+      r: [0.80, 0.90, 0.95]
+    },
+    computeAnswer: (p) => String(Math.round(p.r * p.r * 100)),
+    computeExplanation: (p, ans) => `R² = r² = ${p.r}² = ${(p.r * p.r).toFixed(4)} = ${ans}%`,
+    points: 10
+  }
+];
+
+// Lesson 12: Numerical Methods and Interpolation
+export const d7_lesson12_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Linear interpolation is used in surveying to:",
+      "The purpose of interpolation in surveying is to:",
+      "Surveyors use interpolation to:",
+      "Interpolation helps surveyors:",
+      "Linear interpolation allows surveyors to:"
+    ],
+    optionSets: [
+      ["Measure angles", "Estimate values between known data points", "Set monuments", "Record deeds"],
+      ["Draw boundaries", "Find intermediate values from known data", "Measure distances", "Calculate bearings"],
+      ["File reports", "Estimate unknown values between measured points", "Order equipment", "Hire staff"],
+      ["Buy supplies", "Determine values at unmeasured locations", "Plan schedules", "Manage budgets"],
+      ["Paint marks", "Calculate values between known measurements", "Dig holes", "Set stakes"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Linear interpolation estimates values between known data points",
+      "Interpolation finds intermediate values from known data",
+      "It estimates unknown values between measured points",
+      "It helps determine values at unmeasured locations",
+      "It calculates values between known measurements"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Linear interpolation: y = y₁ + (x - x₁)(y₂ - y₁)/(x₂ - x₁). If x₁={x1}, y₁={y1}, x₂={x2}, y₂={y2}, x={x}, then y = ___",
+    paramRanges: {
+      x1: [0, 10, 20],
+      y1: [100, 150, 200],
+      x2: [10, 20, 40],
+      y2: [120, 170, 240],
+      x: [5, 15, 30]
+    },
+    computeAnswer: (p) => String(p.y1 + (p.x - p.x1) * (p.y2 - p.y1) / (p.x2 - p.x1)),
+    computeExplanation: (p, ans) => `y = ${p.y1} + (${p.x}-${p.x1})(${p.y2}-${p.y1})/(${p.x2}-${p.x1}) = ${p.y1} + ${p.x-p.x1}×${p.y2-p.y1}/${p.x2-p.x1} = ${ans}`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The Newton-Raphson method is used for:",
+      "Iterative root-finding methods like Newton-Raphson are used to:",
+      "Newton-Raphson in surveying computations helps:",
+      "Surveyors might use Newton-Raphson to:",
+      "Iterative numerical methods are useful in surveying for:"
+    ],
+    optionSets: [
+      ["Drawing maps", "Finding solutions to nonlinear equations", "Measuring angles", "Recording data"],
+      ["Setting monuments", "Solve equations that can't be solved algebraically", "Reading levels", "Calculating areas"],
+      ["Filing documents", "Find roots of complex equations iteratively", "Ordering supplies", "Hiring staff"],
+      ["Paint marking", "Solve nonlinear coordinate or adjustment equations", "Concrete mixing", "Stake setting"],
+      ["Equipment calibration", "Solving complex equations by successive approximation", "Travel planning", "Budget management"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Newton-Raphson finds solutions to nonlinear equations",
+      "It solves equations that can't be solved algebraically",
+      "It finds roots of complex equations iteratively",
+      "It helps solve nonlinear coordinate or adjustment equations",
+      "Iterative methods solve complex equations by successive approximation"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Contour interpolation uses:",
+      "To find contour locations from spot elevations, surveyors use:",
+      "Interpolating contour lines between points involves:",
+      "Contour line positioning uses interpolation based on:",
+      "Finding where a contour crosses between two points uses:"
+    ],
+    optionSets: [
+      ["Random placement", "Linear interpolation between known elevations", "Guessing", "Fixed intervals"],
+      ["Arbitrary spacing", "Proportional distance based on elevation differences", "Equal spacing always", "No calculation"],
+      ["Random selection", "Calculating proportional distances from elevations", "Fixed formulas", "Approximate placement"],
+      ["No math", "Proportional positioning based on elevation values", "Fixed grid", "Random sampling"],
+      ["Estimation only", "Linear interpolation of horizontal distance from elevation", "Copying from maps", "Standard spacing"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Contour interpolation uses linear interpolation between known elevations",
+      "Contour locations use proportional distance based on elevation differences",
+      "It involves calculating proportional distances from elevations",
+      "Contours are positioned proportionally based on elevation values",
+      "Linear interpolation of horizontal distance from elevation is used"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "Find contour 110 between points A (elev {ea}, dist 0) and B (elev {eb}, dist {d}). Distance to contour = {d} × (110-{ea})/({eb}-{ea}) = ___m",
+    paramRanges: {
+      ea: [105, 100, 108],
+      eb: [115, 120, 112],
+      d: [50, 100, 40]
+    },
+    computeAnswer: (p) => String(p.d * (110 - p.ea) / (p.eb - p.ea)),
+    computeExplanation: (p, ans) => `Distance = ${p.d} × (110-${p.ea})/(${p.eb}-${p.ea}) = ${p.d} × ${110-p.ea}/${p.eb-p.ea} = ${ans}m from A`,
+    points: 10
+  }
+];
+
+// Export all archetypes by lesson ID
+export const allArchetypes: Record<string, QuestionArchetype[]> = {
+  "d0-lesson-01": d0_lesson01_archetypes,
   "d0-lesson-02": d0_lesson02_archetypes,
   "d0-lesson-03": d0_lesson03_archetypes,
   "d0-lesson-04": d0_lesson04_archetypes,
@@ -4395,6 +7517,36 @@ export const d4_lesson07_archetypes: QuestionArchetype[] = [
   "d4-lesson-05": d4_lesson05_archetypes,
   "d4-lesson-06": d4_lesson06_archetypes,
   "d4-lesson-07": d4_lesson07_archetypes,
+  "d5-lesson-01": d5_lesson01_archetypes,
+  "d5-lesson-02": d5_lesson02_archetypes,
+  "d5-lesson-03": d5_lesson03_archetypes,
+  "d5-lesson-04": d5_lesson04_archetypes,
+  "d5-lesson-05": d5_lesson05_archetypes,
+  "d5-lesson-06": d5_lesson06_archetypes,
+  "d5-lesson-07": d5_lesson07_archetypes,
+  "d5-lesson-08": d5_lesson08_archetypes,
+  "d5-lesson-09": d5_lesson09_archetypes,
+  "d5-lesson-10": d5_lesson10_archetypes,
+  "d5-lesson-11": d5_lesson11_archetypes,
+  "d5-lesson-12": d5_lesson12_archetypes,
+  "d6-lesson-01": d6_lesson01_archetypes,
+  "d6-lesson-02": d6_lesson02_archetypes,
+  "d6-lesson-03": d6_lesson03_archetypes,
+  "d6-lesson-04": d6_lesson04_archetypes,
+  "d6-lesson-05": d6_lesson05_archetypes,
+  "d6-lesson-06": d6_lesson06_archetypes,
+  "d7-lesson-01": d7_lesson01_archetypes,
+  "d7-lesson-02": d7_lesson02_archetypes,
+  "d7-lesson-03": d7_lesson03_archetypes,
+  "d7-lesson-04": d7_lesson04_archetypes,
+  "d7-lesson-05": d7_lesson05_archetypes,
+  "d7-lesson-06": d7_lesson06_archetypes,
+  "d7-lesson-07": d7_lesson07_archetypes,
+  "d7-lesson-08": d7_lesson08_archetypes,
+  "d7-lesson-09": d7_lesson09_archetypes,
+  "d7-lesson-10": d7_lesson10_archetypes,
+  "d7-lesson-11": d7_lesson11_archetypes,
+  "d7-lesson-12": d7_lesson12_archetypes,
 };
 
 // Generate all variations for a lesson
