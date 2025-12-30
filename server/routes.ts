@@ -1167,7 +1167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Track which question variations were shown this attempt
       const seenVariations = (existingProgress?.seenQuestionVariations as Record<string, string[]>) || {};
       questions.forEach((q) => {
-        const groupKey = q.variationGroup.toString();
+        const groupKey = (q.variationGroup ?? 1).toString();
         const seenIds = seenVariations[groupKey] || [];
         if (!seenIds.includes(q.id)) {
           seenIds.push(q.id);
