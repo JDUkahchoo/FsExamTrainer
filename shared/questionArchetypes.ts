@@ -224,7 +224,7 @@ export const d0_lesson01_archetypes: QuestionArchetype[] = [
     ],
     optionSets: [
       ["Please Excuse My Dear Aunt Sally", "Priority Evaluation Math Division Addition Subtraction", "Both represent order of operations", "None of the above"],
-      ["Parentheses, Exponents, Multiplication, Division, Addition, Subtraction", "Percentages, Exponents, Multiplication, Division, Addition, Subtraction", "Parentheses, Equations, Multiplication, Division, Addition, Subtraction", "Parentheses, Exponents, Measurement, Division, Addition, Subtraction"],
+      ["Parentheses, Exponents, Multiplication, Division, Addition, Subtraction", "Percentages, Exponents, Multiplication, Division, Addition, Subtraction", "Parentheses, Equations, Multiplication, Division, Addition, Subtraction", "Parentheses, Exponents, Multiplication, Data, Addition, Subtraction"],
       ["Addition", "Exponents", "Multiplication", "Subtraction"],
       ["Addition", "Multiplication", "Both have equal precedence", "Neither"],
       ["Equations", "Estimation", "Exponents", "Evaluation"]

@@ -85,9 +85,12 @@ export default function StudyPlan() {
     queryKey: ['/api/daily-logs']
   });
 
-  // Fetch lesson progress
+  // Fetch lesson progress - use staleTime: 0 to always refetch when component mounts
+  // This ensures lesson completion status is fresh when returning from lessons
   const { data: lessonProgressData = [] } = useQuery<any[]>({
-    queryKey: ['/api/lessons/progress']
+    queryKey: ['/api/lessons/progress'],
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   // Fetch ALL lessons for study plan distribution
