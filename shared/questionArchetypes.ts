@@ -366,7 +366,7 @@ export const d0_lesson02_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "A surveyor measures {feet}.{frac} feet. What is this in inches? (Answer as whole number)",
+    template: "A surveyor measures {feet}.{frac} feet. What is this in inches? (Answer as whole number) ___",
     paramRanges: {
       feet: [3, 4, 5, 6, 7],
       frac: [25, 50, 75]
@@ -438,7 +438,7 @@ export const d0_lesson03_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "What is {pct}% of {value}?",
+    template: "What is {pct}% of {value}? ___",
     paramRanges: {
       pct: [10, 12, 15, 20, 25],
       value: [150, 160, 200, 250, 500]
@@ -1190,7 +1190,7 @@ export const d1_lesson01_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "Most total stations measure angles to the nearest {precision} seconds.",
+    template: "Most total stations measure angles to the nearest ___ seconds.",
     paramRanges: {
       precision: [1, 2, 3, 5]
     },
@@ -1820,7 +1820,7 @@ export const d1_lesson06_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "GPS requires line of sight to at least {min} satellites for 3D positioning.",
+    template: "GPS requires line of sight to at least ___ satellites for 3D positioning.",
     paramRanges: {
       min: [4, 5]
     },
@@ -3347,7 +3347,7 @@ export const d3_lesson05_archetypes: QuestionArchetype[] = [
 export const d3_lesson06_archetypes: QuestionArchetype[] = [
   {
     type: 'fill_in_blank',
-    template: "A township is {n} miles square.",
+    template: "A township is ___ miles square.",
     paramRanges: {
       n: [6, 6, 6, 6, 6]
     },
@@ -3393,7 +3393,7 @@ export const d3_lesson06_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "A quarter section contains {n} acres. (Enter the correct value)",
+    template: "A quarter section contains ___ acres.",
     paramRanges: {
       n: [160, 160, 160, 160, 160]
     },
@@ -4018,7 +4018,7 @@ export const d4_lesson04_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "1 cubic yard equals {n} cubic feet. (Enter the correct value)",
+    template: "1 cubic yard equals ___ cubic feet.",
     paramRanges: {
       n: [27, 27, 27, 27, 27]
     },
@@ -6497,7 +6497,7 @@ export const d7_lesson03_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "The derivative of f(x) = {a}x² is f'(x) = {ans}x. What is {ans}?",
+    template: "The derivative of f(x) = {a}x² is f'(x) = ___x. What coefficient goes in the blank?",
     paramRanges: {
       a: [2, 3, 4, 5, 6],
       ans: [4, 6, 8, 10, 12]
@@ -6814,7 +6814,7 @@ export const d7_lesson06_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "For {k}σ control limits, approximately {pct}% of data should fall within limits under normal conditions.",
+    template: "For {k}σ control limits, approximately ___% of data should fall within limits under normal conditions.",
     paramRanges: {
       k: [2, 3],
       pct: [95.45, 99.73]
@@ -6918,7 +6918,7 @@ export const d7_lesson07_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "A distance of {dist}m ± {err}m is measured. The relative precision (error/distance) expressed as 1:x is 1:{ratio}. What is {ratio}?",
+    template: "A distance of {dist}m ± {err}m is measured. The relative precision (error/distance) expressed as 1:x is 1:___. What value goes in the blank?",
     paramRanges: {
       dist: [1000, 2000, 5000],
       err: [0.05, 0.10, 0.25],
@@ -7084,7 +7084,7 @@ export const d7_lesson09_archetypes: QuestionArchetype[] = [
   },
   {
     type: 'fill_in_blank',
-    template: "In a normal distribution, approximately {pct}% of values fall within ±{k} standard deviations of the mean.",
+    template: "In a normal distribution, approximately ___% of values fall within ±{k} standard deviations of the mean.",
     paramRanges: {
       pct: [68, 95, 99.7],
       k: [1, 2, 3]
