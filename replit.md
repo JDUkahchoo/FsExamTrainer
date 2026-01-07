@@ -25,7 +25,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams.
 -   **Expanded Question Pool:** 1,825 lesson questions generated from 365 question archetypes (5 per lesson × 73 lessons × 5 variations). Uses archetype-based variation system with seeded random number generation for deterministic, reproducible question variations. Prevents memorization through computational parameter variations and curated alternative phrasings.
 -   **Getting Started & Study Strategy Page:** Comprehensive onboarding for new users, offering a quick start guide, study tool overview, detailed study strategy comparisons, and success tips. Also includes Feedback, Testimonials, Privacy Policy, and Disclaimer pages.
--   **Reference Manual Companion:** All 73 lessons are mapped to the Surveyor Reference Manual (SRM) 7th Edition chapters for comprehensive cross-referencing.
+-   **Reference Manual Companion:** Dual textbook reference system with all 73 lessons mapped to both Surveyor Reference Manual (SRM) 7th Edition and Elementary Surveying 15th Edition (Ghilani & Wolf). Users can toggle between textbooks to view chapter mappings, study tips, and page references. Stats and domain views dynamically update based on selected book.
 -   **Complete NCEES Coverage:** All 7 NCEES exam knowledge areas fully covered including Safety, Supervision, Communication (Domain 6), and UAS/Drone Operations (Domain 2) per the official FS CBT exam specifications.
 
 **Technical Implementation:**
