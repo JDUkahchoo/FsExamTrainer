@@ -1983,6 +1983,111 @@ export const d1_lesson07_archetypes: QuestionArchetype[] = [
   }
 ];
 
+// Lesson 8: Trigonometric Leveling
+export const d1_lesson08_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Trigonometric leveling uses:",
+      "Which method describes trigonometric leveling?",
+      "Trig leveling determines elevations using:",
+      "The trigonometric leveling method employs:",
+      "Elevation differences in trig leveling are found from:"
+    ],
+    optionSets: [
+      ["Level and rod only", "Vertical angles and slope distance", "GPS only", "Barometric pressure"],
+      ["Horizontal angles only", "Vertical angles and distance", "Spirit levels only", "EDM only"],
+      ["Level rods only", "Slope distance and vertical angles", "GNSS receivers", "Barometers"],
+      ["Spirit level measurements", "Vertical angles with slope distance", "Horizontal distance only", "GPS positioning"],
+      ["Level and rod", "Vertical angles and measured distances", "Barometric readings", "GPS heights"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Trig leveling computes elevation differences from vertical angles and slope distances",
+      "Trigonometric leveling uses vertical angles and slope distances to determine heights",
+      "The method uses measured angles and distances to calculate elevation changes",
+      "Vertical angles combined with slope distance allow elevation computation",
+      "Trig leveling employs vertical angle and distance for height differences"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "A total station measures a slope distance of {sd} feet at a zenith angle of {za}°. The vertical component V is ___ feet (round to 1 decimal).",
+    paramRanges: {
+      sd: [200, 250, 300, 350, 400],
+      za: [85, 82, 80, 78, 75]
+    },
+    computeAnswer: (p) => (p.sd * Math.cos(p.za * Math.PI / 180)).toFixed(1),
+    computeExplanation: (p, ans) => `V = SD × cos(zenith angle) = ${p.sd} × cos(${p.za}°) = ${ans} ft. Note: For zenith angles, use cosine; for vertical angles from horizontal, use sine.`,
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Curvature and refraction corrections are needed for:",
+      "When should curvature and refraction be applied in trig leveling?",
+      "C&R corrections become significant for:",
+      "Earth curvature corrections are required for:",
+      "Curvature/refraction affects trig leveling at:"
+    ],
+    optionSets: [
+      ["Short distances only", "Long distances", "Never", "GPS only"],
+      ["Very short sights", "Long sight distances", "All distances equally", "Close-range only"],
+      ["All measurements", "Distances over several hundred feet", "No measurements", "Indoor surveys"],
+      ["Short baselines", "Long baselines over 1000+ feet", "Only GPS work", "Never"],
+      ["Only under 100 feet", "Distances exceeding several hundred feet", "GPS measurements only", "Never needed"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Earth curvature and atmospheric refraction affect trig leveling over long distances",
+      "Curvature and refraction become significant at longer sight distances",
+      "C&R corrections are needed for longer distances where earth curvature matters",
+      "Long distances require curvature and refraction corrections",
+      "Over extended distances, curvature and refraction must be corrected"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Reciprocal trig leveling helps eliminate:",
+      "The purpose of reciprocal observations in trig leveling is to:",
+      "Taking trig leveling shots from both ends cancels:",
+      "Reciprocal trigonometric leveling removes:",
+      "Measuring from both stations eliminates:"
+    ],
+    optionSets: [
+      ["Random errors only", "Curvature and refraction effects", "Blunders", "Nothing"],
+      ["Increase random error", "Cancel curvature and refraction", "Add more observations", "Reduce accuracy"],
+      ["Random variation", "Curvature and refraction errors", "Instrumental errors only", "Distance errors"],
+      ["Gross errors only", "Systematic curvature/refraction errors", "Random errors", "All errors"],
+      ["Distance errors", "Curvature and refraction effects", "Blunders only", "Nothing"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Measuring from both ends and averaging cancels curvature and refraction effects",
+      "Reciprocal leveling eliminates curvature and refraction by averaging",
+      "Curvature and refraction are cancelled when measuring reciprocally",
+      "The reciprocal method averages out curvature and refraction errors",
+      "Reciprocal observations eliminate systematic C&R errors"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "With instrument height HI = {hi} ft, target height HT = {ht} ft, and vertical component V = {v} ft, the elevation difference is ___ feet.",
+    paramRanges: {
+      hi: [5.2, 5.5, 5.0, 4.8, 5.3],
+      ht: [6.0, 5.8, 6.2, 5.5, 6.0],
+      v: [12.5, 15.3, 18.7, 22.1, 25.4]
+    },
+    computeAnswer: (p) => (p.v + p.hi - p.ht).toFixed(1),
+    computeExplanation: (p, ans) => `ΔElev = V + HI - HT = ${p.v} + ${p.hi} - ${p.ht} = ${ans} ft`,
+    points: 10
+  }
+];
+
 // ============================================================================
 // DOMAIN 2: MEASUREMENT AND CALCULATIONS - QUESTION ARCHETYPES
 // ============================================================================
@@ -8013,6 +8118,7 @@ export const allArchetypes: Record<string, QuestionArchetype[]> = {
   "d1-lesson-05": d1_lesson05_archetypes,
   "d1-lesson-06": d1_lesson06_archetypes,
   "d1-lesson-07": d1_lesson07_archetypes,
+  "d1-lesson-08": d1_lesson08_archetypes,
   "d2-lesson-01": d2_lesson01_archetypes,
   "d2-lesson-02": d2_lesson02_archetypes,
   "d2-lesson-03": d2_lesson03_archetypes,

@@ -23,9 +23,9 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
 -   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain with multiple question types, difficulty levels, and progress indicators. Includes practical word problems for real-world application.
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams.
--   **Expanded Question Pool:** 1,800 lesson questions generated from 360 question archetypes (5 per lesson × 72 lessons × 5 variations). Uses archetype-based variation system with seeded random number generation for deterministic, reproducible question variations. Prevents memorization through computational parameter variations and curated alternative phrasings.
+-   **Expanded Question Pool:** 1,825 lesson questions generated from 365 question archetypes (5 per lesson × 73 lessons × 5 variations). Uses archetype-based variation system with seeded random number generation for deterministic, reproducible question variations. Prevents memorization through computational parameter variations and curated alternative phrasings.
 -   **Getting Started & Study Strategy Page:** Comprehensive onboarding for new users, offering a quick start guide, study tool overview, detailed study strategy comparisons, and success tips. Also includes Feedback, Testimonials, Privacy Policy, and Disclaimer pages.
--   **Reference Manual Companion:** All 72 lessons are mapped to the Surveyor Reference Manual (SRM) 7th Edition chapters for comprehensive cross-referencing.
+-   **Reference Manual Companion:** All 73 lessons are mapped to the Surveyor Reference Manual (SRM) 7th Edition chapters for comprehensive cross-referencing.
 -   **Complete NCEES Coverage:** All 7 NCEES exam knowledge areas fully covered including Safety, Supervision, Communication (Domain 6), and UAS/Drone Operations (Domain 2) per the official FS CBT exam specifications.
 
 **Technical Implementation:**

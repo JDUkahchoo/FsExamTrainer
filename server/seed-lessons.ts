@@ -325,6 +325,24 @@ async function seedLessons() {
         { type: "fill_in_blank", text: "The method of measuring angles twice and averaging is called double ___.", answer: "centering", explanation: "Double centering (or two-face measurements) involves measuring in direct and reverse", points: 10 }
       ]
     },
+    {
+      domainNumber: 1,
+      domain: DOMAINS[1],
+      title: "Trigonometric Leveling",
+      description: "Determine elevations using vertical angles and slope distances",
+      content: "Trigonometric leveling uses vertical angles and slope distances to compute elevation differences. Essential for steep terrain where differential leveling is impractical.",
+      difficulty: "medium",
+      orderIndex: 8,
+      estimatedMinutes: 24,
+      suggestedWeek: 5,
+      questions: [
+        { type: "multiple_choice", text: "Trigonometric leveling uses:", options: ["Level and rod only", "Vertical angles and slope distance", "GPS only", "Barometric pressure"], answer: "1", explanation: "Trig leveling computes elevation differences from vertical angles and slope distances", points: 10 },
+        { type: "fill_in_blank", text: "The vertical component V = SD × cos(___) where SD is slope distance and the angle is measured from vertical.", answer: "zenith angle", explanation: "V = SD × cos(zenith angle). For zenith angles (measured from vertical), use cosine. For vertical angles from horizontal, use sine.", points: 10 },
+        { type: "multiple_choice", text: "Curvature and refraction corrections are needed for:", options: ["Short distances only", "Long distances", "Never", "GPS only"], answer: "1", explanation: "Earth curvature and atmospheric refraction affect trig leveling over long distances", points: 10 },
+        { type: "multiple_choice", text: "Reciprocal trig leveling helps eliminate:", options: ["Random errors only", "Curvature and refraction effects", "Blunders", "Nothing"], answer: "1", explanation: "Measuring from both ends and averaging cancels curvature and refraction effects", points: 10 },
+        { type: "fill_in_blank", text: "The elevation difference formula includes instrument height (HI) minus target height (___). Use two letters.", answer: "HT", explanation: "ΔElev = V + HI - HT where HT is height of target/prism", points: 10 }
+      ]
+    },
 
     // ========== DOMAIN 2: Mapping Processes and Methods (7 lessons) ==========
     {
