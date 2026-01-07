@@ -21,6 +21,8 @@ import {
   LESSON_MAPPINGS, 
   getBookChapters,
   getLessonsByDomain,
+  ES_CHAPTERS,
+  ES_LESSON_MAPPINGS,
   type LessonMapping 
 } from "@shared/data/referenceManualMappings";
 import { NCEES_DOMAINS } from "@shared/domains";
@@ -45,6 +47,9 @@ export default function ReferenceCompanion() {
   const chapters = getBookChapters(selectedBook);
 
   const renderChapterView = () => {
+    if (selectedBook === "ES") {
+      return renderESChapterView();
+    }
     return (
       <div className="space-y-4">
         {Object.entries(SRM_TOPICS).map(([topicKey, topic]) => (
@@ -106,6 +111,86 @@ export default function ReferenceCompanion() {
     );
   };
 
+  const renderESChapterView = () => {
+    const esChapterGroups = [
+      { name: "Fundamentals", chapters: [1, 2, 3] },
+      { name: "Field Measurements", chapters: [4, 5, 6, 7, 8] },
+      { name: "Traverse & Coordinates", chapters: [9, 10, 11, 12] },
+      { name: "GNSS & Adjustments", chapters: [13, 14, 15, 16] },
+      { name: "Mapping", chapters: [17, 18, 19, 20] },
+      { name: "Boundary & Land Surveys", chapters: [21, 22] },
+      { name: "Construction & Curves", chapters: [23, 24, 25, 26] },
+      { name: "Advanced Topics", chapters: [27, 28] }
+    ];
+
+    return (
+      <div className="space-y-4">
+        {esChapterGroups.map((group) => (
+          <Card key={group.name} className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="outline" className="font-mono text-xs">
+                {group.name}
+              </Badge>
+            </div>
+            <div className="space-y-2">
+              {group.chapters.map((chapterNum) => {
+                const chapter = ES_CHAPTERS[chapterNum];
+                if (!chapter) return null;
+                
+                const linkedLessonIds = Object.entries(ES_LESSON_MAPPINGS)
+                  .filter(([_, mapping]) => mapping.chapters.includes(chapterNum))
+                  .map(([lessonId]) => lessonId);
+                
+                const linkedLessons = LESSON_MAPPINGS.filter(m => 
+                  linkedLessonIds.includes(m.lessonId)
+                );
+                
+                return (
+                  <div 
+                    key={chapterNum} 
+                    className="flex items-start gap-3 p-3 rounded-md bg-muted/50 hover-elevate"
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
+                      <span className="text-sm font-medium text-primary">{chapterNum}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-foreground">{chapter.title}</div>
+                      <div className="text-xs text-muted-foreground">p. {chapter.pageStart}+</div>
+                      {linkedLessons.length > 0 ? (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {linkedLessons.map((lesson) => (
+                            <Badge 
+                              key={lesson.lessonId}
+                              variant="secondary" 
+                              className={`text-xs cursor-pointer ${DOMAIN_COLORS[lesson.domainNumber]}`}
+                              onClick={() => setLocation(`/lesson/${lesson.lessonId}`)}
+                              data-testid={`link-es-lesson-${lesson.lessonId}`}
+                            >
+                              {lesson.lessonTitle.length > 25 
+                                ? lesson.lessonTitle.substring(0, 25) + "..." 
+                                : lesson.lessonTitle}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground mt-1 block">
+                          No linked lessons yet
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-shrink-0 text-xs text-muted-foreground">
+                      {linkedLessons.length} lesson{linkedLessons.length !== 1 ? "s" : ""}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
   const renderDomainView = () => {
     return (
       <div className="space-y-4">
@@ -125,31 +210,46 @@ export default function ReferenceCompanion() {
                 </span>
               </div>
               <div className="space-y-2">
-                {lessons.map((lesson) => (
-                  <div 
-                    key={lesson.lessonId}
-                    className="flex items-start gap-3 p-3 rounded-md bg-muted/50 hover-elevate cursor-pointer"
-                    onClick={() => setLocation(`/lesson/${lesson.lessonId}`)}
-                    data-testid={`card-lesson-${lesson.lessonId}`}
-                  >
-                    <BookOpen className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm text-foreground">{lesson.lessonTitle}</div>
-                      <div className="mt-1 flex flex-wrap gap-1">
-                        {lesson.references.map((ref, idx) => (
-                          <Badge 
-                            key={idx}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            Ch. {ref.chapter}: {ref.chapterTitle}
-                          </Badge>
-                        ))}
+                {lessons.map((lesson) => {
+                  const esMapping = ES_LESSON_MAPPINGS[lesson.lessonId];
+                  const displayRefs = selectedBook === "ES" && esMapping
+                    ? esMapping.chapters.map(chNum => {
+                        const ch = ES_CHAPTERS[chNum];
+                        return ch ? { chapter: chNum, chapterTitle: ch.title } : null;
+                      }).filter(Boolean) as { chapter: number; chapterTitle: string }[]
+                    : lesson.references;
+                  
+                  return (
+                    <div 
+                      key={lesson.lessonId}
+                      className="flex items-start gap-3 p-3 rounded-md bg-muted/50 hover-elevate cursor-pointer"
+                      onClick={() => setLocation(`/lesson/${lesson.lessonId}`)}
+                      data-testid={`card-lesson-${lesson.lessonId}`}
+                    >
+                      <BookOpen className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm text-foreground">{lesson.lessonTitle}</div>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {displayRefs.map((ref, idx) => (
+                            <Badge 
+                              key={idx}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              Ch. {ref.chapter}: {ref.chapterTitle}
+                            </Badge>
+                          ))}
+                          {selectedBook === "ES" && esMapping?.studyTips && (
+                            <Badge variant="secondary" className="text-xs">
+                              {esMapping.studyTips}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                     </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
           );
@@ -159,8 +259,11 @@ export default function ReferenceCompanion() {
   };
 
   const totalLessons = LESSON_MAPPINGS.length;
-  const totalChapters = chapters.length;
-  const lessonsWithReferences = LESSON_MAPPINGS.filter(m => m.references.length > 0).length;
+  const esLessonsWithMappings = Object.keys(ES_LESSON_MAPPINGS).length;
+  const totalChapters = selectedBook === "ES" ? Object.keys(ES_CHAPTERS).length : chapters.length;
+  const lessonsWithReferences = selectedBook === "ES" 
+    ? esLessonsWithMappings 
+    : LESSON_MAPPINGS.filter(m => m.references.length > 0).length;
 
   return (
     <div className="container max-w-5xl mx-auto py-6 px-4 space-y-6">
@@ -200,12 +303,10 @@ export default function ReferenceCompanion() {
             <Button
               variant={selectedBook === "ES" ? "default" : "outline"}
               size="sm"
-              disabled
-              title="Coming soon - upload Elementary Surveying PDF"
+              onClick={() => setSelectedBook("ES")}
               data-testid="button-select-es"
             >
               Elementary Surveying
-              <Badge variant="secondary" className="ml-1 text-xs">Soon</Badge>
             </Button>
           </div>
         </div>

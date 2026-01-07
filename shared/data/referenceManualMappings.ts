@@ -1494,3 +1494,207 @@ export function getBookChapters(bookId: string): { chapter: number; title: strin
     }))
     .sort((a, b) => a.chapter - b.chapter);
 }
+
+// Elementary Surveying, 15th Edition - Chapter Definitions
+export const ES_CHAPTERS: Record<number, { title: string; pageStart: number }> = {
+  1: { title: "Introduction", pageStart: 1 },
+  2: { title: "Units, Significant Figures, and Field Notes", pageStart: 22 },
+  3: { title: "Theory of Errors in Observations", pageStart: 44 },
+  4: { title: "Leveling - Theory, Methods, and Equipment", pageStart: 70 },
+  5: { title: "Leveling - Field Procedures and Computations", pageStart: 101 },
+  6: { title: "Distance Measurement", pageStart: 129 },
+  7: { title: "Angles, Azimuths, and Bearings", pageStart: 164 },
+  8: { title: "Total Station Instruments; Angle Observations", pageStart: 185 },
+  9: { title: "Traversing", pageStart: 226 },
+  10: { title: "Traverse Computations", pageStart: 239 },
+  11: { title: "Coordinate Geometry in Surveying Calculations", pageStart: 270 },
+  12: { title: "Area", pageStart: 301 },
+  13: { title: "GNSS - Introduction and Principles of Operation", pageStart: 323 },
+  14: { title: "GNSS - Static Surveys", pageStart: 361 },
+  15: { title: "GNSS - Kinematic Surveys", pageStart: 396 },
+  16: { title: "Adjustments by Least Squares", pageStart: 417 },
+  17: { title: "Mapping Surveys", pageStart: 464 },
+  18: { title: "Mapping", pageStart: 500 },
+  19: { title: "Control Surveys and Geodetic Reductions", pageStart: 529 },
+  20: { title: "State Plane Coordinates and Other Map Projections", pageStart: 591 },
+  21: { title: "Boundary Surveys", pageStart: 637 },
+  22: { title: "Surveys of the Public Lands", pageStart: 663 },
+  23: { title: "Construction Surveys", pageStart: 687 },
+  24: { title: "Horizontal Curves", pageStart: 718 },
+  25: { title: "Vertical Curves", pageStart: 758 },
+  26: { title: "Volumes", pageStart: 777 },
+  27: { title: "Photogrammetry", pageStart: 798 },
+  28: { title: "Introduction to Geographic Information Systems", pageStart: 840 }
+};
+
+// Lesson to Elementary Surveying Chapter Mapping
+// Maps lesson IDs to ES chapter numbers with study tips
+export const ES_LESSON_MAPPINGS: Record<string, { chapters: number[]; studyTips?: string }> = {
+  // Domain 0: Math Foundations
+  "d0-lesson-01": { chapters: [2], studyTips: "Focus on significant figures and rounding rules" },
+  "d0-lesson-02": { chapters: [2], studyTips: "Practice unit conversions between feet, meters, and chains" },
+  "d0-lesson-03": { chapters: [2], studyTips: "Percentages are critical for grade calculations" },
+  "d0-lesson-04": { chapters: [3], studyTips: "Error propagation uses exponents extensively" },
+  "d0-lesson-05": { chapters: [6], studyTips: "Pythagorean theorem for slope distance reduction" },
+  "d0-lesson-06": { chapters: [7], studyTips: "Master DMS to decimal degree conversions" },
+  "d0-lesson-07": { chapters: [12], studyTips: "Know area formulas for common shapes" },
+  "d0-lesson-08": { chapters: [10], studyTips: "Linear equations model coordinate relationships" },
+  "d0-lesson-09": { chapters: [2], studyTips: "Know your calculator's degree mode settings" },
+  "d0-lesson-10": { chapters: [2, 3], studyTips: "Significant figures affect measurement precision" },
+  
+  // Domain 1: Surveying Processes and Methods
+  "d1-lesson-01": { chapters: [8], studyTips: "Understand total station setup and operation" },
+  "d1-lesson-02": { chapters: [4, 5], studyTips: "Master differential leveling concepts" },
+  "d1-lesson-03": { chapters: [13, 14], studyTips: "Know GNSS positioning principles" },
+  "d1-lesson-04": { chapters: [6], studyTips: "Understand EDM principles and error sources" },
+  "d1-lesson-05": { chapters: [7, 8], studyTips: "Practice azimuth calculations from bearings" },
+  "d1-lesson-06": { chapters: [9, 10], studyTips: "Understand open vs closed traverses" },
+  "d1-lesson-07": { chapters: [3], studyTips: "Know systematic vs random errors" },
+  "d1-lesson-08": { chapters: [4, 5], studyTips: "Trigonometric leveling uses vertical angles and slope distances" },
+  
+  // Domain 2: Mapping Processes and Methods
+  "d2-lesson-01": { chapters: [17, 18], studyTips: "Focus on map scales and contour intervals" },
+  "d2-lesson-02": { chapters: [17], studyTips: "Contour lines show equal elevation points" },
+  "d2-lesson-03": { chapters: [20], studyTips: "Understand Lambert and Transverse Mercator projections" },
+  "d2-lesson-04": { chapters: [13, 14], studyTips: "Know GNSS positioning principles" },
+  "d2-lesson-05": { chapters: [27], studyTips: "Understand scale and relief displacement" },
+  "d2-lesson-06": { chapters: [28], studyTips: "Know vector vs raster data formats" },
+  "d2-lesson-07": { chapters: [15, 27], studyTips: "Understand UAS/drone mapping applications" },
+  "d2-lesson-08": { chapters: [17], studyTips: "Know ALTA/NSPS standards and hydrographic methods" },
+  
+  // Domain 3: Boundary Law and Real Property
+  "d3-lesson-01": { chapters: [21], studyTips: "Study the history of property law" },
+  "d3-lesson-02": { chapters: [21], studyTips: "Master metes and bounds descriptions" },
+  "d3-lesson-03": { chapters: [22], studyTips: "Know PLSS section numbering and subdivision rules" },
+  "d3-lesson-04": { chapters: [21], studyTips: "Understand monument priority rules" },
+  "d3-lesson-05": { chapters: [21], studyTips: "Know types of easements and their creation" },
+  "d3-lesson-06": { chapters: [21], studyTips: "Study record vs possession evidence priority" },
+  "d3-lesson-07": { chapters: [21], studyTips: "Know adverse possession requirements" },
+  "d3-lesson-08": { chapters: [21], studyTips: "Understand subdivision platting requirements" },
+  "d3-lesson-09": { chapters: [21], studyTips: "Condominium surveys have special requirements" },
+  "d3-lesson-10": { chapters: [2, 21], studyTips: "Professional standards require proper documentation" },
+  
+  // Domain 4: Surveying Principles
+  "d4-lesson-01": { chapters: [19], studyTips: "Understand ellipsoid vs geoid concepts" },
+  "d4-lesson-02": { chapters: [10], studyTips: "Practice coordinate calculations" },
+  "d4-lesson-03": { chapters: [10], studyTips: "Know latitude and departure formulas" },
+  "d4-lesson-04": { chapters: [12], studyTips: "Coordinate method is most accurate for area" },
+  "d4-lesson-05": { chapters: [11], studyTips: "Practice intersection problems" },
+  "d4-lesson-06": { chapters: [13, 14], studyTips: "Know GNSS error sources and corrections" },
+  "d4-lesson-07": { chapters: [16], studyTips: "Understand basics of least squares adjustment" },
+  "d4-lesson-08": { chapters: [3], studyTips: "Know how errors propagate in calculations" },
+  "d4-lesson-09": { chapters: [19], studyTips: "Know accuracy standards for different orders" },
+  "d4-lesson-10": { chapters: [10, 16], studyTips: "Network adjustment concepts" },
+  
+  // Domain 5: Survey Computations
+  "d5-lesson-01": { chapters: [24], studyTips: "Master curve formulas: R, D, T, L, E, M" },
+  "d5-lesson-02": { chapters: [25], studyTips: "Know parabolic curve equations" },
+  "d5-lesson-03": { chapters: [24], studyTips: "Understand spiral transition curves" },
+  "d5-lesson-04": { chapters: [26], studyTips: "Know average end area and prismoidal formulas" },
+  "d5-lesson-05": { chapters: [23], studyTips: "Practice cut/fill calculations" },
+  "d5-lesson-06": { chapters: [23], studyTips: "Know staking procedures for buildings and pipelines" },
+  "d5-lesson-07": { chapters: [11], studyTips: "COGO is essential for modern surveying software" },
+  "d5-lesson-08": { chapters: [23], studyTips: "Machine control uses RTK GNSS technology" },
+  "d5-lesson-09": { chapters: [12], studyTips: "Practice land partitioning calculations" },
+  "d5-lesson-10": { chapters: [28], studyTips: "Know CAD data export formats and standards" },
+  
+  // Domain 6: Business Concepts
+  "d6-lesson-01": { chapters: [1], studyTips: "Know licensing requirements in your state" },
+  "d6-lesson-02": { chapters: [1], studyTips: "Safety is paramount on survey projects" },
+  "d6-lesson-03": { chapters: [1], studyTips: "Professional ethics guide all decisions" },
+  "d6-lesson-04": { chapters: [1], studyTips: "Different survey types have different requirements" },
+  "d6-lesson-05": { chapters: [2], studyTips: "Time management is crucial for field productivity" },
+  "d6-lesson-06": { chapters: [17], studyTips: "Quality assurance prevents costly errors" },
+  "d6-lesson-07": { chapters: [1], studyTips: "Business practices affect profitability" },
+  "d6-lesson-08": { chapters: [2], studyTips: "Modern data management uses digital workflows" },
+  "d6-lesson-09": { chapters: [1], studyTips: "Communication skills are essential for surveyors" },
+  
+  // Domain 7: Applied Mathematics and Statistics
+  "d7-lesson-01": { chapters: [3], studyTips: "Know mean, median, mode, and standard deviation" },
+  "d7-lesson-02": { chapters: [3], studyTips: "Error propagation is tested frequently" },
+  "d7-lesson-03": { chapters: [16], studyTips: "Understand weighted averages concept" },
+  "d7-lesson-04": { chapters: [3], studyTips: "Know how to identify and eliminate blunders" },
+  "d7-lesson-05": { chapters: [3], studyTips: "95% confidence interval = 2 standard deviations" },
+  "d7-lesson-06": { chapters: [12, 17], studyTips: "Interpolation is used for contour plotting" },
+  "d7-lesson-07": { chapters: [16], studyTips: "Basic matrix operations for least squares" },
+  "d7-lesson-08": { chapters: [3], studyTips: "Quality metrics guide measurement decisions" },
+  "d7-lesson-09": { chapters: [3, 16], studyTips: "Regression analysis for trend fitting" },
+  "d7-lesson-10": { chapters: [11], studyTips: "Advanced COGO transformations" },
+  "d7-lesson-11": { chapters: [3], studyTips: "Correlation measures relationship strength" },
+  "d7-lesson-12": { chapters: [17], studyTips: "Numerical methods for interpolation" }
+};
+
+// Get Elementary Surveying references for a lesson
+export function getESReferences(lessonId: string): BookReference[] {
+  const mapping = ES_LESSON_MAPPINGS[lessonId];
+  if (!mapping) return [];
+  
+  return mapping.chapters.map(chapterNum => {
+    const chapter = ES_CHAPTERS[chapterNum];
+    if (!chapter) return null;
+    return {
+      bookId: "ES",
+      bookTitle: "Elementary Surveying",
+      bookAuthor: "Charles D. Ghilani",
+      edition: "15th Edition",
+      chapter: chapterNum,
+      chapterTitle: chapter.title,
+      pageRange: `p. ${chapter.pageStart}+`,
+      topics: mapping.studyTips ? [mapping.studyTips] : undefined
+    };
+  }).filter(Boolean) as BookReference[];
+}
+
+// Get all references (SRM + ES) for a lesson
+export function getAllLessonReferences(lessonId: string): BookReference[] {
+  const srmRefs = getLessonReferences(lessonId);
+  const esRefs = getESReferences(lessonId);
+  return [...srmRefs, ...esRefs];
+}
+
+// Study mode chapter recommendations for Elementary Surveying
+export interface StudyModeChapterPlan {
+  mode: string;
+  description: string;
+  weeklyFocus: Record<number, number[]>;
+}
+
+export const ES_STUDY_MODE_PLANS: StudyModeChapterPlan[] = [
+  {
+    mode: "standard",
+    description: "Comprehensive 16-week coverage",
+    weeklyFocus: {
+      1: [1, 2], 2: [3, 4], 3: [5, 6], 4: [7, 8], 5: [9, 10], 6: [11, 12],
+      7: [13, 14], 8: [15, 16], 9: [17, 18], 10: [19, 20], 11: [21, 22],
+      12: [23, 24], 13: [25, 26], 14: [27, 28], 15: [3, 10, 12], 16: [21, 22, 23]
+    }
+  },
+  {
+    mode: "result-driven",
+    description: "Focus on high-weight exam topics first",
+    weeklyFocus: {
+      1: [4, 5], 2: [10, 12], 3: [21, 22], 4: [7, 8], 5: [23, 24, 25],
+      6: [9, 11], 7: [3, 6], 8: [13, 14], 9: [15, 16], 10: [19, 20],
+      11: [17, 18], 12: [26, 27], 13: [28, 1, 2], 14: [4, 5, 10], 15: [21, 22, 23], 16: [24, 25, 12]
+    }
+  },
+  {
+    mode: "working-professional",
+    description: "Condensed 8-week intensive plan",
+    weeklyFocus: {
+      1: [4, 5, 7], 2: [10, 12, 3], 3: [21, 22], 4: [23, 24, 25],
+      5: [6, 8, 9], 6: [11, 13], 7: [19, 20, 26], 8: [4, 5, 10, 12, 21]
+    }
+  }
+];
+
+// Get ES chapters to focus on for a specific week in a study plan
+export function getESWeeklyChapters(mode: string, week: number): { chapter: number; title: string; pageStart: number }[] {
+  const plan = ES_STUDY_MODE_PLANS.find(p => p.mode === mode);
+  if (!plan || !plan.weeklyFocus[week]) return [];
+  
+  return plan.weeklyFocus[week].map(chNum => {
+    const ch = ES_CHAPTERS[chNum];
+    return ch ? { chapter: chNum, title: ch.title, pageStart: ch.pageStart } : null;
+  }).filter(Boolean) as { chapter: number; title: string; pageStart: number }[];
+}

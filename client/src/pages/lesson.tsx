@@ -10,7 +10,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, Trophy, BookOpen } from "lucide-react";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { getLessonReferences, type BookReference } from "@shared/data/referenceManualMappings";
+import { getAllLessonReferences, type BookReference } from "@shared/data/referenceManualMappings";
 
 type QuestionType = "multiple_choice" | "fill_in_blank" | "drag_drop";
 
@@ -446,27 +446,27 @@ export default function LessonPage() {
               </div>
             )}
             
-            {/* See Also: Reference Manual */}
-            {lessonId && getLessonReferences(lessonId).length > 0 && (
+            {/* See Also: Reference Manuals */}
+            {lessonId && getAllLessonReferences(lessonId).length > 0 && (
               <div className="mt-4 p-4 border rounded-lg bg-primary/5">
                 <div className="flex items-center gap-2 mb-2">
                   <BookOpen className="h-4 w-4 text-primary" />
-                  <h3 className="font-semibold text-sm">See Also: Reference Manual</h3>
+                  <h3 className="font-semibold text-sm">See Also: Reference Manuals</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {getLessonReferences(lessonId).map((ref: BookReference, idx: number) => (
+                  {getAllLessonReferences(lessonId).map((ref: BookReference, idx: number) => (
                     <Badge 
                       key={idx} 
                       variant="outline" 
                       className="text-xs"
                       data-testid={`badge-reference-${idx}`}
                     >
-                      {ref.bookId === "SRM" ? "Surveyor RM" : ref.bookId} - Ch. {ref.chapter}: {ref.chapterTitle}
+                      {ref.bookId === "SRM" ? "SRM" : "ES"} Ch. {ref.chapter}: {ref.chapterTitle}
                     </Badge>
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  For deeper understanding, review these chapters in your reference manual.
+                  For deeper understanding, review these chapters in your reference manual or Elementary Surveying textbook.
                 </p>
               </div>
             )}
