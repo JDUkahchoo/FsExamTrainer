@@ -1420,8 +1420,10 @@ async function seedLessons() {
   console.log("Lesson seeding completed!");
 }
 
-// Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run if called directly via npm run db:seed
+// In production bundled code, this check may not work, so we also check for RUN_SEED env var
+const isDirectRun = process.argv[1]?.endsWith('seed-lessons.ts') || process.env.RUN_SEED === 'true';
+if (isDirectRun) {
   seedLessons().then(() => process.exit(0)).catch((err) => {
     console.error("Seed failed:", err);
     process.exit(1);
