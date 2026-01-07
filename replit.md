@@ -10,7 +10,7 @@ I prefer simple language and detailed explanations. I want iterative development
 The application features a comprehensive UI/UX with domain-specific color coding, Inter font for UI, and JetBrains Mono for code/formulas, designed responsively with dark mode support.
 
 **Key Features:**
--   **16-Week Study Plan with Flexible Study Modes:** Structured weekly schedules with a READ → FOCUS → APPLY → REINFORCE framework, interactive checklists, and progress tracking. Supports Standard, Result-Driven, Working Professional, and Custom modes.
+-   **16-Week Study Plan with Flexible Study Modes:** Structured weekly schedules with a READ → FOCUS → APPLY → REINFORCE framework, interactive checklists, and progress tracking. Supports Standard, Result-Driven, Working Professional, and Custom modes. Each week displays recommended textbook chapters from both SRM and ES based on assigned lessons.
 -   **Custom Plan Builder:** Interactive UI for personalized study plans.
 -   **Study Cycles System:** Multi-pass study framework for repeated plan completion, preserving historical data.
 -   **Practice Quizzes:** Mixed Exam and Domain Practice modes with unique questions, instant feedback, explanations, and analytics.
