@@ -6257,6 +6257,524 @@ export const d6_lesson06_archetypes: QuestionArchetype[] = [
   }
 ];
 
+// Lesson 7: Field Safety and OSHA Compliance
+export const d6_lesson07_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Before excavating near utilities, surveyors should:",
+      "Prior to any digging near utility lines, the required action is to:",
+      "What must be done before excavating where utilities may exist?",
+      "The required step before excavation near possible utilities is:",
+      "Before digging in areas with underground utilities:"
+    ],
+    optionSets: [
+      ["Dig carefully", "Call 811 for utility locates", "Assume no utilities exist", "Use metal detectors only"],
+      ["Start digging slowly", "Contact 811 to request utility marking", "Check with neighbors", "Look for manholes"],
+      ["Begin excavation with care", "Request utility locates through 811", "Ignore utility concerns", "Use ground-penetrating radar only"],
+      ["Proceed with caution", "Have utilities marked by calling 811", "Ask the client about utilities", "Avoid the area"],
+      ["Dig by hand only", "Call 811 for One-Call utility locates", "Check surface features", "Consult old maps"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "811 'Call Before You Dig' is required to locate underground utilities before excavation",
+      "Contacting 811 is legally required before excavation to mark underground utilities",
+      "Utility locates through 811 are required before any excavation",
+      "Calling 811 to mark utilities is mandatory before digging",
+      "The One-Call 811 system must be contacted before any excavation"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "High-visibility vests are required when:",
+      "ANSI high-visibility apparel must be worn when:",
+      "Workers must wear high-vis clothing when:",
+      "Safety vests are required for survey crews when:",
+      "High-visibility safety apparel is mandatory when:"
+    ],
+    optionSets: [
+      ["Never", "Working near traffic or heavy equipment", "Only at night", "Only for supervisors"],
+      ["Only in rain", "Exposed to vehicle or equipment traffic", "Only in construction zones", "Only for new employees"],
+      ["Only indoors", "Working near roadways or moving equipment", "Only during daylight", "Only on government projects"],
+      ["Never required", "In proximity to traffic hazards", "Only at intersections", "Only for party chiefs"],
+      ["Optional always", "When working near vehicles or machinery", "Only on highways", "Only in urban areas"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "ANSI/ISEA high-vis apparel is required when workers are exposed to traffic or equipment",
+      "High-visibility clothing is mandatory when exposed to vehicle or equipment traffic",
+      "Workers must wear high-vis when near roadways or moving equipment",
+      "Safety vests are required in proximity to traffic hazards",
+      "High-vis apparel is mandatory when working near vehicles or machinery"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "OSHA stands for:",
+      "The acronym OSHA represents:",
+      "OSHA is the abbreviation for:",
+      "What does OSHA stand for?",
+      "The federal agency OSHA is named:"
+    ],
+    optionSets: [
+      ["Office of Safety and Health Assistance", "Occupational Safety and Health Administration", "Outdoor Safety Hazard Assessment", "Official Survey Health Authority"],
+      ["Organization for Safety and Health", "Occupational Safety and Health Administration", "Outdoor Survey Hazard Agency", "Office of Surveying Health Awareness"],
+      ["Office of Site Health Analysis", "Occupational Safety and Health Administration", "Operator Safety and Hazard Authority", "Outdoor Safety and Health Association"],
+      ["Operational Safety Hazard Assessment", "Occupational Safety and Health Administration", "Office of Survey Health Audit", "Organization for Site Health Action"],
+      ["Office of Surveying and Hazard Avoidance", "Occupational Safety and Health Administration", "Outdoor Site Health Assessment", "Operator Safety Health Authority"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "OSHA = Occupational Safety and Health Administration, the federal workplace safety agency",
+      "OSHA stands for Occupational Safety and Health Administration",
+      "The abbreviation means Occupational Safety and Health Administration",
+      "OSHA is the Occupational Safety and Health Administration",
+      "OSHA = Occupational Safety and Health Administration"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A Job Hazard Analysis (JHA) is performed:",
+      "When should a Job Hazard Analysis be conducted?",
+      "JHA (Job Hazard Analysis) should be completed:",
+      "A JHA is best performed:",
+      "Job Hazard Analysis should occur:"
+    ],
+    optionSets: [
+      ["After accidents only", "Before starting work to identify risks", "By OSHA inspectors only", "Once per year"],
+      ["Only when injuries occur", "Prior to beginning work to assess hazards", "Only by safety officers", "Annually only"],
+      ["After completing work", "Before work begins to identify potential hazards", "Only during audits", "Monthly only"],
+      ["When requested by client", "At project start to identify and mitigate risks", "Only for large projects", "Quarterly only"],
+      ["Only after incidents", "Before each job to assess and control hazards", "Only by management", "Semi-annually"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "JHA identifies potential hazards and controls before work begins",
+      "Job Hazard Analysis is performed prior to work to assess hazards",
+      "JHA should be completed before work to identify potential hazards",
+      "JHA is performed at project start to identify and mitigate risks",
+      "Job Hazard Analysis should occur before each job to assess hazards"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "When working on roadways, traffic control should include:",
+      "Proper traffic control for roadway surveying requires:",
+      "Traffic control devices for road survey work include:",
+      "Working on roads requires traffic control such as:",
+      "Survey work on roadways needs traffic control including:"
+    ],
+    optionSets: [
+      ["Nothing special", "Cones, signs, and flaggers as appropriate", "Only a vehicle with lights", "Just high-vis vests"],
+      ["Just parking nearby", "Signs, cones, barricades, and flaggers as needed", "Only hazard lights", "Personal awareness only"],
+      ["Only reflective clothing", "Advance warning signs, channeling devices, and flaggers", "Just vehicle flashers", "Verbal warnings only"],
+      ["No special requirements", "Appropriate signs, cones, and traffic control personnel", "Only work at night", "Just orange cones"],
+      ["Minimal setup needed", "MUTCD-compliant signs, cones, and flaggers", "Only vehicle hazards", "Basic awareness"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "MUTCD standards require appropriate traffic control devices based on road conditions",
+      "Traffic control requires signs, cones, barricades, and flaggers as needed",
+      "Advance warning signs, channeling devices, and flaggers are required",
+      "Appropriate signs, cones, and traffic control personnel are required",
+      "MUTCD-compliant signs, cones, and flaggers are required for roadway work"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 8: Survey Crew Supervision and Leadership
+export const d6_lesson08_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The primary role of a party chief is to:",
+      "A survey party chief's main responsibility is to:",
+      "The party chief's primary function is:",
+      "Survey party chiefs are mainly responsible for:",
+      "The key role of a field party chief is to:"
+    ],
+    optionSets: [
+      ["Carry equipment only", "Direct crew operations and ensure quality", "Stay in the office", "Only operate instruments"],
+      ["Clean equipment", "Lead the crew and maintain work quality", "Handle paperwork only", "Drive the vehicle only"],
+      ["Set up tripods only", "Manage field operations and quality control", "Remain at the truck", "Only record data"],
+      ["Hold the rod only", "Supervise crew and ensure accurate work", "Stay behind the crew", "Only communicate with office"],
+      ["Pack supplies only", "Direct field activities and verify quality", "Monitor radio only", "Only maintain equipment"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Party chief leads the field crew, makes decisions, ensures quality and safety",
+      "The party chief leads the crew and maintains work quality",
+      "Party chiefs manage field operations and quality control",
+      "Party chiefs supervise crew and ensure accurate work",
+      "Party chiefs direct field activities and verify quality"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Standard hand signals between instrument operator and rodman:",
+      "Field hand signals for survey crews:",
+      "Communication hand signals in surveying:",
+      "Survey crew hand signals are:",
+      "The use of hand signals between surveyor and rodman:"
+    ],
+    optionSets: [
+      ["Are unnecessary with radios", "Provide silent, efficient communication", "Only used in emergencies", "Are outdated"],
+      ["Never used anymore", "Enable efficient coordination without voice", "Only for beginners", "Cause confusion"],
+      ["Should be avoided", "Allow clear communication over distance", "Are only for show", "Slow down work"],
+      ["Are obsolete", "Provide effective silent coordination", "Only for complex jobs", "Are rarely used"],
+      ["Waste time", "Enable quick communication when voice fails", "Are only historical", "Decrease efficiency"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Hand signals are standard, efficient communication especially when radios fail or are impractical",
+      "Hand signals enable efficient coordination without voice communication",
+      "Hand signals allow clear communication over distance",
+      "Hand signals provide effective silent coordination",
+      "Hand signals enable quick communication when voice fails"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "The hand signal of arm raised straight up means:",
+      "When the instrument operator raises their arm vertically, it signals:",
+      "A vertical arm raised indicates:",
+      "An arm extended straight up signals the rodman to:",
+      "The straight-up arm signal means:"
+    ],
+    optionSets: [
+      ["Move left", "Stop or hold position", "Move right", "Come closer"],
+      ["Turn around", "Freeze in current position", "Move backward", "Raise the rod"],
+      ["Lower the rod", "Hold still / stop movement", "Move forward", "Rotate the rod"],
+      ["Wave the rod", "Stop and hold position", "Move faster", "Lower the prism"],
+      ["Tilt the rod", "Stop movement immediately", "Move slowly", "Check the level"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Arm raised straight up signals stop or hold position",
+      "Vertical arm means freeze in current position",
+      "The signal means hold still / stop movement",
+      "This signals stop and hold position",
+      "The vertical arm signal means stop movement immediately"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Effective delegation to crew members requires:",
+      "Proper task delegation to survey crew needs:",
+      "Delegating work to field personnel requires:",
+      "Effective crew task assignment needs:",
+      "Good delegation practices include:"
+    ],
+    optionSets: [
+      ["No instructions", "Clear tasks, expectations, and deadlines", "Assuming they know everything", "Written orders only"],
+      ["Minimal guidance", "Specific objectives, standards, and timeframes", "No follow-up", "Verbal orders only"],
+      ["No communication", "Defined tasks, quality standards, and timelines", "Complete independence", "Email only"],
+      ["Vague directions", "Clear assignments, expectations, and schedules", "No supervision", "Text messages only"],
+      ["No explanation", "Specific tasks, criteria, and due dates", "Blind trust", "Forms only"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Good delegation includes clear objectives, expectations, and timelines",
+      "Effective delegation requires specific objectives, standards, and timeframes",
+      "Proper delegation needs defined tasks, quality standards, and timelines",
+      "Good delegation includes clear assignments, expectations, and schedules",
+      "Effective delegation requires specific tasks, criteria, and due dates"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A survey crew briefing should cover:",
+      "Daily crew briefings should include:",
+      "Pre-work survey crew meetings should address:",
+      "A morning crew briefing should discuss:",
+      "Crew briefings at the start of work should cover:"
+    ],
+    optionSets: [
+      ["Only lunch plans", "Project goals, safety hazards, and individual tasks", "Nothing specific", "Past project stories"],
+      ["Personal matters only", "Work objectives, potential hazards, and assignments", "Weather only", "Equipment inventory only"],
+      ["Office gossip", "Daily objectives, safety concerns, and role assignments", "Lunch location", "Personal schedules"],
+      ["Nothing formal", "Project scope, hazards, and crew responsibilities", "Break times only", "Vehicle assignments only"],
+      ["Social topics", "Work plan, safety briefing, and task assignments", "Traffic conditions", "Company news only"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Daily briefings communicate objectives, hazards, assignments, and expectations",
+      "Briefings should include work objectives, potential hazards, and assignments",
+      "Pre-work meetings address daily objectives, safety concerns, and role assignments",
+      "Briefings should cover project scope, hazards, and crew responsibilities",
+      "Crew briefings include work plan, safety briefing, and task assignments"
+    ],
+    points: 10
+  }
+];
+
+// Lesson 9: Professional Communication and Documentation
+export const d6_lesson09_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Field notes should be recorded:",
+      "Proper field note recording requires:",
+      "Survey field notes must be:",
+      "The correct way to record field notes is:",
+      "Field notes should be written:"
+    ],
+    optionSets: [
+      ["From memory at office", "In pencil, at time of observation", "Only for complex jobs", "By the client"],
+      ["At end of day", "Contemporaneously and legibly in pencil", "Only when convenient", "By office staff"],
+      ["From photographs later", "At the time of measurement in pencil", "Only for large projects", "By the party chief only"],
+      ["After returning to office", "Immediately during observation in pencil", "Only when required by client", "By any crew member at office"],
+      ["The next day", "In the field at time of observation", "Only for legal surveys", "By data collectors only"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Field notes must be contemporaneous, legible, and in pencil (permanent, erasures visible)",
+      "Field notes should be recorded contemporaneously and legibly in pencil",
+      "Notes must be recorded at the time of measurement in pencil",
+      "Notes should be written immediately during observation in pencil",
+      "Field notes must be recorded in the field at time of observation"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "A survey report typically includes:",
+      "Professional survey reports contain:",
+      "A complete survey report should have:",
+      "Survey reports generally include:",
+      "The components of a survey report are:"
+    ],
+    optionSets: [
+      ["Only the map", "Purpose, methods, findings, and conclusions", "Just measurements", "Personal opinions"],
+      ["Only coordinates", "Scope, methodology, data, and analysis", "Just raw data", "Informal notes"],
+      ["Only the plat", "Project description, procedures, results, and conclusions", "Just bearings", "Draft sketches"],
+      ["Only calculations", "Purpose, approach, findings, and professional opinion", "Just distances", "Preliminary notes"],
+      ["Only the boundary", "Objectives, methods, observations, and conclusions", "Just angles", "Rough estimates"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Professional reports document purpose, methodology, data, analysis, and conclusions",
+      "Survey reports contain scope, methodology, data, and analysis",
+      "Complete reports have project description, procedures, results, and conclusions",
+      "Reports include purpose, approach, findings, and professional opinion",
+      "Report components are objectives, methods, observations, and conclusions"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Field notes are considered legal documents and should never be:",
+      "Since field notes are legal records, you should never:",
+      "Treating field notes as legal documents means never:",
+      "Field notes as legal records require that you never:",
+      "Because field notes are legal documents, never:"
+    ],
+    optionSets: [
+      ["Written in pencil", "Erased or destroyed", "Dated", "Initialed"],
+      ["Kept organized", "Obliterated or modified after the fact", "Filed properly", "Reviewed"],
+      ["Written neatly", "Altered or erased", "Stored securely", "Referenced"],
+      ["Labeled clearly", "Erased or tampered with", "Bound properly", "Checked"],
+      ["Numbered", "Destroyed or falsified", "Archived", "Verified"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Field notes are legal records; mistakes should be crossed out with single line, initialed, and corrected",
+      "Legal records should never be obliterated or modified after the fact",
+      "Legal documents should never be altered or erased",
+      "Legal records require that you never erase or tamper with entries",
+      "Legal documents should never be destroyed or falsified"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "When resolving client conflicts, the surveyor should:",
+      "Professional conflict resolution with clients requires:",
+      "To resolve disputes with clients, surveyors should:",
+      "Client conflict resolution best practices include:",
+      "When clients have concerns, surveyors should:"
+    ],
+    optionSets: [
+      ["Ignore complaints", "Listen, document, and address professionally", "Become defensive", "Refuse communication"],
+      ["Dismiss concerns", "Acknowledge, record, and respond objectively", "Argue the point", "Avoid contact"],
+      ["Deny responsibility", "Hear concerns, document, and resolve professionally", "Take it personally", "Stop responding"],
+      ["Blame the client", "Listen actively, record, and address concerns formally", "Get emotional", "Delete correspondence"],
+      ["Ignore feedback", "Acknowledge issues, document, and provide solutions", "Become confrontational", "End the relationship"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Professional conflict resolution involves listening, documentation, and objective response",
+      "Conflict resolution requires acknowledging, recording, and responding objectively",
+      "Surveyors should hear concerns, document, and resolve professionally",
+      "Best practices include listening actively, recording, and addressing concerns formally",
+      "Surveyors should acknowledge issues, document, and provide solutions"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Written communication with clients should be:",
+      "Professional client correspondence should be:",
+      "Written client communication must be:",
+      "Correspondence with clients should be:",
+      "Client communications in writing should be:"
+    ],
+    optionSets: [
+      ["Highly technical jargon", "Clear, professional, and documented", "Informal always", "Verbal only"],
+      ["Full of abbreviations", "Precise, courteous, and retained on file", "Casual always", "Phone calls only"],
+      ["Complex technical terms", "Understandable, professional, and archived", "Friendly and informal", "In person only"],
+      ["Industry jargon heavy", "Clear, polite, and saved for records", "Very casual", "Text messages only"],
+      ["Acronym-filled", "Straightforward, professional, and filed", "Conversational only", "Emails deleted"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Client communication should be clear, professional, and documented for the record",
+      "Professional correspondence should be precise, courteous, and retained on file",
+      "Written communication must be understandable, professional, and archived",
+      "Correspondence should be clear, polite, and saved for records",
+      "Communications should be straightforward, professional, and filed"
+    ],
+    points: 10
+  }
+];
+
+// New Domain 2 Lesson: UAS/Drone Operations and Regulations
+export const d2_lesson09_archetypes: QuestionArchetype[] = [
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Commercial drone operations require:",
+      "To fly drones commercially in the US, you need:",
+      "FAA requirements for commercial UAS include:",
+      "Commercial UAS operations in the US require:",
+      "Flying drones for surveying requires:"
+    ],
+    optionSets: [
+      ["No certification", "FAA Part 107 Remote Pilot Certificate", "Pilot's license only", "State permit only"],
+      ["No special license", "FAA Part 107 certification", "Only a driver's license", "Just insurance"],
+      ["Verbal permission", "FAA Part 107 Remote Pilot Certificate", "Only local permit", "No requirements"],
+      ["Nothing special", "FAA Part 107 certification", "Only client permission", "Manufacturer approval"],
+      ["Just experience", "FAA Part 107 Remote Pilot Certificate", "Only company training", "Equipment registration only"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "FAA Part 107 certification is required for commercial UAS operations",
+      "Commercial drone operations require FAA Part 107 certification",
+      "FAA requirements include Part 107 Remote Pilot Certificate",
+      "Commercial UAS operations require FAA Part 107 certification",
+      "Surveying drone operations require FAA Part 107 Remote Pilot Certificate"
+    ],
+    points: 10
+  },
+  {
+    type: 'fill_in_blank',
+    template: "The maximum altitude for standard Part 107 UAS operations is ___ feet AGL.",
+    paramRanges: {},
+    computeAnswer: () => "400",
+    computeExplanation: () => "Part 107 limits UAS to 400 feet AGL unless within 400 feet of a structure",
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "UAS stands for:",
+      "The acronym UAS means:",
+      "UAS is the abbreviation for:",
+      "What does UAS stand for?",
+      "The term UAS refers to:"
+    ],
+    optionSets: [
+      ["Unmanned Aerial Survey", "Unmanned Aircraft System", "Universal Aerial System", "Unified Air Service"],
+      ["Unified Aircraft System", "Unmanned Aircraft System", "Unmanned Aerial Service", "Universal Air Survey"],
+      ["Unmanned Air Service", "Unmanned Aircraft System", "Unified Aerial System", "Universal Aircraft Service"],
+      ["Universal Aircraft Survey", "Unmanned Aircraft System", "Unmanned Aerial System", "Unified Air System"],
+      ["Unmanned Aviation Service", "Unmanned Aircraft System", "Universal Aerial Survey", "Unified Aircraft Survey"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "UAS = Unmanned Aircraft System (includes aircraft, controller, and communication links)",
+      "UAS stands for Unmanned Aircraft System",
+      "The abbreviation means Unmanned Aircraft System",
+      "UAS is Unmanned Aircraft System",
+      "UAS refers to Unmanned Aircraft System"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Ground control points (GCPs) in drone mapping:",
+      "GCPs used with UAS surveys:",
+      "For drone photogrammetry, ground control points:",
+      "The purpose of GCPs in drone surveying is to:",
+      "Ground control points in UAS mapping:"
+    ],
+    optionSets: [
+      ["Are never needed", "Improve accuracy and georeferencing", "Only for indoor flights", "Reduce data quality"],
+      ["Are optional always", "Provide known coordinates for accuracy", "Slow down processing", "Are for decoration"],
+      ["Decrease precision", "Enable accurate georeferencing of imagery", "Are used only for video", "Make flights longer"],
+      ["Have no effect", "Provide reference for accurate positioning", "Only for thermal imaging", "Reduce flight time"],
+      ["Are unnecessary", "Improve positional accuracy of products", "Only for multispectral", "Complicate workflows"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "GCPs provide known coordinates to improve photogrammetric accuracy",
+      "GCPs provide known coordinates for accuracy",
+      "GCPs enable accurate georeferencing of imagery",
+      "GCPs provide reference for accurate positioning",
+      "GCPs improve positional accuracy of products"
+    ],
+    points: 10
+  },
+  {
+    type: 'multiple_choice',
+    questionVariants: [
+      "Before flying a drone for surveying, the operator must:",
+      "Pre-flight planning for UAS surveys requires:",
+      "Prior to a drone survey flight, operators should:",
+      "UAS pre-flight requirements include:",
+      "Before conducting a drone survey:"
+    ],
+    optionSets: [
+      ["Just charge batteries", "Check airspace, weather, and site conditions", "Only notify the client", "Nothing special"],
+      ["Only fuel up", "Verify airspace authorization, weather, and hazards", "Just pack equipment", "No planning needed"],
+      ["Only test the camera", "Check airspace restrictions, weather, and ground hazards", "Just calibrate sensors", "Minimal preparation"],
+      ["Only charge controller", "Verify flight authorization, conditions, and obstacles", "Just check memory cards", "Skip planning"],
+      ["Only update firmware", "Check airspace, meteorological conditions, and site hazards", "Just test motors", "No requirements"]
+    ],
+    correctAnswers: ["1", "1", "1", "1", "1"],
+    explanationVariants: [
+      "Pre-flight planning includes airspace authorization, weather check, and site hazard assessment",
+      "Pre-flight requires verifying airspace authorization, weather, and hazards",
+      "Operators should check airspace restrictions, weather, and ground hazards",
+      "Pre-flight requirements include verifying flight authorization, conditions, and obstacles",
+      "Pre-flight includes checking airspace, meteorological conditions, and site hazards"
+    ],
+    points: 10
+  }
+];
+
 // ============================================================================
 // DOMAIN 7: APPLIED MATHEMATICS AND STATISTICS - QUESTION ARCHETYPES
 // ============================================================================
@@ -7535,6 +8053,10 @@ export const allArchetypes: Record<string, QuestionArchetype[]> = {
   "d6-lesson-04": d6_lesson04_archetypes,
   "d6-lesson-05": d6_lesson05_archetypes,
   "d6-lesson-06": d6_lesson06_archetypes,
+  "d6-lesson-07": d6_lesson07_archetypes,
+  "d6-lesson-08": d6_lesson08_archetypes,
+  "d6-lesson-09": d6_lesson09_archetypes,
+  "d2-lesson-09": d2_lesson09_archetypes,
   "d7-lesson-01": d7_lesson01_archetypes,
   "d7-lesson-02": d7_lesson02_archetypes,
   "d7-lesson-03": d7_lesson03_archetypes,

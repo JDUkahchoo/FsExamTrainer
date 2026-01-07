@@ -453,6 +453,24 @@ async function seedLessons() {
         { type: "multiple_choice", text: "Annotation in CAD refers to:", options: ["Text and labels", "Colors", "Layers", "Coordinates"], answer: "0", explanation: "Annotations are text, dimensions, labels, and notes added to drawings", points: 10 }
       ]
     },
+    {
+      domainNumber: 2,
+      domain: DOMAINS[2],
+      title: "UAS/Drone Operations and Regulations",
+      description: "Understand drone surveying including FAA regulations and flight planning",
+      content: "Unmanned Aircraft Systems (UAS/drones) enable efficient aerial data collection. FAA Part 107 regulations govern commercial operations. Flight planning, safety, and data processing are essential skills.",
+      difficulty: "medium",
+      orderIndex: 9,
+      estimatedMinutes: 22,
+      suggestedWeek: 8,
+      questions: [
+        { type: "multiple_choice", text: "Commercial drone operations require:", options: ["No certification", "FAA Part 107 Remote Pilot Certificate", "Pilot's license only", "State permit only"], answer: "1", explanation: "FAA Part 107 certification required for commercial UAS operations", points: 10 },
+        { type: "multiple_choice", text: "Maximum altitude for Part 107 UAS operations is:", options: ["100 feet AGL", "200 feet AGL", "400 feet AGL", "Unlimited"], answer: "2", explanation: "Part 107 limits UAS to 400 feet AGL unless within 400 feet of a structure", points: 10 },
+        { type: "fill_in_blank", text: "UAS stands for Unmanned Aircraft ___.", answer: "System", explanation: "UAS = Unmanned Aircraft System (includes aircraft, controller, and communication links)", points: 10 },
+        { type: "multiple_choice", text: "Ground control points (GCPs) in drone mapping:", options: ["Are never needed", "Improve accuracy and georeferencing", "Only for indoor flights", "Reduce data quality"], answer: "1", explanation: "GCPs provide known coordinates to improve photogrammetric accuracy", points: 10 },
+        { type: "multiple_choice", text: "Before flying a drone for surveying, the operator must:", options: ["Just charge batteries", "Check airspace, weather, and site conditions", "Only notify the client", "Nothing special"], answer: "1", explanation: "Pre-flight planning includes airspace authorization, weather check, and site hazard assessment", points: 10 }
+      ]
+    },
 
     // ========== DOMAIN 3: Boundary Law and Real Property Principles (7 lessons) ==========
     {
@@ -1035,6 +1053,60 @@ async function seedLessons() {
         { type: "fill_in_blank", text: "The multiplier applied to salary to get billing rate typically ranges from 2.5 to ___ (one digit).", answer: "3", explanation: "Multipliers of 2.5-3.5× salary cover overhead, benefits, and profit", points: 10 },
         { type: "multiple_choice", text: "Accounts receivable represents:", options: ["Money owed to firm", "Money firm owes", "Equipment value", "Office supplies"], answer: "0", explanation: "A/R = outstanding invoices (money clients owe to firm)", points: 10 },
         { type: "multiple_choice", text: "Prompt invoicing and collection:", options: ["Annoy clients", "Improve cash flow", "Are unnecessary", "Reduce profit"], answer: "1", explanation: "Quick billing and collection maintain cash flow for ongoing operations", points: 10 }
+      ]
+    },
+    {
+      domainNumber: 6,
+      domain: DOMAINS[6],
+      title: "Field Safety and OSHA Compliance",
+      description: "Understand safety requirements and hazard awareness for field surveying",
+      content: "Field surveying involves traffic hazards, underground utilities, heavy equipment, and environmental conditions. OSHA regulations, PPE requirements, and safety protocols protect survey crews.",
+      difficulty: "medium",
+      orderIndex: 7,
+      estimatedMinutes: 22,
+      suggestedWeek: 17,
+      questions: [
+        { type: "multiple_choice", text: "Before excavating near utilities, surveyors should:", options: ["Dig carefully", "Call 811 for utility locates", "Assume no utilities exist", "Use metal detectors only"], answer: "1", explanation: "811 'Call Before You Dig' is required to locate underground utilities before any excavation", points: 10 },
+        { type: "multiple_choice", text: "High-visibility vests are required when:", options: ["Never", "Working near traffic or equipment", "Only at night", "Only for supervisors"], answer: "1", explanation: "ANSI/ISEA high-vis apparel required when workers are exposed to traffic or equipment", points: 10 },
+        { type: "fill_in_blank", text: "OSHA stands for Occupational Safety and Health ___.", answer: "Administration", explanation: "OSHA = Occupational Safety and Health Administration, the federal agency regulating workplace safety", points: 10 },
+        { type: "multiple_choice", text: "A Job Hazard Analysis (JHA) is performed:", options: ["After accidents only", "Before starting work to identify risks", "By OSHA inspectors only", "Once per year"], answer: "1", explanation: "JHA identifies potential hazards and controls before work begins", points: 10 },
+        { type: "multiple_choice", text: "When working on roadways, traffic control should include:", options: ["Nothing special", "Cones, signs, and flaggers as appropriate", "Only a vehicle with lights", "Just high-vis vests"], answer: "1", explanation: "MUTCD standards require appropriate traffic control devices based on road conditions", points: 10 }
+      ]
+    },
+    {
+      domainNumber: 6,
+      domain: DOMAINS[6],
+      title: "Survey Crew Supervision and Leadership",
+      description: "Lead survey crews effectively including communication and task delegation",
+      content: "Effective crew leadership requires clear communication, proper delegation, safety enforcement, and personnel management. Hand signals, radio protocols, and team coordination ensure efficient operations.",
+      difficulty: "medium",
+      orderIndex: 8,
+      estimatedMinutes: 20,
+      suggestedWeek: 17,
+      questions: [
+        { type: "multiple_choice", text: "The primary role of a party chief is to:", options: ["Carry equipment only", "Direct crew operations and ensure quality", "Stay in the office", "Only operate instruments"], answer: "1", explanation: "Party chief leads the field crew, makes decisions, ensures quality and safety", points: 10 },
+        { type: "multiple_choice", text: "Standard hand signals between instrument operator and rodman:", options: ["Are unnecessary with radios", "Provide silent, efficient communication", "Only used in emergencies", "Are outdated"], answer: "1", explanation: "Hand signals are standard, efficient communication especially when radios fail or are impractical", points: 10 },
+        { type: "fill_in_blank", text: "The hand signal of arm extended horizontally and moved slowly means move ___ in that direction.", answer: "slowly", explanation: "Slow horizontal arm movement signals rodman to move slowly in indicated direction", points: 10 },
+        { type: "multiple_choice", text: "Effective delegation to crew members requires:", options: ["No instructions", "Clear tasks, expectations, and deadlines", "Assuming they know everything", "Written orders only"], answer: "1", explanation: "Good delegation includes clear objectives, expectations, and timelines", points: 10 },
+        { type: "multiple_choice", text: "A survey crew briefing should cover:", options: ["Only lunch plans", "Project goals, safety hazards, and individual tasks", "Nothing specific", "Past project stories"], answer: "1", explanation: "Daily briefings communicate objectives, hazards, assignments, and expectations", points: 10 }
+      ]
+    },
+    {
+      domainNumber: 6,
+      domain: DOMAINS[6],
+      title: "Professional Communication and Documentation",
+      description: "Master written reports, client communication, and conflict resolution",
+      content: "Professional surveyors communicate through field notes, technical reports, client correspondence, and oral presentations. Clear documentation protects the firm and ensures project success.",
+      difficulty: "medium",
+      orderIndex: 9,
+      estimatedMinutes: 20,
+      suggestedWeek: 18,
+      questions: [
+        { type: "multiple_choice", text: "Field notes should be recorded:", options: ["From memory at office", "In pencil, at time of observation", "Only for complex jobs", "By the client"], answer: "1", explanation: "Field notes must be contemporaneous, legible, and in pencil (permanent, erasures visible)", points: 10 },
+        { type: "multiple_choice", text: "A survey report typically includes:", options: ["Only the map", "Purpose, methods, findings, and conclusions", "Just measurements", "Personal opinions"], answer: "1", explanation: "Professional reports document purpose, methodology, data, analysis, and conclusions", points: 10 },
+        { type: "fill_in_blank", text: "Field notes are considered legal ___ and should never be erased.", answer: "documents", explanation: "Field notes are legal records; mistakes should be crossed out with single line, initialed, and corrected", points: 10 },
+        { type: "multiple_choice", text: "When resolving client conflicts, the surveyor should:", options: ["Ignore complaints", "Listen, document, and address professionally", "Become defensive", "Refuse communication"], answer: "1", explanation: "Professional conflict resolution involves listening, documentation, and objective response", points: 10 },
+        { type: "multiple_choice", text: "Written communication with clients should be:", options: ["Highly technical jargon", "Clear, professional, and documented", "Informal always", "Verbal only"], answer: "1", explanation: "Client communication should be clear, professional, and documented for the record", points: 10 }
       ]
     },
 
