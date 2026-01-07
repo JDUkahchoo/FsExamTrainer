@@ -40,6 +40,11 @@ import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
+import { 
+  getESWeeklyChapters, 
+  getSRMWeeklyChapters,
+  getChaptersForLessons 
+} from '@shared/data/referenceManualMappings';
 
 export default function StudyPlan() {
   const [, navigate] = useLocation();
@@ -886,6 +891,77 @@ export default function StudyPlan() {
                           );
                           })}
                         </div>
+                      </div>
+                    );
+                  })()}
+                  
+                  {/* Textbook Chapters Section */}
+                  {(() => {
+                    const studyMode = preferences?.studyMode || 'standard';
+                    const isCustomMode = studyMode === 'custom';
+                    const currentWeekLessons = weeklyLessonsMap.get(plan.week) || [];
+                    
+                    let srmChapters: { chapter: number; title: string }[] = [];
+                    let esChapters: { chapter: number; title: string }[] = [];
+                    
+                    if (isCustomMode && currentWeekLessons.length > 0) {
+                      const lessonIds = currentWeekLessons.map((l: any) => l.id);
+                      srmChapters = getChaptersForLessons(lessonIds, "SRM");
+                      esChapters = getChaptersForLessons(lessonIds, "ES");
+                    } else if (!isCustomMode) {
+                      srmChapters = getSRMWeeklyChapters(studyMode, plan.week);
+                      esChapters = getESWeeklyChapters(studyMode, plan.week);
+                    }
+                    
+                    const hasChapters = srmChapters.length > 0 || esChapters.length > 0;
+                    
+                    return hasChapters && (
+                      <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
+                        <div className="flex items-center gap-2 text-primary font-semibold uppercase text-sm tracking-wider mb-4">
+                          <BookOpen className="w-4 h-4" />
+                          Recommended Textbook Chapters
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {srmChapters.length > 0 && (
+                            <div className="p-4 rounded-lg border border-border bg-muted/30">
+                              <div className="text-sm font-medium mb-2 text-foreground">Surveyor Reference Manual</div>
+                              <div className="flex flex-wrap gap-2">
+                                {srmChapters.map((ch) => (
+                                  <Badge 
+                                    key={`srm-${ch.chapter}`} 
+                                    variant="outline"
+                                    className="text-xs cursor-pointer hover-elevate"
+                                    onClick={() => navigate('/reference-companion')}
+                                    data-testid={`badge-srm-ch-${ch.chapter}`}
+                                  >
+                                    Ch. {ch.chapter}: {ch.title}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {esChapters.length > 0 && (
+                            <div className="p-4 rounded-lg border border-border bg-muted/30">
+                              <div className="text-sm font-medium mb-2 text-foreground">Elementary Surveying (15th Ed)</div>
+                              <div className="flex flex-wrap gap-2">
+                                {esChapters.map((ch) => (
+                                  <Badge 
+                                    key={`es-${ch.chapter}`} 
+                                    variant="outline"
+                                    className="text-xs cursor-pointer hover-elevate"
+                                    onClick={() => navigate('/reference-companion')}
+                                    data-testid={`badge-es-ch-${ch.chapter}`}
+                                  >
+                                    Ch. {ch.chapter}: {ch.title}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Click any chapter to view the Reference Companion for more details.
+                        </p>
                       </div>
                     );
                   })()}

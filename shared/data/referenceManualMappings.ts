@@ -1698,3 +1698,80 @@ export function getESWeeklyChapters(mode: string, week: number): { chapter: numb
     return ch ? { chapter: chNum, title: ch.title, pageStart: ch.pageStart } : null;
   }).filter(Boolean) as { chapter: number; title: string; pageStart: number }[];
 }
+
+// SRM Study Mode Plans - Maps weeks to SRM chapter numbers
+export const SRM_STUDY_MODE_PLANS: StudyModeChapterPlan[] = [
+  {
+    mode: "standard",
+    description: "Comprehensive 16-week SRM coverage",
+    weeklyFocus: {
+      1: [1, 2, 11], 2: [3, 4, 15], 3: [5, 13, 14], 4: [6, 17, 18],
+      5: [7, 8], 6: [9, 10], 7: [16, 19], 8: [20, 21],
+      9: [22, 23], 10: [24, 25], 11: [26, 27], 12: [28, 29],
+      13: [30, 31], 14: [32, 33], 15: [34, 35], 16: [1, 11, 17, 22]
+    }
+  },
+  {
+    mode: "result-driven",
+    description: "Focus on high-weight SRM topics first",
+    weeklyFocus: {
+      1: [15, 17], 2: [11, 18], 3: [22, 23], 4: [8, 9],
+      5: [24, 25], 6: [5, 6], 7: [1, 2], 8: [13, 14],
+      9: [19, 20], 10: [26, 27], 11: [28, 29], 12: [30, 31],
+      13: [32, 33], 14: [3, 4], 15: [34, 35], 16: [15, 17, 22, 11]
+    }
+  },
+  {
+    mode: "working-professional",
+    description: "Condensed 8-week intensive SRM plan",
+    weeklyFocus: {
+      1: [15, 17, 11], 2: [18, 22, 23], 3: [8, 9, 24],
+      4: [25, 5, 6], 5: [1, 2, 13], 6: [14, 19, 20],
+      7: [26, 27, 28], 8: [15, 17, 22, 11]
+    }
+  }
+];
+
+// Get SRM chapters to focus on for a specific week in a study plan
+export function getSRMWeeklyChapters(mode: string, week: number): { chapter: number; title: string }[] {
+  const plan = SRM_STUDY_MODE_PLANS.find(p => p.mode === mode);
+  if (!plan || !plan.weeklyFocus[week]) return [];
+  
+  const allChapters = getBookChapters("SRM");
+  return plan.weeklyFocus[week].map(chNum => {
+    const ch = allChapters.find(c => c.chapter === chNum);
+    return ch ? { chapter: chNum, title: ch.title } : null;
+  }).filter(Boolean) as { chapter: number; title: string }[];
+}
+
+// Get chapters from specific lesson IDs (for custom study plans with specific lessons)
+export function getChaptersForLessons(lessonIds: string[], bookId: "SRM" | "ES"): { chapter: number; title: string }[] {
+  const chapters: { chapter: number; title: string }[] = [];
+  
+  if (bookId === "ES") {
+    lessonIds.forEach(lessonId => {
+      const mapping = ES_LESSON_MAPPINGS[lessonId];
+      if (mapping) {
+        mapping.chapters.forEach(chNum => {
+          const ch = ES_CHAPTERS[chNum];
+          if (ch && !chapters.find(c => c.chapter === chNum)) {
+            chapters.push({ chapter: chNum, title: ch.title });
+          }
+        });
+      }
+    });
+  } else {
+    lessonIds.forEach(lessonId => {
+      const lesson = LESSON_MAPPINGS.find(m => m.lessonId === lessonId);
+      if (lesson) {
+        lesson.references.forEach(ref => {
+          if (!chapters.find(c => c.chapter === ref.chapter)) {
+            chapters.push({ chapter: ref.chapter, title: ref.chapterTitle });
+          }
+        });
+      }
+    });
+  }
+  
+  return chapters.sort((a, b) => a.chapter - b.chapter);
+}
