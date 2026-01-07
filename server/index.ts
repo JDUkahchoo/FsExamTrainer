@@ -50,8 +50,7 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  // Auto-seed lessons if database is empty or missing questions (for production deployments)
+async function autoSeedIfNeeded() {
   try {
     const lessonResult = await db.select({ count: count() }).from(lessons);
     const lessonCount = lessonResult[0]?.count || 0;
@@ -59,25 +58,24 @@ app.use((req, res, next) => {
     const questionResult = await db.select({ count: count() }).from(lessonQuestions);
     const questionCount = questionResult[0]?.count || 0;
     
-    // Expected: 68 lessons, ~1700 questions (5 per archetype × 5 archetypes × 68 lessons)
     const needsSeeding = lessonCount === 0 || questionCount < 1000;
     
     if (needsSeeding) {
-      log(`📚 Database needs seeding (lessons: ${lessonCount}, questions: ${questionCount}). Auto-seeding...`);
+      log(`Database needs seeding (lessons: ${lessonCount}, questions: ${questionCount}). Auto-seeding in background...`);
       await seedLessons();
       
-      // Verify seeding worked
       const newLessonResult = await db.select({ count: count() }).from(lessons);
       const newQuestionResult = await db.select({ count: count() }).from(lessonQuestions);
-      log(`✅ Auto-seeding completed! ${newLessonResult[0]?.count} lessons, ${newQuestionResult[0]?.count} questions loaded.`);
+      log(`Auto-seeding completed! ${newLessonResult[0]?.count} lessons, ${newQuestionResult[0]?.count} questions loaded.`);
     } else {
-      log(`✅ Database ready with ${lessonCount} lessons and ${questionCount} questions`);
+      log(`Database ready with ${lessonCount} lessons and ${questionCount} questions`);
     }
   } catch (error) {
-    console.error("⚠️ Error checking/seeding lessons:", error);
-    // Continue server startup even if seeding fails
+    console.error("Error checking/seeding lessons:", error);
   }
+}
 
+(async () => {
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -88,19 +86,12 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
   server.listen({
     port,
@@ -108,5 +99,9 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Run database seeding in background AFTER server starts listening
+    // This ensures health checks pass immediately
+    autoSeedIfNeeded();
   });
 })();
