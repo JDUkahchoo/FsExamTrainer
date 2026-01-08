@@ -4,6 +4,10 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema } from "@shared/schema";
+import { seedLessons } from "./seed-lessons";
+import { db } from "./db";
+import { lessons, lessonQuestions } from "@shared/schema";
+import { count } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -18,6 +22,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Admin endpoint to check and seed lessons (protected by secret key)
+  app.post('/api/admin/seed-lessons', async (req, res) => {
+    try {
+      const adminKey = req.headers['x-admin-key'] || req.body.adminKey;
+      const expectedKey = process.env.ADMIN_SEED_KEY;
+      
+      if (!expectedKey) {
+        return res.status(500).json({ error: 'ADMIN_SEED_KEY not configured' });
+      }
+      
+      if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+
+      // Check current state
+      const lessonResult = await db.select({ count: count() }).from(lessons);
+      const questionResult = await db.select({ count: count() }).from(lessonQuestions);
+      const lessonCount = lessonResult[0]?.count || 0;
+      const questionCount = questionResult[0]?.count || 0;
+
+      console.log(`Admin seed request - Current state: ${lessonCount} lessons, ${questionCount} questions`);
+
+      // If force=true or data is missing, run seed
+      const force = req.body.force === true;
+      if (force || lessonCount === 0 || questionCount < 1000) {
+        console.log('Starting admin-triggered seed...');
+        await seedLessons();
+        
+        const newLessonResult = await db.select({ count: count() }).from(lessons);
+        const newQuestionResult = await db.select({ count: count() }).from(lessonQuestions);
+        
+        res.json({
+          success: true,
+          message: 'Seeding completed',
+          before: { lessons: lessonCount, questions: questionCount },
+          after: { lessons: newLessonResult[0]?.count, questions: newQuestionResult[0]?.count }
+        });
+      } else {
+        res.json({
+          success: true,
+          message: 'Database already seeded',
+          lessons: lessonCount,
+          questions: questionCount
+        });
+      }
+    } catch (error) {
+      console.error('Admin seed error:', error);
+      res.status(500).json({ error: 'Seeding failed', details: String(error) });
+    }
+  });
+
+  // Admin endpoint to check database status (no auth required, read-only)
+  app.get('/api/admin/db-status', async (_req, res) => {
+    try {
+      const lessonResult = await db.select({ count: count() }).from(lessons);
+      const questionResult = await db.select({ count: count() }).from(lessonQuestions);
+      
+      res.json({
+        lessons: lessonResult[0]?.count || 0,
+        questions: questionResult[0]?.count || 0,
+        expectedLessons: 73,
+        expectedQuestions: 1825
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Database check failed', details: String(error) });
     }
   });
 
