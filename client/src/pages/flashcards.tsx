@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearch } from 'wouter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +18,13 @@ import type { Domain, FlashcardMastery } from '@shared/schema';
 type FlashcardDeck = 'original' | 'comprehensive';
 
 export default function FlashcardsPage() {
+  const searchString = useSearch();
+  const urlParams = new URLSearchParams(searchString);
+  const domainsFromUrl = urlParams.get('domains');
+  
   const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>('comprehensive');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
+  const [selectedDomains, setSelectedDomains] = useState<Domain[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
@@ -45,18 +51,34 @@ export default function FlashcardsPage() {
   // Convert database mastery to Set
   const masteredCards = new Set((masteryData || []).filter(m => m.masteryLevel >= 4).map(m => m.flashcardId));
 
+  // Initialize domains from URL parameters
+  useEffect(() => {
+    if (domainsFromUrl) {
+      const domains = domainsFromUrl.split(',').filter(d => DOMAINS.includes(d as Domain)) as Domain[];
+      if (domains.length > 0) {
+        setSelectedDomains(domains);
+        if (domains.length === 1) {
+          setSelectedDomain(domains[0]);
+        }
+      }
+    }
+  }, [domainsFromUrl]);
+
   // Select the active deck
   const activeFlashcards = selectedDeck === 'comprehensive' ? COMPREHENSIVE_FLASHCARDS : FLASHCARDS;
 
-  const filteredCards = selectedDomain === 'all'
-    ? activeFlashcards
-    : activeFlashcards.filter(card => card.domain === selectedDomain);
+  // Filter cards based on selected domains (from URL) or single domain
+  const filteredCards = selectedDomains.length > 0
+    ? activeFlashcards.filter(card => selectedDomains.includes(card.domain as Domain))
+    : selectedDomain === 'all'
+      ? activeFlashcards
+      : activeFlashcards.filter(card => card.domain === selectedDomain);
 
   useEffect(() => {
     setShuffledIndices(filteredCards.map((_, i) => i));
     setCurrentIndex(0);
     setIsFlipped(false);
-  }, [selectedDomain, selectedDeck, filteredCards.length]);
+  }, [selectedDomain, selectedDomains.length, selectedDeck, filteredCards.length]);
 
   const currentCard = filteredCards[shuffledIndices[currentIndex]];
   const totalCards = filteredCards.length;
@@ -166,7 +188,10 @@ export default function FlashcardsPage() {
             </SelectContent>
           </Select>
 
-          <Select value={selectedDomain} onValueChange={(value) => setSelectedDomain(value as Domain | 'all')}>
+          <Select value={selectedDomain} onValueChange={(value) => {
+            setSelectedDomain(value as Domain | 'all');
+            setSelectedDomains([]); // Clear URL-based multi-domain filter when user manually selects
+          }}>
             <SelectTrigger className="w-64" data-testid="select-domain">
               <SelectValue placeholder="Select domain" />
             </SelectTrigger>
@@ -182,6 +207,33 @@ export default function FlashcardsPage() {
             <span>Card {currentIndex + 1} of {totalCards}</span>
             <span>Mastered: {masteredCount}/{totalCards}</span>
           </div>
+
+          {selectedDomains.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm text-muted-foreground">Study Plan Filter:</span>
+              {selectedDomains.map(domain => {
+                const config = getDomainConfig(domain);
+                return (
+                  <Badge key={domain} variant="outline" className={`${config.bgColor} ${config.textColor} border-transparent text-xs`}>
+                    {domain}
+                  </Badge>
+                );
+              })}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedDomains([]);
+                  setSelectedDomain('all');
+                }}
+                className="text-xs"
+                data-testid="button-clear-domains"
+              >
+                <RotateCcw className="w-3 h-3 mr-1" />
+                Clear
+              </Button>
+            </div>
+          )}
 
           <div className="ml-auto flex gap-2">
             <Button

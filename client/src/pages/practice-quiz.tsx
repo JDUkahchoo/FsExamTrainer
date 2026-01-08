@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearch } from 'wouter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +18,13 @@ import type { Domain, QuizDraft } from '@shared/schema';
 type QuizState = 'setup' | 'active' | 'completed';
 
 export default function PracticeQuizPage() {
+  const searchString = useSearch();
+  const urlParams = new URLSearchParams(searchString);
+  const domainsFromUrl = urlParams.get('domains');
+  
   const [quizState, setQuizState] = useState<QuizState>('setup');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
+  const [selectedDomains, setSelectedDomains] = useState<Domain[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -83,6 +89,21 @@ export default function PracticeQuizPage() {
 
     return () => clearInterval(interval);
   }, [quizState, startTime]);
+
+  // Initialize domains from URL parameters
+  useEffect(() => {
+    if (domainsFromUrl && quizState === 'setup') {
+      const domains = domainsFromUrl.split(',').filter(d => DOMAINS.includes(d as Domain)) as Domain[];
+      if (domains.length > 0) {
+        setSelectedDomains(domains);
+        if (domains.length === 1) {
+          setSelectedDomain(domains[0]);
+        } else {
+          setSelectedDomain('all');
+        }
+      }
+    }
+  }, [domainsFromUrl, quizState]);
 
   // Helper function to save draft
   const saveDraft = (indexOverride?: number) => {
@@ -196,10 +217,14 @@ export default function PracticeQuizPage() {
   };
 
   const handleStartQuiz = () => {
-    // Prepare quiz questions based on selected domain
+    // Prepare quiz questions based on selected domain(s)
     let questionsForQuiz: typeof QUIZ_QUESTIONS;
     
-    if (selectedDomain === 'all') {
+    if (selectedDomains.length > 0) {
+      // Multi-domain mode from URL: filter by selected domains
+      const filtered = QUIZ_QUESTIONS.filter(q => selectedDomains.includes(q.domain as Domain));
+      questionsForQuiz = shuffleArray(filtered).slice(0, Math.min(50, filtered.length));
+    } else if (selectedDomain === 'all') {
       // Mixed exam mode: randomly select 50 questions from all domains and shuffle
       const shuffled = shuffleArray(QUIZ_QUESTIONS);
       questionsForQuiz = shuffled.slice(0, 50);
@@ -379,7 +404,10 @@ export default function PracticeQuizPage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium mb-2">Select Domain</label>
-              <Select value={selectedDomain} onValueChange={(value) => setSelectedDomain(value as Domain | 'all')}>
+              <Select value={selectedDomain} onValueChange={(value) => {
+                setSelectedDomain(value as Domain | 'all');
+                setSelectedDomains([]); // Clear URL-based multi-domain filter when user manually selects
+              }}>
                 <SelectTrigger className="w-full" data-testid="select-domain">
                   <SelectValue placeholder="Select domain" />
                 </SelectTrigger>
@@ -398,10 +426,46 @@ export default function PracticeQuizPage() {
             </div>
 
             <div className="bg-muted/50 p-4 rounded-lg">
-              {selectedDomain === 'all' ? (
+              {selectedDomains.length > 0 ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <p className="text-sm font-medium text-foreground">
+                      Study Plan Focus Mode
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedDomains([]);
+                        setSelectedDomain('all');
+                      }}
+                      className="text-xs"
+                      data-testid="button-clear-domains"
+                    >
+                      <RotateCcw className="w-3 h-3 mr-1" />
+                      Clear Filter
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedDomains.map(domain => {
+                      const config = getDomainConfig(domain);
+                      return (
+                        <Badge key={domain} variant="outline" className={`${config.bgColor} ${config.textColor} border-transparent text-xs`}>
+                          {domain}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Practice <strong className="text-foreground">
+                      {QUIZ_QUESTIONS.filter(q => selectedDomains.includes(q.domain as Domain)).length} questions
+                    </strong> from your study plan's focus domains.
+                  </p>
+                </div>
+              ) : selectedDomain === 'all' ? (
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-foreground">
-                    📝 Mixed Exam Mode
+                    Mixed Exam Mode
                   </p>
                   <p className="text-sm text-muted-foreground">
                     You'll answer <strong className="text-foreground">50 randomly selected questions</strong> from all 7 domains. 
@@ -411,7 +475,7 @@ export default function PracticeQuizPage() {
               ) : (
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-foreground">
-                    📚 Domain Practice Mode
+                    Domain Practice Mode
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Practice all <strong className="text-foreground">

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -778,6 +778,15 @@ export default function StudyPlan() {
                     onToggle={(i) => toggleItem(plan.week, `read-${i}`)}
                     prefix="read"
                     colorClass="text-primary"
+                    action={{
+                      label: "View Chapters",
+                      icon: ExternalLink,
+                      onClick: () => {
+                        logActivity('study_plan_read');
+                        navigate('/reference-companion');
+                      },
+                      testId: `button-read-action-${plan.week}`
+                    }}
                   />
                   <ChecklistSection
                     title="FOCUS"
@@ -787,6 +796,15 @@ export default function StudyPlan() {
                     onToggle={(i) => toggleItem(plan.week, `focus-${i}`)}
                     prefix="focus"
                     colorClass="text-domain-computations-fg"
+                    action={{
+                      label: "Domain Quiz",
+                      icon: Play,
+                      onClick: () => {
+                        const domainsParam = plan.domains.join(',');
+                        navigate(`/practice-quiz?domains=${encodeURIComponent(domainsParam)}`);
+                      },
+                      testId: `button-focus-action-${plan.week}`
+                    }}
                   />
                   <ChecklistSection
                     title="APPLY"
@@ -796,6 +814,19 @@ export default function StudyPlan() {
                     onToggle={(i) => toggleItem(plan.week, `apply-${i}`)}
                     prefix="apply"
                     colorClass="text-domain-boundary-fg"
+                    action={{
+                      label: "Start Lessons",
+                      icon: Play,
+                      onClick: () => {
+                        const currentWeekLessons = weeklyLessonsMap.get(plan.week) || [];
+                        if (currentWeekLessons.length > 0) {
+                          navigate(`/lesson/${currentWeekLessons[0].id}`);
+                        } else {
+                          toast({ title: "No lessons available", description: "This week has no interactive lessons assigned.", variant: "destructive" });
+                        }
+                      },
+                      testId: `button-apply-action-${plan.week}`
+                    }}
                   />
                   <ChecklistSection
                     title="REINFORCE"
@@ -805,6 +836,15 @@ export default function StudyPlan() {
                     onToggle={(i) => toggleItem(plan.week, `reinforce-${i}`)}
                     prefix="reinforce"
                     colorClass="text-domain-field-fg"
+                    action={{
+                      label: "Flashcards",
+                      icon: Layers,
+                      onClick: () => {
+                        const domainsParam = plan.domains.join(',');
+                        navigate(`/flashcards?domains=${encodeURIComponent(domainsParam)}`);
+                      },
+                      testId: `button-reinforce-action-${plan.week}`
+                    }}
                   />
 
                   {/* Interactive Lessons Section */}
@@ -1240,7 +1280,8 @@ function ChecklistSection({
   completed,
   onToggle,
   prefix,
-  colorClass
+  colorClass,
+  action
 }: {
   title: string;
   icon: typeof BookOpen;
@@ -1249,12 +1290,32 @@ function ChecklistSection({
   onToggle: (index: number) => void;
   prefix: string;
   colorClass: string;
+  action?: {
+    label: string;
+    icon: typeof BookOpen;
+    onClick: () => void;
+    testId: string;
+  };
 }) {
   return (
     <div className="space-y-3">
-      <div className={`flex items-center gap-2 ${colorClass} font-semibold uppercase text-sm tracking-wider`}>
-        <Icon className="w-4 h-4" />
-        {title}
+      <div className={`flex items-center justify-between gap-2`}>
+        <div className={`flex items-center gap-2 ${colorClass} font-semibold uppercase text-sm tracking-wider`}>
+          <Icon className="w-4 h-4" />
+          {title}
+        </div>
+        {action && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={action.onClick}
+            className="text-xs gap-1"
+            data-testid={action.testId}
+          >
+            <action.icon className="w-3 h-3" />
+            {action.label}
+          </Button>
+        )}
       </div>
       <div className="space-y-2">
         {items.map((item, index) => {
