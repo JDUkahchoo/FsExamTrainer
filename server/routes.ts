@@ -889,6 +889,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timeSpentSeconds
       });
       
+      // Update daily quest progress for flashcard reviews
+      if (cardsReviewed > 0) {
+        await storage.updateQuestProgress(userId, 'complete_flashcards', cardsReviewed);
+      }
+      
       // Award XP (idempotent per period per day)
       const xpResult = await storage.awardFlashcardReviewXp(userId, sessionId, session.period);
       

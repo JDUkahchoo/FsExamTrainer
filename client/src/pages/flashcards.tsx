@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearch } from 'wouter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,8 +18,16 @@ import { FlashcardModeSelector, type FlashcardMode } from '@/components/flashcar
 import { TriadDrillCard } from '@/components/triad-drill-card';
 import { FeynmanModeCard } from '@/components/feynman-mode-card';
 import { MnemonicBuilderCard } from '@/components/mnemonic-builder-card';
+import { useToast } from '@/hooks/use-toast';
 
 type FlashcardDeck = 'original' | 'comprehensive';
+
+interface SessionStats {
+  cardsReviewed: number;
+  masteryRatings: number[];
+  domainsReviewed: Record<string, number>;
+  startTime: number;
+}
 
 export default function FlashcardsPage() {
   const searchString = useSearch();
@@ -34,6 +42,116 @@ export default function FlashcardsPage() {
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
   const [studyMode, setStudyMode] = useState<FlashcardMode>('quick');
   const { logActivity } = useActivityLogger();
+  const { toast } = useToast();
+
+  // Session tracking state
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const sessionStatsRef = useRef<SessionStats>({
+    cardsReviewed: 0,
+    masteryRatings: [],
+    domainsReviewed: {},
+    startTime: Date.now()
+  });
+
+  // Start session mutation
+  const startSessionMutation = useMutation({
+    mutationFn: () => apiRequest('POST', '/api/flashcards/sessions/start'),
+    onSuccess: (data: any) => {
+      setCurrentSessionId(data.id);
+      sessionStatsRef.current = {
+        cardsReviewed: 0,
+        masteryRatings: [],
+        domainsReviewed: {},
+        startTime: Date.now()
+      };
+    }
+  });
+
+  // Complete session mutation
+  const completeSessionMutation = useMutation({
+    mutationFn: (sessionId: string) => {
+      const stats = sessionStatsRef.current;
+      const avgMastery = stats.masteryRatings.length > 0
+        ? stats.masteryRatings.reduce((a, b) => a + b, 0) / stats.masteryRatings.length
+        : 0;
+      const timeSpent = Math.floor((Date.now() - stats.startTime) / 1000);
+      
+      return apiRequest('POST', `/api/flashcards/sessions/${sessionId}/complete`, {
+        cardsReviewed: stats.cardsReviewed,
+        avgMasteryRating: avgMastery,
+        domainBreakdown: stats.domainsReviewed,
+        timeSpentSeconds: timeSpent
+      });
+    },
+    onSuccess: (data: any) => {
+      setCurrentSessionId(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions/today'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+      
+      if (data.xpAwarded) {
+        toast({
+          title: "Session Complete!",
+          description: `You earned ${data.xpAmount} XP for this review session.`,
+        });
+      }
+    }
+  });
+
+  // Start session when entering Quick Review mode
+  useEffect(() => {
+    if (studyMode === 'quick' && !currentSessionId && !startSessionMutation.isPending) {
+      startSessionMutation.mutate();
+    }
+  }, [studyMode]);
+
+  // Complete session when leaving page or changing modes
+  const completeCurrentSession = useCallback(() => {
+    if (currentSessionId && sessionStatsRef.current.cardsReviewed > 0) {
+      completeSessionMutation.mutate(currentSessionId);
+    }
+  }, [currentSessionId]);
+
+  useEffect(() => {
+    // Handle mode change - complete session when leaving quick review
+    if (studyMode !== 'quick' && currentSessionId) {
+      completeCurrentSession();
+    }
+  }, [studyMode, currentSessionId, completeCurrentSession]);
+
+  // Complete session on page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (currentSessionId && sessionStatsRef.current.cardsReviewed > 0) {
+        // Use sendBeacon for reliable completion on page close
+        const stats = sessionStatsRef.current;
+        const avgMastery = stats.masteryRatings.length > 0
+          ? stats.masteryRatings.reduce((a, b) => a + b, 0) / stats.masteryRatings.length
+          : 0;
+        const timeSpent = Math.floor((Date.now() - stats.startTime) / 1000);
+        
+        navigator.sendBeacon(
+          `/api/flashcards/sessions/${currentSessionId}/complete`,
+          JSON.stringify({
+            cardsReviewed: stats.cardsReviewed,
+            avgMasteryRating: avgMastery,
+            domainBreakdown: stats.domainsReviewed,
+            timeSpentSeconds: timeSpent
+          })
+        );
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Also complete session on component unmount
+      if (currentSessionId && sessionStatsRef.current.cardsReviewed > 0) {
+        completeCurrentSession();
+      }
+    };
+  }, [currentSessionId, completeCurrentSession]);
 
   const { data: masteryData } = useQuery<FlashcardMastery[]>({
     queryKey: ['/api/flashcards/mastery']
@@ -138,6 +256,15 @@ export default function FlashcardsPage() {
     const cardId = `${deckPrefix}${stableIndex}`;
     const wasMastered = masteredCards.has(cardId);
     const newMasteryLevel = wasMastered ? 2 : 5;
+    
+    // Track session stats
+    if (currentSessionId) {
+      sessionStatsRef.current.cardsReviewed += 1;
+      sessionStatsRef.current.masteryRatings.push(newMasteryLevel);
+      const domain = card.domain;
+      sessionStatsRef.current.domainsReviewed[domain] = 
+        (sessionStatsRef.current.domainsReviewed[domain] || 0) + 1;
+    }
     
     saveMasteryMutation.mutate({
       flashcardId: cardId,

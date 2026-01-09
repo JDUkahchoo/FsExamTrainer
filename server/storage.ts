@@ -2495,6 +2495,7 @@ export class DatabaseStorage implements IStorage {
     const analytics = await this.getPersonalAnalytics(userId);
     const dueReviews = await this.getDueReviews(userId);
     const todaysQuests = await this.getDailyQuests(userId);
+    const todaysFlashcardSessions = await this.getTodayFlashcardSessions(userId);
     
     // Get user preferences for exam date
     const [prefs] = await db
@@ -2521,16 +2522,25 @@ export class DatabaseStorage implements IStorage {
       focusRecommendation = "You're doing well across all domains! Consider reviewing your strongest areas to maintain your edge.";
     }
 
-    // Progress insight
+    // Progress insight - include flashcard session data
     let progressInsight = "";
     const { currentScore, predictedExamScore, onTrack } = analytics.progressTrajectory;
+    const totalCardsReviewedToday = todaysFlashcardSessions.reduce((sum, s) => sum + (s.cardsReviewed || 0), 0);
+    const sessionCount = todaysFlashcardSessions.length;
+    
     if (onTrack) {
       progressInsight = `Great news! Your current trajectory puts you at ${predictedExamScore}% (passing is 70%). Keep up the momentum!`;
     } else {
       progressInsight = `Current estimated score: ${currentScore}%. With consistent practice, you can reach ${predictedExamScore}% by exam day.`;
     }
+    
+    // Add flashcard session context
+    if (sessionCount > 0 && totalCardsReviewedToday > 0) {
+      const periodsCompleted = todaysFlashcardSessions.map(s => s.period).join(', ');
+      progressInsight += ` You've reviewed ${totalCardsReviewedToday} flashcard${totalCardsReviewedToday !== 1 ? 's' : ''} today (${periodsCompleted} session${sessionCount > 1 ? 's' : ''}).`;
+    }
 
-    // Motivational message based on velocity
+    // Motivational message based on velocity and flashcard activity
     const avgVelocity = analytics.learningVelocity.reduce((sum, v) => sum + v.weeklyImprovement, 0) / analytics.learningVelocity.length;
     let motivationalMessage = "";
     if (avgVelocity > 5) {
@@ -2549,6 +2559,18 @@ export class DatabaseStorage implements IStorage {
     if (weakestDomain && weakestDomain.predictedStruggle) {
       todaysPriorities.push(`Practice ${weakestDomain.domain} questions to improve weak area`);
     }
+    
+    // Check for missing flashcard review periods today
+    const currentHour = new Date().getHours();
+    const completedPeriods = new Set(todaysFlashcardSessions.map(s => s.period));
+    if (currentHour >= 5 && currentHour < 12 && !completedPeriods.has('morning')) {
+      todaysPriorities.push("Complete your morning flashcard review for 15 XP");
+    } else if (currentHour >= 12 && currentHour < 17 && !completedPeriods.has('afternoon')) {
+      todaysPriorities.push("Complete your afternoon flashcard review for 15 XP");
+    } else if (currentHour >= 17 && !completedPeriods.has('evening')) {
+      todaysPriorities.push("Complete your evening flashcard review for 15 XP");
+    }
+    
     const incompleteQuests = todaysQuests.filter(q => !q.isCompleted);
     if (incompleteQuests.length > 0) {
       todaysPriorities.push(`Complete ${incompleteQuests.length} daily quest${incompleteQuests.length > 1 ? 's' : ''} for bonus XP`);
