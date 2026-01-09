@@ -161,6 +161,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FOCUS Weakness Scanner routes
+  app.get("/api/focus/recent-misses", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const misses = await storage.getRecentMisses(userId, limit);
+      res.json(misses);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch recent misses" });
+    }
+  });
+
+  app.get("/api/focus/domain-stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const stats = await storage.getDomainStats(userId);
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch domain stats" });
+    }
+  });
+
+  app.get("/api/focus/streak", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const streak = await storage.getCorrectStreak(userId);
+      res.json(streak);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch streak" });
+    }
+  });
+
   // Quiz Results routes
   app.get("/api/quiz/results", isAuthenticated, async (req: any, res) => {
     try {

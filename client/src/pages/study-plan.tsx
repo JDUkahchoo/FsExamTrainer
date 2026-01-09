@@ -41,6 +41,7 @@ import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, Prete
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
+import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
 import { 
   getESWeeklyChapters, 
   getSRMWeeklyChapters,
@@ -776,23 +777,9 @@ export default function StudyPlan() {
                     chapters={plan.read}
                     colorClass="text-primary"
                   />
-                  <ChecklistSection
-                    title="FOCUS"
-                    icon={Target}
-                    items={plan.focus}
-                    completed={completedItems[`week-${plan.week}`] || new Set()}
-                    onToggle={(i) => toggleItem(plan.week, `focus-${i}`)}
-                    prefix="focus"
+                  <FocusWeaknessScanner
+                    week={plan.week}
                     colorClass="text-domain-computations-fg"
-                    action={{
-                      label: "Domain Quiz",
-                      icon: Play,
-                      onClick: () => {
-                        const domainsParam = plan.domains.join(',');
-                        navigate(`/practice-quiz?domains=${encodeURIComponent(domainsParam)}`);
-                      },
-                      testId: `button-focus-action-${plan.week}`
-                    }}
                   />
                   <ChecklistSection
                     title="APPLY"

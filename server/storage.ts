@@ -98,6 +98,11 @@ export interface IStorage {
   getQuizResultsBySession(sessionId: string): Promise<QuizResult[]>;
   createQuizResult(result: InsertQuizResult): Promise<QuizResult>;
   deleteAllQuizResults(userId: string): Promise<void>;
+  
+  // FOCUS Weakness Scanner methods
+  getRecentMisses(userId: string, limit?: number): Promise<QuizResult[]>;
+  getDomainStats(userId: string): Promise<{ domain: string; total: number; correct: number; accuracy: number }[]>;
+  getCorrectStreak(userId: string): Promise<{ current: number; best: number }>;
 
   // Quiz Session methods
   getQuizSessions(userId: string): Promise<QuizSession[]>;
@@ -291,6 +296,70 @@ export class DatabaseStorage implements IStorage {
 
   async deleteAllQuizResults(userId: string): Promise<void> {
     await db.delete(quizResults).where(eq(quizResults.userId, userId));
+  }
+
+  // FOCUS Weakness Scanner methods
+  async getRecentMisses(userId: string, limit: number = 20): Promise<QuizResult[]> {
+    return await db
+      .select()
+      .from(quizResults)
+      .where(and(eq(quizResults.userId, userId), eq(quizResults.isCorrect, false)))
+      .orderBy(desc(quizResults.completedAt))
+      .limit(limit);
+  }
+
+  async getDomainStats(userId: string): Promise<{ domain: string; total: number; correct: number; accuracy: number }[]> {
+    const results = await db
+      .select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, userId));
+    
+    const domainMap = new Map<string, { total: number; correct: number }>();
+    
+    for (const result of results) {
+      const current = domainMap.get(result.domain) || { total: 0, correct: 0 };
+      current.total += 1;
+      if (result.isCorrect) current.correct += 1;
+      domainMap.set(result.domain, current);
+    }
+    
+    return Array.from(domainMap.entries()).map(([domain, stats]) => ({
+      domain,
+      total: stats.total,
+      correct: stats.correct,
+      accuracy: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0,
+    }));
+  }
+
+  async getCorrectStreak(userId: string): Promise<{ current: number; best: number }> {
+    const results = await db
+      .select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, userId))
+      .orderBy(desc(quizResults.completedAt));
+    
+    let current = 0;
+    let best = 0;
+    let tempStreak = 0;
+    
+    for (let i = results.length - 1; i >= 0; i--) {
+      if (results[i].isCorrect) {
+        tempStreak++;
+        best = Math.max(best, tempStreak);
+      } else {
+        tempStreak = 0;
+      }
+    }
+    
+    for (const result of results) {
+      if (result.isCorrect) {
+        current++;
+      } else {
+        break;
+      }
+    }
+    
+    return { current, best };
   }
 
   // Quiz Session methods
