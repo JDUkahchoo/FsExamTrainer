@@ -14,7 +14,12 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Custom Plan Builder:** Interactive UI for personalized study plans.
 -   **Study Cycles System:** Multi-pass study framework for repeated plan completion, preserving historical data.
 -   **Practice Quizzes:** Mixed Exam and Domain Practice modes with unique questions, instant feedback, explanations, and analytics.
--   **Flashcard System:** Two decks with card flip animations, spaced repetition, and mastery tracking, including coverage for all NCEES domains.
+-   **Enhanced Flashcard System:** Two decks with four interactive study modes:
+    -   **Quick Review:** Classic flip cards with spaced repetition and mastery tracking
+    -   **Triad Drill:** 3-phase learning (Recall → Apply → Reverse) for deeper retention
+    -   **Feynman Mode:** Explain concepts in your own words with 1-5 clarity self-rating
+    -   **Mnemonic Builder:** Create and save memory tricks with built-in formula suggestions
+    -   Database tables: `flashcardFeynmanScores`, `flashcardMnemonics`, `flashcardTriadProgress` track per-card progress across modes
 -   **Study Resources:** Library with formula sheets, memory techniques, and professional references.
 -   **Practice Exam Simulator:** Full 110-question exam with timer, unique questions, domain-based score breakdown, and analytics.
 -   **Study Notes (Enhanced):** Multi-page note-taking system with week selector, Mon-Sun day filtering, optional domain tagging, auto-save, and CRUD operations for managing multiple notes per week.
