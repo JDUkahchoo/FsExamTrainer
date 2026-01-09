@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/collapsible";
 import { useQuery } from '@tanstack/react-query';
 import { Target, Flame, AlertTriangle, ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { MicroDrillModal } from './micro-drill-modal';
 import type { QuizResult, Domain, DOMAINS } from '@shared/schema';
 
 interface FocusWeaknessScannerProps {
@@ -31,7 +31,7 @@ const DOMAIN_COLORS: Record<string, string> = {
 
 export function FocusWeaknessScanner({ week, colorClass = "text-primary" }: FocusWeaknessScannerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [, setLocation] = useLocation();
+  const [showDrillModal, setShowDrillModal] = useState(false);
 
   const { data: recentMisses = [], isLoading: missesLoading } = useQuery<QuizResult[]>({
     queryKey: ['/api/focus/recent-misses?limit=10'],
@@ -209,18 +209,18 @@ export function FocusWeaknessScanner({ week, colorClass = "text-primary" }: Focu
                     className="w-full"
                     data-testid="button-start-micro-drill"
                     disabled={!hasData}
-                    onClick={() => {
-                      const weakDomain = weakestDomains.length > 0 ? weakestDomains[0].domain : '';
-                      const params = new URLSearchParams({
-                        ...(weakDomain && { domains: weakDomain })
-                      });
-                      setLocation(`/quiz?${params.toString()}`);
-                    }}
+                    onClick={() => setShowDrillModal(true)}
                   >
                     <Target className="w-4 h-4 mr-2" />
-                    Start 5-Question Micro-Drill
+                    Start 10-Question Micro-Drill
                   </Button>
                 </div>
+
+                <MicroDrillModal 
+                  open={showDrillModal}
+                  onOpenChange={setShowDrillModal}
+                  focusDomains={weakestDomains.filter(d => d.accuracy < 70).map(d => d.domain)}
+                />
               </>
             )}
           </CardContent>
