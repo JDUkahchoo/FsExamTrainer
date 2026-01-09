@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
@@ -124,6 +124,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error saving progress:", error);
       res.status(400).json({ error: "Invalid week progress data" });
+    }
+  });
+
+  // Reading Progress routes (Comprehension Checkpoint)
+  app.get("/api/reading-progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getAllReadingProgress(userId);
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch reading progress" });
+    }
+  });
+
+  app.get("/api/reading-progress/:week", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = parseInt(req.params.week);
+      const progress = await storage.getReadingProgress(userId, week);
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch reading progress" });
+    }
+  });
+
+  app.post("/api/reading-progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertReadingProgressSchema.parse({ ...req.body, userId });
+      const progress = await storage.upsertReadingProgress(data);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error saving reading progress:", error);
+      res.status(400).json({ error: "Invalid reading progress data" });
     }
   });
 

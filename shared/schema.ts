@@ -322,6 +322,35 @@ export type StudyNote = typeof studyNotes.$inferSelect;
 export const DAYS_OF_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 export type DayOfWeek = typeof DAYS_OF_WEEK[number];
 
+// --- Reading Progress (Comprehension Checkpoint) ---
+
+export const readingProgress = pgTable("reading_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  week: integer("week").notNull(),
+  chapterIndex: integer("chapter_index").notNull(),
+  completed: boolean("completed").notNull().default(false),
+  confidenceRating: integer("confidence_rating"), // 1-5 scale
+  takeawayNote: text("takeaway_note"),
+  completedAt: timestamp("completed_at"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const readingProgressRelations = relations(readingProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [readingProgress.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertReadingProgressSchema = createInsertSchema(readingProgress).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type InsertReadingProgress = z.infer<typeof insertReadingProgressSchema>;
+export type ReadingProgress = typeof readingProgress.$inferSelect;
+
 // --- Quiz Drafts (for resume functionality) ---
 
 export const quizDrafts = pgTable("quiz_drafts", {
@@ -393,6 +422,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   pretestResults: many(pretestResults),
   pretestQuestionResults: many(pretestQuestionResults),
   studyNotes: many(studyNotes),
+  readingProgress: many(readingProgress),
   quizDrafts: many(quizDrafts),
   examDrafts: many(examDrafts),
   dailyActivity: many(dailyActivity),

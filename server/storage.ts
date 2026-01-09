@@ -17,6 +17,8 @@ import type {
   InsertPretestQuestionResult,
   StudyNote,
   InsertStudyNote,
+  ReadingProgress,
+  InsertReadingProgress,
   QuizDraft,
   InsertQuizDraft,
   ExamDraft,
@@ -62,6 +64,7 @@ import {
   pretestResults,
   pretestQuestionResults,
   studyNotes,
+  readingProgress,
   quizDrafts,
   examDrafts,
   dailyActivity,
@@ -123,6 +126,11 @@ export interface IStorage {
   createStudyNote(note: InsertStudyNote): Promise<StudyNote>;
   updateStudyNote(userId: string, noteId: string, updates: Partial<InsertStudyNote>): Promise<StudyNote>;
   deleteStudyNote(userId: string, noteId: string): Promise<void>;
+
+  // Reading Progress methods (Comprehension Checkpoint)
+  getReadingProgress(userId: string, week: number): Promise<ReadingProgress[]>;
+  getAllReadingProgress(userId: string): Promise<ReadingProgress[]>;
+  upsertReadingProgress(progress: InsertReadingProgress): Promise<ReadingProgress>;
 
   // Daily Activity methods
   getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
@@ -494,6 +502,59 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(studyNotes)
       .where(and(eq(studyNotes.userId, userId), eq(studyNotes.id, noteId)));
+  }
+
+  // Reading Progress methods (Comprehension Checkpoint)
+  async getReadingProgress(userId: string, week: number): Promise<ReadingProgress[]> {
+    return await db
+      .select()
+      .from(readingProgress)
+      .where(and(eq(readingProgress.userId, userId), eq(readingProgress.week, week)));
+  }
+
+  async getAllReadingProgress(userId: string): Promise<ReadingProgress[]> {
+    return await db
+      .select()
+      .from(readingProgress)
+      .where(eq(readingProgress.userId, userId));
+  }
+
+  async upsertReadingProgress(progress: InsertReadingProgress): Promise<ReadingProgress> {
+    const existing = await db
+      .select()
+      .from(readingProgress)
+      .where(
+        and(
+          eq(readingProgress.userId, progress.userId),
+          eq(readingProgress.week, progress.week),
+          eq(readingProgress.chapterIndex, progress.chapterIndex)
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      const [updated] = await db
+        .update(readingProgress)
+        .set({
+          completed: progress.completed,
+          confidenceRating: progress.confidenceRating,
+          takeawayNote: progress.takeawayNote,
+          completedAt: progress.completed ? new Date() : null,
+          updatedAt: new Date(),
+        })
+        .where(eq(readingProgress.id, existing[0].id))
+        .returning();
+      return updated;
+    }
+
+    const [created] = await db
+      .insert(readingProgress)
+      .values({
+        ...progress,
+        completedAt: progress.completed ? new Date() : null,
+      })
+      .returning();
+    return created;
   }
 
   // Daily Activity methods

@@ -40,6 +40,7 @@ import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
+import { ReadCheckpoint } from '@/components/read-checkpoint';
 import { 
   getESWeeklyChapters, 
   getSRMWeeklyChapters,
@@ -770,23 +771,10 @@ export default function StudyPlan() {
 
               {isExpanded && (
                 <div className="p-6 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-6 bg-card">
-                  <ChecklistSection
-                    title="READ"
-                    icon={BookOpen}
-                    items={plan.read}
-                    completed={completedItems[`week-${plan.week}`] || new Set()}
-                    onToggle={(i) => toggleItem(plan.week, `read-${i}`)}
-                    prefix="read"
+                  <ReadCheckpoint
+                    week={plan.week}
+                    chapters={plan.read}
                     colorClass="text-primary"
-                    action={{
-                      label: "View Chapters",
-                      icon: ExternalLink,
-                      onClick: () => {
-                        logActivity('study_plan_read');
-                        navigate('/reference-companion');
-                      },
-                      testId: `button-read-action-${plan.week}`
-                    }}
                   />
                   <ChecklistSection
                     title="FOCUS"
