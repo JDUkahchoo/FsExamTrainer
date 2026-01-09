@@ -57,6 +57,7 @@ export default function FlashcardsPage() {
   const startSessionMutation = useMutation({
     mutationFn: () => apiRequest('POST', '/api/flashcards/sessions/start'),
     onSuccess: (data: any) => {
+      console.log('Session started:', data.id);
       setCurrentSessionId(data.id);
       sessionStatsRef.current = {
         cardsReviewed: 0,
@@ -64,6 +65,9 @@ export default function FlashcardsPage() {
         domainsReviewed: {},
         startTime: Date.now()
       };
+    },
+    onError: (error: any) => {
+      console.error('Failed to start session:', error);
     }
   });
 
@@ -76,6 +80,8 @@ export default function FlashcardsPage() {
         : 0;
       const timeSpent = Math.floor((Date.now() - stats.startTime) / 1000);
       
+      console.log('Completing session:', sessionId, 'Cards:', stats.cardsReviewed);
+      
       return apiRequest('POST', `/api/flashcards/sessions/${sessionId}/complete`, {
         cardsReviewed: stats.cardsReviewed,
         avgMasteryRating: avgMastery,
@@ -84,11 +90,13 @@ export default function FlashcardsPage() {
       });
     },
     onSuccess: (data: any) => {
+      console.log('Session completed:', data);
       setCurrentSessionId(null);
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions/today'] });
       queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
       queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/daily-quests'] });
       
       if (data.xpAwarded) {
         toast({
@@ -96,6 +104,9 @@ export default function FlashcardsPage() {
           description: `You earned ${data.xpAmount} XP for this review session.`,
         });
       }
+    },
+    onError: (error: any) => {
+      console.error('Failed to complete session:', error);
     }
   });
 
@@ -266,6 +277,9 @@ export default function FlashcardsPage() {
       const domain = card.domain;
       sessionStatsRef.current.domainsReviewed[domain] = 
         (sessionStatsRef.current.domainsReviewed[domain] || 0) + 1;
+      console.log('Card reviewed in session:', currentSessionId, 'Total:', sessionStatsRef.current.cardsReviewed);
+    } else {
+      console.log('No active session - card review not tracked');
     }
     
     saveMasteryMutation.mutate({
