@@ -50,7 +50,9 @@ import type {
   Feedback,
   InsertFeedback,
   Testimonial,
-  InsertTestimonial
+  InsertTestimonial,
+  ApplyChallengeAttempt,
+  InsertApplyChallengeAttempt
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -77,6 +79,7 @@ import {
   lessonQuestions,
   lessonProgress,
   domainProgressSnapshots,
+  applyChallengeAttempts,
   feedback,
   testimonials
 } from "@shared/schema";
@@ -136,6 +139,11 @@ export interface IStorage {
   getReadingProgress(userId: string, week: number): Promise<ReadingProgress[]>;
   getAllReadingProgress(userId: string): Promise<ReadingProgress[]>;
   upsertReadingProgress(progress: InsertReadingProgress): Promise<ReadingProgress>;
+
+  // APPLY Challenge Attempts methods (Scenario Lab)
+  getApplyChallengeAttempts(userId: string, week?: number): Promise<ApplyChallengeAttempt[]>;
+  createApplyChallengeAttempt(attempt: InsertApplyChallengeAttempt): Promise<ApplyChallengeAttempt>;
+  updateApplyChallengeAttempt(userId: string, attemptId: string, updates: Partial<InsertApplyChallengeAttempt>): Promise<ApplyChallengeAttempt>;
 
   // Daily Activity methods
   getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
@@ -624,6 +632,39 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return created;
+  }
+
+  // APPLY Challenge Attempts methods (Scenario Lab)
+  async getApplyChallengeAttempts(userId: string, week?: number): Promise<ApplyChallengeAttempt[]> {
+    if (week !== undefined) {
+      return await db
+        .select()
+        .from(applyChallengeAttempts)
+        .where(and(eq(applyChallengeAttempts.userId, userId), eq(applyChallengeAttempts.week, week)))
+        .orderBy(desc(applyChallengeAttempts.startedAt));
+    }
+    return await db
+      .select()
+      .from(applyChallengeAttempts)
+      .where(eq(applyChallengeAttempts.userId, userId))
+      .orderBy(desc(applyChallengeAttempts.startedAt));
+  }
+
+  async createApplyChallengeAttempt(attempt: InsertApplyChallengeAttempt): Promise<ApplyChallengeAttempt> {
+    const [created] = await db
+      .insert(applyChallengeAttempts)
+      .values({ ...attempt, startedAt: new Date() })
+      .returning();
+    return created;
+  }
+
+  async updateApplyChallengeAttempt(userId: string, attemptId: string, updates: Partial<InsertApplyChallengeAttempt>): Promise<ApplyChallengeAttempt> {
+    const [updated] = await db
+      .update(applyChallengeAttempts)
+      .set({ ...updates, completedAt: updates.completedAt || new Date() })
+      .where(and(eq(applyChallengeAttempts.id, attemptId), eq(applyChallengeAttempts.userId, userId)))
+      .returning();
+    return updated;
   }
 
   // Daily Activity methods

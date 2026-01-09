@@ -840,6 +840,38 @@ export const insertDomainProgressSnapshotSchema = createInsertSchema(domainProgr
 export type InsertDomainProgressSnapshot = z.infer<typeof insertDomainProgressSnapshotSchema>;
 export type DomainProgressSnapshot = typeof domainProgressSnapshots.$inferSelect;
 
+// --- APPLY Challenge Attempts (Scenario Lab tracking) ---
+
+export const applyChallengeAttempts = pgTable("apply_challenge_attempts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  week: integer("week").notNull(),
+  challengeId: varchar("challenge_id").notNull(),
+  challengeType: varchar("challenge_type").notNull(), // 'field_problem', 'timed_drill', 'scenario'
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+  elapsedSeconds: integer("elapsed_seconds"),
+  selfGrade: integer("self_grade"), // Number of rubric items checked (0-4 typically)
+  maxGrade: integer("max_grade"), // Total rubric items available
+  userAnswer: text("user_answer"),
+  notes: text("notes"),
+});
+
+export const applyChallengeAttemptsRelations = relations(applyChallengeAttempts, ({ one }) => ({
+  user: one(users, {
+    fields: [applyChallengeAttempts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertApplyChallengeAttemptSchema = createInsertSchema(applyChallengeAttempts).omit({
+  id: true,
+  startedAt: true,
+});
+
+export type InsertApplyChallengeAttempt = z.infer<typeof insertApplyChallengeAttemptSchema>;
+export type ApplyChallengeAttempt = typeof applyChallengeAttempts.$inferSelect;
+
 // --- Feedback & Testimonials ---
 
 export const feedback = pgTable("feedback", {

@@ -42,6 +42,7 @@ import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-pla
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
 import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
+import { ApplyScenarioLab } from '@/components/apply-scenario-lab';
 import { 
   getESWeeklyChapters, 
   getSRMWeeklyChapters,
@@ -781,27 +782,9 @@ export default function StudyPlan() {
                     week={plan.week}
                     colorClass="text-domain-computations-fg"
                   />
-                  <ChecklistSection
-                    title="APPLY"
-                    icon={Dumbbell}
-                    items={plan.apply}
-                    completed={completedItems[`week-${plan.week}`] || new Set()}
-                    onToggle={(i) => toggleItem(plan.week, `apply-${i}`)}
-                    prefix="apply"
+                  <ApplyScenarioLab
+                    week={plan.week}
                     colorClass="text-domain-boundary-fg"
-                    action={{
-                      label: "Start Lessons",
-                      icon: Play,
-                      onClick: () => {
-                        const currentWeekLessons = weeklyLessonsMap.get(plan.week) || [];
-                        if (currentWeekLessons.length > 0) {
-                          navigate(`/lesson/${currentWeekLessons[0].id}`);
-                        } else {
-                          toast({ title: "No lessons available", description: "This week has no interactive lessons assigned.", variant: "destructive" });
-                        }
-                      },
-                      testId: `button-apply-action-${plan.week}`
-                    }}
                   />
                   <ChecklistSection
                     title="REINFORCE"

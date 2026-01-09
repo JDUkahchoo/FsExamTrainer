@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
@@ -190,6 +190,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(streak);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch streak" });
+    }
+  });
+
+  // APPLY Scenario Lab routes
+  app.get("/api/apply/attempts", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = req.query.week ? parseInt(req.query.week as string) : undefined;
+      const attempts = await storage.getApplyChallengeAttempts(userId, week);
+      res.json(attempts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch apply attempts" });
+    }
+  });
+
+  app.post("/api/apply/attempts", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertApplyChallengeAttemptSchema.parse({ ...req.body, userId });
+      const attempt = await storage.createApplyChallengeAttempt(data);
+      res.json(attempt);
+    } catch (error) {
+      console.error("Error creating apply attempt:", error);
+      res.status(400).json({ error: "Invalid apply attempt data" });
+    }
+  });
+
+  app.patch("/api/apply/attempts/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const attemptId = req.params.id;
+      const updates = {
+        ...req.body,
+        completedAt: new Date(),
+      };
+      const attempt = await storage.updateApplyChallengeAttempt(userId, attemptId, updates);
+      res.json(attempt);
+    } catch (error) {
+      console.error("Error updating apply attempt:", error);
+      res.status(400).json({ error: "Failed to update apply attempt" });
     }
   });
 
