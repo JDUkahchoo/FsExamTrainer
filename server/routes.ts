@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
@@ -624,6 +624,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch flashcard statistics" });
+    }
+  });
+
+  // Flashcard Feynman Mode routes
+  app.get("/api/flashcards/feynman", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const scores = await storage.getAllFlashcardFeynmanScores(userId);
+      res.json(scores);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch Feynman scores" });
+    }
+  });
+
+  app.get("/api/flashcards/feynman/:flashcardId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const score = await storage.getFlashcardFeynmanScore(userId, req.params.flashcardId);
+      res.json(score || null);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch Feynman score" });
+    }
+  });
+
+  app.post("/api/flashcards/feynman", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertFlashcardFeynmanScoreSchema.parse({ ...req.body, userId });
+      const score = await storage.upsertFlashcardFeynmanScore(data);
+      res.json(score);
+    } catch (error) {
+      console.error("Error saving Feynman score:", error);
+      res.status(400).json({ error: "Invalid Feynman score data" });
+    }
+  });
+
+  // Flashcard Mnemonic routes
+  app.get("/api/flashcards/mnemonics", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const mnemonics = await storage.getAllFlashcardMnemonics(userId);
+      res.json(mnemonics);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch mnemonics" });
+    }
+  });
+
+  app.get("/api/flashcards/mnemonics/:flashcardId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const mnemonic = await storage.getFlashcardMnemonic(userId, req.params.flashcardId);
+      res.json(mnemonic || null);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch mnemonic" });
+    }
+  });
+
+  app.post("/api/flashcards/mnemonics", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertFlashcardMnemonicSchema.parse({ ...req.body, userId });
+      const mnemonic = await storage.upsertFlashcardMnemonic(data);
+      res.json(mnemonic);
+    } catch (error) {
+      console.error("Error saving mnemonic:", error);
+      res.status(400).json({ error: "Invalid mnemonic data" });
+    }
+  });
+
+  app.delete("/api/flashcards/mnemonics/:flashcardId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await storage.deleteFlashcardMnemonic(userId, req.params.flashcardId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete mnemonic" });
+    }
+  });
+
+  // Flashcard Triad Drill routes
+  app.get("/api/flashcards/triad", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getAllFlashcardTriadProgress(userId);
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch triad progress" });
+    }
+  });
+
+  app.get("/api/flashcards/triad/:flashcardId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getFlashcardTriadProgress(userId, req.params.flashcardId);
+      res.json(progress || null);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch triad progress" });
+    }
+  });
+
+  app.post("/api/flashcards/triad", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertFlashcardTriadProgressSchema.parse({ ...req.body, userId });
+      const progress = await storage.upsertFlashcardTriadProgress(data);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error saving triad progress:", error);
+      res.status(400).json({ error: "Invalid triad progress data" });
     }
   });
 

@@ -55,7 +55,13 @@ import type {
   InsertApplyChallengeAttempt,
   RetentionReview,
   InsertRetentionReview,
-  XpGrant
+  XpGrant,
+  FlashcardFeynmanScore,
+  InsertFlashcardFeynmanScore,
+  FlashcardMnemonic,
+  InsertFlashcardMnemonic,
+  FlashcardTriadProgress,
+  InsertFlashcardTriadProgress
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -86,7 +92,10 @@ import {
   feedback,
   testimonials,
   retentionReviews,
-  xpGrants
+  xpGrants,
+  flashcardFeynmanScores,
+  flashcardMnemonics,
+  flashcardTriadProgress
 } from "@shared/schema";
 import { eq, and, desc, gte, sql, inArray } from "drizzle-orm";
 
@@ -123,6 +132,22 @@ export interface IStorage {
   getAllFlashcardMastery(userId: string): Promise<FlashcardMastery[]>;
   upsertFlashcardMastery(mastery: InsertFlashcardMastery): Promise<FlashcardMastery>;
   deleteAllFlashcardMastery(userId: string): Promise<void>;
+  
+  // Flashcard Feynman Mode methods
+  getFlashcardFeynmanScore(userId: string, flashcardId: string): Promise<FlashcardFeynmanScore | undefined>;
+  getAllFlashcardFeynmanScores(userId: string): Promise<FlashcardFeynmanScore[]>;
+  upsertFlashcardFeynmanScore(score: InsertFlashcardFeynmanScore): Promise<FlashcardFeynmanScore>;
+  
+  // Flashcard Mnemonic methods
+  getFlashcardMnemonic(userId: string, flashcardId: string): Promise<FlashcardMnemonic | undefined>;
+  getAllFlashcardMnemonics(userId: string): Promise<FlashcardMnemonic[]>;
+  upsertFlashcardMnemonic(mnemonic: InsertFlashcardMnemonic): Promise<FlashcardMnemonic>;
+  deleteFlashcardMnemonic(userId: string, flashcardId: string): Promise<void>;
+  
+  // Flashcard Triad Drill methods
+  getFlashcardTriadProgress(userId: string, flashcardId: string): Promise<FlashcardTriadProgress | undefined>;
+  getAllFlashcardTriadProgress(userId: string): Promise<FlashcardTriadProgress[]>;
+  upsertFlashcardTriadProgress(progress: InsertFlashcardTriadProgress): Promise<FlashcardTriadProgress>;
 
   // Practice Exam methods
   getPracticeExams(userId: string): Promise<PracticeExam[]>;
@@ -490,6 +515,153 @@ export class DatabaseStorage implements IStorage {
 
   async deleteAllFlashcardMastery(userId: string): Promise<void> {
     await db.delete(flashcardMastery).where(eq(flashcardMastery.userId, userId));
+  }
+
+  // Flashcard Feynman Mode methods
+  async getFlashcardFeynmanScore(userId: string, flashcardId: string): Promise<FlashcardFeynmanScore | undefined> {
+    const [score] = await db
+      .select()
+      .from(flashcardFeynmanScores)
+      .where(and(
+        eq(flashcardFeynmanScores.userId, userId),
+        eq(flashcardFeynmanScores.flashcardId, flashcardId)
+      ));
+    return score || undefined;
+  }
+
+  async getAllFlashcardFeynmanScores(userId: string): Promise<FlashcardFeynmanScore[]> {
+    return db
+      .select()
+      .from(flashcardFeynmanScores)
+      .where(eq(flashcardFeynmanScores.userId, userId));
+  }
+
+  async upsertFlashcardFeynmanScore(score: InsertFlashcardFeynmanScore): Promise<FlashcardFeynmanScore> {
+    const existing = await this.getFlashcardFeynmanScore(score.userId, score.flashcardId);
+    
+    if (existing) {
+      const [updated] = await db
+        .update(flashcardFeynmanScores)
+        .set({
+          explanation: score.explanation,
+          clarityRating: score.clarityRating,
+          updatedAt: new Date(),
+        })
+        .where(and(
+          eq(flashcardFeynmanScores.userId, score.userId),
+          eq(flashcardFeynmanScores.flashcardId, score.flashcardId)
+        ))
+        .returning();
+      return updated;
+    }
+    
+    const [created] = await db
+      .insert(flashcardFeynmanScores)
+      .values(score)
+      .returning();
+    return created;
+  }
+
+  // Flashcard Mnemonic methods
+  async getFlashcardMnemonic(userId: string, flashcardId: string): Promise<FlashcardMnemonic | undefined> {
+    const [mnemonic] = await db
+      .select()
+      .from(flashcardMnemonics)
+      .where(and(
+        eq(flashcardMnemonics.userId, userId),
+        eq(flashcardMnemonics.flashcardId, flashcardId)
+      ));
+    return mnemonic || undefined;
+  }
+
+  async getAllFlashcardMnemonics(userId: string): Promise<FlashcardMnemonic[]> {
+    return db
+      .select()
+      .from(flashcardMnemonics)
+      .where(eq(flashcardMnemonics.userId, userId));
+  }
+
+  async upsertFlashcardMnemonic(mnemonic: InsertFlashcardMnemonic): Promise<FlashcardMnemonic> {
+    const existing = await this.getFlashcardMnemonic(mnemonic.userId, mnemonic.flashcardId);
+    
+    if (existing) {
+      const [updated] = await db
+        .update(flashcardMnemonics)
+        .set({ mnemonic: mnemonic.mnemonic })
+        .where(and(
+          eq(flashcardMnemonics.userId, mnemonic.userId),
+          eq(flashcardMnemonics.flashcardId, mnemonic.flashcardId)
+        ))
+        .returning();
+      return updated;
+    }
+    
+    const [created] = await db
+      .insert(flashcardMnemonics)
+      .values(mnemonic)
+      .returning();
+    return created;
+  }
+
+  async deleteFlashcardMnemonic(userId: string, flashcardId: string): Promise<void> {
+    await db
+      .delete(flashcardMnemonics)
+      .where(and(
+        eq(flashcardMnemonics.userId, userId),
+        eq(flashcardMnemonics.flashcardId, flashcardId)
+      ));
+  }
+
+  // Flashcard Triad Drill methods
+  async getFlashcardTriadProgress(userId: string, flashcardId: string): Promise<FlashcardTriadProgress | undefined> {
+    const [progress] = await db
+      .select()
+      .from(flashcardTriadProgress)
+      .where(and(
+        eq(flashcardTriadProgress.userId, userId),
+        eq(flashcardTriadProgress.flashcardId, flashcardId)
+      ));
+    return progress || undefined;
+  }
+
+  async getAllFlashcardTriadProgress(userId: string): Promise<FlashcardTriadProgress[]> {
+    return db
+      .select()
+      .from(flashcardTriadProgress)
+      .where(eq(flashcardTriadProgress.userId, userId));
+  }
+
+  async upsertFlashcardTriadProgress(progress: InsertFlashcardTriadProgress): Promise<FlashcardTriadProgress> {
+    const existing = await this.getFlashcardTriadProgress(progress.userId, progress.flashcardId);
+    
+    if (existing) {
+      const recallComplete = progress.recallComplete ?? existing.recallComplete;
+      const applyComplete = progress.applyComplete ?? existing.applyComplete;
+      const reverseComplete = progress.reverseComplete ?? existing.reverseComplete;
+      const allComplete = recallComplete && applyComplete && reverseComplete;
+      
+      const [updated] = await db
+        .update(flashcardTriadProgress)
+        .set({
+          recallComplete,
+          applyComplete,
+          reverseComplete,
+          completedAt: allComplete ? new Date() : null,
+          updatedAt: new Date(),
+        })
+        .where(and(
+          eq(flashcardTriadProgress.userId, progress.userId),
+          eq(flashcardTriadProgress.flashcardId, progress.flashcardId)
+        ))
+        .returning();
+      return updated;
+    }
+    
+    const [created] = await db
+      .insert(flashcardTriadProgress)
+      .values(progress)
+      .returning();
+    return created;
   }
 
   // Practice Exam methods

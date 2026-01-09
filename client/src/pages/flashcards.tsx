@@ -14,6 +14,10 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
 import type { Domain, FlashcardMastery } from '@shared/schema';
+import { FlashcardModeSelector, type FlashcardMode } from '@/components/flashcard-mode-selector';
+import { TriadDrillCard } from '@/components/triad-drill-card';
+import { FeynmanModeCard } from '@/components/feynman-mode-card';
+import { MnemonicBuilderCard } from '@/components/mnemonic-builder-card';
 
 type FlashcardDeck = 'original' | 'comprehensive';
 
@@ -28,14 +32,13 @@ export default function FlashcardsPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
+  const [studyMode, setStudyMode] = useState<FlashcardMode>('quick');
   const { logActivity } = useActivityLogger();
 
-  // Fetch flashcard mastery from database
   const { data: masteryData } = useQuery<FlashcardMastery[]>({
     queryKey: ['/api/flashcards/mastery']
   });
 
-  // Mutation to save flashcard mastery
   const saveMasteryMutation = useMutation({
     mutationFn: (mastery: { flashcardId: string; masteryLevel: number; lastReviewed: Date }) =>
       apiRequest('POST', '/api/flashcards/mastery', mastery),
@@ -48,10 +51,8 @@ export default function FlashcardsPage() {
     }
   });
 
-  // Convert database mastery to Set
   const masteredCards = new Set((masteryData || []).filter(m => m.masteryLevel >= 4).map(m => m.flashcardId));
 
-  // Initialize domains from URL parameters
   useEffect(() => {
     if (domainsFromUrl) {
       const domains = domainsFromUrl.split(',').filter(d => DOMAINS.includes(d as Domain)) as Domain[];
@@ -64,10 +65,8 @@ export default function FlashcardsPage() {
     }
   }, [domainsFromUrl]);
 
-  // Select the active deck
   const activeFlashcards = selectedDeck === 'comprehensive' ? COMPREHENSIVE_FLASHCARDS : FLASHCARDS;
 
-  // Filter cards based on selected domains (from URL) or single domain
   const filteredCards = selectedDomains.length > 0
     ? activeFlashcards.filter(card => selectedDomains.includes(card.domain as Domain))
     : selectedDomain === 'all'
@@ -82,7 +81,6 @@ export default function FlashcardsPage() {
 
   const currentCard = filteredCards[shuffledIndices[currentIndex]];
   const totalCards = filteredCards.length;
-  // Count how many of the currently filtered cards are mastered
   const masteredCount = filteredCards.filter(card => {
     const stableIndex = activeFlashcards.indexOf(card);
     const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
@@ -135,12 +133,11 @@ export default function FlashcardsPage() {
   const handleToggleMastered = () => {
     const cardIndex = shuffledIndices[currentIndex];
     const card = filteredCards[cardIndex];
-    // Use stable ID based on position in active deck array
     const stableIndex = activeFlashcards.indexOf(card);
     const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
     const cardId = `${deckPrefix}${stableIndex}`;
     const wasMastered = masteredCards.has(cardId);
-    const newMasteryLevel = wasMastered ? 2 : 5; // 5 = mastered, 2 = reviewed but not mastered
+    const newMasteryLevel = wasMastered ? 2 : 5;
     
     saveMasteryMutation.mutate({
       flashcardId: cardId,
@@ -151,7 +148,6 @@ export default function FlashcardsPage() {
 
   const handleReset = async () => {
     try {
-      // Delete all flashcard mastery
       await apiRequest('DELETE', '/api/flashcards/mastery');
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/mastery'] });
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/stats'] });
@@ -166,17 +162,167 @@ export default function FlashcardsPage() {
 
   const domainConfig = getDomainConfig(currentCard.domain);
   const Icon = domainConfig.icon;
-  // Use stable ID based on position in active deck array
   const stableIndex = activeFlashcards.indexOf(currentCard);
   const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
   const currentCardId = `${deckPrefix}${stableIndex}`;
   const isMastered = masteredCards.has(currentCardId);
   const progress = totalCards > 0 ? ((currentIndex + 1) / totalCards) * 100 : 0;
 
+  const renderQuickReviewMode = () => (
+    <>
+      <div className="relative mb-6" style={{ perspective: '1000px' }}>
+        <div
+          onClick={handleFlip}
+          className={`relative w-full cursor-pointer transition-transform duration-600`}
+          style={{
+            transformStyle: 'preserve-3d',
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            minHeight: '400px'
+          }}
+          data-testid="card-flashcard"
+        >
+          <Card
+            className={`absolute inset-0 p-8 flex flex-col justify-center items-center text-center ${domainConfig.bgColor} border-t-4 ${domainConfig.borderColor}`}
+            style={{
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden'
+            }}
+          >
+            <Badge variant="outline" className={`mb-6 ${domainConfig.textColor} border-transparent`}>
+              <Icon className="w-3 h-3 mr-1" />
+              {currentCard.domain}
+            </Badge>
+            <p className="text-2xl font-semibold text-foreground leading-relaxed whitespace-pre-line">
+              {currentCard.front}
+            </p>
+            <p className="text-sm text-muted-foreground mt-8">Click to flip</p>
+          </Card>
+
+          <Card
+            className="absolute inset-0 p-8 flex flex-col justify-center items-center text-center bg-card border-t-4 border-primary"
+            style={{
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg)'
+            }}
+          >
+            <p className="text-lg text-foreground leading-relaxed whitespace-pre-line font-mono">
+              {currentCard.back}
+            </p>
+            <p className="text-sm text-muted-foreground mt-8">Click to flip back</p>
+          </Card>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 mb-6">
+        <Button
+          variant="outline"
+          onClick={handlePrevious}
+          disabled={currentIndex === 0}
+          data-testid="button-previous"
+        >
+          <ChevronLeft className="w-4 h-4 mr-2" />
+          Previous
+        </Button>
+
+        <Button
+          variant={isMastered ? 'default' : 'outline'}
+          onClick={handleToggleMastered}
+          className="flex-1"
+          data-testid="button-mastered"
+        >
+          <Star className={`w-4 h-4 mr-2 ${isMastered ? 'fill-current' : ''}`} />
+          {isMastered ? 'Mastered' : 'Mark as Mastered'}
+        </Button>
+
+        <Button
+          onClick={handleNext}
+          disabled={currentIndex === totalCards - 1}
+          data-testid="button-next"
+        >
+          Next
+          <ChevronRight className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+
+      <Card className="p-4 bg-muted">
+        <p className="text-sm text-muted-foreground text-center">
+          <strong>Tip:</strong> Review mastered cards periodically using spaced repetition for better retention.
+          Categories: {currentCard.category}
+        </p>
+      </Card>
+    </>
+  );
+
+  const renderEnhancedMode = () => {
+    const handleModeComplete = () => {
+      if (currentIndex < totalCards - 1) {
+        setCurrentIndex(currentIndex + 1);
+        setIsFlipped(false);
+      }
+    };
+
+    return (
+      <div className="mb-6">
+        {studyMode === 'triad' && (
+          <TriadDrillCard
+            card={currentCard}
+            cardId={currentCardId}
+            onComplete={handleModeComplete}
+          />
+        )}
+        {studyMode === 'feynman' && (
+          <FeynmanModeCard
+            card={currentCard}
+            cardId={currentCardId}
+            onComplete={handleModeComplete}
+          />
+        )}
+        {studyMode === 'mnemonic' && (
+          <MnemonicBuilderCard
+            card={currentCard}
+            cardId={currentCardId}
+            onComplete={handleModeComplete}
+          />
+        )}
+
+        <div className="flex items-center justify-between mt-4">
+          <Button
+            variant="outline"
+            onClick={handlePrevious}
+            disabled={currentIndex === 0}
+            data-testid="button-previous-enhanced"
+          >
+            <ChevronLeft className="w-4 h-4 mr-2" />
+            Previous
+          </Button>
+          
+          <span className="text-sm text-muted-foreground">
+            Card {currentIndex + 1} of {totalCards}
+          </span>
+
+          <Button
+            onClick={handleNext}
+            disabled={currentIndex === totalCards - 1}
+            data-testid="button-next-enhanced"
+          >
+            Skip
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-foreground mb-4" data-testid="heading-flashcards">Flashcards</h1>
+        
+        <div className="mb-4">
+          <FlashcardModeSelector mode={studyMode} onModeChange={setStudyMode} />
+        </div>
+
         <div className="flex flex-wrap items-center gap-4 mb-4">
           <Select value={selectedDeck} onValueChange={(value) => setSelectedDeck(value as FlashcardDeck)}>
             <SelectTrigger className="w-64" data-testid="select-deck">
@@ -190,7 +336,7 @@ export default function FlashcardsPage() {
 
           <Select value={selectedDomain} onValueChange={(value) => {
             setSelectedDomain(value as Domain | 'all');
-            setSelectedDomains([]); // Clear URL-based multi-domain filter when user manually selects
+            setSelectedDomains([]);
           }}>
             <SelectTrigger className="w-64" data-testid="select-domain">
               <SelectValue placeholder="Select domain" />
@@ -260,89 +406,7 @@ export default function FlashcardsPage() {
         <Progress value={progress} className="h-2" />
       </div>
 
-      <div className="relative mb-6" style={{ perspective: '1000px' }}>
-        <div
-          onClick={handleFlip}
-          className={`relative w-full cursor-pointer transition-transform duration-600`}
-          style={{
-            transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-            minHeight: '400px'
-          }}
-          data-testid="card-flashcard"
-        >
-          {/* Front of card */}
-          <Card
-            className={`absolute inset-0 p-8 flex flex-col justify-center items-center text-center ${domainConfig.bgColor} border-t-4 ${domainConfig.borderColor}`}
-            style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden'
-            }}
-          >
-            <Badge variant="outline" className={`mb-6 ${domainConfig.textColor} border-transparent`}>
-              <Icon className="w-3 h-3 mr-1" />
-              {currentCard.domain}
-            </Badge>
-            <p className="text-2xl font-semibold text-foreground leading-relaxed whitespace-pre-line">
-              {currentCard.front}
-            </p>
-            <p className="text-sm text-muted-foreground mt-8">Click to flip</p>
-          </Card>
-
-          {/* Back of card */}
-          <Card
-            className="absolute inset-0 p-8 flex flex-col justify-center items-center text-center bg-card border-t-4 border-primary"
-            style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg)'
-            }}
-          >
-            <p className="text-lg text-foreground leading-relaxed whitespace-pre-line font-mono">
-              {currentCard.back}
-            </p>
-            <p className="text-sm text-muted-foreground mt-8">Click to flip back</p>
-          </Card>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-3 mb-6">
-        <Button
-          variant="outline"
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
-          data-testid="button-previous"
-        >
-          <ChevronLeft className="w-4 h-4 mr-2" />
-          Previous
-        </Button>
-
-        <Button
-          variant={isMastered ? 'default' : 'outline'}
-          onClick={handleToggleMastered}
-          className="flex-1"
-          data-testid="button-mastered"
-        >
-          <Star className={`w-4 h-4 mr-2 ${isMastered ? 'fill-current' : ''}`} />
-          {isMastered ? 'Mastered' : 'Mark as Mastered'}
-        </Button>
-
-        <Button
-          onClick={handleNext}
-          disabled={currentIndex === totalCards - 1}
-          data-testid="button-next"
-        >
-          Next
-          <ChevronRight className="w-4 h-4 ml-2" />
-        </Button>
-      </div>
-
-      <Card className="p-4 bg-muted">
-        <p className="text-sm text-muted-foreground text-center">
-          <strong>Tip:</strong> Review mastered cards periodically using spaced repetition for better retention.
-          Categories: {currentCard.category}
-        </p>
-      </Card>
+      {studyMode === 'quick' ? renderQuickReviewMode() : renderEnhancedMode()}
     </div>
   );
 }

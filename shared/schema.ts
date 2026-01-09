@@ -240,6 +240,88 @@ export const insertFlashcardMasterySchema = createInsertSchema(flashcardMastery)
 export type InsertFlashcardMastery = z.infer<typeof insertFlashcardMasterySchema>;
 export type FlashcardMastery = typeof flashcardMastery.$inferSelect;
 
+// --- Flashcard Feynman Scores (for Feynman Mode) ---
+
+export const flashcardFeynmanScores = pgTable("flashcard_feynman_scores", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  flashcardId: varchar("flashcard_id").notNull(),
+  explanation: text("explanation").notNull(), // User's own explanation
+  clarityRating: integer("clarity_rating").notNull().default(3), // 1-5 self-rating
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const flashcardFeynmanScoresRelations = relations(flashcardFeynmanScores, ({ one }) => ({
+  user: one(users, {
+    fields: [flashcardFeynmanScores.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertFlashcardFeynmanScoreSchema = createInsertSchema(flashcardFeynmanScores).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertFlashcardFeynmanScore = z.infer<typeof insertFlashcardFeynmanScoreSchema>;
+export type FlashcardFeynmanScore = typeof flashcardFeynmanScores.$inferSelect;
+
+// --- Flashcard User Mnemonics ---
+
+export const flashcardMnemonics = pgTable("flashcard_mnemonics", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  flashcardId: varchar("flashcard_id").notNull(),
+  mnemonic: text("mnemonic").notNull(), // User's memory trick
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const flashcardMnemonicsRelations = relations(flashcardMnemonics, ({ one }) => ({
+  user: one(users, {
+    fields: [flashcardMnemonics.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertFlashcardMnemonicSchema = createInsertSchema(flashcardMnemonics).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertFlashcardMnemonic = z.infer<typeof insertFlashcardMnemonicSchema>;
+export type FlashcardMnemonic = typeof flashcardMnemonics.$inferSelect;
+
+// --- Flashcard Triad Drill Progress ---
+
+export const flashcardTriadProgress = pgTable("flashcard_triad_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  flashcardId: varchar("flashcard_id").notNull(),
+  recallComplete: boolean("recall_complete").notNull().default(false),
+  applyComplete: boolean("apply_complete").notNull().default(false),
+  reverseComplete: boolean("reverse_complete").notNull().default(false),
+  completedAt: timestamp("completed_at"), // null until all 3 phases done
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const flashcardTriadProgressRelations = relations(flashcardTriadProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [flashcardTriadProgress.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertFlashcardTriadProgressSchema = createInsertSchema(flashcardTriadProgress).omit({
+  id: true,
+  completedAt: true,
+  updatedAt: true,
+});
+
+export type InsertFlashcardTriadProgress = z.infer<typeof insertFlashcardTriadProgressSchema>;
+export type FlashcardTriadProgress = typeof flashcardTriadProgress.$inferSelect;
+
 // --- Practice Exam Results ---
 
 export const practiceExams = pgTable("practice_exams", {
@@ -489,6 +571,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   quizResults: many(quizResults),
   quizSessions: many(quizSessions),
   flashcardMastery: many(flashcardMastery),
+  flashcardFeynmanScores: many(flashcardFeynmanScores),
+  flashcardMnemonics: many(flashcardMnemonics),
+  flashcardTriadProgress: many(flashcardTriadProgress),
   practiceExams: many(practiceExams),
   practiceExamResults: many(practiceExamResults),
   pretestResults: many(pretestResults),
