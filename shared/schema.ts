@@ -1192,3 +1192,61 @@ export const insertReviewScheduleSchema = createInsertSchema(reviewSchedule).omi
 
 export type InsertReviewSchedule = z.infer<typeof insertReviewScheduleSchema>;
 export type ReviewSchedule = typeof reviewSchedule.$inferSelect;
+
+// --- Adaptive Difficulty System ---
+
+export type DifficultyLevel = 'easy' | 'medium' | 'hard';
+
+export const userDifficultySettings = pgTable("user_difficulty_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  domain: varchar("domain").notNull(),
+  currentDifficulty: varchar("current_difficulty").notNull().default('medium'), // 'easy', 'medium', 'hard'
+  consecutiveCorrect: integer("consecutive_correct").notNull().default(0),
+  consecutiveIncorrect: integer("consecutive_incorrect").notNull().default(0),
+  totalAttempts: integer("total_attempts").notNull().default(0),
+  correctAttempts: integer("correct_attempts").notNull().default(0),
+  lastAdjustedAt: timestamp("last_adjusted_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  uniqueUserDomain: sql`UNIQUE (user_id, domain)`,
+}));
+
+export const userDifficultySettingsRelations = relations(userDifficultySettings, ({ one }) => ({
+  user: one(users, {
+    fields: [userDifficultySettings.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertUserDifficultySettingsSchema = createInsertSchema(userDifficultySettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertUserDifficultySettings = z.infer<typeof insertUserDifficultySettingsSchema>;
+export type UserDifficultySettings = typeof userDifficultySettings.$inferSelect;
+
+// --- Weekly Leaderboard ---
+// Uses xpGrants table for weekly XP aggregation
+// LeaderboardEntry type for API responses
+export type LeaderboardEntry = {
+  rank: number;
+  userId: string;
+  displayName: string;
+  profileImageUrl: string | null;
+  weeklyXp: number;
+  level: number;
+  rankName: string;
+};
+
+// --- Forgetting Curve Data ---
+// Uses reviewSchedule table for visualization
+export type ForgettingCurvePoint = {
+  daysSinceReview: number;
+  retentionPercent: number;
+  nextReviewIn: number | null;
+  easeFactor: number;
+};

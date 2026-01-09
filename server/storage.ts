@@ -65,8 +65,14 @@ import type {
   DailyQuest,
   InsertDailyQuest,
   ReviewSchedule,
-  InsertReviewSchedule
+  InsertReviewSchedule,
+  UserDifficultySettings,
+  InsertUserDifficultySettings,
+  LeaderboardEntry,
+  ForgettingCurvePoint,
+  DifficultyLevel
 } from "@shared/schema";
+import { SURVEYOR_RANKS, getSurveyorRank } from "@shared/schema";
 import { db } from "./db";
 import {
   users,
@@ -102,6 +108,7 @@ import {
   flashcardTriadProgress,
   dailyQuests,
   reviewSchedule,
+  userDifficultySettings,
   DOMAINS
 } from "@shared/schema";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
@@ -2540,6 +2547,300 @@ export class DatabaseStorage implements IStorage {
       motivationalMessage,
       todaysPriorities,
       dueReviews
+    };
+  }
+
+  // --- Adaptive Difficulty Methods ---
+
+  async getUserDifficultySettings(userId: string, domain: string): Promise<UserDifficultySettings | undefined> {
+    const [result] = await db
+      .select()
+      .from(userDifficultySettings)
+      .where(and(
+        eq(userDifficultySettings.userId, userId),
+        eq(userDifficultySettings.domain, domain)
+      ))
+      .limit(1);
+    return result;
+  }
+
+  async getAllUserDifficultySettings(userId: string): Promise<UserDifficultySettings[]> {
+    return db
+      .select()
+      .from(userDifficultySettings)
+      .where(eq(userDifficultySettings.userId, userId));
+  }
+
+  async updateDifficultyAfterAnswer(
+    userId: string, 
+    domain: string, 
+    isCorrect: boolean
+  ): Promise<{ difficulty: DifficultyLevel; adjusted: boolean }> {
+    const now = new Date();
+    
+    // Get or create difficulty settings for this domain
+    let settings = await this.getUserDifficultySettings(userId, domain);
+    
+    if (!settings) {
+      // Create new settings starting at medium
+      const [created] = await db
+        .insert(userDifficultySettings)
+        .values({
+          userId,
+          domain,
+          currentDifficulty: 'medium',
+          consecutiveCorrect: isCorrect ? 1 : 0,
+          consecutiveIncorrect: isCorrect ? 0 : 1,
+          totalAttempts: 1,
+          correctAttempts: isCorrect ? 1 : 0,
+          updatedAt: now
+        })
+        .returning();
+      return { difficulty: 'medium' as DifficultyLevel, adjusted: false };
+    }
+
+    // Update counters
+    let { consecutiveCorrect, consecutiveIncorrect, totalAttempts, correctAttempts, currentDifficulty } = settings;
+    totalAttempts += 1;
+    
+    if (isCorrect) {
+      consecutiveCorrect += 1;
+      consecutiveIncorrect = 0;
+      correctAttempts += 1;
+    } else {
+      consecutiveCorrect = 0;
+      consecutiveIncorrect += 1;
+    }
+
+    // Adaptive difficulty logic: 
+    // - 3 correct in a row: increase difficulty
+    // - 2 wrong in a row: decrease difficulty
+    let adjusted = false;
+    let newDifficulty = currentDifficulty as DifficultyLevel;
+
+    if (consecutiveCorrect >= 3) {
+      if (currentDifficulty === 'easy') {
+        newDifficulty = 'medium';
+        adjusted = true;
+      } else if (currentDifficulty === 'medium') {
+        newDifficulty = 'hard';
+        adjusted = true;
+      }
+      if (adjusted) {
+        consecutiveCorrect = 0; // Reset after adjustment
+      }
+    } else if (consecutiveIncorrect >= 2) {
+      if (currentDifficulty === 'hard') {
+        newDifficulty = 'medium';
+        adjusted = true;
+      } else if (currentDifficulty === 'medium') {
+        newDifficulty = 'easy';
+        adjusted = true;
+      }
+      if (adjusted) {
+        consecutiveIncorrect = 0; // Reset after adjustment
+      }
+    }
+
+    // Update settings
+    await db
+      .update(userDifficultySettings)
+      .set({
+        currentDifficulty: newDifficulty,
+        consecutiveCorrect,
+        consecutiveIncorrect,
+        totalAttempts,
+        correctAttempts,
+        lastAdjustedAt: adjusted ? now : settings.lastAdjustedAt,
+        updatedAt: now
+      })
+      .where(eq(userDifficultySettings.id, settings.id));
+
+    return { difficulty: newDifficulty, adjusted };
+  }
+
+  async getRecommendedDifficulty(userId: string, domain: string): Promise<DifficultyLevel> {
+    const settings = await this.getUserDifficultySettings(userId, domain);
+    return (settings?.currentDifficulty as DifficultyLevel) || 'medium';
+  }
+
+  // --- Weekly Leaderboard Methods ---
+
+  async getWeeklyLeaderboard(limit: number = 10): Promise<LeaderboardEntry[]> {
+    // Get start of current week (Monday)
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() + mondayOffset);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    // Aggregate XP from xpGrants table for this week
+    const weeklyXpResults = await db
+      .select({
+        userId: xpGrants.userId,
+        weeklyXp: sql<number>`CAST(COALESCE(SUM(${xpGrants.amount}), 0) AS INTEGER)`
+      })
+      .from(xpGrants)
+      .where(gte(xpGrants.grantedAt, startOfWeek))
+      .groupBy(xpGrants.userId)
+      .orderBy(sql`SUM(${xpGrants.amount}) DESC`)
+      .limit(limit);
+
+    if (weeklyXpResults.length === 0) {
+      return [];
+    }
+
+    // Get user details for the leaderboard
+    const userIds = weeklyXpResults.map(r => r.userId);
+    const userDetails = await db
+      .select()
+      .from(users)
+      .where(inArray(users.id, userIds));
+
+    const userMap = new Map(userDetails.map(u => [u.id, u]));
+
+    // Build leaderboard entries
+    return weeklyXpResults.map((result, index) => {
+      const user = userMap.get(result.userId);
+      const rankInfo = getSurveyorRank(user?.xp ?? 0);
+      
+      return {
+        rank: index + 1,
+        userId: result.userId,
+        displayName: user?.firstName 
+          ? `${user.firstName}${user.lastName ? ` ${user.lastName.charAt(0)}.` : ''}`
+          : 'Anonymous Surveyor',
+        profileImageUrl: user?.profileImageUrl ?? null,
+        weeklyXp: result.weeklyXp,
+        level: rankInfo.level,
+        rankName: rankInfo.name
+      };
+    });
+  }
+
+  async getUserWeeklyRank(userId: string): Promise<{ rank: number; weeklyXp: number } | null> {
+    const leaderboard = await this.getWeeklyLeaderboard(100);
+    const userEntry = leaderboard.find(e => e.userId === userId);
+    
+    if (userEntry) {
+      return { rank: userEntry.rank, weeklyXp: userEntry.weeklyXp };
+    }
+
+    // User not in top 100, calculate their position
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() + mondayOffset);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const [userXp] = await db
+      .select({
+        weeklyXp: sql<number>`CAST(COALESCE(SUM(${xpGrants.amount}), 0) AS INTEGER)`
+      })
+      .from(xpGrants)
+      .where(and(
+        eq(xpGrants.userId, userId),
+        gte(xpGrants.grantedAt, startOfWeek)
+      ));
+
+    if (!userXp || userXp.weeklyXp === 0) {
+      return null;
+    }
+
+    // Count users with more XP
+    const [rankResult] = await db
+      .select({
+        rank: sql<number>`COUNT(*) + 1`
+      })
+      .from(
+        db
+          .select({
+            userId: xpGrants.userId,
+            total: sql<number>`SUM(${xpGrants.amount})`
+          })
+          .from(xpGrants)
+          .where(gte(xpGrants.grantedAt, startOfWeek))
+          .groupBy(xpGrants.userId)
+          .having(sql`SUM(${xpGrants.amount}) > ${userXp.weeklyXp}`)
+          .as('higher_users')
+      );
+
+    return { rank: rankResult.rank, weeklyXp: userXp.weeklyXp };
+  }
+
+  // --- Forgetting Curve Methods ---
+
+  async getForgettingCurveData(userId: string): Promise<{
+    items: Array<{
+      itemId: string;
+      itemTitle: string;
+      domain: string | null;
+      daysSinceReview: number;
+      retentionPercent: number;
+      nextReviewIn: number;
+      easeFactor: number;
+      reviewCount: number;
+    }>;
+    summary: {
+      avgRetention: number;
+      itemsDue: number;
+      itemsAtRisk: number;
+    };
+  }> {
+    const now = new Date();
+    
+    // Get all review items for this user
+    const reviews = await db
+      .select()
+      .from(reviewSchedule)
+      .where(eq(reviewSchedule.userId, userId));
+
+    if (reviews.length === 0) {
+      return {
+        items: [],
+        summary: { avgRetention: 100, itemsDue: 0, itemsAtRisk: 0 }
+      };
+    }
+
+    // Calculate forgetting curve for each item
+    // Using Ebbinghaus formula: R = e^(-t/S) where S is stability based on easeFactor
+    const items = reviews.map(review => {
+      const lastReview = new Date(review.lastReviewedAt);
+      const daysSinceReview = Math.max(0, Math.floor((now.getTime() - lastReview.getTime()) / (1000 * 60 * 60 * 24)));
+      
+      // Stability factor based on ease factor and review count
+      // Higher ease factor and more reviews = slower forgetting
+      const stability = review.easeFactor * Math.pow(1.5, review.reviewCount);
+      
+      // Retention percentage using exponential decay
+      const retentionPercent = Math.round(100 * Math.exp(-daysSinceReview / stability));
+      
+      // Days until next review
+      const nextReviewDate = new Date(review.nextReviewAt);
+      const nextReviewIn = Math.max(0, Math.ceil((nextReviewDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+
+      return {
+        itemId: review.itemId,
+        itemTitle: review.itemTitle,
+        domain: review.domain,
+        daysSinceReview,
+        retentionPercent,
+        nextReviewIn,
+        easeFactor: review.easeFactor,
+        reviewCount: review.reviewCount
+      };
+    });
+
+    // Calculate summary stats
+    const avgRetention = Math.round(items.reduce((sum, i) => sum + i.retentionPercent, 0) / items.length);
+    const itemsDue = items.filter(i => i.nextReviewIn <= 0).length;
+    const itemsAtRisk = items.filter(i => i.retentionPercent < 50).length;
+
+    return {
+      items: items.sort((a, b) => a.retentionPercent - b.retentionPercent),
+      summary: { avgRetention, itemsDue, itemsAtRisk }
     };
   }
 }

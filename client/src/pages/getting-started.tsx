@@ -8,6 +8,8 @@ import type { UserPreferences, User } from "@shared/schema";
 import { StudyCoachBriefing } from "@/components/study-coach-briefing";
 import { DailyQuestsPanel } from "@/components/daily-quests-panel";
 import { ReviewAlerts } from "@/components/review-alerts";
+import { WeeklyLeaderboard } from "@/components/weekly-leaderboard";
+import { ForgettingCurveChart } from "@/components/forgetting-curve-chart";
 
 export default function GettingStarted() {
   const [, setLocation] = useLocation();
@@ -197,6 +199,10 @@ export default function GettingStarted() {
             <div className="lg:col-span-1">
               <ReviewAlerts />
             </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <WeeklyLeaderboard compact />
+            <ForgettingCurveChart compact />
           </div>
         </div>
       )}

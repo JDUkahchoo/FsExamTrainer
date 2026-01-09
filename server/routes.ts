@@ -1823,6 +1823,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // --- Adaptive Difficulty Routes ---
+  
+  app.get("/api/difficulty/:domain", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { domain } = req.params;
+      const difficulty = await storage.getRecommendedDifficulty(userId, domain);
+      res.json({ domain, difficulty });
+    } catch (error) {
+      console.error("Error getting difficulty:", error);
+      res.status(500).json({ error: "Failed to get difficulty setting" });
+    }
+  });
+
+  app.get("/api/difficulty", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const settings = await storage.getAllUserDifficultySettings(userId);
+      res.json(settings);
+    } catch (error) {
+      console.error("Error getting all difficulty settings:", error);
+      res.status(500).json({ error: "Failed to get difficulty settings" });
+    }
+  });
+
+  app.post("/api/difficulty/update", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { domain, isCorrect } = req.body;
+      
+      if (!domain || typeof isCorrect !== 'boolean') {
+        return res.status(400).json({ error: "Domain and isCorrect required" });
+      }
+      
+      const result = await storage.updateDifficultyAfterAnswer(userId, domain, isCorrect);
+      res.json(result);
+    } catch (error) {
+      console.error("Error updating difficulty:", error);
+      res.status(500).json({ error: "Failed to update difficulty" });
+    }
+  });
+
+  // --- Weekly Leaderboard Routes ---
+
+  app.get("/api/leaderboard/weekly", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const leaderboard = await storage.getWeeklyLeaderboard(Math.min(limit, 50));
+      res.json(leaderboard);
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+      res.status(500).json({ error: "Failed to fetch leaderboard" });
+    }
+  });
+
+  app.get("/api/leaderboard/my-rank", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const rank = await storage.getUserWeeklyRank(userId);
+      res.json(rank || { rank: null, weeklyXp: 0 });
+    } catch (error) {
+      console.error("Error fetching user rank:", error);
+      res.status(500).json({ error: "Failed to fetch rank" });
+    }
+  });
+
+  // --- Forgetting Curve Routes ---
+
+  app.get("/api/forgetting-curve", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = await storage.getForgettingCurveData(userId);
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching forgetting curve:", error);
+      res.status(500).json({ error: "Failed to fetch forgetting curve data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
