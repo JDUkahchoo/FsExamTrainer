@@ -17,7 +17,7 @@ import type { Domain, ExamDraft } from '@shared/schema';
 
 const EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
 const TOTAL_QUESTIONS = 110;
-const NCEES_TOTAL_QUESTIONS = 60; // Smaller for NCEES-style due to complexity
+const NCEES_TOTAL_QUESTIONS = 110; // Match actual NCEES FS exam format
 
 type ExamState = 'setup' | 'active' | 'completed';
 type ExamMode = 'standard' | 'ncees-style';
