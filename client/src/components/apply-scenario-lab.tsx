@@ -18,8 +18,10 @@ import {
 } from "@/components/ui/dialog";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
-import { Dumbbell, ChevronDown, Timer, Play, CheckCircle2, Star, Clock, MapPin, Calculator, Loader2 } from 'lucide-react';
+import { Dumbbell, ChevronDown, Timer, Play, CheckCircle2, Star, Clock, MapPin, Calculator, Loader2, Zap } from 'lucide-react';
 import type { ApplyChallengeAttempt } from '@shared/schema';
+import { XP_AWARDS } from '@shared/schema';
+import { useToast } from '@/hooks/use-toast';
 
 interface ApplyScenarioLabProps {
   week: number;
@@ -86,6 +88,7 @@ const SAMPLE_PROBLEMS: FieldProblem[] = [
 ];
 
 export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplyScenarioLabProps) {
+  const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [activeChallenge, setActiveChallenge] = useState<FieldProblem | null>(null);
   const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
@@ -117,6 +120,18 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplySce
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/apply/attempts?week=${week}`] });
+    },
+  });
+
+  const awardXpMutation = useMutation({
+    mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
+      const res = await apiRequest('POST', '/api/xp/award', data);
+      return res.json() as Promise<{ xp: number; level: number; leveledUp: boolean; awarded: boolean; reason: string }>;
+    },
+    onSuccess: (data) => {
+      if (data.awarded) {
+        queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+      }
     },
   });
 
@@ -175,6 +190,22 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplySce
           maxGrade: activeChallenge.rubric.length,
           userAnswer,
         });
+        
+        // Award XP with backend idempotency (activity key prevents duplicate awards)
+        awardXpMutation.mutate({ 
+          amount: XP_AWARDS.APPLY_CHALLENGE, 
+          reason: 'Scenario challenge completed',
+          activityKey: `apply:challenge:${activeChallenge.id}`
+        }, {
+          onSuccess: (data) => {
+            if (data.awarded) {
+              toast({ 
+                title: `+${XP_AWARDS.APPLY_CHALLENGE} XP`, 
+                description: "Challenge graded!" 
+              });
+            }
+          }
+        });
       } catch (error) {
         console.error('Failed to update attempt:', error);
       }
@@ -186,7 +217,7 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplySce
       setSelfGrade([]);
       setStartTime(null);
     }
-  }, [activeChallenge, activeAttemptId, startTime, selfGrade, userAnswer, updateAttemptMutation]);
+  }, [activeChallenge, activeAttemptId, startTime, selfGrade, userAnswer, updateAttemptMutation, awardXpMutation, toast]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

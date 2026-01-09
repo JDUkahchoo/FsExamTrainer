@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Brain, Timer, RefreshCw, CheckCircle, XCircle, AlertTriangle, Sparkles } from 'lucide-react';
+import { Brain, Timer, RefreshCw, CheckCircle, XCircle, AlertTriangle, Sparkles, Zap } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { RetentionReview } from '@shared/schema';
-import { DOMAINS } from '@shared/schema';
+import { DOMAINS, XP_AWARDS } from '@shared/schema';
+import { useToast } from '@/hooks/use-toast';
 
 interface RetentionStats {
   totalReviews: number;
@@ -49,6 +50,7 @@ const SAMPLE_CONCEPTS = [
 
 export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
@@ -103,6 +105,7 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
     },
   });
 
@@ -130,24 +133,49 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
     setSessionActive(true);
   }, [dueReviews]);
 
+  const awardXpMutation = useMutation({
+    mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
+      const res = await apiRequest('POST', '/api/xp/award', data);
+      return res.json() as Promise<{ xp: number; level: number; leveledUp: boolean; awarded: boolean; reason: string }>;
+    },
+    onSuccess: (data) => {
+      if (data.awarded) {
+        queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+      }
+    },
+  });
+
   const handleQualityRating = useCallback(async (quality: number) => {
     if (sessionCards.length > 0 && currentCardIndex < sessionCards.length) {
       const review = sessionCards[currentCardIndex];
       await updateReviewMutation.mutateAsync({ id: review.id, quality });
       
+      // Award XP with backend idempotency (activity key prevents duplicate awards)
+      awardXpMutation.mutate({ 
+        amount: XP_AWARDS.REINFORCE_REVIEW, 
+        reason: 'Retention card reviewed',
+        activityKey: `reinforce:review:${review.id}`
+      });
+      
       setReviewedCardIds(prev => { const newSet = new Set(prev); newSet.add(review.id); return newSet; });
       
-      if (currentCardIndex < sessionCards.length - 1) {
+      const isLastCard = currentCardIndex >= sessionCards.length - 1;
+      
+      if (!isLastCard) {
         setCurrentCardIndex(prev => prev + 1);
         setIsFlipped(false);
       } else {
+        toast({ 
+          title: `+${XP_AWARDS.REINFORCE_REVIEW * sessionCards.length} XP`, 
+          description: `Session complete! ${sessionCards.length} cards reviewed.` 
+        });
         setSessionActive(false);
         setSessionCards([]);
         setReviewedCardIds(new Set());
         setCurrentCardIndex(0);
       }
     }
-  }, [sessionCards, currentCardIndex, updateReviewMutation]);
+  }, [sessionCards, currentCardIndex, updateReviewMutation, awardXpMutation, toast]);
 
   const getDecayColor = (score: number): string => {
     if (score >= 80) return 'text-green-500';

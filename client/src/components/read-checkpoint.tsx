@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { BookOpen, ChevronDown, ChevronUp, MessageSquare, Star, Check, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { BookOpen, ChevronDown, ChevronUp, MessageSquare, Star, Check, Loader2, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -28,12 +28,29 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-primary" }: 
   const [localNotes, setLocalNotes] = useState<Record<number, string>>({});
   const [localRatings, setLocalRatings] = useState<Record<number, number>>({});
   const { toast } = useToast();
+  const lastSyncedWeek = useRef<number | null>(null);
+  const hasInitialized = useRef(false);
 
   const { data: readingProgress = [], isLoading } = useQuery<ReadingProgress[]>({
     queryKey: [`/api/reading-progress/${week}`],
   });
 
+  // Reset local state when week changes
   useEffect(() => {
+    lastSyncedWeek.current = null;
+    hasInitialized.current = false;
+    setLocalNotes({});
+    setLocalRatings({});
+  }, [week]);
+
+  // Sync local state from server data only once after initial load per week
+  useEffect(() => {
+    if (isLoading || hasInitialized.current) return;
+    if (readingProgress.length === 0 && !isLoading) {
+      hasInitialized.current = true;
+      return;
+    }
+    
     const notes: Record<number, string> = {};
     const ratings: Record<number, number> = {};
     readingProgress.forEach(p => {
@@ -42,7 +59,8 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-primary" }: 
     });
     setLocalNotes(notes);
     setLocalRatings(ratings);
-  }, [readingProgress, week]);
+    hasInitialized.current = true;
+  }, [isLoading, readingProgress]);
 
   const saveProgressMutation = useMutation({
     mutationFn: async (data: { chapterIndex: number; completed: boolean; confidenceRating?: number; takeawayNote?: string }) => {
@@ -60,19 +78,51 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-primary" }: 
     },
   });
 
+  const awardXpMutation = useMutation({
+    mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
+      const res = await apiRequest('POST', '/api/xp/award', data);
+      return res.json() as Promise<{ xp: number; level: number; leveledUp: boolean; awarded: boolean; reason: string }>;
+    },
+    onSuccess: (data) => {
+      if (data.awarded) {
+        queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+      }
+    },
+  });
+
   const getChapterProgress = (index: number) => {
     return readingProgress.find(p => p.chapterIndex === index);
   };
 
   const handleToggleComplete = (index: number) => {
     const current = getChapterProgress(index);
-    const newCompleted = !current?.completed;
+    const wasCompleted = current?.completed ?? false;
+    const newCompleted = !wasCompleted;
+    
     saveProgressMutation.mutate({
       chapterIndex: index,
       completed: newCompleted,
       confidenceRating: localRatings[index],
       takeawayNote: localNotes[index],
     });
+    
+    // Award XP with backend idempotency (activity key prevents duplicate awards)
+    if (newCompleted) {
+      awardXpMutation.mutate({ 
+        amount: XP_AWARDS.READ_CHECKPOINT, 
+        reason: 'Chapter checkpoint completed',
+        activityKey: `read:week${week}:chapter${index}`
+      }, {
+        onSuccess: (data) => {
+          if (data.awarded) {
+            toast({ 
+              title: `+${XP_AWARDS.READ_CHECKPOINT} XP`, 
+              description: "Chapter checkpoint completed!" 
+            });
+          }
+        }
+      });
+    }
   };
 
   const handleRatingChange = (index: number, rating: number) => {

@@ -70,9 +70,11 @@ export const SURVEYOR_RANKS = [
   { level: 10, name: 'Survey Legend', minXp: 40000 },
 ] as const;
 
+type SurveyorRank = typeof SURVEYOR_RANKS[number];
+
 export function getSurveyorRank(xp: number): { level: number; name: string; progress: number; nextLevelXp: number | null } {
-  let currentRank = SURVEYOR_RANKS[0];
-  let nextRank: typeof SURVEYOR_RANKS[number] | null = SURVEYOR_RANKS[1] || null;
+  let currentRank: SurveyorRank = SURVEYOR_RANKS[0];
+  let nextRank: SurveyorRank | null = SURVEYOR_RANKS[1] || null;
   
   for (let i = 0; i < SURVEYOR_RANKS.length; i++) {
     if (xp >= SURVEYOR_RANKS[i].minXp) {
@@ -104,6 +106,25 @@ export const XP_AWARDS = {
   LESSON_COMPLETE: 40,
   EXAM_COMPLETE: 200,
 } as const;
+
+// XP Grants tracking for idempotency (prevents XP farming)
+export const xpGrants = pgTable("xp_grants", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  activityKey: varchar("activity_key").notNull(), // e.g., "read:week5:chapter2", "apply:challenge123"
+  amount: integer("amount").notNull(),
+  grantedAt: timestamp("granted_at").notNull().defaultNow(),
+});
+
+export const xpGrantsRelations = relations(xpGrants, ({ one }) => ({
+  user: one(users, {
+    fields: [xpGrants.userId],
+    references: [users.id],
+  }),
+}));
+
+export type XpGrant = typeof xpGrants.$inferSelect;
+export type InsertXpGrant = typeof xpGrants.$inferInsert;
 
 // --- Study Progress Tables ---
 

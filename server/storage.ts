@@ -54,7 +54,8 @@ import type {
   ApplyChallengeAttempt,
   InsertApplyChallengeAttempt,
   RetentionReview,
-  InsertRetentionReview
+  InsertRetentionReview,
+  XpGrant
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -84,7 +85,8 @@ import {
   applyChallengeAttempts,
   feedback,
   testimonials,
-  retentionReviews
+  retentionReviews,
+  xpGrants
 } from "@shared/schema";
 import { eq, and, desc, gte, sql, inArray } from "drizzle-orm";
 
@@ -223,7 +225,8 @@ export interface IStorage {
 
   // XP System methods
   getUserXp(userId: string): Promise<{ xp: number; level: number }>;
-  awardXp(userId: string, amount: number): Promise<{ xp: number; level: number; leveledUp: boolean }>;
+  awardXp(userId: string, amount: number, activityKey: string): Promise<{ xp: number; level: number; leveledUp: boolean; awarded: boolean }>;
+  hasXpGrant(userId: string, activityKey: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1697,7 +1700,23 @@ export class DatabaseStorage implements IStorage {
     return { xp: user?.xp ?? 0, level: user?.level ?? 1 };
   }
 
-  async awardXp(userId: string, amount: number): Promise<{ xp: number; level: number; leveledUp: boolean }> {
+  async hasXpGrant(userId: string, activityKey: string): Promise<boolean> {
+    const existing = await db
+      .select()
+      .from(xpGrants)
+      .where(and(eq(xpGrants.userId, userId), eq(xpGrants.activityKey, activityKey)))
+      .limit(1);
+    return existing.length > 0;
+  }
+
+  async awardXp(userId: string, amount: number, activityKey: string): Promise<{ xp: number; level: number; leveledUp: boolean; awarded: boolean }> {
+    // Check if XP was already granted for this activity (idempotency)
+    const alreadyGranted = await this.hasXpGrant(userId, activityKey);
+    if (alreadyGranted) {
+      const user = await this.getUser(userId);
+      return { xp: user?.xp ?? 0, level: user?.level ?? 1, leveledUp: false, awarded: false };
+    }
+    
     const user = await this.getUser(userId);
     const currentXp = user?.xp ?? 0;
     const currentLevel = user?.level ?? 1;
@@ -1724,12 +1743,19 @@ export class DatabaseStorage implements IStorage {
       }
     }
     
+    // Record the XP grant for idempotency
+    await db.insert(xpGrants).values({
+      userId,
+      activityKey,
+      amount
+    });
+    
     await db
       .update(users)
       .set({ xp: newXp, level: newLevel, updatedAt: new Date() })
       .where(eq(users.id, userId));
     
-    return { xp: newXp, level: newLevel, leveledUp: newLevel > currentLevel };
+    return { xp: newXp, level: newLevel, leveledUp: newLevel > currentLevel, awarded: true };
   }
 }
 

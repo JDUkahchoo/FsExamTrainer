@@ -1598,13 +1598,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/xp/award", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { amount, reason } = req.body;
+      const { amount, reason, activityKey } = req.body;
       
       if (typeof amount !== 'number' || amount <= 0) {
         return res.status(400).json({ error: "Invalid XP amount" });
       }
       
-      const result = await storage.awardXp(userId, amount);
+      if (!activityKey || typeof activityKey !== 'string') {
+        return res.status(400).json({ error: "Activity key required for XP award" });
+      }
+      
+      const result = await storage.awardXp(userId, amount, activityKey);
       res.json({ ...result, reason });
     } catch (error) {
       console.error("Error awarding XP:", error);
