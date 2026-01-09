@@ -428,6 +428,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Personal Analytics Dashboard route
+  app.get("/api/progress/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const analytics = await storage.getPersonalAnalytics(userId);
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching personal analytics:", error);
+      res.status(500).json({ error: "Failed to fetch personal analytics" });
+    }
+  });
+
   // Domain mastery tracking route
   app.get("/api/progress/domain-mastery", isAuthenticated, async (req: any, res) => {
     try {

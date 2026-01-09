@@ -1929,6 +1929,267 @@ export class DatabaseStorage implements IStorage {
     
     return { xp: newXp, level: newLevel, leveledUp: newLevel > currentLevel, awarded: true };
   }
+
+  // Personal Analytics Dashboard
+  async getPersonalAnalytics(userId: string): Promise<{
+    learningVelocity: Array<{
+      domain: string;
+      domainNumber: number;
+      weeklyImprovement: number;
+      currentAccuracy: number;
+      previousAccuracy: number;
+      trend: 'improving' | 'stable' | 'declining';
+    }>;
+    timeInvestmentROI: Array<{
+      domain: string;
+      domainNumber: number;
+      timeSpentMinutes: number;
+      accuracyGain: number;
+      roi: number; // accuracy gain per hour
+    }>;
+    weaknessPredictions: Array<{
+      domain: string;
+      domainNumber: number;
+      predictedStruggle: boolean;
+      reason: string;
+      confidence: number;
+    }>;
+    studyPatterns: {
+      mostActiveDay: string;
+      mostActiveHour: number;
+      averageSessionMinutes: number;
+      totalStudyHours: number;
+    };
+    progressTrajectory: {
+      currentScore: number;
+      predictedExamScore: number;
+      daysUntilReady: number;
+      onTrack: boolean;
+    };
+  }> {
+    // Get all quiz results with timestamps
+    const allQuizResults = await db
+      .select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, userId))
+      .orderBy(quizResults.completedAt);
+
+    // Get lesson progress for time tracking
+    const allLessonProgress = await db
+      .select()
+      .from(lessonProgress)
+      .where(eq(lessonProgress.userId, userId));
+
+    // Get quiz sessions for time data
+    const allQuizSessions = await db
+      .select()
+      .from(quizSessions)
+      .where(eq(quizSessions.userId, userId));
+
+    // Get practice exams
+    const allExams = await db
+      .select()
+      .from(practiceExams)
+      .where(eq(practiceExams.userId, userId))
+      .orderBy(practiceExams.completedAt);
+
+    // Get daily logs for study patterns
+    const allDailyLogs = await db
+      .select()
+      .from(dailyLogs)
+      .where(eq(dailyLogs.userId, userId));
+
+    // Domain names matching the actual stored values in the database
+    const DOMAIN_NAMES: Record<number, string> = {
+      1: 'Math & Basic Science',
+      2: 'Field Data Acquisition',
+      3: 'Mapping, GIS, and CAD',
+      4: 'Boundary Law & PLSS',
+      5: 'Surveying Principles',
+      6: 'Survey Computations & Applications',
+      7: 'Professional Practice',
+      8: 'Applied Mathematics & Statistics'
+    };
+
+    // Create reverse lookup from domain name to number
+    const DOMAIN_TO_NUMBER: Record<string, number> = {};
+    Object.entries(DOMAIN_NAMES).forEach(([num, name]) => {
+      DOMAIN_TO_NUMBER[name] = parseInt(num);
+    });
+
+    // Calculate Learning Velocity per domain
+    const now = new Date();
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+    const learningVelocity = [];
+    for (let d = 1; d <= 8; d++) {
+      const domainResults = allQuizResults.filter(r => DOMAIN_TO_NUMBER[r.domain] === d);
+      const recentResults = domainResults.filter(r => r.completedAt >= oneWeekAgo);
+      const previousResults = domainResults.filter(r => r.completedAt >= twoWeeksAgo && r.completedAt < oneWeekAgo);
+
+      const currentAccuracy = recentResults.length > 0
+        ? (recentResults.filter(r => r.isCorrect).length / recentResults.length) * 100
+        : 0;
+      const previousAccuracy = previousResults.length > 0
+        ? (previousResults.filter(r => r.isCorrect).length / previousResults.length) * 100
+        : 0;
+
+      const weeklyImprovement = currentAccuracy - previousAccuracy;
+      let trend: 'improving' | 'stable' | 'declining' = 'stable';
+      if (weeklyImprovement > 5) trend = 'improving';
+      else if (weeklyImprovement < -5) trend = 'declining';
+
+      learningVelocity.push({
+        domain: DOMAIN_NAMES[d],
+        domainNumber: d,
+        weeklyImprovement: Math.round(weeklyImprovement * 10) / 10,
+        currentAccuracy: Math.round(currentAccuracy * 10) / 10,
+        previousAccuracy: Math.round(previousAccuracy * 10) / 10,
+        trend
+      });
+    }
+
+    // Calculate Time Investment ROI
+    const timeInvestmentROI = [];
+    for (let d = 1; d <= 8; d++) {
+      const domainLessons = allLessonProgress.filter(l => l.lessonId?.startsWith(`d${d}-`));
+      const timeSpentMinutes = domainLessons.reduce((sum, l) => sum + ((l.timeSpentSeconds || 0) / 60), 0);
+      
+      const domainResults = allQuizResults.filter(r => DOMAIN_TO_NUMBER[r.domain] === d);
+      const firstHalf = domainResults.slice(0, Math.floor(domainResults.length / 2));
+      const secondHalf = domainResults.slice(Math.floor(domainResults.length / 2));
+      
+      const firstAccuracy = firstHalf.length > 0
+        ? (firstHalf.filter(r => r.isCorrect).length / firstHalf.length) * 100
+        : 0;
+      const secondAccuracy = secondHalf.length > 0
+        ? (secondHalf.filter(r => r.isCorrect).length / secondHalf.length) * 100
+        : 0;
+      
+      const accuracyGain = secondAccuracy - firstAccuracy;
+      const hoursSpent = timeSpentMinutes / 60;
+      const roi = hoursSpent > 0 ? accuracyGain / hoursSpent : 0;
+
+      timeInvestmentROI.push({
+        domain: DOMAIN_NAMES[d],
+        domainNumber: d,
+        timeSpentMinutes,
+        accuracyGain: Math.round(accuracyGain * 10) / 10,
+        roi: Math.round(roi * 10) / 10
+      });
+    }
+
+    // Weakness Predictions based on patterns
+    const weaknessPredictions = [];
+    for (let d = 1; d <= 8; d++) {
+      const domainResults = allQuizResults.filter(r => DOMAIN_TO_NUMBER[r.domain] === d);
+      const accuracy = domainResults.length > 0
+        ? (domainResults.filter(r => r.isCorrect).length / domainResults.length) * 100
+        : 0;
+      
+      const recentResults = domainResults.slice(-10);
+      const recentAccuracy = recentResults.length > 0
+        ? (recentResults.filter(r => r.isCorrect).length / recentResults.length) * 100
+        : 0;
+
+      let predictedStruggle = false;
+      let reason = '';
+      let confidence = 0;
+
+      if (domainResults.length < 5) {
+        predictedStruggle = true;
+        reason = 'Not enough practice - needs more exposure';
+        confidence = 60;
+      } else if (accuracy < 50) {
+        predictedStruggle = true;
+        reason = 'Low overall accuracy - focus area needed';
+        confidence = 85;
+      } else if (recentAccuracy < accuracy - 10) {
+        predictedStruggle = true;
+        reason = 'Recent performance declining - review fundamentals';
+        confidence = 70;
+      } else if (accuracy < 70) {
+        predictedStruggle = true;
+        reason = 'Below passing threshold - needs improvement';
+        confidence = 75;
+      }
+
+      weaknessPredictions.push({
+        domain: DOMAIN_NAMES[d],
+        domainNumber: d,
+        predictedStruggle,
+        reason: reason || 'On track',
+        confidence: predictedStruggle ? confidence : 0
+      });
+    }
+
+    // Study Patterns
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayCounts: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+    const hourCounts: Record<number, number> = {};
+    
+    for (let h = 0; h < 24; h++) hourCounts[h] = 0;
+
+    allDailyLogs.forEach(log => {
+      const day = new Date(log.date).getDay();
+      dayCounts[day]++;
+    });
+
+    allQuizResults.forEach(result => {
+      const hour = result.completedAt.getHours();
+      hourCounts[hour]++;
+    });
+
+    const mostActiveDay = dayNames[Object.entries(dayCounts).sort((a, b) => b[1] - a[1])[0]?.[0] as unknown as number || 0];
+    const mostActiveHour = parseInt(Object.entries(hourCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '9');
+
+    const totalTimeMinutes = allLessonProgress.reduce((sum, l) => sum + ((l.timeSpentSeconds || 0) / 60), 0) +
+      allQuizSessions.reduce((sum, s) => sum + (s.timeSpentSeconds || 0) / 60, 0);
+
+    const studyPatterns = {
+      mostActiveDay,
+      mostActiveHour,
+      averageSessionMinutes: allQuizSessions.length > 0
+        ? Math.round(allQuizSessions.reduce((sum, s) => sum + (s.timeSpentSeconds || 0), 0) / allQuizSessions.length / 60)
+        : 0,
+      totalStudyHours: Math.round(totalTimeMinutes / 60 * 10) / 10
+    };
+
+    // Progress Trajectory
+    const overallAccuracy = allQuizResults.length > 0
+      ? (allQuizResults.filter(r => r.isCorrect).length / allQuizResults.length) * 100
+      : 0;
+
+    const recentOverall = allQuizResults.slice(-50);
+    const recentAccuracy = recentOverall.length > 0
+      ? (recentOverall.filter(r => r.isCorrect).length / recentOverall.length) * 100
+      : overallAccuracy;
+
+    const latestExam = allExams[allExams.length - 1];
+    const latestExamScore = latestExam
+      ? (latestExam.correctAnswers / latestExam.totalQuestions) * 100
+      : recentAccuracy;
+
+    // Predict based on improvement rate
+    const improvementRate = learningVelocity.reduce((sum, v) => sum + v.weeklyImprovement, 0) / 8;
+    const weeksToPass = latestExamScore >= 70 ? 0 : Math.ceil((70 - latestExamScore) / Math.max(improvementRate, 1));
+
+    const progressTrajectory = {
+      currentScore: Math.round(latestExamScore * 10) / 10,
+      predictedExamScore: Math.round(Math.min(100, latestExamScore + improvementRate * 4) * 10) / 10,
+      daysUntilReady: weeksToPass * 7,
+      onTrack: latestExamScore >= 65 || improvementRate > 2
+    };
+
+    return {
+      learningVelocity,
+      timeInvestmentROI,
+      weaknessPredictions,
+      studyPatterns,
+      progressTrajectory
+    };
+  }
 }
 
 export const storage = new DatabaseStorage();

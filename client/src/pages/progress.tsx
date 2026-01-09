@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book, RefreshCw, Play } from 'lucide-react';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book, RefreshCw, Play, Activity } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
@@ -33,6 +33,7 @@ import ProgressHeader from '@/components/ProgressHeader';
 import { Link } from 'wouter';
 import { DailyLogForm } from '@/components/daily-log-form';
 import { DailyLogList } from '@/components/daily-log-list';
+import { PersonalAnalyticsDashboard } from '@/components/personal-analytics-dashboard';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { formatMinutes } from '@/lib/time-utils';
@@ -403,25 +404,34 @@ export default function ProgressPage() {
       </div>
 
       {/* Tabbed Interface */}
-      <Tabs defaultValue="daily" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6">
+      <Tabs defaultValue="analytics" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 mb-6">
+          <TabsTrigger value="analytics" className="flex items-center gap-2" data-testid="tab-analytics">
+            <Activity className="h-4 w-4" />
+            <span className="hidden sm:inline">Analytics</span>
+          </TabsTrigger>
           <TabsTrigger value="daily" className="flex items-center gap-2" data-testid="tab-daily-logs">
             <Book className="h-4 w-4" />
-            Daily Logs
+            <span className="hidden sm:inline">Daily Logs</span>
           </TabsTrigger>
           <TabsTrigger value="quiz" className="flex items-center gap-2" data-testid="tab-quiz-history">
             <FileText className="h-4 w-4" />
-            Quiz History
+            <span className="hidden sm:inline">Quiz History</span>
           </TabsTrigger>
           <TabsTrigger value="exam" className="flex items-center gap-2" data-testid="tab-exam-history">
             <GraduationCap className="h-4 w-4" />
-            Exam History
+            <span className="hidden sm:inline">Exam History</span>
           </TabsTrigger>
           <TabsTrigger value="domain" className="flex items-center gap-2" data-testid="tab-domain-mastery">
             <BarChart3 className="h-4 w-4" />
-            Domain Mastery
+            <span className="hidden sm:inline">Domain Mastery</span>
           </TabsTrigger>
         </TabsList>
+
+        {/* Personal Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <PersonalAnalyticsDashboard />
+        </TabsContent>
 
         {/* Daily Logs Tab */}
         <TabsContent value="daily" className="space-y-6">
