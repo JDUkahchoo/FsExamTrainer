@@ -2,6 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { 
   Award, 
   Flame, 
@@ -11,10 +12,12 @@ import {
   Trophy,
   CheckCircle2,
   Star,
-  TrendingUp
+  TrendingUp,
+  Zap
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { getSurveyorRank } from "@shared/schema";
 
 interface ProgressData {
   overallProgress: number;
@@ -97,6 +100,10 @@ export default function ProgressHeader() {
     queryKey: ["/api/achievements"],
   });
 
+  const { data: xpData } = useQuery<{ xp: number; level: number }>({
+    queryKey: ["/api/xp"],
+  });
+
   const checkAchievementsMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch("/api/achievements/check", { 
@@ -142,6 +149,10 @@ export default function ProgressHeader() {
   const progress = progressData?.overallProgress || 0;
   const currentStreak = progressData?.currentStreak || 0;
   const longestStreak = progressData?.longestStreak || 0;
+  
+  // Calculate surveyor rank from XP
+  const userXp = xpData?.xp ?? 0;
+  const rankInfo = getSurveyorRank(userXp);
 
   // Calculate circle properties
   const radius = 70;
@@ -230,6 +241,33 @@ export default function ProgressHeader() {
                 Best: {longestStreak} days
               </span>
             )}
+          </div>
+
+          {/* XP & Rank Display */}
+          <div className="flex flex-col gap-2 p-4 rounded-lg bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 min-w-[160px]">
+            <div className="flex items-center gap-2">
+              <Zap className="w-5 h-5 text-amber-500" />
+              <span className="text-sm font-semibold text-amber-700 dark:text-amber-400" data-testid="text-surveyor-rank">
+                {rankInfo.name}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-bold text-amber-600 dark:text-amber-300" data-testid="text-xp-total">
+                {userXp.toLocaleString()}
+              </span>
+              <span className="text-xs text-amber-600/70 dark:text-amber-400/70">XP</span>
+            </div>
+            <Progress 
+              value={rankInfo.progress} 
+              className="h-2"
+            />
+            <div className="text-xs text-muted-foreground text-center">
+              {rankInfo.nextLevelXp ? (
+                <span>Level {rankInfo.level} ({rankInfo.nextLevelXp - userXp} XP to next)</span>
+              ) : (
+                <span>Max Level Achieved</span>
+              )}
+            </div>
           </div>
         </div>
 

@@ -220,6 +220,10 @@ export interface IStorage {
   // Testimonials methods
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
   getApprovedTestimonials(): Promise<Testimonial[]>;
+
+  // XP System methods
+  getUserXp(userId: string): Promise<{ xp: number; level: number }>;
+  awardXp(userId: string, amount: number): Promise<{ xp: number; level: number; leveledUp: boolean }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1685,6 +1689,47 @@ export class DatabaseStorage implements IStorage {
       .from(testimonials)
       .where(eq(testimonials.approved, true))
       .orderBy(desc(testimonials.createdAt));
+  }
+
+  // XP System methods
+  async getUserXp(userId: string): Promise<{ xp: number; level: number }> {
+    const user = await this.getUser(userId);
+    return { xp: user?.xp ?? 0, level: user?.level ?? 1 };
+  }
+
+  async awardXp(userId: string, amount: number): Promise<{ xp: number; level: number; leveledUp: boolean }> {
+    const user = await this.getUser(userId);
+    const currentXp = user?.xp ?? 0;
+    const currentLevel = user?.level ?? 1;
+    const newXp = currentXp + amount;
+    
+    // Calculate new level based on XP thresholds
+    const SURVEYOR_RANKS = [
+      { level: 1, minXp: 0 },
+      { level: 2, minXp: 500 },
+      { level: 3, minXp: 1500 },
+      { level: 4, minXp: 3500 },
+      { level: 5, minXp: 6500 },
+      { level: 6, minXp: 10500 },
+      { level: 7, minXp: 15500 },
+      { level: 8, minXp: 22000 },
+      { level: 9, minXp: 30000 },
+      { level: 10, minXp: 40000 },
+    ];
+    
+    let newLevel = 1;
+    for (const rank of SURVEYOR_RANKS) {
+      if (newXp >= rank.minXp) {
+        newLevel = rank.level;
+      }
+    }
+    
+    await db
+      .update(users)
+      .set({ xp: newXp, level: newLevel, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+    
+    return { xp: newXp, level: newLevel, leveledUp: newLevel > currentLevel };
   }
 }
 

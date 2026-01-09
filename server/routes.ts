@@ -1583,6 +1583,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // XP System routes
+  app.get("/api/xp", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const xpData = await storage.getUserXp(userId);
+      res.json(xpData);
+    } catch (error) {
+      console.error("Error fetching XP:", error);
+      res.status(500).json({ error: "Failed to fetch XP" });
+    }
+  });
+
+  app.post("/api/xp/award", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { amount, reason } = req.body;
+      
+      if (typeof amount !== 'number' || amount <= 0) {
+        return res.status(400).json({ error: "Invalid XP amount" });
+      }
+      
+      const result = await storage.awardXp(userId, amount);
+      res.json({ ...result, reason });
+    } catch (error) {
+      console.error("Error awarding XP:", error);
+      res.status(500).json({ error: "Failed to award XP" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

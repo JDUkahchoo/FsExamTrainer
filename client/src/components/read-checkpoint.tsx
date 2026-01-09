@@ -15,6 +15,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import type { ReadingProgress } from '@shared/schema';
+import { XP_AWARDS } from '@shared/schema';
 
 interface ReadCheckpointProps {
   week: number;

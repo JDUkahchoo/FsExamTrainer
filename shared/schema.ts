@@ -47,12 +47,63 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  xp: integer("xp").notNull().default(0),
+  level: integer("level").notNull().default(1),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+
+// Surveyor Ranks based on level
+export const SURVEYOR_RANKS = [
+  { level: 1, name: 'Survey Trainee', minXp: 0 },
+  { level: 2, name: 'Rod Person', minXp: 500 },
+  { level: 3, name: 'Instrument Operator', minXp: 1500 },
+  { level: 4, name: 'Party Chief', minXp: 3500 },
+  { level: 5, name: 'Survey Technician', minXp: 6500 },
+  { level: 6, name: 'FS Candidate', minXp: 10500 },
+  { level: 7, name: 'Licensed Surveyor', minXp: 15500 },
+  { level: 8, name: 'Senior Surveyor', minXp: 22000 },
+  { level: 9, name: 'Master Surveyor', minXp: 30000 },
+  { level: 10, name: 'Survey Legend', minXp: 40000 },
+] as const;
+
+export function getSurveyorRank(xp: number): { level: number; name: string; progress: number; nextLevelXp: number | null } {
+  let currentRank = SURVEYOR_RANKS[0];
+  let nextRank: typeof SURVEYOR_RANKS[number] | null = SURVEYOR_RANKS[1] || null;
+  
+  for (let i = 0; i < SURVEYOR_RANKS.length; i++) {
+    if (xp >= SURVEYOR_RANKS[i].minXp) {
+      currentRank = SURVEYOR_RANKS[i];
+      nextRank = SURVEYOR_RANKS[i + 1] || null;
+    }
+  }
+  
+  const progress = nextRank 
+    ? ((xp - currentRank.minXp) / (nextRank.minXp - currentRank.minXp)) * 100
+    : 100;
+  
+  return {
+    level: currentRank.level,
+    name: currentRank.name,
+    progress: Math.min(100, progress),
+    nextLevelXp: nextRank?.minXp ?? null
+  };
+}
+
+// XP Awards for different activities
+export const XP_AWARDS = {
+  READ_CHECKPOINT: 25,
+  FOCUS_MICRO_DRILL: 50,
+  APPLY_CHALLENGE: 75,
+  REINFORCE_REVIEW: 15,
+  DAILY_QUEST_COMPLETE: 100,
+  QUIZ_COMPLETE: 50,
+  LESSON_COMPLETE: 40,
+  EXAM_COMPLETE: 200,
+} as const;
 
 // --- Study Progress Tables ---
 
