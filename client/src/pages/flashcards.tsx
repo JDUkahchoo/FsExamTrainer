@@ -182,6 +182,15 @@ export default function FlashcardsPage() {
     }
   });
 
+  // Record flashcard progress mutation (for Daily Quest tracking) - must be before early return
+  const recordProgressMutation = useMutation({
+    mutationFn: ({ cardId, mode }: { cardId: string; mode: string }) =>
+      apiRequest('POST', '/api/flashcards/progress', { cardId, mode }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/daily-quests'] });
+    }
+  });
+
   const masteredCards = new Set((masteryData || []).filter(m => m.masteryLevel >= 4).map(m => m.flashcardId));
 
   useEffect(() => {
@@ -238,6 +247,16 @@ export default function FlashcardsPage() {
 
   const handleNext = () => {
     if (currentIndex < totalCards - 1) {
+      // Record progress for the current card before moving to next (Quick Review mode)
+      if (studyMode === 'quick') {
+        const cardIndex = shuffledIndices[currentIndex];
+        const card = filteredCards[cardIndex];
+        const stableIndex = activeFlashcards.indexOf(card);
+        const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
+        const cardId = `${deckPrefix}${stableIndex}`;
+        recordProgressMutation.mutate({ cardId, mode: 'quick' });
+      }
+      
       setCurrentIndex(currentIndex + 1);
       setIsFlipped(false);
     }
@@ -399,6 +418,9 @@ export default function FlashcardsPage() {
 
   const renderEnhancedMode = () => {
     const handleModeComplete = () => {
+      // Record progress for the current card in this mode
+      recordProgressMutation.mutate({ cardId: currentCardId, mode: studyMode });
+      
       if (currentIndex < totalCards - 1) {
         setCurrentIndex(currentIndex + 1);
         setIsFlipped(false);

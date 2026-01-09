@@ -109,6 +109,7 @@ import {
   flashcardMnemonics,
   flashcardTriadProgress,
   flashcardReviewSessions,
+  dailyFlashcardProgress,
   dailyQuests,
   reviewSchedule,
   userDifficultySettings,
@@ -171,6 +172,10 @@ export interface IStorage {
   getTodayFlashcardSessions(userId: string): Promise<FlashcardReviewSession[]>;
   createFlashcardReviewSession(session: InsertFlashcardReviewSession): Promise<FlashcardReviewSession>;
   completeFlashcardReviewSession(sessionId: string, data: { cardsReviewed: number; avgMasteryRating?: number; domainBreakdown?: Record<string, { reviewed: number; avgRating: number }>; timeSpentSeconds: number }): Promise<FlashcardReviewSession>;
+  
+  // Daily Flashcard Progress (for quest tracking - idempotent per card per day)
+  recordFlashcardProgress(userId: string, cardId: string, mode: string): Promise<{ isNew: boolean; todayCount: number }>;
+  getTodayFlashcardProgressCount(userId: string): Promise<number>;
 
   // Practice Exam methods
   getPracticeExams(userId: string): Promise<PracticeExam[]>;
@@ -2966,6 +2971,66 @@ export class DatabaseStorage implements IStorage {
       .where(eq(flashcardReviewSessions.id, sessionId));
     
     return { awarded: result.awarded, xp: result.awarded ? 15 : 0 };
+  }
+
+  // --- Daily Flashcard Progress Methods (for quest tracking) ---
+
+  async recordFlashcardProgress(userId: string, cardId: string, mode: string): Promise<{ isNew: boolean; todayCount: number }> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Check if this card was already recorded today for this mode
+    const existing = await db
+      .select()
+      .from(dailyFlashcardProgress)
+      .where(and(
+        eq(dailyFlashcardProgress.userId, userId),
+        eq(dailyFlashcardProgress.cardId, cardId),
+        eq(dailyFlashcardProgress.mode, mode),
+        gte(dailyFlashcardProgress.date, today),
+        lte(dailyFlashcardProgress.date, endOfDay)
+      ))
+      .limit(1);
+
+    let isNew = false;
+    if (existing.length === 0) {
+      // Record this card progress
+      await db.insert(dailyFlashcardProgress).values({
+        userId,
+        cardId,
+        mode,
+        date: today
+      });
+      isNew = true;
+      
+      // Update the daily quest for flashcards
+      await this.updateQuestProgress(userId, 'complete_flashcards', 1);
+    }
+
+    // Get today's total count
+    const todayCount = await this.getTodayFlashcardProgressCount(userId);
+    
+    return { isNew, todayCount };
+  }
+
+  async getTodayFlashcardProgressCount(userId: string): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(dailyFlashcardProgress)
+      .where(and(
+        eq(dailyFlashcardProgress.userId, userId),
+        gte(dailyFlashcardProgress.date, today),
+        lte(dailyFlashcardProgress.date, endOfDay)
+      ));
+
+    return Number(result[0]?.count || 0);
   }
 }
 

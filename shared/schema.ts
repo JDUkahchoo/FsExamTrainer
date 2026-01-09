@@ -363,6 +363,35 @@ export function getReviewPeriod(date: Date = new Date()): ReviewPeriod {
   return 'evening';
 }
 
+// --- Daily Flashcard Progress (for quest tracking) ---
+
+export const FLASHCARD_MODES = ['quick', 'triad', 'feynman', 'mnemonic'] as const;
+export type FlashcardMode = typeof FLASHCARD_MODES[number];
+
+export const dailyFlashcardProgress = pgTable("daily_flashcard_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  cardId: varchar("card_id").notNull(),
+  mode: varchar("mode").notNull(), // 'quick', 'triad', 'feynman', 'mnemonic'
+  date: timestamp("date").notNull(), // Date only (normalized to midnight)
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const dailyFlashcardProgressRelations = relations(dailyFlashcardProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [dailyFlashcardProgress.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertDailyFlashcardProgressSchema = createInsertSchema(dailyFlashcardProgress).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertDailyFlashcardProgress = z.infer<typeof insertDailyFlashcardProgressSchema>;
+export type DailyFlashcardProgress = typeof dailyFlashcardProgress.$inferSelect;
+
 // --- Practice Exam Results ---
 
 export const practiceExams = pgTable("practice_exams", {
@@ -616,6 +645,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   flashcardMnemonics: many(flashcardMnemonics),
   flashcardTriadProgress: many(flashcardTriadProgress),
   flashcardReviewSessions: many(flashcardReviewSessions),
+  dailyFlashcardProgress: many(dailyFlashcardProgress),
   practiceExams: many(practiceExams),
   practiceExamResults: many(practiceExamResults),
   pretestResults: many(pretestResults),

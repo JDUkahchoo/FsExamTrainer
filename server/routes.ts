@@ -889,11 +889,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timeSpentSeconds
       });
       
-      // Update daily quest progress for flashcard reviews
-      if (cardsReviewed > 0) {
-        await storage.updateQuestProgress(userId, 'complete_flashcards', cardsReviewed);
-      }
-      
       // Award XP (idempotent per period per day)
       const xpResult = await storage.awardFlashcardReviewXp(userId, sessionId, session.period);
       
@@ -905,6 +900,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error completing review session:", error);
       res.status(400).json({ error: "Failed to complete review session" });
+    }
+  });
+
+  // Record individual flashcard progress (for Daily Quest tracking)
+  app.post("/api/flashcards/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { cardId, mode } = req.body;
+      
+      if (!cardId || !mode) {
+        return res.status(400).json({ error: "cardId and mode are required" });
+      }
+      
+      const result = await storage.recordFlashcardProgress(userId, cardId, mode);
+      res.json(result);
+    } catch (error) {
+      console.error("Error recording flashcard progress:", error);
+      res.status(400).json({ error: "Failed to record flashcard progress" });
+    }
+  });
+
+  // Get today's flashcard progress count
+  app.get("/api/flashcards/progress/today", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const count = await storage.getTodayFlashcardProgressCount(userId);
+      res.json({ count });
+    } catch (error) {
+      console.error("Error fetching flashcard progress:", error);
+      res.status(500).json({ error: "Failed to fetch flashcard progress" });
     }
   });
 
