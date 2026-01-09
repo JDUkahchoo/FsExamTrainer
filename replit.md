@@ -20,6 +20,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Study Notes (Enhanced):** Multi-page note-taking system with week selector, Mon-Sun day filtering, optional domain tagging, auto-save, and CRUD operations for managing multiple notes per week.
 -   **Daily Logging System:** Integrated into the Study Plan for tracking activities and contributing to study streaks.
 -   **Progress Dashboard with Gamification:** Circular progress ring, study streak tracker, achievement badges, and detailed history, including domain mastery tracking.
+-   **XP System with 10 Surveyor Ranks:** Gamified progression from Survey Trainee (Level 1) to Survey Legend (Level 10). XP awarded for completing READ checkpoints (25 XP), APPLY challenges (75 XP), and REINFORCE reviews (15 XP). Backend idempotency prevents XP farming via xpGrants table tracking unique activity keys.
 -   **Resume Functionality:** Allows users to save and resume interrupted quiz and exam sessions.
 -   **Interactive Lessons System (Domain-Based):** Duolingo-style interactive lessons organized by NCEES domain with multiple question types, difficulty levels, and progress indicators. Includes practical word problems for real-world application.
 -   **Individual Question Tracking:** Comprehensive question-level tracking for pretests and practice exams.
@@ -48,6 +49,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Progress tracking includes `domainProgressSnapshots` table and an API for domain mastery.
 -   Question pool randomization system utilizes `variationGroup` and `variationNumber` fields, tracking `seenQuestionVariations` to prioritize unseen variations.
 -   **Question Archetype System:** Template-based question generation in `shared/questionArchetypes.ts`. Uses `FillInBlankArchetype` (computational with paramRanges), `MultipleChoiceArchetype` (5 curated question variants), and `ConceptualFillInBlankArchetype` patterns. Seeded RNG (mulberry32) ensures deterministic variations. Archetype IDs follow pattern: `d{domain}-lesson-{order:02}-q{num:02}-v{variation}`.
+-   **XP Idempotency System:** `xpGrants` table tracks (userId, activityKey) pairs to prevent duplicate XP awards. Activity keys are deterministic: `read:week{N}:chapter{M}`, `apply:challenge:{id}`, `reinforce:review:{id}`. Backend `awardXp()` checks `hasXpGrant()` before granting XP and returns `awarded: true/false` to frontend.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
