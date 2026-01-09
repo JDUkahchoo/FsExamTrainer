@@ -61,7 +61,11 @@ import type {
   FlashcardMnemonic,
   InsertFlashcardMnemonic,
   FlashcardTriadProgress,
-  InsertFlashcardTriadProgress
+  InsertFlashcardTriadProgress,
+  DailyQuest,
+  InsertDailyQuest,
+  ReviewSchedule,
+  InsertReviewSchedule
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -95,9 +99,12 @@ import {
   xpGrants,
   flashcardFeynmanScores,
   flashcardMnemonics,
-  flashcardTriadProgress
+  flashcardTriadProgress,
+  dailyQuests,
+  reviewSchedule,
+  DOMAINS
 } from "@shared/schema";
-import { eq, and, desc, gte, sql, inArray } from "drizzle-orm";
+import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User methods (required for Replit Auth)
@@ -2188,6 +2195,351 @@ export class DatabaseStorage implements IStorage {
       weaknessPredictions,
       studyPatterns,
       progressTrajectory
+    };
+  }
+
+  // --- Daily Quests Methods ---
+
+  async getDailyQuests(userId: string): Promise<DailyQuest[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    return db
+      .select()
+      .from(dailyQuests)
+      .where(and(
+        eq(dailyQuests.userId, userId),
+        gte(dailyQuests.date, today),
+        lte(dailyQuests.date, tomorrow)
+      ))
+      .orderBy(dailyQuests.createdAt);
+  }
+
+  async generateDailyQuests(userId: string): Promise<DailyQuest[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Check if quests already exist for today (strictly today only)
+    const existingQuests = await db
+      .select()
+      .from(dailyQuests)
+      .where(and(
+        eq(dailyQuests.userId, userId),
+        gte(dailyQuests.date, today),
+        lte(dailyQuests.date, tomorrow)
+      ));
+
+    if (existingQuests.length > 0) {
+      return existingQuests;
+    }
+
+    // Get user's weak domains from analytics - use predictedStruggle flag
+    const analytics = await this.getPersonalAnalytics(userId);
+    const weakDomains = analytics.weaknessPredictions
+      .filter(w => w.predictedStruggle)
+      .map(w => w.domain);
+
+    // Generate 3-4 daily quests
+    const questTemplates = [
+      {
+        questType: 'complete_flashcards',
+        title: 'Flashcard Master',
+        description: 'Review 15 flashcards to reinforce your memory',
+        targetCount: 15,
+        xpReward: 50
+      },
+      {
+        questType: 'complete_lesson',
+        title: 'Lesson Learner',
+        description: 'Complete 1 interactive lesson',
+        targetCount: 1,
+        xpReward: 40
+      },
+      {
+        questType: 'complete_quiz',
+        title: 'Quiz Champion',
+        description: 'Complete a practice quiz with 10+ questions',
+        targetCount: 1,
+        xpReward: 60
+      },
+      {
+        questType: 'complete_all_pillars',
+        title: 'Daily Discipline',
+        description: 'Complete all 4 study pillars (READ, FOCUS, APPLY, REINFORCE)',
+        targetCount: 4,
+        xpReward: 100
+      }
+    ];
+
+    // Add a weak domain quest if applicable
+    if (weakDomains.length > 0) {
+      const weakDomain = weakDomains[0];
+      questTemplates.push({
+        questType: 'review_weak_domain',
+        title: `${weakDomain} Focus`,
+        description: `Practice 5 questions in your weak area: ${weakDomain}`,
+        targetCount: 5,
+        xpReward: 75
+      });
+    }
+
+    // Select 3-4 quests randomly
+    const shuffled = questTemplates.sort(() => Math.random() - 0.5);
+    const selectedQuests = shuffled.slice(0, 4);
+
+    const createdQuests: DailyQuest[] = [];
+    for (const quest of selectedQuests) {
+      const [created] = await db
+        .insert(dailyQuests)
+        .values({
+          userId,
+          date: today,
+          questType: quest.questType,
+          title: quest.title,
+          description: quest.description,
+          targetCount: quest.targetCount,
+          xpReward: quest.xpReward,
+          currentCount: 0,
+          isCompleted: false
+        })
+        .returning();
+      createdQuests.push(created);
+    }
+
+    return createdQuests;
+  }
+
+  async updateQuestProgress(userId: string, questType: string, increment: number = 1): Promise<DailyQuest | null> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [quest] = await db
+      .select()
+      .from(dailyQuests)
+      .where(and(
+        eq(dailyQuests.userId, userId),
+        eq(dailyQuests.questType, questType),
+        gte(dailyQuests.date, today),
+        eq(dailyQuests.isCompleted, false)
+      ))
+      .limit(1);
+
+    if (!quest) return null;
+
+    const newCount = quest.currentCount + increment;
+    const isNowComplete = newCount >= quest.targetCount;
+
+    const [updated] = await db
+      .update(dailyQuests)
+      .set({
+        currentCount: newCount,
+        isCompleted: isNowComplete,
+        completedAt: isNowComplete ? new Date() : null
+      })
+      .where(eq(dailyQuests.id, quest.id))
+      .returning();
+
+    return updated;
+  }
+
+  // --- Review Schedule Methods (Spaced Repetition) ---
+
+  async getUpcomingReviews(userId: string, limit: number = 10): Promise<ReviewSchedule[]> {
+    const now = new Date();
+    
+    return db
+      .select()
+      .from(reviewSchedule)
+      .where(and(
+        eq(reviewSchedule.userId, userId),
+        gte(reviewSchedule.nextReviewAt, new Date(now.getTime() - 24 * 60 * 60 * 1000)) // Include past due
+      ))
+      .orderBy(reviewSchedule.nextReviewAt)
+      .limit(limit);
+  }
+
+  async getDueReviews(userId: string): Promise<ReviewSchedule[]> {
+    const now = new Date();
+    
+    return db
+      .select()
+      .from(reviewSchedule)
+      .where(and(
+        eq(reviewSchedule.userId, userId),
+        lte(reviewSchedule.nextReviewAt, now)
+      ))
+      .orderBy(reviewSchedule.nextReviewAt);
+  }
+
+  async createOrUpdateReviewItem(
+    userId: string, 
+    itemType: string, 
+    itemId: string, 
+    itemTitle: string,
+    domain?: string,
+    quality: number = 3 // 0-5 quality rating for SM-2
+  ): Promise<ReviewSchedule> {
+    // Check if item already exists
+    const [existing] = await db
+      .select()
+      .from(reviewSchedule)
+      .where(and(
+        eq(reviewSchedule.userId, userId),
+        eq(reviewSchedule.itemId, itemId)
+      ))
+      .limit(1);
+
+    const now = new Date();
+
+    if (existing) {
+      // Update using SM-2 algorithm
+      let { easeFactor, intervalDays, reviewCount } = existing;
+      
+      // SM-2 algorithm implementation
+      // Update ease factor based on quality
+      easeFactor = Math.max(1.3, easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
+      
+      if (quality < 3) {
+        // Reset interval AND reviewCount for poor performance (per SM-2 spec)
+        intervalDays = 1;
+        reviewCount = 0; // Reset to start of learning phase
+      } else {
+        // Good response - advance through intervals
+        if (reviewCount === 0) {
+          intervalDays = 1;
+        } else if (reviewCount === 1) {
+          intervalDays = 6;
+        } else {
+          intervalDays = Math.round(intervalDays * easeFactor);
+        }
+        reviewCount = reviewCount + 1;
+      }
+
+      const nextReview = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000);
+
+      const [updated] = await db
+        .update(reviewSchedule)
+        .set({
+          lastReviewedAt: now,
+          nextReviewAt: nextReview,
+          intervalDays,
+          easeFactor,
+          reviewCount
+        })
+        .where(eq(reviewSchedule.id, existing.id))
+        .returning();
+
+      return updated;
+    } else {
+      // Create new review item
+      const nextReview = new Date(now.getTime() + 24 * 60 * 60 * 1000); // First review in 1 day
+
+      const [created] = await db
+        .insert(reviewSchedule)
+        .values({
+          userId,
+          itemType,
+          itemId,
+          itemTitle,
+          domain,
+          lastReviewedAt: now,
+          nextReviewAt: nextReview,
+          intervalDays: 1,
+          easeFactor: 2.5,
+          reviewCount: 0
+        })
+        .returning();
+
+      return created;
+    }
+  }
+
+  // --- AI Study Coach Briefing ---
+
+  async getStudyCoachBriefing(userId: string): Promise<{
+    greeting: string;
+    focusRecommendation: string;
+    progressInsight: string;
+    motivationalMessage: string;
+    todaysPriorities: string[];
+    dueReviews: ReviewSchedule[];
+  }> {
+    const analytics = await this.getPersonalAnalytics(userId);
+    const dueReviews = await this.getDueReviews(userId);
+    const todaysQuests = await this.getDailyQuests(userId);
+    
+    // Get user preferences for exam date
+    const [prefs] = await db
+      .select()
+      .from(userPreferences)
+      .where(eq(userPreferences.userId, userId))
+      .limit(1);
+
+    // Time-based greeting
+    const hour = new Date().getHours();
+    let greeting = "Good morning";
+    if (hour >= 12 && hour < 17) greeting = "Good afternoon";
+    else if (hour >= 17) greeting = "Good evening";
+
+    // Find weakest domain
+    const weakestDomain = analytics.weaknessPredictions
+      .sort((a, b) => b.confidence - a.confidence)[0];
+
+    // Focus recommendation based on weakness
+    let focusRecommendation = "";
+    if (weakestDomain && weakestDomain.predictedStruggle) {
+      focusRecommendation = `Based on your recent performance, focus on ${weakestDomain.domain} today. ${weakestDomain.reason}`;
+    } else {
+      focusRecommendation = "You're doing well across all domains! Consider reviewing your strongest areas to maintain your edge.";
+    }
+
+    // Progress insight
+    let progressInsight = "";
+    const { currentScore, predictedExamScore, onTrack } = analytics.progressTrajectory;
+    if (onTrack) {
+      progressInsight = `Great news! Your current trajectory puts you at ${predictedExamScore}% (passing is 70%). Keep up the momentum!`;
+    } else {
+      progressInsight = `Current estimated score: ${currentScore}%. With consistent practice, you can reach ${predictedExamScore}% by exam day.`;
+    }
+
+    // Motivational message based on velocity
+    const avgVelocity = analytics.learningVelocity.reduce((sum, v) => sum + v.weeklyImprovement, 0) / analytics.learningVelocity.length;
+    let motivationalMessage = "";
+    if (avgVelocity > 5) {
+      motivationalMessage = "You're making excellent progress! Your improvement rate is above average.";
+    } else if (avgVelocity > 0) {
+      motivationalMessage = "You're on the right track. Every study session brings you closer to your goal.";
+    } else {
+      motivationalMessage = "Remember: consistency beats intensity. Even 20 minutes of focused study makes a difference.";
+    }
+
+    // Today's priorities
+    const todaysPriorities: string[] = [];
+    if (dueReviews.length > 0) {
+      todaysPriorities.push(`Review ${dueReviews.length} concept${dueReviews.length > 1 ? 's' : ''} due for spaced repetition`);
+    }
+    if (weakestDomain && weakestDomain.predictedStruggle) {
+      todaysPriorities.push(`Practice ${weakestDomain.domain} questions to improve weak area`);
+    }
+    const incompleteQuests = todaysQuests.filter(q => !q.isCompleted);
+    if (incompleteQuests.length > 0) {
+      todaysPriorities.push(`Complete ${incompleteQuests.length} daily quest${incompleteQuests.length > 1 ? 's' : ''} for bonus XP`);
+    }
+    if (todaysPriorities.length === 0) {
+      todaysPriorities.push("Continue your study plan at your own pace");
+    }
+
+    return {
+      greeting,
+      focusRecommendation,
+      progressInsight,
+      motivationalMessage,
+      todaysPriorities,
+      dueReviews
     };
   }
 }

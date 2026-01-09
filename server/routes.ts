@@ -452,6 +452,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // --- Daily Quests Routes ---
+  
+  app.get("/api/daily-quests", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      // Generate quests if none exist for today, otherwise return existing
+      const quests = await storage.generateDailyQuests(userId);
+      res.json(quests);
+    } catch (error) {
+      console.error("Error fetching daily quests:", error);
+      res.status(500).json({ error: "Failed to fetch daily quests" });
+    }
+  });
+
+  app.post("/api/daily-quests/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { questType, increment = 1 } = req.body;
+      
+      if (!questType) {
+        return res.status(400).json({ error: "questType is required" });
+      }
+      
+      const updated = await storage.updateQuestProgress(userId, questType, increment);
+      res.json({ updated, awarded: updated?.isCompleted });
+    } catch (error) {
+      console.error("Error updating quest progress:", error);
+      res.status(500).json({ error: "Failed to update quest progress" });
+    }
+  });
+
+  // --- Spaced Repetition Review Routes ---
+
+  app.get("/api/reviews/upcoming", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const reviews = await storage.getUpcomingReviews(userId, limit);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching upcoming reviews:", error);
+      res.status(500).json({ error: "Failed to fetch upcoming reviews" });
+    }
+  });
+
+  app.get("/api/reviews/due", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reviews = await storage.getDueReviews(userId);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching due reviews:", error);
+      res.status(500).json({ error: "Failed to fetch due reviews" });
+    }
+  });
+
+  app.post("/api/reviews", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { itemType, itemId, itemTitle, domain, quality = 3 } = req.body;
+      
+      if (!itemType || !itemId || !itemTitle) {
+        return res.status(400).json({ error: "itemType, itemId, and itemTitle are required" });
+      }
+      
+      const review = await storage.createOrUpdateReviewItem(userId, itemType, itemId, itemTitle, domain, quality);
+      res.json(review);
+    } catch (error) {
+      console.error("Error creating/updating review:", error);
+      res.status(500).json({ error: "Failed to create/update review" });
+    }
+  });
+
+  // --- AI Study Coach Routes ---
+
+  app.get("/api/study-coach/briefing", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const briefing = await storage.getStudyCoachBriefing(userId);
+      res.json(briefing);
+    } catch (error) {
+      console.error("Error fetching study coach briefing:", error);
+      res.status(500).json({ error: "Failed to fetch study coach briefing" });
+    }
+  });
+
   // Quiz Session routes
   app.get("/api/quiz/sessions", isAuthenticated, async (req: any, res) => {
     try {

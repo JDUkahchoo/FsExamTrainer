@@ -4,13 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Clock, TrendingUp, BookOpen, Zap, AlertCircle, CheckCircle2, Brain, ClipboardCheck, GraduationCap, FileText, BarChart3, BookMarked, Lightbulb } from "lucide-react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import type { UserPreferences } from "@shared/schema";
+import type { UserPreferences, User } from "@shared/schema";
+import { StudyCoachBriefing } from "@/components/study-coach-briefing";
+import { DailyQuestsPanel } from "@/components/daily-quests-panel";
+import { ReviewAlerts } from "@/components/review-alerts";
 
 export default function GettingStarted() {
   const [, setLocation] = useLocation();
   const { data: preferences } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
   });
+  
+  const { data: user } = useQuery<User>({
+    queryKey: ['/api/auth/user'],
+  });
+  
+  const isLoggedIn = !!user;
 
   const strategies = [
     {
@@ -170,6 +179,27 @@ export default function GettingStarted() {
           </p>
         </div>
       </div>
+
+      {/* Study Dashboard - Only shown when logged in */}
+      {isLoggedIn && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Your Study Dashboard</h2>
+            <Badge variant="outline">Personalized for you</Badge>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-1">
+              <StudyCoachBriefing />
+            </div>
+            <div className="lg:col-span-1">
+              <DailyQuestsPanel />
+            </div>
+            <div className="lg:col-span-1">
+              <ReviewAlerts />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Tips */}
       <div className="space-y-4">

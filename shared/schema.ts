@@ -1117,3 +1117,78 @@ export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
 
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;
+
+// --- Daily Quests System ---
+
+export const QUEST_TYPES = [
+  'complete_flashcards',
+  'complete_lesson', 
+  'complete_quiz',
+  'complete_all_pillars',
+  'study_time',
+  'review_weak_domain'
+] as const;
+
+export type QuestType = typeof QUEST_TYPES[number];
+
+export const dailyQuests = pgTable("daily_quests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  date: timestamp("date").notNull(), // The day this quest is for
+  questType: varchar("quest_type").notNull(), // e.g., 'complete_flashcards', 'complete_lesson'
+  title: varchar("title").notNull(),
+  description: text("description"),
+  targetCount: integer("target_count").notNull().default(1), // e.g., complete 10 flashcards
+  currentCount: integer("current_count").notNull().default(0),
+  xpReward: integer("xp_reward").notNull().default(50),
+  isCompleted: boolean("is_completed").notNull().default(false),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const dailyQuestsRelations = relations(dailyQuests, ({ one }) => ({
+  user: one(users, {
+    fields: [dailyQuests.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertDailyQuestSchema = createInsertSchema(dailyQuests).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertDailyQuest = z.infer<typeof insertDailyQuestSchema>;
+export type DailyQuest = typeof dailyQuests.$inferSelect;
+
+// --- Spaced Repetition Review Schedule ---
+
+export const reviewSchedule = pgTable("review_schedule", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  itemType: varchar("item_type").notNull(), // 'flashcard', 'concept', 'lesson'
+  itemId: varchar("item_id").notNull(),
+  itemTitle: varchar("item_title").notNull(),
+  domain: varchar("domain"),
+  lastReviewedAt: timestamp("last_reviewed_at").notNull().defaultNow(),
+  nextReviewAt: timestamp("next_review_at").notNull(),
+  intervalDays: integer("interval_days").notNull().default(1), // Current spaced repetition interval
+  easeFactor: real("ease_factor").notNull().default(2.5), // SM-2 algorithm ease factor
+  reviewCount: integer("review_count").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const reviewScheduleRelations = relations(reviewSchedule, ({ one }) => ({
+  user: one(users, {
+    fields: [reviewSchedule.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertReviewScheduleSchema = createInsertSchema(reviewSchedule).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertReviewSchedule = z.infer<typeof insertReviewScheduleSchema>;
+export type ReviewSchedule = typeof reviewSchedule.$inferSelect;
