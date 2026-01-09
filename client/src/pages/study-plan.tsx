@@ -43,6 +43,7 @@ import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
 import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
 import { ApplyScenarioLab } from '@/components/apply-scenario-lab';
+import { ReinforceRetentionBooster } from '@/components/reinforce-retention-booster';
 import { 
   getESWeeklyChapters, 
   getSRMWeeklyChapters,
@@ -786,23 +787,8 @@ export default function StudyPlan() {
                     week={plan.week}
                     colorClass="text-domain-boundary-fg"
                   />
-                  <ChecklistSection
-                    title="REINFORCE"
-                    icon={BrainCircuit}
-                    items={plan.reinforce}
-                    completed={completedItems[`week-${plan.week}`] || new Set()}
-                    onToggle={(i) => toggleItem(plan.week, `reinforce-${i}`)}
-                    prefix="reinforce"
-                    colorClass="text-domain-field-fg"
-                    action={{
-                      label: "Flashcards",
-                      icon: Layers,
-                      onClick: () => {
-                        const domainsParam = plan.domains.join(',');
-                        navigate(`/flashcards?domains=${encodeURIComponent(domainsParam)}`);
-                      },
-                      testId: `button-reinforce-action-${plan.week}`
-                    }}
+                  <ReinforceRetentionBooster
+                    week={plan.week}
                   />
 
                   {/* Interactive Lessons Section */}

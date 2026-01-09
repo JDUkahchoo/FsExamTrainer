@@ -52,7 +52,9 @@ import type {
   Testimonial,
   InsertTestimonial,
   ApplyChallengeAttempt,
-  InsertApplyChallengeAttempt
+  InsertApplyChallengeAttempt,
+  RetentionReview,
+  InsertRetentionReview
 } from "@shared/schema";
 import { db } from "./db";
 import {
@@ -81,7 +83,8 @@ import {
   domainProgressSnapshots,
   applyChallengeAttempts,
   feedback,
-  testimonials
+  testimonials,
+  retentionReviews
 } from "@shared/schema";
 import { eq, and, desc, gte, sql, inArray } from "drizzle-orm";
 
@@ -144,6 +147,13 @@ export interface IStorage {
   getApplyChallengeAttempts(userId: string, week?: number): Promise<ApplyChallengeAttempt[]>;
   createApplyChallengeAttempt(attempt: InsertApplyChallengeAttempt): Promise<ApplyChallengeAttempt>;
   updateApplyChallengeAttempt(userId: string, attemptId: string, updates: Partial<InsertApplyChallengeAttempt>): Promise<ApplyChallengeAttempt>;
+
+  // REINFORCE Retention Reviews methods (Spaced Repetition)
+  getRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]>;
+  getDueRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]>;
+  createRetentionReview(review: InsertRetentionReview): Promise<RetentionReview>;
+  updateRetentionReview(userId: string, reviewId: string, updates: Partial<InsertRetentionReview>): Promise<RetentionReview>;
+  getRetentionStats(userId: string, week?: number): Promise<{ totalReviews: number; dueToday: number; averageMastery: number; retentionScore: number }>;
 
   // Daily Activity methods
   getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
@@ -665,6 +675,98 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(applyChallengeAttempts.id, attemptId), eq(applyChallengeAttempts.userId, userId)))
       .returning();
     return updated;
+  }
+
+  // REINFORCE Retention Reviews methods (Spaced Repetition)
+  async getRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]> {
+    if (week !== undefined) {
+      return await db
+        .select()
+        .from(retentionReviews)
+        .where(and(eq(retentionReviews.userId, userId), eq(retentionReviews.week, week)))
+        .orderBy(desc(retentionReviews.createdAt));
+    }
+    return await db
+      .select()
+      .from(retentionReviews)
+      .where(eq(retentionReviews.userId, userId))
+      .orderBy(desc(retentionReviews.createdAt));
+  }
+
+  async getDueRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]> {
+    const now = new Date();
+    if (week !== undefined) {
+      return await db
+        .select()
+        .from(retentionReviews)
+        .where(and(
+          eq(retentionReviews.userId, userId),
+          eq(retentionReviews.week, week),
+          sql`${retentionReviews.nextReviewAt} IS NULL OR ${retentionReviews.nextReviewAt} <= ${now}`
+        ))
+        .orderBy(retentionReviews.nextReviewAt);
+    }
+    return await db
+      .select()
+      .from(retentionReviews)
+      .where(and(
+        eq(retentionReviews.userId, userId),
+        sql`${retentionReviews.nextReviewAt} IS NULL OR ${retentionReviews.nextReviewAt} <= ${now}`
+      ))
+      .orderBy(retentionReviews.nextReviewAt);
+  }
+
+  async createRetentionReview(review: InsertRetentionReview): Promise<RetentionReview> {
+    const [created] = await db
+      .insert(retentionReviews)
+      .values({ ...review, createdAt: new Date() })
+      .returning();
+    return created;
+  }
+
+  async updateRetentionReview(userId: string, reviewId: string, updates: Partial<InsertRetentionReview>): Promise<RetentionReview> {
+    const [updated] = await db
+      .update(retentionReviews)
+      .set(updates)
+      .where(and(eq(retentionReviews.id, reviewId), eq(retentionReviews.userId, userId)))
+      .returning();
+    return updated;
+  }
+
+  async getRetentionStats(userId: string, week?: number): Promise<{ totalReviews: number; dueToday: number; averageMastery: number; retentionScore: number }> {
+    const allReviews = await this.getRetentionReviews(userId, week);
+    const dueReviews = await this.getDueRetentionReviews(userId, week);
+    
+    if (allReviews.length === 0) {
+      return { totalReviews: 0, dueToday: 0, averageMastery: 0, retentionScore: 100 };
+    }
+
+    const totalMastery = allReviews.reduce((sum, r) => sum + r.masteryLevel, 0);
+    const averageMastery = totalMastery / allReviews.length;
+    
+    // Calculate retention score based on decay from last review
+    const now = Date.now();
+    let totalRetention = 0;
+    for (const review of allReviews) {
+      if (!review.lastReviewedAt) {
+        totalRetention += 0; // Never reviewed = 0 retention
+      } else {
+        const daysSinceReview = (now - new Date(review.lastReviewedAt).getTime()) / (1000 * 60 * 60 * 24);
+        // Exponential decay formula based on interval
+        const expectedInterval = review.intervalDays || 1;
+        const decayRate = 0.5; // Memory halves after expected interval
+        const retention = Math.pow(decayRate, daysSinceReview / expectedInterval) * 100;
+        totalRetention += Math.min(100, Math.max(0, retention));
+      }
+    }
+    const retentionScore = Math.round(totalRetention / allReviews.length);
+
+    return {
+      totalReviews: allReviews.length,
+      dueToday: dueReviews.length,
+      averageMastery: Math.round(averageMastery * 10) / 10,
+      retentionScore
+    };
   }
 
   // Daily Activity methods

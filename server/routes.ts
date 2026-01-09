@@ -3,11 +3,12 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
 import { count } from "drizzle-orm";
+import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -230,6 +231,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating apply attempt:", error);
       res.status(400).json({ error: "Failed to update apply attempt" });
+    }
+  });
+
+  // REINFORCE Retention Reviews routes
+  app.get("/api/retention/reviews", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = req.query.week ? parseInt(req.query.week as string) : undefined;
+      const reviews = await storage.getRetentionReviews(userId, week);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching retention reviews:", error);
+      res.status(500).json({ error: "Failed to fetch retention reviews" });
+    }
+  });
+
+  app.get("/api/retention/due", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = req.query.week ? parseInt(req.query.week as string) : undefined;
+      const dueReviews = await storage.getDueRetentionReviews(userId, week);
+      res.json(dueReviews);
+    } catch (error) {
+      console.error("Error fetching due reviews:", error);
+      res.status(500).json({ error: "Failed to fetch due reviews" });
+    }
+  });
+
+  app.get("/api/retention/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = req.query.week ? parseInt(req.query.week as string) : undefined;
+      const stats = await storage.getRetentionStats(userId, week);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching retention stats:", error);
+      res.status(500).json({ error: "Failed to fetch retention stats" });
+    }
+  });
+
+  app.post("/api/retention/reviews", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const data = insertRetentionReviewSchema.parse({ ...req.body, userId });
+      const review = await storage.createRetentionReview(data);
+      res.json(review);
+    } catch (error) {
+      console.error("Error creating retention review:", error);
+      res.status(400).json({ error: "Invalid retention review data" });
+    }
+  });
+
+  const retentionReviewUpdateSchema = z.object({
+    quality: z.number().int().min(0).max(5),
+  });
+
+  app.patch("/api/retention/reviews/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reviewId = req.params.id;
+      
+      // Validate quality rating (0-5) using Zod
+      const { quality } = retentionReviewUpdateSchema.parse(req.body);
+      const currentReview = await storage.getRetentionReviews(userId);
+      const review = currentReview.find(r => r.id === reviewId);
+      
+      if (!review) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+
+      // SM-2 algorithm
+      let easeFactor = review.easeFactor || 2.5;
+      let interval = review.intervalDays || 1;
+      let masteryLevel = review.masteryLevel || 0;
+
+      if (quality < 3) {
+        // Failed recall - reset interval
+        interval = 1;
+        masteryLevel = Math.max(0, masteryLevel - 1);
+      } else {
+        // Successful recall - increase interval
+        if (review.reviewCount === 0) {
+          interval = 1;
+        } else if (review.reviewCount === 1) {
+          interval = 6;
+        } else {
+          interval = Math.round(interval * easeFactor);
+        }
+        masteryLevel = Math.min(5, masteryLevel + 1);
+      }
+
+      // Update ease factor
+      easeFactor = easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+      easeFactor = Math.max(1.3, easeFactor);
+
+      const nextReviewAt = new Date();
+      nextReviewAt.setDate(nextReviewAt.getDate() + interval);
+
+      const updates = {
+        masteryLevel,
+        easeFactor,
+        intervalDays: interval,
+        lastReviewedAt: new Date(),
+        nextReviewAt,
+        reviewCount: (review.reviewCount || 0) + 1,
+      };
+
+      const updated = await storage.updateRetentionReview(userId, reviewId, updates);
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating retention review:", error);
+      res.status(400).json({ error: "Failed to update retention review" });
     }
   });
 

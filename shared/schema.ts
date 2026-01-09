@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, boolean, jsonb, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, boolean, jsonb, timestamp, index, real } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -871,6 +871,40 @@ export const insertApplyChallengeAttemptSchema = createInsertSchema(applyChallen
 
 export type InsertApplyChallengeAttempt = z.infer<typeof insertApplyChallengeAttemptSchema>;
 export type ApplyChallengeAttempt = typeof applyChallengeAttempts.$inferSelect;
+
+// --- REINFORCE Retention Reviews (Spaced Repetition tracking) ---
+
+export const retentionReviews = pgTable("retention_reviews", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  week: integer("week").notNull(),
+  conceptId: varchar("concept_id").notNull(), // Unique identifier for the concept
+  conceptType: varchar("concept_type").notNull(), // 'formula', 'definition', 'procedure'
+  conceptText: text("concept_text").notNull(),
+  domain: integer("domain").notNull(),
+  masteryLevel: integer("mastery_level").notNull().default(0), // 0-5 SM-2 style
+  easeFactor: real("ease_factor").notNull().default(2.5), // SM-2 ease factor
+  intervalDays: integer("interval_days").notNull().default(1), // Days until next review
+  lastReviewedAt: timestamp("last_reviewed_at"),
+  nextReviewAt: timestamp("next_review_at"),
+  reviewCount: integer("review_count").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const retentionReviewsRelations = relations(retentionReviews, ({ one }) => ({
+  user: one(users, {
+    fields: [retentionReviews.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertRetentionReviewSchema = createInsertSchema(retentionReviews).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertRetentionReview = z.infer<typeof insertRetentionReviewSchema>;
+export type RetentionReview = typeof retentionReviews.$inferSelect;
 
 // --- Feedback & Testimonials ---
 
