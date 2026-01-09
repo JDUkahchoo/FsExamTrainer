@@ -62,6 +62,8 @@ import type {
   InsertFlashcardMnemonic,
   FlashcardTriadProgress,
   InsertFlashcardTriadProgress,
+  FlashcardReviewSession,
+  InsertFlashcardReviewSession,
   DailyQuest,
   InsertDailyQuest,
   ReviewSchedule,
@@ -106,6 +108,7 @@ import {
   flashcardFeynmanScores,
   flashcardMnemonics,
   flashcardTriadProgress,
+  flashcardReviewSessions,
   dailyQuests,
   reviewSchedule,
   userDifficultySettings,
@@ -162,6 +165,12 @@ export interface IStorage {
   getFlashcardTriadProgress(userId: string, flashcardId: string): Promise<FlashcardTriadProgress | undefined>;
   getAllFlashcardTriadProgress(userId: string): Promise<FlashcardTriadProgress[]>;
   upsertFlashcardTriadProgress(progress: InsertFlashcardTriadProgress): Promise<FlashcardTriadProgress>;
+  
+  // Flashcard Review Sessions methods (timestamped tracking)
+  getFlashcardReviewSessions(userId: string, date?: Date): Promise<FlashcardReviewSession[]>;
+  getTodayFlashcardSessions(userId: string): Promise<FlashcardReviewSession[]>;
+  createFlashcardReviewSession(session: InsertFlashcardReviewSession): Promise<FlashcardReviewSession>;
+  completeFlashcardReviewSession(sessionId: string, data: { cardsReviewed: number; avgMasteryRating?: number; domainBreakdown?: Record<string, { reviewed: number; avgRating: number }>; timeSpentSeconds: number }): Promise<FlashcardReviewSession>;
 
   // Practice Exam methods
   getPracticeExams(userId: string): Promise<PracticeExam[]>;
@@ -2850,6 +2859,91 @@ export class DatabaseStorage implements IStorage {
       items: items.sort((a, b) => a.retentionPercent - b.retentionPercent),
       summary: { avgRetention, itemsDue, itemsAtRisk }
     };
+  }
+
+  // --- Flashcard Review Sessions Methods ---
+
+  async getFlashcardReviewSessions(userId: string, date?: Date): Promise<FlashcardReviewSession[]> {
+    if (date) {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      return await db
+        .select()
+        .from(flashcardReviewSessions)
+        .where(and(
+          eq(flashcardReviewSessions.userId, userId),
+          gte(flashcardReviewSessions.startedAt, startOfDay),
+          lte(flashcardReviewSessions.startedAt, endOfDay)
+        ))
+        .orderBy(desc(flashcardReviewSessions.startedAt));
+    }
+    
+    return await db
+      .select()
+      .from(flashcardReviewSessions)
+      .where(eq(flashcardReviewSessions.userId, userId))
+      .orderBy(desc(flashcardReviewSessions.startedAt));
+  }
+
+  async getTodayFlashcardSessions(userId: string): Promise<FlashcardReviewSession[]> {
+    return this.getFlashcardReviewSessions(userId, new Date());
+  }
+
+  async createFlashcardReviewSession(session: InsertFlashcardReviewSession): Promise<FlashcardReviewSession> {
+    const [created] = await db
+      .insert(flashcardReviewSessions)
+      .values(session)
+      .returning();
+    return created;
+  }
+
+  async completeFlashcardReviewSession(
+    sessionId: string, 
+    data: { 
+      cardsReviewed: number; 
+      avgMasteryRating?: number; 
+      domainBreakdown?: Record<string, { reviewed: number; avgRating: number }>; 
+      timeSpentSeconds: number;
+    }
+  ): Promise<FlashcardReviewSession> {
+    const [updated] = await db
+      .update(flashcardReviewSessions)
+      .set({
+        cardsReviewed: data.cardsReviewed,
+        avgMasteryRating: data.avgMasteryRating,
+        domainBreakdown: data.domainBreakdown,
+        timeSpentSeconds: data.timeSpentSeconds,
+        completedAt: new Date()
+      })
+      .where(eq(flashcardReviewSessions.id, sessionId))
+      .returning();
+    return updated;
+  }
+
+  // Award XP for flashcard review session (idempotent per period per day)
+  async awardFlashcardReviewXp(userId: string, sessionId: string, period: string): Promise<{ awarded: boolean; xp: number }> {
+    const today = new Date().toISOString().split('T')[0];
+    const activityKey = `flashcard-review:${today}:${period}`;
+    
+    // Check if XP was already awarded for this period today
+    const hasGrant = await this.hasXpGrant(userId, activityKey);
+    if (hasGrant) {
+      return { awarded: false, xp: 0 };
+    }
+    
+    // Award XP (15 XP for flashcard review session)
+    const result = await this.awardXp(userId, 15, activityKey);
+    
+    // Mark session as XP awarded
+    await db
+      .update(flashcardReviewSessions)
+      .set({ xpAwarded: true })
+      .where(eq(flashcardReviewSessions.id, sessionId));
+    
+    return { awarded: result.awarded, xp: result.awarded ? 15 : 0 };
   }
 }
 

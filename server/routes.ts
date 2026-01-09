@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
@@ -831,6 +831,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error saving triad progress:", error);
       res.status(400).json({ error: "Invalid triad progress data" });
+    }
+  });
+
+  // Flashcard Review Sessions routes (timestamped tracking)
+  app.get("/api/flashcards/sessions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const sessions = await storage.getFlashcardReviewSessions(userId);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch review sessions" });
+    }
+  });
+
+  app.get("/api/flashcards/sessions/today", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const sessions = await storage.getTodayFlashcardSessions(userId);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch today's sessions" });
+    }
+  });
+
+  app.post("/api/flashcards/sessions/start", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const period = getReviewPeriod();
+      
+      const session = await storage.createFlashcardReviewSession({
+        userId,
+        period,
+        cardsReviewed: 0,
+        timeSpentSeconds: 0,
+        xpAwarded: false
+      });
+      
+      res.json(session);
+    } catch (error) {
+      console.error("Error starting review session:", error);
+      res.status(400).json({ error: "Failed to start review session" });
+    }
+  });
+
+  app.post("/api/flashcards/sessions/:sessionId/complete", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { sessionId } = req.params;
+      const { cardsReviewed, avgMasteryRating, domainBreakdown, timeSpentSeconds } = req.body;
+      
+      // Complete the session
+      const session = await storage.completeFlashcardReviewSession(sessionId, {
+        cardsReviewed,
+        avgMasteryRating,
+        domainBreakdown,
+        timeSpentSeconds
+      });
+      
+      // Award XP (idempotent per period per day)
+      const xpResult = await storage.awardFlashcardReviewXp(userId, sessionId, session.period);
+      
+      res.json({ 
+        session, 
+        xpAwarded: xpResult.awarded,
+        xpAmount: xpResult.xp 
+      });
+    } catch (error) {
+      console.error("Error completing review session:", error);
+      res.status(400).json({ error: "Failed to complete review session" });
     }
   });
 
