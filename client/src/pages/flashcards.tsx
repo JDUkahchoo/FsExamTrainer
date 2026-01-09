@@ -131,14 +131,16 @@ export default function FlashcardsPage() {
           : 0;
         const timeSpent = Math.floor((Date.now() - stats.startTime) / 1000);
         
+        const blob = new Blob([JSON.stringify({
+          cardsReviewed: stats.cardsReviewed,
+          avgMasteryRating: avgMastery,
+          domainBreakdown: stats.domainsReviewed,
+          timeSpentSeconds: timeSpent
+        })], { type: 'application/json' });
+        
         navigator.sendBeacon(
           `/api/flashcards/sessions/${currentSessionId}/complete`,
-          JSON.stringify({
-            cardsReviewed: stats.cardsReviewed,
-            avgMasteryRating: avgMastery,
-            domainBreakdown: stats.domainsReviewed,
-            timeSpentSeconds: timeSpent
-          })
+          blob
         );
       }
     };
