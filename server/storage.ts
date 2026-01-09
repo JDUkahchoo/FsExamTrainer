@@ -2049,7 +2049,15 @@ export class DatabaseStorage implements IStorage {
         ? (previousResults.filter(r => r.isCorrect).length / previousResults.length) * 100
         : 0;
 
-      const weeklyImprovement = currentAccuracy - previousAccuracy;
+      // Only calculate improvement if there's activity in both weeks, otherwise show 0
+      // This prevents misleading negative values when there's no recent activity
+      let weeklyImprovement = 0;
+      if (recentResults.length > 0 && previousResults.length > 0) {
+        weeklyImprovement = currentAccuracy - previousAccuracy;
+      }
+      // Floor at 0% - negative values are confusing (show stable instead)
+      const displayImprovement = Math.max(0, weeklyImprovement);
+      
       let trend: 'improving' | 'stable' | 'declining' = 'stable';
       if (weeklyImprovement > 5) trend = 'improving';
       else if (weeklyImprovement < -5) trend = 'declining';
@@ -2057,7 +2065,7 @@ export class DatabaseStorage implements IStorage {
       learningVelocity.push({
         domain: DOMAIN_NAMES[d],
         domainNumber: d,
-        weeklyImprovement: Math.round(weeklyImprovement * 10) / 10,
+        weeklyImprovement: Math.round(displayImprovement * 10) / 10,
         currentAccuracy: Math.round(currentAccuracy * 10) / 10,
         previousAccuracy: Math.round(previousAccuracy * 10) / 10,
         trend

@@ -322,6 +322,47 @@ export const insertFlashcardTriadProgressSchema = createInsertSchema(flashcardTr
 export type InsertFlashcardTriadProgress = z.infer<typeof insertFlashcardTriadProgressSchema>;
 export type FlashcardTriadProgress = typeof flashcardTriadProgress.$inferSelect;
 
+// --- Flashcard Review Sessions (Timestamped tracking for multiple daily reviews) ---
+
+export const REVIEW_PERIODS = ['morning', 'afternoon', 'evening'] as const;
+export type ReviewPeriod = typeof REVIEW_PERIODS[number];
+
+export const flashcardReviewSessions = pgTable("flashcard_review_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  period: varchar("period").notNull(), // 'morning', 'afternoon', 'evening'
+  cardsReviewed: integer("cards_reviewed").notNull().default(0),
+  avgMasteryRating: real("avg_mastery_rating"), // Average rating for this session (1-5)
+  domainBreakdown: jsonb("domain_breakdown"), // { [domain]: { reviewed, avgRating } }
+  timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  xpAwarded: boolean("xp_awarded").notNull().default(false), // Idempotency flag for XP
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+});
+
+export const flashcardReviewSessionsRelations = relations(flashcardReviewSessions, ({ one }) => ({
+  user: one(users, {
+    fields: [flashcardReviewSessions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertFlashcardReviewSessionSchema = createInsertSchema(flashcardReviewSessions).omit({
+  id: true,
+  startedAt: true,
+});
+
+export type InsertFlashcardReviewSession = z.infer<typeof insertFlashcardReviewSessionSchema>;
+export type FlashcardReviewSession = typeof flashcardReviewSessions.$inferSelect;
+
+// Helper to determine review period from timestamp
+export function getReviewPeriod(date: Date = new Date()): ReviewPeriod {
+  const hour = date.getHours();
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 17) return 'afternoon';
+  return 'evening';
+}
+
 // --- Practice Exam Results ---
 
 export const practiceExams = pgTable("practice_exams", {
@@ -574,6 +615,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   flashcardFeynmanScores: many(flashcardFeynmanScores),
   flashcardMnemonics: many(flashcardMnemonics),
   flashcardTriadProgress: many(flashcardTriadProgress),
+  flashcardReviewSessions: many(flashcardReviewSessions),
   practiceExams: many(practiceExams),
   practiceExamResults: many(practiceExamResults),
   pretestResults: many(pretestResults),
