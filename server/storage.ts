@@ -2263,6 +2263,25 @@ export class DatabaseStorage implements IStorage {
       ));
 
     if (existingQuests.length > 0) {
+      // Check if flashcard quest exists - if not, add it (for backwards compatibility)
+      const hasFlashcardQuest = existingQuests.some(q => q.questType === 'complete_flashcards');
+      if (!hasFlashcardQuest) {
+        const [flashcardQuest] = await db
+          .insert(dailyQuests)
+          .values({
+            userId,
+            date: today,
+            questType: 'complete_flashcards',
+            title: 'Flashcard Master',
+            description: 'Review 15 flashcards to reinforce your memory',
+            targetCount: 15,
+            xpReward: 50,
+            currentCount: 0,
+            isCompleted: false
+          })
+          .returning();
+        return [...existingQuests, flashcardQuest];
+      }
       return existingQuests;
     }
 
@@ -2272,15 +2291,19 @@ export class DatabaseStorage implements IStorage {
       .filter(w => w.predictedStruggle)
       .map(w => w.domain);
 
-    // Generate 3-4 daily quests
-    const questTemplates = [
+    // Core quests that are always included
+    const coreQuests = [
       {
         questType: 'complete_flashcards',
         title: 'Flashcard Master',
         description: 'Review 15 flashcards to reinforce your memory',
         targetCount: 15,
         xpReward: 50
-      },
+      }
+    ];
+
+    // Optional quests to randomly select from
+    const optionalQuests = [
       {
         questType: 'complete_lesson',
         title: 'Lesson Learner',
@@ -2307,7 +2330,7 @@ export class DatabaseStorage implements IStorage {
     // Add a weak domain quest if applicable
     if (weakDomains.length > 0) {
       const weakDomain = weakDomains[0];
-      questTemplates.push({
+      optionalQuests.push({
         questType: 'review_weak_domain',
         title: `${weakDomain} Focus`,
         description: `Practice 5 questions in your weak area: ${weakDomain}`,
@@ -2316,9 +2339,10 @@ export class DatabaseStorage implements IStorage {
       });
     }
 
-    // Select 3-4 quests randomly
-    const shuffled = questTemplates.sort(() => Math.random() - 0.5);
-    const selectedQuests = shuffled.slice(0, 4);
+    // Select 2-3 optional quests randomly, then combine with core quests
+    const shuffled = optionalQuests.sort(() => Math.random() - 0.5);
+    const selectedOptional = shuffled.slice(0, 3);
+    const selectedQuests = [...coreQuests, ...selectedOptional];
 
     const createdQuests: DailyQuest[] = [];
     for (const quest of selectedQuests) {
