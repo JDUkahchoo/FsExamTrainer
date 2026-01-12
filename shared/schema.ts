@@ -27,6 +27,69 @@ export const DOMAINS: Domain[] = [
   'Applied Mathematics & Statistics'
 ];
 
+// --- Exam Track Types ---
+export type ExamTrack = 'fs' | 'ps' | 'state-specific';
+
+export const EXAM_TRACKS: { id: ExamTrack; name: string; status: 'ready' | 'coming-soon'; description: string }[] = [
+  { id: 'fs', name: 'FS Exam', status: 'ready', description: 'Fundamentals of Surveying - Entry-level exam' },
+  { id: 'ps', name: 'PS Exam', status: 'coming-soon', description: 'Principles and Practice of Surveying - Professional licensure exam' },
+  { id: 'state-specific', name: 'State-Specific', status: 'coming-soon', description: 'State laws, rules, and regulations for your jurisdiction' },
+];
+
+// --- US States for Surveying Licensure ---
+export const US_STATES = [
+  { code: 'TX', name: 'Texas', available: true },
+  { code: 'AL', name: 'Alabama', available: false },
+  { code: 'AK', name: 'Alaska', available: false },
+  { code: 'AZ', name: 'Arizona', available: false },
+  { code: 'AR', name: 'Arkansas', available: false },
+  { code: 'CA', name: 'California', available: false },
+  { code: 'CO', name: 'Colorado', available: false },
+  { code: 'CT', name: 'Connecticut', available: false },
+  { code: 'DE', name: 'Delaware', available: false },
+  { code: 'FL', name: 'Florida', available: false },
+  { code: 'GA', name: 'Georgia', available: false },
+  { code: 'HI', name: 'Hawaii', available: false },
+  { code: 'ID', name: 'Idaho', available: false },
+  { code: 'IL', name: 'Illinois', available: false },
+  { code: 'IN', name: 'Indiana', available: false },
+  { code: 'IA', name: 'Iowa', available: false },
+  { code: 'KS', name: 'Kansas', available: false },
+  { code: 'KY', name: 'Kentucky', available: false },
+  { code: 'LA', name: 'Louisiana', available: false },
+  { code: 'ME', name: 'Maine', available: false },
+  { code: 'MD', name: 'Maryland', available: false },
+  { code: 'MA', name: 'Massachusetts', available: false },
+  { code: 'MI', name: 'Michigan', available: false },
+  { code: 'MN', name: 'Minnesota', available: false },
+  { code: 'MS', name: 'Mississippi', available: false },
+  { code: 'MO', name: 'Missouri', available: false },
+  { code: 'MT', name: 'Montana', available: false },
+  { code: 'NE', name: 'Nebraska', available: false },
+  { code: 'NV', name: 'Nevada', available: false },
+  { code: 'NH', name: 'New Hampshire', available: false },
+  { code: 'NJ', name: 'New Jersey', available: false },
+  { code: 'NM', name: 'New Mexico', available: false },
+  { code: 'NY', name: 'New York', available: false },
+  { code: 'NC', name: 'North Carolina', available: false },
+  { code: 'ND', name: 'North Dakota', available: false },
+  { code: 'OH', name: 'Ohio', available: false },
+  { code: 'OK', name: 'Oklahoma', available: false },
+  { code: 'OR', name: 'Oregon', available: false },
+  { code: 'PA', name: 'Pennsylvania', available: false },
+  { code: 'RI', name: 'Rhode Island', available: false },
+  { code: 'SC', name: 'South Carolina', available: false },
+  { code: 'SD', name: 'South Dakota', available: false },
+  { code: 'TN', name: 'Tennessee', available: false },
+  { code: 'UT', name: 'Utah', available: false },
+  { code: 'VT', name: 'Vermont', available: false },
+  { code: 'VA', name: 'Virginia', available: false },
+  { code: 'WA', name: 'Washington', available: false },
+  { code: 'WV', name: 'West Virginia', available: false },
+  { code: 'WI', name: 'Wisconsin', available: false },
+  { code: 'WY', name: 'Wyoming', available: false },
+] as const;
+
 // --- Replit Auth Tables (from blueprint:javascript_log_in_with_replit) ---
 
 // Session storage table for Replit Auth
@@ -839,6 +902,8 @@ export const userPreferences = pgTable("user_preferences", {
   currentCycle: integer("current_cycle").notNull().default(1), // Current study cycle (1, 2, 3...)
   customWeeklyDomains: jsonb("custom_weekly_domains"), // Week-by-week domain assignments, e.g., { "1": [1, 2], "2": [3, 5], "3": [1, 4] }
   customTimeline: integer("custom_timeline").default(12), // Number of weeks for custom study plan (8-16)
+  preferredExamTrack: text("preferred_exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'state-specific'
+  stateCode: text("state_code").default('TX'), // US state code (e.g., 'TX' for Texas)
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 

@@ -1421,6 +1421,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       
+      // Validate exam track - only allow 'fs' for now (ps and state-specific are coming soon)
+      const requestedExamTrack = req.body.preferredExamTrack;
+      if (requestedExamTrack && requestedExamTrack !== 'fs') {
+        return res.status(400).json({ error: "Only FS exam is currently available. PS and State-Specific exams are coming soon." });
+      }
+      
       // Get existing preferences to merge with partial updates
       const existing = await storage.getUserPreferences(userId);
       const merged = {
@@ -1432,6 +1438,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentCycle: req.body.currentCycle ?? existing?.currentCycle ?? 1,
         customWeeklyDomains: req.body.customWeeklyDomains !== undefined ? req.body.customWeeklyDomains : existing?.customWeeklyDomains,
         customTimeline: req.body.customTimeline ?? existing?.customTimeline ?? 12,
+        preferredExamTrack: req.body.preferredExamTrack ?? existing?.preferredExamTrack ?? 'fs',
+        stateCode: req.body.stateCode ?? existing?.stateCode ?? 'TX',
       };
       
       const data = insertUserPreferencesSchema.parse(merged);

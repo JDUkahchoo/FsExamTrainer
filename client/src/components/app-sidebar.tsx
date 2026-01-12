@@ -1,5 +1,7 @@
 import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
+import { Badge } from '@/components/ui/badge';
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
 } from '@/components/ui/sidebar';
+import { EXAM_TRACKS, US_STATES, type UserPreferences, type ExamTrack } from '@shared/schema';
 
 const menuItems = [
   { id: '/getting-started', icon: HelpCircle, label: 'Getting Started', testId: 'nav-getting-started' },
@@ -36,6 +39,15 @@ const policyItems = [
 
 export function AppSidebar() {
   const [location] = useLocation();
+  
+  const { data: preferences } = useQuery<UserPreferences>({
+    queryKey: ['/api/preferences'],
+  });
+
+  const currentExam = (preferences?.preferredExamTrack as ExamTrack) || 'fs';
+  const currentState = preferences?.stateCode;
+  const examTrack = EXAM_TRACKS.find(t => t.id === currentExam);
+  const stateName = currentState ? US_STATES.find(s => s.code === currentState)?.name : null;
 
   return (
     <Sidebar>
@@ -45,8 +57,10 @@ export function AppSidebar() {
             <GraduationCap className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-sidebar-foreground">FS Exam</h2>
-            <p className="text-xs text-muted-foreground">Study Guide</p>
+            <h2 className="text-lg font-semibold text-sidebar-foreground">{examTrack?.name || 'FS Exam'}</h2>
+            <p className="text-xs text-muted-foreground">
+              {stateName ? `${stateName} Study Guide` : 'Study Guide'}
+            </p>
           </div>
         </div>
       </SidebarHeader>

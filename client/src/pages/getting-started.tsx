@@ -5,11 +5,13 @@ import { Clock, TrendingUp, BookOpen, Zap, AlertCircle, CheckCircle2, Brain, Cli
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { UserPreferences, User } from "@shared/schema";
+import { EXAM_TRACKS, US_STATES, type ExamTrack } from "@shared/schema";
 import { StudyCoachBriefing } from "@/components/study-coach-briefing";
 import { DailyQuestsPanel } from "@/components/daily-quests-panel";
 import { ReviewAlerts } from "@/components/review-alerts";
 import { WeeklyLeaderboard } from "@/components/weekly-leaderboard";
 import { ForgettingCurveChart } from "@/components/forgetting-curve-chart";
+import { ExamSelector } from "@/components/exam-selector";
 
 export default function GettingStarted() {
   const [, setLocation] = useLocation();
@@ -175,12 +177,26 @@ export default function GettingStarted() {
       {/* Welcome Section */}
       <div className="space-y-4">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold">Getting Started with the FS Exam Study Guide</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-4xl font-bold">Getting Started with the FS Exam Study Guide</h1>
+            {preferences?.stateCode && (
+              <Badge variant="outline" className="text-sm">
+                {US_STATES.find(s => s.code === preferences.stateCode)?.name || preferences.stateCode}
+              </Badge>
+            )}
+          </div>
           <p className="text-lg text-muted-foreground">
             Your complete preparation system for the NCEES Fundamentals of Surveying (FS) exam. Follow this guide to get the most out of your study journey.
           </p>
         </div>
       </div>
+
+      {/* Exam Selection - Only shown when logged in */}
+      {isLoggedIn && (
+        <Card className="p-6">
+          <ExamSelector />
+        </Card>
+      )}
 
       {/* Study Dashboard - Only shown when logged in */}
       {isLoggedIn && (

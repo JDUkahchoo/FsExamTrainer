@@ -41,6 +41,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Getting Started & Study Strategy Page:** Comprehensive onboarding for new users, offering a quick start guide, study tool overview, detailed study strategy comparisons, and success tips. Also includes Feedback, Testimonials, Privacy Policy, and Disclaimer pages.
 -   **Reference Manual Companion:** Dual textbook reference system with all 73 lessons mapped to both Surveyor Reference Manual (SRM) 7th Edition and Elementary Surveying 15th Edition (Ghilani & Wolf). Users can toggle between textbooks to view chapter mappings, study tips, and page references. Stats and domain views dynamically update based on selected book.
 -   **Complete NCEES Coverage:** All 7 NCEES exam knowledge areas fully covered including Safety, Supervision, Communication (Domain 6), and UAS/Drone Operations (Domain 2) per the official FS CBT exam specifications.
+-   **Multi-Exam Support (Extensible):** Users can select their licensure state and exam track (FS, PS, State-Specific). Currently FS is available with PS and State-Specific marked as "Coming Soon". User preferences store `preferredExamTrack` and `stateCode`. All 50 US states are listed with Texas initially marked as available. Sidebar and header dynamically update to reflect selected exam track and state.
 
 **Technical Implementation:**
 -   **Frontend:** React with TypeScript, Tailwind CSS, Shadcn UI, Wouter, TanStack Query, and Lucide React.
@@ -63,6 +64,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Question pool randomization system utilizes `variationGroup` and `variationNumber` fields, tracking `seenQuestionVariations` to prioritize unseen variations.
 -   **Question Archetype System:** Template-based question generation in `shared/questionArchetypes.ts`. Uses `FillInBlankArchetype` (computational with paramRanges), `MultipleChoiceArchetype` (5 curated question variants), and `ConceptualFillInBlankArchetype` patterns. Seeded RNG (mulberry32) ensures deterministic variations. Archetype IDs follow pattern: `d{domain}-lesson-{order:02}-q{num:02}-v{variation}`.
 -   **XP Idempotency System:** `xpGrants` table tracks (userId, activityKey) pairs to prevent duplicate XP awards. Activity keys are deterministic: `read:week{N}:chapter{M}`, `apply:challenge:{id}`, `reinforce:review:{id}`. Backend `awardXp()` checks `hasXpGrant()` before granting XP and returns `awarded: true/false` to frontend.
+-   **Multi-Exam Architecture:** `EXAM_TRACKS` constant defines available exam tracks (fs, ps, state-specific) with status flags. `US_STATES` constant lists all 50 states with availability flags. `ExamSelector` component in Getting Started page allows users to select state and exam track. Backend validates exam track selection (only 'fs' currently allowed). Sidebar dynamically displays current exam track name and state.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
