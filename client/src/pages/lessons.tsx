@@ -10,7 +10,8 @@ import { getDomainConfig } from '@/lib/domains';
 interface Lesson {
   id: string;
   title: string;
-  domain: number;
+  domain: string;
+  domainNumber: number;
   orderIndex: number;
   difficulty: string;
   estimatedMinutes: number;
@@ -48,7 +49,7 @@ export default function LessonsPage() {
   const completedLessonIds = new Set(progress.filter(p => p.completed).map(p => p.lessonId));
   
   const lessonsByDomain = domains.map(domain => {
-    const domainLessons = lessons.filter(l => l.domain === domain.number);
+    const domainLessons = lessons.filter(l => l.domainNumber === domain.number);
     const completedCount = domainLessons.filter(l => completedLessonIds.has(l.id)).length;
     return {
       domain,
