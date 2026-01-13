@@ -1641,13 +1641,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/lessons/progress", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      console.log(`[Get Progress] Fetching progress for userId: ${userId}`);
-      const progress = await storage.getAllLessonProgress(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      console.log(`[Get Progress] Fetching progress for userId: ${userId}, examTrack: ${examTrack}`);
+      const progress = await storage.getAllLessonProgress(userId, examTrack);
       console.log(`[Get Progress] Found ${progress.length} progress records`);
       res.json(progress);
     } catch (error) {
       console.error("Error fetching lesson progress:", error);
       res.status(500).json({ error: "Failed to fetch lesson progress" });
+    }
+  });
+
+  // Get lesson progress summary (count of completed lessons)
+  app.get("/api/lessons/progress-summary", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const progress = await storage.getAllLessonProgress(userId, examTrack);
+      const completed = progress.filter(p => p.completed).length;
+      const lessons = await storage.getAllLessons(examTrack);
+      res.json({ completed, total: lessons.length });
+    } catch (error) {
+      console.error("Error fetching lesson progress summary:", error);
+      res.status(500).json({ error: "Failed to fetch progress summary" });
+    }
+  });
+
+  // Get study stats for dashboard
+  app.get("/api/study-stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      
+      const progress = await storage.getAllLessonProgress(userId, examTrack);
+      const lessonsCompleted = progress.filter(p => p.completed).length;
+      const lessons = await storage.getAllLessons(examTrack);
+      const totalLessons = lessons.length;
+      
+      // Get XP from storage
+      const xpData = await storage.getUserXp(userId);
+      const totalXp = xpData.xp;
+      
+      // Calculate streak from daily logs
+      const dailyLogs = await storage.getDailyLogs(userId);
+      const today = new Date();
+      let currentStreak = 0;
+      
+      // Sort logs by date descending
+      const sortedLogs = dailyLogs.sort((a, b) => 
+        new Date(b.logDate).getTime() - new Date(a.logDate).getTime()
+      );
+      
+      // Count consecutive days with activity
+      for (let i = 0; i < 30; i++) { // Check last 30 days max
+        const checkDate = new Date(today);
+        checkDate.setDate(checkDate.getDate() - i);
+        const dateStr = checkDate.toISOString().split('T')[0];
+        
+        const hasActivity = sortedLogs.some(log => {
+          const logDate = new Date(log.logDate).toISOString().split('T')[0];
+          return logDate === dateStr;
+        });
+        
+        if (hasActivity) {
+          currentStreak++;
+        } else if (i > 0) { // Skip today if no activity yet
+          break;
+        }
+      }
+      
+      res.json({
+        lessonsCompleted,
+        totalLessons,
+        flashcardsReviewed: 0,
+        quizzesTaken: 0,
+        currentStreak,
+        totalXp
+      });
+    } catch (error) {
+      console.error("Error fetching study stats:", error);
+      res.status(500).json({ error: "Failed to fetch study stats" });
     }
   });
 

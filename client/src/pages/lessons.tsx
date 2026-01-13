@@ -29,10 +29,20 @@ export default function LessonsPage() {
 
   const { data: lessons = [], isLoading } = useQuery<Lesson[]>({
     queryKey: ['/api/lessons', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/lessons?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch lessons');
+      return res.json();
+    }
   });
 
   const { data: progress = [] } = useQuery<LessonProgress[]>({
     queryKey: ['/api/lessons/progress-list', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/lessons/progress-list?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch progress');
+      return res.json();
+    }
   });
 
   const completedLessonIds = new Set(progress.filter(p => p.completed).map(p => p.lessonId));

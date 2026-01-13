@@ -36,10 +36,20 @@ export default function ExamDashboard() {
 
   const { data: stats } = useQuery<StudyStats>({
     queryKey: ['/api/study-stats', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/study-stats?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch stats');
+      return res.json();
+    }
   });
 
   const { data: lessonsProgress } = useQuery<{ completed: number; total: number }>({
-    queryKey: ['/api/lessons/progress', examTrack],
+    queryKey: ['/api/lessons/progress-summary', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/lessons/progress-summary?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch progress');
+      return res.json();
+    }
   });
 
   const { data: preferences } = useQuery<UserPreferences>({

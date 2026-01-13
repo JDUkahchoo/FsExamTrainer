@@ -127,14 +127,24 @@ export default function StudyPlan() {
   // Fetch lesson progress - use staleTime: 0 to always refetch when component mounts
   // This ensures lesson completion status is fresh when returning from lessons
   const { data: lessonProgressData = [] } = useQuery<any[]>({
-    queryKey: ['/api/lessons/progress'],
+    queryKey: ['/api/lessons/progress', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/lessons/progress?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch progress');
+      return res.json();
+    },
     staleTime: 0,
     refetchOnMount: 'always',
   });
 
   // Fetch ALL lessons for study plan distribution
   const { data: allLessons = [] } = useQuery<any[]>({
-    queryKey: ['/api/lessons']
+    queryKey: ['/api/lessons', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/lessons?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch lessons');
+      return res.json();
+    }
   });
 
   // Identify weak domains from pretest results (accuracy < 60%)

@@ -266,7 +266,7 @@ export interface IStorage {
   getLessonWithRandomizedQuestions(userId: string, lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
   getQuestionsByIds(questionIds: string[]): Promise<LessonQuestion[]>;
   getLessonProgress(userId: string, lessonId: string): Promise<LessonProgress | undefined>;
-  getAllLessonProgress(userId: string): Promise<LessonProgress[]>;
+  getAllLessonProgress(userId: string, examTrack?: string): Promise<LessonProgress[]>;
   upsertLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
   createLessonQuestion(question: InsertLessonQuestion): Promise<LessonQuestion>;
@@ -1723,11 +1723,20 @@ export class DatabaseStorage implements IStorage {
     return progress || undefined;
   }
 
-  async getAllLessonProgress(userId: string): Promise<LessonProgress[]> {
-    return await db
+  async getAllLessonProgress(userId: string, examTrack?: string): Promise<LessonProgress[]> {
+    const allProgress = await db
       .select()
       .from(lessonProgress)
       .where(eq(lessonProgress.userId, userId));
+    
+    // If examTrack is specified, filter to only lessons belonging to that exam
+    if (examTrack) {
+      const examLessons = await this.getAllLessons(examTrack);
+      const examLessonIds = new Set(examLessons.map(l => l.id));
+      return allProgress.filter(p => examLessonIds.has(p.lessonId));
+    }
+    
+    return allProgress;
   }
 
   async upsertLessonProgress(progressData: InsertLessonProgress): Promise<LessonProgress> {
