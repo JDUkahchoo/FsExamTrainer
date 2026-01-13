@@ -60,10 +60,11 @@ interface SubmitResponse {
 }
 
 export default function LessonPage() {
-  const [, params] = useRoute("/lesson/:id");
+  const [, params] = useRoute("/app/:examTrack/lesson/:id");
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const lessonId = params?.id;
+  const examTrack = params?.examTrack || 'fs';
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -139,10 +140,10 @@ export default function LessonPage() {
             <p className="text-center text-muted-foreground">Lesson not found</p>
             <Button
               className="mt-4 w-full"
-              onClick={() => navigate("/study-plan")}
+              onClick={() => navigate(`/app/${examTrack}/lessons`)}
               data-testid="button-back-to-study-plan"
             >
-              Back to Study Plan
+              Back to Lessons
             </Button>
           </CardContent>
         </Card>
@@ -173,11 +174,11 @@ export default function LessonPage() {
             </div>
             <Button
               className="w-full"
-              onClick={() => navigate("/study-plan")}
+              onClick={() => navigate(`/app/${examTrack}/lessons`)}
               data-testid="button-back-to-study-plan"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Study Plan
+              Back to Lessons
             </Button>
           </CardContent>
         </Card>
@@ -382,12 +383,12 @@ export default function LessonPage() {
                 </Button>
               )}
               <Button
-                onClick={() => navigate("/study-plan")}
+                onClick={() => navigate(`/app/${examTrack}/lessons`)}
                 variant={submitMutation.data?.passed ? "default" : "outline"}
                 className="flex-1"
                 data-testid="button-back-to-study-plan-from-results"
               >
-                Back to Study Plan
+                Back to Lessons
               </Button>
             </div>
           </CardContent>
@@ -401,7 +402,7 @@ export default function LessonPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <Link href="/study-plan">
+          <Link href={`/app/${examTrack}/lessons`}>
             <Button variant="ghost" size="sm" data-testid="button-back-to-study-plan-header">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
