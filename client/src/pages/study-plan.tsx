@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -49,9 +49,11 @@ import {
   getSRMWeeklyChapters,
   getChaptersForLessons 
 } from '@shared/data/referenceManualMappings';
+import { useExamTrack } from '@/contexts/exam-track-context';
 
 export default function StudyPlan() {
   const [, navigate] = useLocation();
+  const { examTrack, examName, domains: examDomains } = useExamTrack();
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
   const [expandedDailyLogs, setExpandedDailyLogs] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -67,6 +69,34 @@ export default function StudyPlan() {
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
+
+  if (examTrack === 'ps') {
+    return (
+      <div className="p-4 md:p-6 lg:p-8">
+        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-study-plan">Study Plan</h1>
+        <Card className="p-8">
+          <div className="text-center">
+            <Construction className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <h2 className="text-2xl font-bold mb-2">Coming Soon for {examName}</h2>
+            <p className="text-muted-foreground max-w-md mx-auto mb-6">
+              The domain-based study plan for the PS exam is currently under development.
+              In the meantime, you can study using flashcards and interactive lessons organized by domain.
+            </p>
+            <div className="flex flex-col gap-3 max-w-sm mx-auto">
+              <Button onClick={() => navigate('/flashcards')} data-testid="button-go-flashcards">
+                <BookOpen className="w-4 h-4 mr-2" />
+                Study Flashcards
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/resources')} data-testid="button-go-resources">
+                <Layers className="w-4 h-4 mr-2" />
+                Browse Resources
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   // Fetch all week progress from database
   const { data: weekProgressData, isLoading } = useQuery<WeekProgress[]>({
