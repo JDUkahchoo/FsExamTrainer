@@ -104,48 +104,52 @@ export default function GettingStarted() {
     }
   ];
 
+  const currentExamTrack = (preferences?.preferredExamTrack as string) || 'fs';
+  
+  const getExamLink = (path: string) => `/app/${currentExamTrack}${path}`;
+  
   const tools = [
     {
       icon: BookOpen,
       name: 'Study Plan',
       description: 'Your weekly roadmap with interactive lessons following the READ → FOCUS → APPLY → REINFORCE framework. Track your progress week by week.',
-      link: '/study-plan'
+      link: getExamLink('/study-plan')
     },
     {
       icon: Brain,
       name: 'Practice Quiz',
       description: 'Test your knowledge with domain-specific or exam-style quizzes. Get instant feedback and detailed explanations for every question.',
-      link: '/quiz'
+      link: getExamLink('/quiz')
     },
     {
       icon: ClipboardCheck,
       name: 'Flashcards',
       description: 'Master key concepts with spaced repetition. Two decks to choose from with flip animations and mastery tracking.',
-      link: '/flashcards'
+      link: getExamLink('/flashcards')
     },
     {
       icon: GraduationCap,
       name: 'Practice Exam',
       description: 'Full 110-question exam simulator with timer, realistic conditions, and detailed score breakdown by domain.',
-      link: '/exam'
+      link: getExamLink('/exam')
     },
     {
       icon: FileText,
       name: 'Study Notes',
       description: 'Rich text editor for taking notes each week. Auto-saves and syncs with your study plan for easy reference.',
-      link: '/notes'
+      link: getExamLink('/notes')
     },
     {
       icon: BarChart3,
       name: 'Progress Dashboard',
       description: 'Track your improvement over time with visual analytics, study streaks, achievements, and domain mastery insights.',
-      link: '/progress'
+      link: getExamLink('/progress')
     },
     {
       icon: BookMarked,
       name: 'Resources',
       description: 'Access formula sheets, memory techniques, and professional references to support your studying.',
-      link: '/resources'
+      link: getExamLink('/resources')
     }
   ];
 

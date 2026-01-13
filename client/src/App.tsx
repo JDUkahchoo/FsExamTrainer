@@ -1,17 +1,23 @@
-// From blueprint:javascript_log_in_with_replit
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import { WelcomeDialog } from "@/components/welcome-dialog";
-import { GettingStartedOnboarding } from "@/components/getting-started-onboarding";
 import { ExamTrackProvider } from "@/contexts/exam-track-context";
+import { ExamLayout } from "@/components/exam-layout";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
+import GettingStartedPage from "@/pages/getting-started";
+import FeedbackPage from "@/pages/feedback";
+import TestimonialsPage from "@/pages/testimonials";
+import PrivacyPolicyPage from "@/pages/privacy-policy";
+import DisclaimerPage from "@/pages/disclaimer";
+import NotFound from "@/pages/not-found";
+
+import ExamDashboard from "@/pages/exam-dashboard";
 import StudyPlan from "@/pages/study-plan";
+import LessonsPage from "@/pages/lessons";
 import PracticeQuizPage from "@/pages/practice-quiz";
 import FlashcardsPage from "@/pages/flashcards";
 import PracticeExamPage from "@/pages/practice-exam";
@@ -21,14 +27,32 @@ import ResourcesPage from "@/pages/resources";
 import PretestPage from "@/pages/pretest";
 import PretestResultsPage from "@/pages/pretest-results";
 import LessonPage from "@/pages/lesson";
-import StrategyPage from "@/pages/strategy";
-import GettingStartedPage from "@/pages/getting-started";
-import FeedbackPage from "@/pages/feedback";
-import TestimonialsPage from "@/pages/testimonials";
-import PrivacyPolicyPage from "@/pages/privacy-policy";
-import DisclaimerPage from "@/pages/disclaimer";
 import ReferenceCompanionPage from "@/pages/reference-companion";
-import NotFound from "@/pages/not-found";
+
+function ExamRoutes() {
+  return (
+    <ExamLayout>
+      <ExamTrackProvider>
+        <Switch>
+          <Route path="/app/:examTrack/dashboard" component={ExamDashboard} />
+          <Route path="/app/:examTrack/study-plan" component={StudyPlan} />
+          <Route path="/app/:examTrack/lessons" component={LessonsPage} />
+          <Route path="/app/:examTrack/quiz" component={PracticeQuizPage} />
+          <Route path="/app/:examTrack/flashcards" component={FlashcardsPage} />
+          <Route path="/app/:examTrack/exam" component={PracticeExamPage} />
+          <Route path="/app/:examTrack/notes" component={NotesPage} />
+          <Route path="/app/:examTrack/progress" component={ProgressPage} />
+          <Route path="/app/:examTrack/resources" component={ResourcesPage} />
+          <Route path="/app/:examTrack/reference-companion" component={ReferenceCompanionPage} />
+          <Route path="/app/:examTrack/pretest" component={PretestPage} />
+          <Route path="/app/:examTrack/pretest/results" component={PretestResultsPage} />
+          <Route path="/app/:examTrack/lesson/:id" component={LessonPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </ExamTrackProvider>
+    </ExamLayout>
+  );
+}
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -49,22 +73,11 @@ function Router() {
         <>
           <Route path="/" component={GettingStartedPage} />
           <Route path="/getting-started" component={GettingStartedPage} />
-          <Route path="/study-plan" component={StudyPlan} />
-          <Route path="/quiz" component={PracticeQuizPage} />
-          <Route path="/flashcards" component={FlashcardsPage} />
-          <Route path="/exam" component={PracticeExamPage} />
-          <Route path="/notes" component={NotesPage} />
-          <Route path="/progress" component={ProgressPage} />
-          <Route path="/resources" component={ResourcesPage} />
-          <Route path="/strategy" component={StrategyPage} />
           <Route path="/feedback" component={FeedbackPage} />
           <Route path="/testimonials" component={TestimonialsPage} />
           <Route path="/privacy" component={PrivacyPolicyPage} />
           <Route path="/disclaimer" component={DisclaimerPage} />
-          <Route path="/reference-companion" component={ReferenceCompanionPage} />
-          <Route path="/pretest" component={PretestPage} />
-          <Route path="/pretest/results" component={PretestResultsPage} />
-          <Route path="/lesson/:id" component={LessonPage} />
+          <Route path="/app/:examTrack/:rest*" component={ExamRoutes} />
         </>
       )}
       <Route component={NotFound} />
@@ -73,22 +86,17 @@ function Router() {
 }
 
 export default function App() {
-  const style = {
-    "--sidebar-width": "16rem",
-    "--sidebar-width-icon": "3rem",
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AppContent style={style as React.CSSProperties} />
+        <AppContent />
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );
 }
 
-function AppContent({ style }: { style: React.CSSProperties }) {
+function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -104,21 +112,9 @@ function AppContent({ style }: { style: React.CSSProperties }) {
   }
 
   return (
-    <ExamTrackProvider>
-      <SidebarProvider style={style}>
-        <WelcomeDialog />
-        <div className="flex h-screen w-full">
-          <AppSidebar />
-          <div className="flex flex-col flex-1 overflow-hidden">
-            <header className="flex items-center border-b border-border p-2 bg-background">
-              <SidebarTrigger data-testid="button-sidebar-toggle" />
-            </header>
-            <main className="flex-1 overflow-auto">
-              <Router />
-            </main>
-          </div>
-        </div>
-      </SidebarProvider>
-    </ExamTrackProvider>
+    <>
+      <WelcomeDialog />
+      <Router />
+    </>
   );
 }

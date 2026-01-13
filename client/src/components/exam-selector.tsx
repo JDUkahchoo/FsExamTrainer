@@ -2,15 +2,17 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle2, Lock, GraduationCap, FileText, MapPin } from "lucide-react";
+import { CheckCircle2, Lock, GraduationCap, FileText, MapPin, ArrowRight } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { EXAM_TRACKS, US_STATES, type ExamTrack, type UserPreferences } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 export function ExamSelector() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   
   const { data: preferences } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
@@ -49,6 +51,18 @@ export function ExamSelector() {
 
   const handleStateChange = (stateCode: string) => {
     updatePreferences.mutate({ stateCode });
+  };
+
+  const handleEnterExam = (examId: ExamTrack) => {
+    const track = EXAM_TRACKS.find(t => t.id === examId);
+    if (!track || track.status === 'coming-soon') {
+      toast({
+        title: "Coming Soon",
+        description: `${track?.name || 'This exam'} preparation is not yet available. Stay tuned!`,
+      });
+      return;
+    }
+    setLocation(`/app/${examId}/dashboard`);
   };
 
   const getExamIcon = (examId: ExamTrack) => {
@@ -98,7 +112,7 @@ export function ExamSelector() {
 
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Choose Your Exam Path</h3>
-        <p className="text-sm text-muted-foreground">Select the exam you're preparing for</p>
+        <p className="text-sm text-muted-foreground">Select the exam you're preparing for, then enter your personalized study dashboard</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -161,10 +175,25 @@ export function ExamSelector() {
                   <Button 
                     variant={isSelected ? "default" : "outline"} 
                     size="sm" 
-                    className="w-full"
+                    className="w-full gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isSelected) {
+                        handleEnterExam(track.id);
+                      } else {
+                        handleExamSelect(track.id);
+                      }
+                    }}
                     data-testid={`button-select-${track.id}`}
                   >
-                    {isSelected ? 'Currently Selected' : 'Select This Exam'}
+                    {isSelected ? (
+                      <>
+                        Enter Study Dashboard
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    ) : (
+                      'Select This Exam'
+                    )}
                   </Button>
                 ) : (
                   <Button 

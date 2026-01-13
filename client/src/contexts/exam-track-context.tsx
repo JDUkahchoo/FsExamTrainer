@@ -1,6 +1,7 @@
 import { createContext, useContext, ReactNode, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { UserPreferences, ExamTrack } from "@shared/schema";
+import { useParams } from "wouter";
+import type { UserPreferences } from "@shared/schema";
 import { getAllFSDomains, getAllPSDomains } from "@shared/domains";
 
 export interface DomainInfo {
@@ -19,13 +20,29 @@ interface ExamTrackContextValue {
 
 const ExamTrackContext = createContext<ExamTrackContextValue | undefined>(undefined);
 
-export function ExamTrackProvider({ children }: { children: ReactNode }) {
+interface ExamTrackProviderProps {
+  children: ReactNode;
+  examTrackOverride?: 'fs' | 'ps';
+}
+
+export function ExamTrackProvider({ children, examTrackOverride }: ExamTrackProviderProps) {
+  const params = useParams<{ examTrack?: string }>();
+  
   const { data: preferences, isLoading } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
   });
 
-  const rawTrack = preferences?.preferredExamTrack;
-  const examTrack: 'fs' | 'ps' = rawTrack === 'ps' ? 'ps' : 'fs';
+  const examTrack: 'fs' | 'ps' = useMemo(() => {
+    if (examTrackOverride) return examTrackOverride;
+    
+    const urlTrack = params.examTrack;
+    if (urlTrack === 'ps') return 'ps';
+    if (urlTrack === 'fs') return 'fs';
+    
+    const prefTrack = preferences?.preferredExamTrack;
+    if (prefTrack === 'ps') return 'ps';
+    return 'fs';
+  }, [examTrackOverride, params.examTrack, preferences?.preferredExamTrack]);
 
   const domains = useMemo(() => {
     return examTrack === 'ps' ? getAllPSDomains() : getAllFSDomains();
