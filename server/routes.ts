@@ -1552,11 +1552,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Helper function to get valid exam track (fs or ps only, defaults to fs)
+  const getValidExamTrack = (queryParam?: string, preference?: string): 'fs' | 'ps' => {
+    // First check explicit query parameter
+    if (queryParam === 'fs' || queryParam === 'ps') {
+      return queryParam;
+    }
+    // Fall back to preference, but only if it's a valid supported track (fs or ps)
+    // state-specific and any invalid values default to fs
+    if (preference === 'ps') {
+      return 'ps';
+    }
+    return 'fs'; // Default to FS for all other cases
+  };
+
   // Interactive Lesson routes
   // Get all lessons - must come before parameterized routes
+  // Supports optional ?examTrack=fs|ps query parameter, defaults to user preference or 'fs'
   app.get("/api/lessons", isAuthenticated, async (req: any, res) => {
     try {
-      const lessons = await storage.getAllLessons();
+      const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const lessons = await storage.getAllLessons(examTrack);
       res.json(lessons);
     } catch (error) {
       console.error("Error fetching all lessons:", error);
@@ -1566,8 +1584,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/lessons/week/:week", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const week = parseInt(req.params.week);
-      const lessons = await storage.getLessonsByWeek(week);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const lessons = await storage.getLessonsByWeek(week, examTrack);
       res.json(lessons);
     } catch (error) {
       console.error("Error fetching lessons for week:", error);
@@ -1577,11 +1598,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/lessons/domain/:domainNumber", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const domainNumber = parseInt(req.params.domainNumber);
-      if (Number.isNaN(domainNumber) || domainNumber < 1 || domainNumber > 7) {
-        return res.status(400).json({ error: "Domain number must be between 1 and 7" });
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      // Validate domain number based on exam track (FS has 8 domains, PS has 5)
+      const maxDomain = examTrack === 'ps' ? 5 : 8;
+      if (Number.isNaN(domainNumber) || domainNumber < 1 || domainNumber > maxDomain) {
+        return res.status(400).json({ error: `Domain number must be between 1 and ${maxDomain} for ${examTrack.toUpperCase()} exam` });
       }
-      const lessons = await storage.getLessonsByDomain(domainNumber);
+      const lessons = await storage.getLessonsByDomain(domainNumber, examTrack);
       res.json(lessons);
     } catch (error) {
       console.error("Error fetching lessons for domain:", error);

@@ -259,7 +259,9 @@ export interface IStorage {
   startNewCycle(userId: string): Promise<StudyCycle>;
 
   // Interactive Lesson methods
-  getLessonsByWeek(week: number): Promise<Lesson[]>;
+  getAllLessons(examTrack?: string): Promise<Lesson[]>;
+  getLessonsByWeek(week: number, examTrack?: string): Promise<Lesson[]>;
+  getLessonsByDomain(domainNumber: number, examTrack?: string): Promise<Lesson[]>;
   getLessonWithQuestions(lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
   getLessonWithRandomizedQuestions(userId: string, lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined>;
   getQuestionsByIds(questionIds: string[]): Promise<LessonQuestion[]>;
@@ -1577,28 +1579,35 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Interactive Lesson methods
-  async getLessonsByDomain(domainNumber: number): Promise<Lesson[]> {
+  async getLessonsByDomain(domainNumber: number, examTrack: string = 'fs'): Promise<Lesson[]> {
     return await db
       .select()
       .from(lessons)
-      .where(eq(lessons.domainNumber, domainNumber))
+      .where(and(eq(lessons.domainNumber, domainNumber), eq(lessons.examTrack, examTrack)))
       .orderBy(lessons.orderIndex);
   }
 
-  async getLessonsByWeek(week: number): Promise<Lesson[]> {
+  async getLessonsByWeek(week: number, examTrack: string = 'fs'): Promise<Lesson[]> {
     // For backward compatibility and Standard mode
     return await db
       .select()
       .from(lessons)
-      .where(eq(lessons.suggestedWeek, week))
+      .where(and(eq(lessons.suggestedWeek, week), eq(lessons.examTrack, examTrack)))
       .orderBy(lessons.orderIndex);
   }
 
-  async getAllLessons(): Promise<Lesson[]> {
+  async getAllLessons(examTrack?: string): Promise<Lesson[]> {
+    if (examTrack) {
+      return await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.examTrack, examTrack))
+        .orderBy(lessons.domainNumber, lessons.orderIndex);
+    }
     return await db
       .select()
       .from(lessons)
-      .orderBy(lessons.domainNumber, lessons.orderIndex);
+      .orderBy(lessons.examTrack, lessons.domainNumber, lessons.orderIndex);
   }
 
   async getLessonWithQuestions(lessonId: string): Promise<{ lesson: Lesson; questions: LessonQuestion[] } | undefined> {
