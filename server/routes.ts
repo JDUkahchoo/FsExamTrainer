@@ -1692,7 +1692,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Sort logs by date descending
       const sortedLogs = dailyLogs.sort((a, b) => 
-        new Date(b.logDate).getTime() - new Date(a.logDate).getTime()
+        new Date(b.date).getTime() - new Date(a.date).getTime()
       );
       
       // Count consecutive days with activity
@@ -1702,8 +1702,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const dateStr = checkDate.toISOString().split('T')[0];
         
         const hasActivity = sortedLogs.some(log => {
-          const logDate = new Date(log.logDate).toISOString().split('T')[0];
-          return logDate === dateStr;
+          const logDateStr = new Date(log.date).toISOString().split('T')[0];
+          return logDateStr === dateStr;
         });
         
         if (hasActivity) {

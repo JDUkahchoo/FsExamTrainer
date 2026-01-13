@@ -38,9 +38,9 @@ export default function LessonsPage() {
   });
 
   const { data: progress = [] } = useQuery<LessonProgress[]>({
-    queryKey: ['/api/lessons/progress-list', examTrack],
+    queryKey: ['/api/lessons/progress', examTrack],
     queryFn: async () => {
-      const res = await fetch(`/api/lessons/progress-list?examTrack=${examTrack}`);
+      const res = await fetch(`/api/lessons/progress?examTrack=${examTrack}`);
       if (!res.ok) throw new Error('Failed to fetch progress');
       return res.json();
     }
