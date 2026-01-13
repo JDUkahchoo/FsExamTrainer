@@ -36,7 +36,7 @@ export default function FlashcardsPage() {
   const domainsFromUrl = urlParams.get('domains');
   const { examTrack, domains: examDomains, examName } = useExamTrack();
   
-  const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>('comprehensive');
+  const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>(examTrack === 'ps' ? 'original' : 'comprehensive');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
   const [selectedDomains, setSelectedDomains] = useState<Domain[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);

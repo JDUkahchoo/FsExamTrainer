@@ -37,9 +37,11 @@ import { PersonalAnalyticsDashboard } from '@/components/personal-analytics-dash
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { formatMinutes } from '@/lib/time-utils';
+import { useExamTrack } from '@/contexts/exam-track-context';
 
 export default function ProgressPage() {
   const { toast } = useToast();
+  const { examTrack, examName, domains: examDomains } = useExamTrack();
   const [showCompleteCycleDialog, setShowCompleteCycleDialog] = useState(false);
   const [showStartNewCycleDialog, setShowStartNewCycleDialog] = useState(false);
   const [showExamDateDialog, setShowExamDateDialog] = useState(false);
