@@ -905,7 +905,7 @@ export default function StudyPlan() {
                                   size="sm"
                                   className="w-full"
                                   variant={isMastered || isPassed ? "outline" : "default"}
-                                  onClick={() => navigate(`/lesson/${lesson.id}`)}
+                                  onClick={() => navigate(`/app/${examTrack}/lesson/${lesson.id}`)}
                                   data-testid={`button-lesson-${lesson.id}`}
                                 >
                                   {isMastered ? 'Review Lesson' : isPassed ? 'Improve Score' : isFailed ? 'Retry Lesson' : 'Start Lesson'}
