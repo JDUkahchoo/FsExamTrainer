@@ -1,4 +1,4 @@
-import type { Domain } from '@shared/schema';
+import type { Domain, FSDomain, PSDomain } from '@shared/schema';
 import {
   Calculator,
   Map,
@@ -9,6 +9,7 @@ import {
   Briefcase,
   Calculator as ComputerCalc,
   Compass,
+  FileText,
   type LucideIcon
 } from 'lucide-react';
 
@@ -76,9 +77,46 @@ export const DOMAIN_CONFIG: Record<Domain, DomainConfig> = {
     bgColor: 'bg-domain-geodesy',
     textColor: 'text-domain-geodesy-fg',
     borderColor: 'border-domain-geodesy-fg'
+  },
+  // PS Domains
+  'Legal Principles': {
+    name: 'Legal Principles',
+    icon: Scale,
+    bgColor: 'bg-domain-boundary',
+    textColor: 'text-domain-boundary-fg',
+    borderColor: 'border-domain-boundary-fg'
+  },
+  'Professional Survey Practices': {
+    name: 'Professional Survey Practices',
+    icon: Briefcase,
+    bgColor: 'bg-domain-practice',
+    textColor: 'text-domain-practice-fg',
+    borderColor: 'border-domain-practice-fg'
+  },
+  'Standards and Specifications': {
+    name: 'Standards and Specifications',
+    icon: FileText,
+    bgColor: 'bg-domain-computations',
+    textColor: 'text-domain-computations-fg',
+    borderColor: 'border-domain-computations-fg'
+  },
+  'Business Practices': {
+    name: 'Business Practices',
+    icon: Briefcase,
+    bgColor: 'bg-domain-field',
+    textColor: 'text-domain-field-fg',
+    borderColor: 'border-domain-field-fg'
+  },
+  'Areas of Practice': {
+    name: 'Areas of Practice',
+    icon: Map,
+    bgColor: 'bg-domain-mapping',
+    textColor: 'text-domain-mapping-fg',
+    borderColor: 'border-domain-mapping-fg'
   }
 };
 
+// Legacy PS domain config for backwards compatibility
 const PS_DOMAIN_CONFIG: Record<string, DomainConfig> = {
   'Legal Principles': {
     name: 'Boundary Law & PLSS' as Domain,

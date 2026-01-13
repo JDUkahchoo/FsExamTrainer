@@ -4,9 +4,9 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// --- Domain Types ---
-// Aligned with 8 NCEES exam domains (0-7)
-export type Domain = 
+// --- FS Domain Types ---
+// Aligned with 8 NCEES FS exam domains (0-7)
+export type FSDomain = 
   | 'Math & Basic Science'                    // NCEES Domain 0
   | 'Field Data Acquisition'                  // NCEES Domain 1
   | 'Mapping, GIS, and CAD'                   // NCEES Domain 2
@@ -16,7 +16,7 @@ export type Domain =
   | 'Professional Practice'                   // NCEES Domain 6
   | 'Applied Mathematics & Statistics';       // NCEES Domain 7
 
-export const DOMAINS: Domain[] = [
+export const FS_DOMAINS: FSDomain[] = [
   'Math & Basic Science',
   'Field Data Acquisition',
   'Mapping, GIS, and CAD',
@@ -26,6 +26,27 @@ export const DOMAINS: Domain[] = [
   'Professional Practice',
   'Applied Mathematics & Statistics'
 ];
+
+// --- PS Domain Types ---
+// Aligned with 5 NCEES PS exam domains (1-5)
+export type PSDomain = 
+  | 'Legal Principles'                        // NCEES Domain 1
+  | 'Professional Survey Practices'           // NCEES Domain 2
+  | 'Standards and Specifications'            // NCEES Domain 3
+  | 'Business Practices'                      // NCEES Domain 4
+  | 'Areas of Practice';                      // NCEES Domain 5
+
+export const PS_DOMAINS: PSDomain[] = [
+  'Legal Principles',
+  'Professional Survey Practices',
+  'Standards and Specifications',
+  'Business Practices',
+  'Areas of Practice'
+];
+
+// Combined Domain type for backward compatibility
+export type Domain = FSDomain | PSDomain;
+export const DOMAINS: Domain[] = [...FS_DOMAINS, ...PS_DOMAINS];
 
 // --- Exam Track Types ---
 export type ExamTrack = 'fs' | 'ps' | 'state-specific';

@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getDomainConfig } from '@/lib/domains';
-import { STUDY_PLAN } from '@shared/data/studyPlan';
+import { STUDY_PLAN, PS_STUDY_PLAN } from '@shared/data/studyPlan';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -70,33 +70,8 @@ export default function StudyPlan() {
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
 
-  if (examTrack === 'ps') {
-    return (
-      <div className="p-4 md:p-6 lg:p-8">
-        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-study-plan">Study Plan</h1>
-        <Card className="p-8">
-          <div className="text-center">
-            <Construction className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold mb-2">Coming Soon for {examName}</h2>
-            <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              The domain-based study plan for the PS exam is currently under development.
-              In the meantime, you can study using flashcards and interactive lessons organized by domain.
-            </p>
-            <div className="flex flex-col gap-3 max-w-sm mx-auto">
-              <Button onClick={() => navigate('/flashcards')} data-testid="button-go-flashcards">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Study Flashcards
-              </Button>
-              <Button variant="outline" onClick={() => navigate('/resources')} data-testid="button-go-resources">
-                <Layers className="w-4 h-4 mr-2" />
-                Browse Resources
-              </Button>
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
-  }
+  // Use appropriate study plan based on exam track
+  const baseStudyPlan = examTrack === 'ps' ? PS_STUDY_PLAN : STUDY_PLAN;
 
   // Fetch all week progress from database
   const { data: weekProgressData, isLoading } = useQuery<WeekProgress[]>({
@@ -513,11 +488,12 @@ export default function StudyPlan() {
       // Custom mode: Generate weeks based on user's selected domains and timeline
       baseWeeks = generateCustomWeekPlans(
         preferences.customWeeklyDomains as Record<number, number[]>,
-        preferences.customTimeline || 16
+        preferences.customTimeline || (examTrack === 'ps' ? 12 : 16),
+        examTrack as 'fs' | 'ps'
       );
     } else {
-      // Standard/Result-Driven mode: Use default plan (lessons are already organized by mode)
-      baseWeeks = STUDY_PLAN;
+      // Standard/Result-Driven mode: Use default plan based on exam track
+      baseWeeks = baseStudyPlan;
     }
     
     // Merge base weeks with manually added custom weeks
@@ -535,7 +511,7 @@ export default function StudyPlan() {
         customId: cw.id
       }))
     ];
-  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, customWeeks]);
+  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, customWeeks, examTrack, baseStudyPlan]);
 
   if (isLoading) {
     return (
@@ -546,19 +522,21 @@ export default function StudyPlan() {
   }
 
   // Calculate actual timeline based on study mode
+  const defaultWeeks = examTrack === 'ps' ? 12 : 16;
+  const domainCount = examTrack === 'ps' ? 5 : 7;
   const actualTimeline = preferences?.studyMode === 'custom' && preferences?.customTimeline
     ? preferences.customTimeline + customWeeks.length
-    : 16 + customWeeks.length;
+    : defaultWeeks + customWeeks.length;
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="heading-study-plan">
-            {actualTimeline}-Week FS Exam Study Plan
+            {actualTimeline}-Week {examName} Study Plan
           </h1>
           <p className="text-muted-foreground">
-            Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all 7 NCEES domains.
+            Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all {domainCount} NCEES domains.
           </p>
           {preferences?.studyMode === 'custom' && 
            preferences?.customWeeklyDomains && 

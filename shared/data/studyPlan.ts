@@ -1,5 +1,6 @@
-import type { WeekPlan } from '../schema';
+import type { WeekPlan, PSDomain } from '../schema';
 
+// FS Exam Study Plan (16 weeks)
 export const STUDY_PLAN: WeekPlan[] = [
   {
     week: 1,
@@ -145,4 +146,116 @@ export const STUDY_PLAN: WeekPlan[] = [
     apply: ["Full NCEES Practice Exam (Timed, 5.5 hours simulated split)", "Analyze results and do final spot review"],
     reinforce: ["Rest and mental preparation", "Light review of formula sheet only"]
   },
+];
+
+// PS Exam Study Plan (12 weeks - faster pace for experienced professionals)
+export const PS_STUDY_PLAN: WeekPlan[] = [
+  {
+    week: 1,
+    title: "Legal Foundations & Boundary Principles",
+    domains: ['Legal Principles'] as PSDomain[],
+    read: ["Brown's Boundary Control Ch. 1-3 (Introduction to Boundary Law)", "State-specific property law statutes overview", "ALTA/NSPS 2021 Standards (Introduction)"],
+    focus: ["Hierarchy of title elements (rights, seniority, monuments, measurements)", "Types of deeds and their legal implications", "Statute of frauds requirements", "Recording acts and priority systems"],
+    apply: ["Analyze sample deed descriptions for legal sufficiency", "Case study: Identify hierarchy conflicts in overlapping claims"],
+    reinforce: ["Flashcards: Legal terminology definitions", "Mnemonic: Order of conflicting title elements"]
+  },
+  {
+    week: 2,
+    title: "Easements, Boundaries by Agreement & Adverse Possession",
+    domains: ['Legal Principles'] as PSDomain[],
+    read: ["Brown's Boundary Control Ch. 4-6", "State adverse possession statutes", "Common law boundary doctrines"],
+    focus: ["Easement types: appurtenant, in gross, prescriptive", "Easement creation and termination methods", "Elements of adverse possession", "Boundary by agreement, acquiescence, and estoppel"],
+    apply: ["Determine if easement requirements are satisfied in scenarios", "Analyze adverse possession claims for completeness"],
+    reinforce: ["Flashcards: Easement terminology", "Quiz: Elements required for adverse possession by state"]
+  },
+  {
+    week: 3,
+    title: "Water Boundaries & Riparian Rights",
+    domains: ['Legal Principles'] as PSDomain[],
+    read: ["Brown's Boundary Control (Water boundaries chapter)", "State riparian/littoral law references", "Federal navigable waters jurisdiction"],
+    focus: ["Navigable vs non-navigable stream definitions", "Riparian vs littoral rights distinctions", "Accretion, reliction, avulsion, erosion", "Thread of stream vs bank boundaries"],
+    apply: ["Determine boundary changes for gradual vs sudden stream changes", "Case study: Analyze navigability determination"],
+    reinforce: ["Flashcards: Water boundary terminology", "Diagram: Riparian rights vs littoral rights"]
+  },
+  {
+    week: 4,
+    title: "Professional Ethics & Standard of Care",
+    domains: ['Professional Survey Practices'] as PSDomain[],
+    read: ["NCEES Model Rules of Professional Conduct", "State licensing board rules", "Professional liability case law summaries"],
+    focus: ["Surveyor's standard of care definition", "Professional ethics requirements", "Duty to public vs duty to client", "Conflicts of interest identification"],
+    apply: ["Ethics scenario analysis and decision-making", "Identify ethical violations in hypothetical situations"],
+    reinforce: ["Review: NCEES ethics case studies", "Memorize: Paramount responsibilities (public health, safety, welfare)"]
+  },
+  {
+    week: 5,
+    title: "Survey Practice & Documentation",
+    domains: ['Professional Survey Practices'] as PSDomain[],
+    read: ["State plat requirements", "Field note documentation standards", "Survey certification requirements"],
+    focus: ["Survey plat requirements and certifications", "Field note best practices", "Corners: original, obliterated, lost definitions", "Retracement survey principles"],
+    apply: ["Review and critique sample survey plats for compliance", "Document proper field notes for a boundary retracement"],
+    reinforce: ["Flashcards: Corner restoration procedures", "Checklist: Plat certification requirements"]
+  },
+  {
+    week: 6,
+    title: "ALTA/NSPS Standards Mastery",
+    domains: ['Standards and Specifications'] as PSDomain[],
+    read: ["ALTA/NSPS 2021 Minimum Standard Detail Requirements (complete)", "Table A optional items detailed review", "Certification and disclaimer language"],
+    focus: ["ALTA/NSPS Table A items (all 20)", "Positional tolerance calculations", "Relative positional precision requirements", "Certification language requirements"],
+    apply: ["Prepare an ALTA/NSPS compliant survey checklist", "Calculate positional tolerance for sample surveys"],
+    reinforce: ["Flashcards: Table A items 1-20", "Memorize: Standard certification language"]
+  },
+  {
+    week: 7,
+    title: "State & Federal Standards",
+    domains: ['Standards and Specifications'] as PSDomain[],
+    read: ["State minimum technical standards", "Federal specifications (FGDC, NGS)", "Industry accuracy standards (ASPRS)"],
+    focus: ["State-specific accuracy requirements", "Monument specifications by survey type", "Record of survey requirements", "Accuracy classifications and tolerances"],
+    apply: ["Compare state standards to ALTA/NSPS requirements", "Evaluate equipment calibration compliance"],
+    reinforce: ["Review: State minimum standards summary", "Quiz: Monument type requirements"]
+  },
+  {
+    week: 8,
+    title: "Business & Contract Management",
+    domains: ['Business Practices'] as PSDomain[],
+    read: ["Survey business management fundamentals", "Contract law basics for professionals", "Risk management guides"],
+    focus: ["Contract types for survey services", "Proposal preparation and fee estimation", "Scope of services documentation", "Professional liability insurance (E&O)"],
+    apply: ["Draft a comprehensive scope of services document", "Develop a fee proposal for a boundary survey"],
+    reinforce: ["Flashcards: Contract terminology", "Review: Fee estimation methodologies"]
+  },
+  {
+    week: 9,
+    title: "PLSS Restoration & Subdivision",
+    domains: ['Areas of Practice'] as PSDomain[],
+    read: ["BLM Manual of Surveying Instructions 2009 (Ch. 5-7)", "State subdivision laws", "Platting requirements"],
+    focus: ["PLSS section subdivision rules", "Single and double proportionate measurement", "Lost vs obliterated corner restoration", "Subdivision plat requirements"],
+    apply: ["Perform section corner restoration calculation", "Prepare subdivision plat checklist"],
+    reinforce: ["Drill: Corner restoration decision tree", "Flashcards: PLSS subdivision rules"]
+  },
+  {
+    week: 10,
+    title: "Specialized Survey Types",
+    domains: ['Areas of Practice'] as PSDomain[],
+    read: ["Condominium survey requirements", "Construction staking procedures", "Right-of-way survey standards"],
+    focus: ["Condominium surveys and documentation", "Construction and stake-out surveys", "Right-of-way and easement surveys", "Topographic survey specifications"],
+    apply: ["Design construction control layout for a building", "Prepare condominium survey documentation"],
+    reinforce: ["Checklists: Survey type requirements", "Review: Common staking calculations"]
+  },
+  {
+    week: 11,
+    title: "Weak Area Review & Case Studies",
+    domains: ['Legal Principles', 'Professional Survey Practices', 'Areas of Practice'] as PSDomain[],
+    read: ["Re-read highlighted sections from weakest domains", "Additional case law for boundary disputes"],
+    focus: ["Review error logs from previous weeks", "Deep dive into complex scenarios", "Boundary dispute resolution procedures"],
+    apply: ["Take timed mini-exam focused on weak areas (50 questions)", "Analyze complex boundary dispute scenarios"],
+    reinforce: ["Re-do missed flashcards", "Teach a complex concept to someone else"]
+  },
+  {
+    week: 12,
+    title: "Final Exam Simulation & Preparation",
+    domains: ['Legal Principles', 'Professional Survey Practices', 'Standards and Specifications', 'Business Practices', 'Areas of Practice'] as PSDomain[],
+    read: ["NCEES Examinee Guide (Test day rules)", "Final review of state-specific requirements"],
+    focus: ["Test-taking strategy (triage questions, time management)", "Packing for exam day (approved calculator, ID)", "Mental preparation techniques"],
+    apply: ["Full PS Practice Exam (Timed, 6 hours)", "Analyze results and do final spot review"],
+    reinforce: ["Rest and mental preparation", "Light review of key formulas and definitions"]
+  }
 ];

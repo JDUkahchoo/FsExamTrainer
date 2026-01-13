@@ -12,7 +12,7 @@ import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
-import { DOMAINS } from '@shared/schema';
+import { DOMAINS, FS_DOMAINS, PS_DOMAINS } from '@shared/schema';
 import type { Domain, QuizDraft } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
 
@@ -22,7 +22,10 @@ export default function PracticeQuizPage() {
   const searchString = useSearch();
   const urlParams = new URLSearchParams(searchString);
   const domainsFromUrl = urlParams.get('domains');
-  const { examTrack, examName } = useExamTrack();
+  const { examTrack, examName, domains: examDomains } = useExamTrack();
+  
+  // Get appropriate domains based on exam track
+  const availableDomains = examTrack === 'ps' ? PS_DOMAINS : FS_DOMAINS;
   
   const [quizState, setQuizState] = useState<QuizState>('setup');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
@@ -36,24 +39,6 @@ export default function PracticeQuizPage() {
   const [quizQuestions, setQuizQuestions] = useState<Array<typeof QUIZ_QUESTIONS[0] & { id: string }>>([]);
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
-
-  if (examTrack === 'ps') {
-    return (
-      <div className="p-8 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-practice-quiz">Practice Quiz</h1>
-        <Card className="p-8">
-          <div className="text-center">
-            <Construction className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold mb-2">Coming Soon for {examName}</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Practice quizzes for the PS exam are currently under development. 
-              In the meantime, you can study using flashcards and interactive lessons.
-            </p>
-          </div>
-        </Card>
-      </div>
-    );
-  }
 
   // Query to detect existing draft on page load
   const { data: draftData, isLoading: isDraftLoading } = useQuery<QuizDraft | null>({
@@ -113,7 +98,7 @@ export default function PracticeQuizPage() {
   // Initialize domains from URL parameters
   useEffect(() => {
     if (domainsFromUrl && quizState === 'setup') {
-      const domains = domainsFromUrl.split(',').filter(d => DOMAINS.includes(d as Domain)) as Domain[];
+      const domains = domainsFromUrl.split(',').filter(d => (availableDomains as readonly string[]).includes(d)) as Domain[];
       if (domains.length > 0) {
         setSelectedDomains(domains);
         if (domains.length === 1) {
@@ -240,17 +225,22 @@ export default function PracticeQuizPage() {
     // Prepare quiz questions based on selected domain(s)
     let questionsForQuiz: typeof QUIZ_QUESTIONS;
     
+    // Filter questions to only those matching current exam track domains
+    const examQuestions = QUIZ_QUESTIONS.filter(q => 
+      (availableDomains as readonly string[]).includes(q.domain)
+    );
+    
     if (selectedDomains.length > 0) {
       // Multi-domain mode from URL: filter by selected domains
-      const filtered = QUIZ_QUESTIONS.filter(q => selectedDomains.includes(q.domain as Domain));
+      const filtered = examQuestions.filter(q => selectedDomains.includes(q.domain as Domain));
       questionsForQuiz = shuffleArray(filtered).slice(0, Math.min(50, filtered.length));
     } else if (selectedDomain === 'all') {
-      // Mixed exam mode: randomly select 50 questions from all domains and shuffle
-      const shuffled = shuffleArray(QUIZ_QUESTIONS);
-      questionsForQuiz = shuffled.slice(0, 50);
+      // Mixed exam mode: randomly select 50 questions from all exam-specific domains and shuffle
+      const shuffled = shuffleArray(examQuestions);
+      questionsForQuiz = shuffled.slice(0, Math.min(50, shuffled.length));
     } else {
       // Domain-specific practice: show all questions from selected domain
-      questionsForQuiz = QUIZ_QUESTIONS.filter(q => q.domain === selectedDomain);
+      questionsForQuiz = examQuestions.filter(q => q.domain === selectedDomain);
     }
     
     // Add stable IDs based on original array position
@@ -432,8 +422,8 @@ export default function PracticeQuizPage() {
                   <SelectValue placeholder="Select domain" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Domains - Mixed Exam (50 questions)</SelectItem>
-                  {DOMAINS.map(domain => {
+                  <SelectItem value="all">All Domains - Mixed Exam (up to 50 questions)</SelectItem>
+                  {availableDomains.map(domain => {
                     const count = QUIZ_QUESTIONS.filter(q => q.domain === domain).length;
                     return (
                       <SelectItem key={domain} value={domain}>
@@ -478,7 +468,7 @@ export default function PracticeQuizPage() {
                   </div>
                   <p className="text-sm text-muted-foreground">
                     Practice <strong className="text-foreground">
-                      {QUIZ_QUESTIONS.filter(q => selectedDomains.includes(q.domain as Domain)).length} questions
+                      {QUIZ_QUESTIONS.filter(q => selectedDomains.includes(q.domain as Domain) && (availableDomains as readonly string[]).includes(q.domain)).length} questions
                     </strong> from your study plan's focus domains.
                   </p>
                 </div>
@@ -499,7 +489,7 @@ export default function PracticeQuizPage() {
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Practice all <strong className="text-foreground">
-                      {QUIZ_QUESTIONS.filter(q => q.domain === selectedDomain).length} questions
+                      {QUIZ_QUESTIONS.filter(q => q.domain === selectedDomain && (availableDomains as readonly string[]).includes(q.domain)).length} questions
                     </strong> from the {selectedDomain} domain.
                   </p>
                 </div>

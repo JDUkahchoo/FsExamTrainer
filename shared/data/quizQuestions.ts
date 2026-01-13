@@ -1981,4 +1981,331 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   // EXPANDED POOL: Now 240+ questions total
   // Coverage: All 8 NCEES domains with SRM Topics 2-11 content
   // Includes word problems, practical applications, and professional practice
+
+  // ====================================
+  // PS EXAM QUESTIONS (Professional Surveyor)
+  // 5 NCEES Knowledge Areas
+  // ====================================
+  
+  // Legal Principles (PS Domain 1)
+  {
+    domain: 'Legal Principles',
+    question: 'In a boundary dispute, which of the following takes highest priority under the rules of construction?',
+    options: ['Senior rights and intentions', 'Natural monuments', 'Artificial monuments', 'Courses and distances'],
+    correctAnswer: 0,
+    explanation: 'The priority of calls is: (1) Senior rights and intentions, (2) Natural monuments, (3) Artificial monuments, (4) Courses, (5) Distances, (6) Area/Quantity.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Which type of easement benefits a specific parcel of land and runs with the land?',
+    options: ['Easement appurtenant', 'Easement in gross', 'License', 'Lease'],
+    correctAnswer: 0,
+    explanation: 'An easement appurtenant benefits a dominant estate and burdens a servient estate. It runs with the land when transferred.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'To establish adverse possession, the possession must be:',
+    options: ['Hostile, actual, exclusive, open, continuous for statutory period', 'Consensual, sporadic, shared, hidden', 'Permitted by owner, exclusive, open', 'Licensed by the state, continuous'],
+    correctAnswer: 0,
+    explanation: 'Adverse possession requires: Hostile (without permission), Actual, Exclusive, Open and notorious, and Continuous for the statutory period.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The doctrine of "acquiescence" applies when:',
+    options: ['Neighboring owners accept a line as the boundary over time', 'A surveyor makes a mistake', 'An original monument is lost', 'A deed description is ambiguous'],
+    correctAnswer: 0,
+    explanation: 'Acquiescence occurs when adjoining landowners mutually recognize and accept a line as the boundary, typically for a long period, establishing it as the legal boundary.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'What is the "thread of the stream" in water boundary law?',
+    options: ['The centerline of a non-navigable stream', 'The high water mark', 'The low water mark', 'The deepest point of the stream'],
+    correctAnswer: 0,
+    explanation: 'For non-navigable streams, riparian owners typically own to the thread (center) of the stream. For navigable waters, boundaries are often at the ordinary high water mark.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Accretion refers to:',
+    options: ['Gradual, imperceptible addition of land by natural water action', 'Sudden removal of land by flood or stream', 'Man-made addition of fill', 'Loss of land due to erosion'],
+    correctAnswer: 0,
+    explanation: 'Accretion is the gradual, imperceptible addition of soil to land by natural water action. The landowner gains title to accreted land.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A quitclaim deed:',
+    options: ['Transfers only the interest the grantor has, if any, without warranties', 'Warrants that the title is free of encumbrances', 'Creates a new title from the government', 'Requires a title insurance policy'],
+    correctAnswer: 0,
+    explanation: 'A quitclaim deed transfers only whatever interest the grantor may have, without any warranties of title. It is often used between family members or to clear title.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Under the statute of frauds, a conveyance of real property must be:',
+    options: ['In writing and signed', 'Verbal with two witnesses', 'Recorded within 30 days', 'Approved by a surveyor'],
+    correctAnswer: 0,
+    explanation: 'The statute of frauds requires conveyances of real property to be in writing and signed by the party to be charged.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'What distinguishes avulsion from accretion?',
+    options: ['Avulsion is sudden; accretion is gradual', 'Avulsion creates new title; accretion does not', 'Avulsion applies only to navigable waters', 'Avulsion requires government approval'],
+    correctAnswer: 0,
+    explanation: 'Avulsion is sudden change (flood, earthquake), while accretion is gradual. With avulsion, the boundary typically stays in original position; with accretion, it follows the water.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'In a "race-notice" recording state:',
+    options: ['A subsequent purchaser who records first wins if they had no notice', 'The first to record always wins regardless of notice', 'Recording is not required to protect interests', 'Only the original deed matters'],
+    correctAnswer: 0,
+    explanation: 'In race-notice states, a subsequent bona fide purchaser who records first and has no notice of prior unrecorded claims will prevail.',
+    difficulty: 'hard'
+  },
+
+  // Professional Survey Practices (PS Domain 2)
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The surveyor\'s primary duty is to:',
+    options: ['Protect public health, safety, and welfare', 'Maximize client profits', 'Minimize survey costs', 'Complete surveys quickly'],
+    correctAnswer: 0,
+    explanation: 'Professional ethics require that the surveyor\'s primary obligation is to protect public health, safety, and welfare, even above client interests.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'An obliterated corner is one that:',
+    options: ['Has no remaining physical evidence but can be restored from records', 'Has been moved by a surveyor', 'Is marked with a temporary stake', 'Cannot be restored by any means'],
+    correctAnswer: 0,
+    explanation: 'An obliterated corner has no physical evidence at the site but its position can be recovered from recorded measurements or testimony.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A retracement survey:',
+    options: ['Follows the footsteps of the original surveyor', 'Creates new boundaries where none existed', 'Subdivides existing parcels', 'Is performed only for the government'],
+    correctAnswer: 0,
+    explanation: 'A retracement survey attempts to follow the footsteps of the original surveyor, re-establishing the boundaries as originally intended.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Field notes should include:',
+    options: ['All observations, measurements, and sketches made in the field', 'Only final adjusted coordinates', 'Client billing information', 'Only the property corners found'],
+    correctAnswer: 0,
+    explanation: 'Comprehensive field notes document all observations, measurements, sketches, conditions, and decisions made during the survey.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A lost corner (PLSS) is one that:',
+    options: ['Cannot be identified or restored from any evidence', 'Has been removed but can be restored from records', 'Is marked with a temporary monument', 'Was never originally set'],
+    correctAnswer: 0,
+    explanation: 'A lost corner has no physical evidence and cannot be restored from the record of any survey. It must be established using proportionate measurement.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When a surveyor discovers an error in a previous survey:',
+    options: ['They must promptly notify affected parties and correct the record', 'They may ignore it if it favors their client', 'They should wait until asked', 'They have no obligation to disclose'],
+    correctAnswer: 0,
+    explanation: 'Professional ethics require prompt correction of discovered errors and notification of all affected parties.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Standard of care for a surveyor means:',
+    options: ['The level of skill and diligence expected of a reasonably competent surveyor', 'Perfect accuracy in all measurements', 'The cheapest possible method', 'Maximum speed of completion'],
+    correctAnswer: 0,
+    explanation: 'Standard of care is the degree of care, skill, and diligence that a reasonably competent surveyor would exercise under similar circumstances.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor\'s certification statement:',
+    options: ['Attests to the accuracy of the survey and compliance with standards', 'Guarantees the title is clear', 'Transfers ownership of the property', 'Is required only for federal lands'],
+    correctAnswer: 0,
+    explanation: 'The certification statement attests that the survey was performed in accordance with applicable standards and that the information shown is accurate.',
+    difficulty: 'easy'
+  },
+
+  // Standards and Specifications (PS Domain 3)
+  {
+    domain: 'Standards and Specifications',
+    question: 'According to ALTA/NSPS 2021 Standards, the Relative Positional Precision for a survey must be:',
+    options: ['0.07 feet plus 50 ppm or better', '1 foot or better', 'Whatever the client requests', 'Not specified'],
+    correctAnswer: 0,
+    explanation: 'ALTA/NSPS 2021 requires Relative Positional Precision of 0.07 feet (2 cm) + 50 ppm at 95% confidence level.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'ALTA/NSPS Table A Item 11 requires:',
+    options: ['Location of utilities on or serving the surveyed property', 'A flood zone determination', 'Soil samples', 'An environmental assessment'],
+    correctAnswer: 0,
+    explanation: 'Table A Item 11 requires location of utilities (water, gas, electric, telephone, cable TV, etc.) on or serving the property based on observed evidence and utility company records.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'For an ALTA/NSPS survey, a flood zone determination requires:',
+    options: ['Table A Item 8 to be selected by the client', 'No additional requirements', 'Only an elevation certificate', 'A FEMA map only'],
+    correctAnswer: 0,
+    explanation: 'Table A Item 8 specifies that a flood zone determination be provided if requested by the client.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The purpose of positional tolerance in surveying standards is to:',
+    options: ['Define the maximum allowable uncertainty in point positions', 'Specify the minimum number of measurements', 'Determine the cost of the survey', 'Establish the timeline for completion'],
+    correctAnswer: 0,
+    explanation: 'Positional tolerance defines the maximum allowable uncertainty or error in the positions of surveyed points.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'ALTA/NSPS surveys require that the description used must be:',
+    options: ['Sufficient to locate and identify the property without ambiguity', 'Approved by the client only', 'In metes and bounds format only', 'Less than 100 words'],
+    correctAnswer: 0,
+    explanation: 'The legal description must be sufficient to locate and identify the property being surveyed without ambiguity.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Record of Survey is required when:',
+    options: ['State law mandates recording for certain types of surveys', 'The client requests it', 'The property is over 10 acres', 'Only for subdivision surveys'],
+    correctAnswer: 0,
+    explanation: 'Record of Survey requirements vary by state but typically apply when monuments are set or reset, or when discrepancies are found.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The ALTA/NSPS certification requires the surveyor to state:',
+    options: ['Compliance with the minimum standards and any Table A items selected', 'That no encroachments exist', 'That the title is clear', 'Future construction plans'],
+    correctAnswer: 0,
+    explanation: 'The certification states the survey complies with the ALTA/NSPS Minimum Standard Detail Requirements and identifies which Table A items were addressed.',
+    difficulty: 'medium'
+  },
+
+  // Business Practices (PS Domain 4)
+  {
+    domain: 'Business Practices',
+    question: 'A lump sum contract:',
+    options: ['Specifies a fixed price for defined scope of work', 'Pays by the hour regardless of progress', 'Has no defined scope', 'Is always the lowest cost option'],
+    correctAnswer: 0,
+    explanation: 'A lump sum contract provides a fixed fee for a clearly defined scope of work, placing risk on the surveyor for cost overruns.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Professional liability insurance (E&O) protects surveyors against:',
+    options: ['Claims of negligence, errors, or omissions in professional services', 'Property damage at job sites', 'Employee injuries', 'Vehicle accidents'],
+    correctAnswer: 0,
+    explanation: 'Errors and Omissions (E&O) insurance covers claims arising from professional negligence, errors, or omissions in survey services.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A clear scope of services document should include:',
+    options: ['Deliverables, standards, timeline, and fee structure', 'Only the total fee', 'General terms without details', 'Nothing about limitations'],
+    correctAnswer: 0,
+    explanation: 'A well-defined scope includes deliverables, applicable standards, timeline, fees, payment terms, and limitations on the services.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'When estimating project fees, a surveyor should consider:',
+    options: ['All factors: labor, equipment, overhead, risk, and profit', 'Only the hourly wage', 'Competitor pricing only', 'Client budget only'],
+    correctAnswer: 0,
+    explanation: 'Proper fee estimation accounts for direct labor, equipment, supplies, overhead, risk factors, and reasonable profit.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Risk management in surveying includes:',
+    options: ['Clear contracts, proper insurance, quality control, and documentation', 'Only purchasing insurance', 'Avoiding difficult projects', 'Rushing to complete work'],
+    correctAnswer: 0,
+    explanation: 'Effective risk management combines clear contracts, adequate insurance, quality control procedures, and thorough documentation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A surveyor\'s proposal should NOT:',
+    options: ['Promise specific legal outcomes', 'Describe the scope of work', 'Include fee estimates', 'Reference applicable standards'],
+    correctAnswer: 0,
+    explanation: 'Surveyors should never promise specific legal outcomes (like resolution of boundary disputes) as this goes beyond their professional scope.',
+    difficulty: 'medium'
+  },
+
+  // Areas of Practice (PS Domain 5)
+  {
+    domain: 'Areas of Practice',
+    question: 'In PLSS, single proportionate measurement is used for:',
+    options: ['Lost quarter-section corners on a section line', 'Lost interior township corners', 'Standard corners only', 'Meander corners'],
+    correctAnswer: 0,
+    explanation: 'Single proportionate measurement restores a lost quarter-section corner by distributing the excess or deficiency along the line between two found corners.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Double proportionate measurement is used for:',
+    options: ['Lost interior township or section corners', 'Quarter corners only', 'Meander corners', 'Witness corners'],
+    correctAnswer: 0,
+    explanation: 'Double proportionate measurement restores lost interior corners by proportioning in both north-south and east-west directions.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'An ALTA/NSPS Land Title Survey is:',
+    options: ['A standardized survey meeting specific title insurance requirements', 'A simple boundary survey', 'A topographic survey only', 'A government survey'],
+    correctAnswer: 0,
+    explanation: 'ALTA/NSPS surveys meet detailed standards developed jointly by ALTA and NSPS for use in commercial real estate transactions and title insurance.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A condominium survey must show:',
+    options: ['Unit boundaries, common elements, and limited common elements', 'Only the exterior of the building', 'Only the land boundaries', 'Only the parking spaces'],
+    correctAnswer: 0,
+    explanation: 'Condominium surveys must delineate unit boundaries, common elements (shared by all owners), and limited common elements (assigned to specific units).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Construction staking typically includes:',
+    options: ['Reference points and offset stakes for building construction', 'Only boundary markers', 'Title research', 'Flood zone determination'],
+    correctAnswer: 0,
+    explanation: 'Construction staking establishes reference points and offset stakes to guide contractors in building according to design plans.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A subdivision plat must typically include:',
+    options: ['Lot and block layout, street dedications, easements, and certifications', 'Only the lot numbers', 'Only a vicinity map', 'Building elevations'],
+    correctAnswer: 0,
+    explanation: 'Subdivision plats show the division of land into lots and blocks, dedicated streets and easements, and required certifications.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Right-of-way surveys are performed to:',
+    options: ['Define boundaries of public or private easements for transportation, utilities, etc.', 'Establish property values only', 'Create subdivision lots', 'Only for railroads'],
+    correctAnswer: 0,
+    explanation: 'Right-of-way surveys establish the limits of easements for roads, utilities, pipelines, and other linear corridors.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A topographic survey shows:',
+    options: ['Natural and man-made features with elevations and contours', 'Only boundary lines', 'Only building locations', 'Legal descriptions only'],
+    correctAnswer: 0,
+    explanation: 'Topographic surveys depict the terrain including contour lines, spot elevations, and the locations of natural and man-made features.',
+    difficulty: 'easy'
+  }
 ];

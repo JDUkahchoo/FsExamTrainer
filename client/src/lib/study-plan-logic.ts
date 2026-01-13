@@ -1,9 +1,9 @@
-import { NCEES_DOMAINS, getAllDomains, getDomainName, type DomainNumber } from "@shared/domains";
-import type { StudyMode, WeekPlan, Domain } from "@shared/schema";
-import { generateWeekTitle, generateWeekContent } from "@shared/data/domainContent";
+import { NCEES_DOMAINS, getAllDomains, getDomainName, NCEES_PS_DOMAINS, getAllPSDomains, getPSDomainName, type DomainNumber, type PSDomainNumber } from "@shared/domains";
+import type { StudyMode, WeekPlan, Domain, FSDomain, PSDomain } from "@shared/schema";
+import { generateWeekTitle, generateWeekContent, generatePSWeekTitle } from "@shared/data/domainContent";
 
-// Map NCEES domain numbers (0-7) to UI domain names (8 unique domains)
-const DOMAIN_NUMBER_TO_UI_NAME: Record<number, Domain> = {
+// Map FS NCEES domain numbers (0-7) to UI domain names
+const FS_DOMAIN_NUMBER_TO_UI_NAME: Record<number, FSDomain> = {
   0: "Math & Basic Science",                    // NCEES: Math & Science Foundations
   1: "Field Data Acquisition",                  // NCEES: Surveying Processes and Methods
   2: "Mapping, GIS, and CAD",                   // NCEES: Mapping Processes and Methods
@@ -13,6 +13,18 @@ const DOMAIN_NUMBER_TO_UI_NAME: Record<number, Domain> = {
   6: "Professional Practice",                   // NCEES: Business Concepts
   7: "Applied Mathematics & Statistics"         // NCEES: Applied Mathematics and Statistics
 };
+
+// Map PS NCEES domain numbers (1-5) to UI domain names
+const PS_DOMAIN_NUMBER_TO_UI_NAME: Record<number, PSDomain> = {
+  1: "Legal Principles",                        // NCEES: Legal Principles
+  2: "Professional Survey Practices",           // NCEES: Professional Survey Practices
+  3: "Standards and Specifications",            // NCEES: Standards and Specifications
+  4: "Business Practices",                      // NCEES: Business Practices
+  5: "Areas of Practice"                        // NCEES: Areas of Practice
+};
+
+// Legacy alias for backward compatibility
+const DOMAIN_NUMBER_TO_UI_NAME = FS_DOMAIN_NUMBER_TO_UI_NAME;
 
 // Lesson type matching backend
 interface Lesson {
@@ -304,9 +316,11 @@ export function getWeeklyLessonsByMode(
  */
 export function generateCustomWeekPlans(
   customWeeklyDomains: Record<string, number[]>,
-  customTimeline: number
+  customTimeline: number,
+  examTrack: 'fs' | 'ps' = 'fs'
 ): WeekPlan[] {
   const weekPlans: WeekPlan[] = [];
+  const domainMap = examTrack === 'ps' ? PS_DOMAIN_NUMBER_TO_UI_NAME : FS_DOMAIN_NUMBER_TO_UI_NAME;
   
   for (let week = 1; week <= customTimeline; week++) {
     const weekKey = week.toString();
@@ -316,14 +330,16 @@ export function generateCustomWeekPlans(
     if (domainNumbers.length === 0) continue;
     
     // Generate content based on selected domains
-    const content = generateWeekContent(domainNumbers);
-    const title = generateWeekTitle(domainNumbers);
+    const content = generateWeekContent(domainNumbers, examTrack);
+    const title = examTrack === 'ps' 
+      ? generatePSWeekTitle(domainNumbers) 
+      : generateWeekTitle(domainNumbers);
     
     // Map domain numbers to UI domain names that match getDomainConfig
-    // Use Set to deduplicate since domains 4 and 5 both map to "Plane Survey Computations"
+    // Use Set to deduplicate
     const domains = Array.from(new Set(
       domainNumbers
-        .map(num => DOMAIN_NUMBER_TO_UI_NAME[num])
+        .map(num => domainMap[num])
         .filter(Boolean) // Remove any undefined mappings
     ));
     

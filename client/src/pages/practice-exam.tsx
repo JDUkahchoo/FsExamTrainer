@@ -5,19 +5,23 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw, Layers, FileText, ListChecks, ArrowUpDown, Calculator, Construction } from 'lucide-react';
+import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw, Layers, FileText, ListChecks, ArrowUpDown, Calculator } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { EXAM_QUESTIONS } from '@shared/data/examQuestions';
+import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { NCEES_STYLE_QUESTIONS, getScenarioContext, type NCEESQuestion } from '@shared/data/nceesStyleQuestions';
 import { SelectAllQuestion, PriorityRankingQuestion, ScenarioContext, ComputationalBadge, getQuestionTypeName } from '@/components/ncees-question-types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import type { Domain, ExamDraft } from '@shared/schema';
+import { PS_DOMAINS, FS_DOMAINS } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
 
-const EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
-const TOTAL_QUESTIONS = 110;
+const FS_EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
+const PS_EXAM_DURATION_MINUTES = 300; // 5 hours = 300 minutes
+const FS_TOTAL_QUESTIONS = 110;
+const PS_TOTAL_QUESTIONS = 60; // PS exam has fewer questions
 const NCEES_TOTAL_QUESTIONS = 110; // Match actual NCEES FS exam format
 
 type ExamState = 'setup' | 'active' | 'completed';
@@ -26,8 +30,19 @@ type ExamMode = 'standard' | 'ncees-style';
 // Extended answer type to support different question formats
 type ExtendedAnswer = number | number[];
 
+// Get PS exam questions from quiz questions pool
+const PS_EXAM_QUESTIONS = QUIZ_QUESTIONS.filter(q => 
+  (PS_DOMAINS as readonly string[]).includes(q.domain)
+);
+
 export default function PracticeExamPage() {
   const { examTrack, examName } = useExamTrack();
+  
+  // Calculate exam parameters based on exam track
+  const EXAM_DURATION_MINUTES = examTrack === 'ps' ? PS_EXAM_DURATION_MINUTES : FS_EXAM_DURATION_MINUTES;
+  const TOTAL_QUESTIONS = examTrack === 'ps' ? PS_TOTAL_QUESTIONS : FS_TOTAL_QUESTIONS;
+  const availableExamQuestions = examTrack === 'ps' ? PS_EXAM_QUESTIONS : EXAM_QUESTIONS;
+  
   const [examState, setExamState] = useState<ExamState>('setup');
   const [examMode, setExamMode] = useState<ExamMode>('standard');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -36,24 +51,6 @@ export default function PracticeExamPage() {
   const [examQuestions, setExamQuestions] = useState<Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>>([]);
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
-
-  if (examTrack === 'ps') {
-    return (
-      <div className="p-8 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-practice-exam">Practice Exam</h1>
-        <Card className="p-8">
-          <div className="text-center">
-            <Construction className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold mb-2">Coming Soon for {examName}</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Full-length practice exams for the PS exam are currently under development. 
-              In the meantime, you can study using flashcards and interactive lessons.
-            </p>
-          </div>
-        </Card>
-      </div>
-    );
-  }
 
   // Query to detect existing draft on page load
   const { data: draftData, isLoading: isDraftLoading } = useQuery<ExamDraft | null>({
@@ -196,29 +193,44 @@ export default function PracticeExamPage() {
     setExamMode(mode);
     
     if (mode === 'standard') {
-      // Standard exam - shuffle and select 110 questions from regular pool
-      const shuffled = [...EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
+      // Standard exam - shuffle and select questions from appropriate pool
+      const questionPool = examTrack === 'ps' ? PS_EXAM_QUESTIONS : EXAM_QUESTIONS;
+      const shuffled = [...questionPool].sort(() => Math.random() - 0.5);
       const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
       
       // Add stable IDs based on original array position
       const questionsWithIds = selected.map(q => ({
         ...q,
-        id: `exam-${EXAM_QUESTIONS.indexOf(q)}`
+        id: examTrack === 'ps' 
+          ? `ps-exam-${PS_EXAM_QUESTIONS.indexOf(q)}`
+          : `exam-${EXAM_QUESTIONS.indexOf(q)}`
       }));
       
       setExamQuestions(questionsWithIds);
     } else {
-      // NCEES-style exam - use questions with alternative item types
-      // Filter out scenario context questions (they're displayed with their related questions)
-      const actualQuestions = NCEES_STYLE_QUESTIONS.filter(
-        q => !(q.questionType === 'scenario_based' && q.scenarioContext && q.options.length === 0)
-      );
-      
-      // Shuffle and select questions
-      const shuffled = [...actualQuestions].sort(() => Math.random() - 0.5);
-      const selected = shuffled.slice(0, Math.min(NCEES_TOTAL_QUESTIONS, shuffled.length));
-      
-      setExamQuestions(selected);
+      // NCEES-style exam - only available for FS exam currently
+      if (examTrack === 'ps') {
+        // Fall back to standard mode for PS
+        const shuffled = [...PS_EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
+        const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
+        const questionsWithIds = selected.map(q => ({
+          ...q,
+          id: `ps-exam-${PS_EXAM_QUESTIONS.indexOf(q)}`
+        }));
+        setExamQuestions(questionsWithIds);
+      } else {
+        // NCEES-style exam for FS - use questions with alternative item types
+        // Filter out scenario context questions (they're displayed with their related questions)
+        const actualQuestions = NCEES_STYLE_QUESTIONS.filter(
+          q => !(q.questionType === 'scenario_based' && q.scenarioContext && q.options.length === 0)
+        );
+        
+        // Shuffle and select questions
+        const shuffled = [...actualQuestions].sort(() => Math.random() - 0.5);
+        const selected = shuffled.slice(0, Math.min(NCEES_TOTAL_QUESTIONS, shuffled.length));
+        
+        setExamQuestions(selected);
+      }
     }
     
     setExamState('active');
@@ -454,10 +466,10 @@ export default function PracticeExamPage() {
 
         <div className="p-8 max-w-5xl mx-auto">
           <h1 className="text-3xl font-bold text-foreground mb-8 text-center" data-testid="heading-practice-exam">
-            FS Practice Exam
+            {examTrack === 'ps' ? 'PS' : 'FS'} Practice Exam
           </h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className={`grid gap-6 mb-8 ${examTrack === 'ps' ? 'grid-cols-1 max-w-xl mx-auto' : 'grid-cols-1 md:grid-cols-2'}`}>
             {/* Standard Exam Option */}
             <Card 
               className={`p-6 cursor-pointer transition-all hover-elevate ${examMode === 'standard' ? 'ring-2 ring-primary' : ''}`}
@@ -482,47 +494,49 @@ export default function PracticeExamPage() {
               </div>
             </Card>
             
-            {/* NCEES-Style Exam Option */}
-            <Card 
-              className={`p-6 cursor-pointer transition-all hover-elevate ${examMode === 'ncees-style' ? 'ring-2 ring-primary' : ''}`}
-              onClick={() => setExamMode('ncees-style')}
-              data-testid="card-ncees-exam"
-            >
-              <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center flex-shrink-0">
-                  <Layers className="h-6 w-6 text-amber-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h2 className="text-xl font-semibold text-foreground">NCEES-Style Exam</h2>
-                    <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30">New</Badge>
+            {/* NCEES-Style Exam Option - Only show for FS exam */}
+            {examTrack !== 'ps' && (
+              <Card 
+                className={`p-6 cursor-pointer transition-all hover-elevate ${examMode === 'ncees-style' ? 'ring-2 ring-primary' : ''}`}
+                onClick={() => setExamMode('ncees-style')}
+                data-testid="card-ncees-exam"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+                    <Layers className="h-6 w-6 text-amber-600" />
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Mirrors actual NCEES format with alternative item types: scenarios, select-all, priority ranking, and computational questions. Note: Resume not available for this mode.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">{NCEES_TOTAL_QUESTIONS} Questions</Badge>
-                    <Badge variant="secondary">{EXAM_DURATION_MINUTES / 60}h Time Limit</Badge>
-                    <Badge variant="outline" className="text-xs">
-                      <FileText className="w-3 h-3 mr-1" />
-                      Scenarios
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      <ListChecks className="w-3 h-3 mr-1" />
-                      Select All
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      <ArrowUpDown className="w-3 h-3 mr-1" />
-                      Ranking
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      <Calculator className="w-3 h-3 mr-1" />
-                      Computational
-                    </Badge>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h2 className="text-xl font-semibold text-foreground">NCEES-Style Exam</h2>
+                      <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30">New</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Mirrors actual NCEES format with alternative item types: scenarios, select-all, priority ranking, and computational questions. Note: Resume not available for this mode.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary">{NCEES_TOTAL_QUESTIONS} Questions</Badge>
+                      <Badge variant="secondary">{EXAM_DURATION_MINUTES / 60}h Time Limit</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        <FileText className="w-3 h-3 mr-1" />
+                        Scenarios
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        <ListChecks className="w-3 h-3 mr-1" />
+                        Select All
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        <ArrowUpDown className="w-3 h-3 mr-1" />
+                        Ranking
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        <Calculator className="w-3 h-3 mr-1" />
+                        Computational
+                      </Badge>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            )}
           </div>
           
           {/* Exam Info Summary */}
@@ -539,7 +553,7 @@ export default function PracticeExamPage() {
                 <p className="text-sm text-muted-foreground">Time Limit</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">7</p>
+                <p className="text-2xl font-bold text-foreground">{examTrack === 'ps' ? '5' : '7'}</p>
                 <p className="text-sm text-muted-foreground">Domains</p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import type { DomainNumber } from '../domains';
+import type { DomainNumber, PSDomainNumber } from '../domains';
 
 // Domain-specific study content for generating custom weekly plans
 // Each domain includes recommended resources and activities for READ, FOCUS, APPLY, and REINFORCE phases
@@ -10,6 +10,7 @@ interface DomainContent {
   reinforce: string[];
 }
 
+// FS Exam Domain Content (Domains 0-7)
 export const DOMAIN_CONTENT: Record<DomainNumber, DomainContent> = {
   0: {
     // Math & Science Foundations
@@ -273,7 +274,7 @@ export function generateWeekTitle(domainNumbers: number[]): string {
 }
 
 // Generate combined content for multiple domains
-export function generateWeekContent(domainNumbers: number[]): DomainContent {
+export function generateWeekContent(domainNumbers: number[], examTrack: 'fs' | 'ps' = 'fs'): DomainContent {
   const combined: DomainContent = {
     read: [],
     focus: [],
@@ -283,7 +284,12 @@ export function generateWeekContent(domainNumbers: number[]): DomainContent {
 
   // Collect content from all selected domains
   domainNumbers.forEach(domainNum => {
-    const content = DOMAIN_CONTENT[domainNum as DomainNumber];
+    let content: DomainContent | undefined;
+    if (examTrack === 'ps') {
+      content = PS_DOMAIN_CONTENT[domainNum as PSDomainNumber];
+    } else {
+      content = DOMAIN_CONTENT[domainNum as DomainNumber];
+    }
     if (content) {
       combined.read.push(...content.read);
       combined.focus.push(...content.focus);
@@ -293,4 +299,175 @@ export function generateWeekContent(domainNumbers: number[]): DomainContent {
   });
 
   return combined;
+}
+
+// PS Exam Domain Content (Domains 1-5)
+export const PS_DOMAIN_CONTENT: Record<PSDomainNumber, DomainContent> = {
+  1: {
+    // Legal Principles
+    read: [
+      "Brown's Boundary Control and Legal Principles (Chapters 1-5)",
+      "State-specific property law statutes",
+      "ALTA/NSPS Land Title Survey Standards",
+      "Court cases on boundary disputes and surveyor liability"
+    ],
+    focus: [
+      "Hierarchy of title elements (rights, seniority, monuments, measurements)",
+      "Deed interpretation and legal descriptions",
+      "Easements: creation, types, and termination",
+      "Adverse possession elements and requirements",
+      "Riparian and littoral rights",
+      "Statute of frauds and recording acts",
+      "Boundary by agreement, acquiescence, and estoppel"
+    ],
+    apply: [
+      "Analyze conflicting deed descriptions to determine boundary",
+      "Draft legal descriptions for various property configurations",
+      "Case study: Determine boundary based on monument vs measurement conflict",
+      "Identify potential adverse possession claims in survey scenarios"
+    ],
+    reinforce: [
+      "Flashcards: Legal terminology definitions",
+      "Mnemonic: Order of conflicting title elements",
+      "Case law summaries for common boundary disputes",
+      "Quiz: Identify valid vs invalid easement types"
+    ]
+  },
+  2: {
+    // Professional Survey Practices
+    read: [
+      "State-specific survey practice acts and regulations",
+      "NCEES Model Rules of Professional Conduct",
+      "Professional liability and insurance documentation",
+      "State licensing board rules and disciplinary procedures"
+    ],
+    focus: [
+      "Surveyor's standard of care and duty",
+      "Professional ethics and conduct requirements",
+      "Client relations and communication protocols",
+      "Survey plat requirements and certifications",
+      "Field note documentation standards",
+      "Corners: original, obliterated, and lost definitions",
+      "Retracement survey principles and procedures"
+    ],
+    apply: [
+      "Ethics scenario analysis and decision-making",
+      "Review and critique sample survey plats for compliance",
+      "Document proper field notes for a boundary retracement",
+      "Develop QA/QC checklist for survey deliverables"
+    ],
+    reinforce: [
+      "Flashcards: State-specific licensing requirements",
+      "Review: Ethics case studies from disciplinary actions",
+      "Memorize: Elements of surveyor's standard of care",
+      "Quiz: Corner restoration procedures"
+    ]
+  },
+  3: {
+    // Standards and Specifications
+    read: [
+      "ALTA/NSPS 2021 Minimum Standard Detail Requirements",
+      "State minimum technical standards for surveying",
+      "Federal specifications (FGDC, NGS standards)",
+      "Industry accuracy standards (ASPRS, etc.)"
+    ],
+    focus: [
+      "ALTA/NSPS Table A optional items",
+      "Positional tolerance calculations and reporting",
+      "Relative positional precision requirements",
+      "Boundary vs topographic survey accuracy standards",
+      "Monument requirements and specifications",
+      "Certification and disclaimer language",
+      "Record of survey requirements"
+    ],
+    apply: [
+      "Calculate and verify positional tolerance for a survey",
+      "Prepare an ALTA/NSPS compliant survey checklist",
+      "Draft appropriate certifications for different survey types",
+      "Evaluate equipment calibration requirements"
+    ],
+    reinforce: [
+      "Flashcards: ALTA/NSPS Table A items and definitions",
+      "Memorize: Standard accuracy classifications",
+      "Review: Common certification language templates",
+      "Quiz: Monument type requirements by survey type"
+    ]
+  },
+  4: {
+    // Business Practices
+    read: [
+      "Survey business management references",
+      "Contract law basics for professionals",
+      "Risk management and liability insurance guides",
+      "Project management fundamentals"
+    ],
+    focus: [
+      "Contract types and elements for survey services",
+      "Proposal preparation and fee estimation",
+      "Scope of services documentation",
+      "Professional liability and E&O insurance",
+      "Risk management strategies",
+      "Client communication and expectation management",
+      "Business entity structures for surveyors"
+    ],
+    apply: [
+      "Draft a comprehensive scope of services document",
+      "Develop a fee proposal for a boundary survey project",
+      "Create risk management checklist for common survey types",
+      "Analyze contract terms for liability exposure"
+    ],
+    reinforce: [
+      "Flashcards: Contract terminology",
+      "Review: Fee estimation methodologies",
+      "Memorize: Essential contract clauses",
+      "Quiz: Professional liability scenarios"
+    ]
+  },
+  5: {
+    // Areas of Practice
+    read: [
+      "Brown's Boundary Control (advanced chapters)",
+      "BLM Manual of Surveying Instructions 2009",
+      "State-specific subdivision and platting laws",
+      "PLSS restoration procedures"
+    ],
+    focus: [
+      "Subdivision plat creation and requirements",
+      "Condominium surveys and documentation",
+      "PLSS: Section subdivision and corner restoration",
+      "Construction and stake-out surveys",
+      "ALTA/NSPS Land Title Surveys (full requirements)",
+      "Topographic survey specifications",
+      "Right-of-way and easement surveys",
+      "Boundary dispute resolution procedures"
+    ],
+    apply: [
+      "Prepare a subdivision plat meeting local requirements",
+      "Perform section corner restoration calculation",
+      "Complete an ALTA/NSPS survey certification with Table A items",
+      "Design construction control layout for a building project"
+    ],
+    reinforce: [
+      "Flashcards: PLSS subdivision rules",
+      "Drill: Section corner restoration methods",
+      "Review: Subdivision plat checklists",
+      "Quiz: ALTA Table A item requirements"
+    ]
+  }
+};
+
+// PS-specific week title generation
+export function generatePSWeekTitle(domainNumbers: number[]): string {
+  if (domainNumbers.length === 0) return "Custom Study Week";
+  if (domainNumbers.length === 1) {
+    const psdomainNames: Record<number, string> = {
+      1: "Legal Principles",
+      2: "Professional Survey Practices",
+      3: "Standards and Specifications",
+      4: "Business Practices",
+      5: "Areas of Practice"
+    };
+    return psdomainNames[domainNumbers[0]] || "Custom Study Week";
+  }
+  return `Multi-Domain Focus (${domainNumbers.length} domains)`;
 }
