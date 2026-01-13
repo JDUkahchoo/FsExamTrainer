@@ -1125,10 +1125,14 @@ async function seedPSLessons() {
 // Export for use in main seeding script
 export { seedPSLessons };
 
-// Run seeding
-seedPSLessons()
-  .then(() => process.exit(0))
-  .catch((err) => {
-    console.error("Error seeding PS lessons:", err);
-    process.exit(1);
-  });
+// Only run when executed directly (not when imported)
+// Check if this file is being run directly via tsx
+const isDirectExecution = process.argv[1]?.includes('seed-ps-lessons');
+if (isDirectExecution) {
+  seedPSLessons()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error("Error seeding PS lessons:", err);
+      process.exit(1);
+    });
+}

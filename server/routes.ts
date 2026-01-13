@@ -5,9 +5,10 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
+import { seedPSLessons } from "./seed-ps-lessons";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -77,17 +78,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin endpoint to seed PS lessons (protected by secret key)
+  app.post('/api/admin/seed-ps-lessons', async (req, res) => {
+    try {
+      const adminKey = req.headers['x-admin-key'] || req.body.adminKey;
+      const expectedKey = process.env.ADMIN_SEED_KEY;
+      
+      if (!expectedKey) {
+        return res.status(500).json({ error: 'ADMIN_SEED_KEY not configured' });
+      }
+      
+      if (adminKey !== expectedKey) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+
+      // Check current state of PS lessons
+      const psLessonResult = await db.select({ count: count() }).from(lessons).where(eq(lessons.examTrack, 'ps'));
+      const psLessonCount = psLessonResult[0]?.count || 0;
+
+      console.log(`Admin PS seed request - Current state: ${psLessonCount} PS lessons`);
+
+      // If force=true or PS lessons are missing, run seed
+      const force = req.body.force === true;
+      if (force || psLessonCount < 50) {
+        console.log('Starting admin-triggered PS seed...');
+        await seedPSLessons();
+        
+        const newPsLessonResult = await db.select({ count: count() }).from(lessons).where(eq(lessons.examTrack, 'ps'));
+        const totalLessonResult = await db.select({ count: count() }).from(lessons);
+        const totalQuestionResult = await db.select({ count: count() }).from(lessonQuestions);
+        
+        res.json({
+          success: true,
+          message: 'PS Lesson seeding completed',
+          before: { psLessons: psLessonCount },
+          after: { 
+            psLessons: newPsLessonResult[0]?.count,
+            totalLessons: totalLessonResult[0]?.count,
+            totalQuestions: totalQuestionResult[0]?.count
+          }
+        });
+      } else {
+        res.json({
+          success: true,
+          message: 'PS lessons already seeded',
+          psLessons: psLessonCount
+        });
+      }
+    } catch (error) {
+      console.error('Admin PS seed error:', error);
+      res.status(500).json({ error: 'PS Seeding failed', details: String(error) });
+    }
+  });
+
   // Admin endpoint to check database status (no auth required, read-only)
   app.get('/api/admin/db-status', async (_req, res) => {
     try {
       const lessonResult = await db.select({ count: count() }).from(lessons);
       const questionResult = await db.select({ count: count() }).from(lessonQuestions);
+      const fsLessonResult = await db.select({ count: count() }).from(lessons).where(eq(lessons.examTrack, 'fs'));
+      const psLessonResult = await db.select({ count: count() }).from(lessons).where(eq(lessons.examTrack, 'ps'));
       
       res.json({
         lessons: lessonResult[0]?.count || 0,
+        fsLessons: fsLessonResult[0]?.count || 0,
+        psLessons: psLessonResult[0]?.count || 0,
         questions: questionResult[0]?.count || 0,
-        expectedLessons: 73,
-        expectedQuestions: 1825
+        expectedLessons: 128,
+        expectedFsLessons: 73,
+        expectedPsLessons: 55,
+        expectedQuestions: 2100
       });
     } catch (error) {
       res.status(500).json({ error: 'Database check failed', details: String(error) });
