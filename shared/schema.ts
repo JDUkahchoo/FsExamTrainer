@@ -725,10 +725,11 @@ export const usersRelations = relations(users, ({ many }) => ({
 // --- Frontend-only Types (for UI state management) ---
 
 export type Flashcard = {
-  domain: Domain;
+  domain: Domain | string; // Domain for FS or PS exam
   front: string;
   back: string;
   category: 'formula' | 'definition' | 'concept';
+  examTrack?: 'fs' | 'ps'; // Which exam this flashcard belongs to (defaults to 'fs')
 };
 
 export type WeekPlan = {
@@ -1004,8 +1005,9 @@ export type StudyCycle = typeof studyCycles.$inferSelect;
 export type QuestionType = 'multiple_choice' | 'fill_in_blank' | 'drag_drop';
 
 export const lessons = pgTable("lessons", {
-  id: varchar("id").primaryKey(), // Deterministic ID: d{domain}-lesson-{orderIndex:02}
-  domainNumber: integer("domain_number").notNull(), // 1-7 for NCEES domains
+  id: varchar("id").primaryKey(), // Deterministic ID: {examTrack}-d{domain}-lesson-{orderIndex:02}
+  examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' or 'ps' - which exam this lesson belongs to
+  domainNumber: integer("domain_number").notNull(), // Domain number for the exam track
   domain: text("domain").notNull(), // NCEES domain name
   title: text("title").notNull(),
   description: text("description").notNull(),
