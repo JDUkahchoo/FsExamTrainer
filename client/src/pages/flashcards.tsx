@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useSearch } from 'wouter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import { TriadDrillCard } from '@/components/triad-drill-card';
 import { FeynmanModeCard } from '@/components/feynman-mode-card';
 import { MnemonicBuilderCard } from '@/components/mnemonic-builder-card';
 import { useToast } from '@/hooks/use-toast';
+import { useExamTrack } from '@/contexts/exam-track-context';
 
 type FlashcardDeck = 'original' | 'comprehensive';
 
@@ -33,6 +34,7 @@ export default function FlashcardsPage() {
   const searchString = useSearch();
   const urlParams = new URLSearchParams(searchString);
   const domainsFromUrl = urlParams.get('domains');
+  const { examTrack, domains: examDomains, examName } = useExamTrack();
   
   const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>('comprehensive');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
@@ -205,7 +207,24 @@ export default function FlashcardsPage() {
     }
   }, [domainsFromUrl]);
 
-  const activeFlashcards = selectedDeck === 'comprehensive' ? COMPREHENSIVE_FLASHCARDS : FLASHCARDS;
+  useEffect(() => {
+    if (examTrack === 'ps') {
+      setSelectedDeck('original');
+    }
+    setSelectedDomain('all');
+    setSelectedDomains([]);
+  }, [examTrack]);
+
+  const examFilteredFlashcards = useMemo(() => {
+    if (selectedDeck === 'comprehensive') {
+      return COMPREHENSIVE_FLASHCARDS;
+    }
+    return FLASHCARDS.filter(card => 
+      !card.examTrack || card.examTrack === examTrack
+    );
+  }, [selectedDeck, examTrack]);
+
+  const activeFlashcards = examFilteredFlashcards;
 
   const filteredCards = selectedDomains.length > 0
     ? activeFlashcards.filter(card => selectedDomains.includes(card.domain as Domain))
@@ -489,15 +508,21 @@ export default function FlashcardsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-4 mb-4">
-          <Select value={selectedDeck} onValueChange={(value) => setSelectedDeck(value as FlashcardDeck)}>
-            <SelectTrigger className="w-64" data-testid="select-deck">
-              <SelectValue placeholder="Select deck" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="comprehensive">Comprehensive (350 cards)</SelectItem>
-              <SelectItem value="original">Original (50 cards)</SelectItem>
-            </SelectContent>
-          </Select>
+          <Badge variant="secondary" className="text-xs">
+            {examName}
+          </Badge>
+          
+          {examTrack === 'fs' && (
+            <Select value={selectedDeck} onValueChange={(value) => setSelectedDeck(value as FlashcardDeck)}>
+              <SelectTrigger className="w-64" data-testid="select-deck">
+                <SelectValue placeholder="Select deck" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="comprehensive">Comprehensive (350 cards)</SelectItem>
+                <SelectItem value="original">Original ({FLASHCARDS.filter(c => c.examTrack === 'fs' || !c.examTrack).length} cards)</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
 
           <Select value={selectedDomain} onValueChange={(value) => {
             setSelectedDomain(value as Domain | 'all');
@@ -508,8 +533,8 @@ export default function FlashcardsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Domains</SelectItem>
-              {DOMAINS.map(domain => (
-                <SelectItem key={domain} value={domain}>{domain}</SelectItem>
+              {examDomains.map(domain => (
+                <SelectItem key={domain.number} value={domain.name}>{domain.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>

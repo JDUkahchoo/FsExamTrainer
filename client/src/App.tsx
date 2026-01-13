@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { GettingStartedOnboarding } from "@/components/getting-started-onboarding";
+import { ExamTrackProvider } from "@/contexts/exam-track-context";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import StudyPlan from "@/pages/study-plan";
@@ -103,19 +104,21 @@ function AppContent({ style }: { style: React.CSSProperties }) {
   }
 
   return (
-    <SidebarProvider style={style}>
-      <WelcomeDialog />
-      <div className="flex h-screen w-full">
-        <AppSidebar />
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <header className="flex items-center border-b border-border p-2 bg-background">
-            <SidebarTrigger data-testid="button-sidebar-toggle" />
-          </header>
-          <main className="flex-1 overflow-auto">
-            <Router />
-          </main>
+    <ExamTrackProvider>
+      <SidebarProvider style={style}>
+        <WelcomeDialog />
+        <div className="flex h-screen w-full">
+          <AppSidebar />
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <header className="flex items-center border-b border-border p-2 bg-background">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
+            </header>
+            <main className="flex-1 overflow-auto">
+              <Router />
+            </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </ExamTrackProvider>
   );
 }
