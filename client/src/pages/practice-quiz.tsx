@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle2, XCircle, RotateCcw, Lightbulb, Clock, Play, Trophy } from 'lucide-react';
+import { CheckCircle2, XCircle, RotateCcw, Lightbulb, Clock, Play, Trophy, Construction } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
 import type { Domain, QuizDraft } from '@shared/schema';
+import { useExamTrack } from '@/contexts/exam-track-context';
 
 type QuizState = 'setup' | 'active' | 'completed';
 
@@ -21,6 +22,7 @@ export default function PracticeQuizPage() {
   const searchString = useSearch();
   const urlParams = new URLSearchParams(searchString);
   const domainsFromUrl = urlParams.get('domains');
+  const { examTrack, examName } = useExamTrack();
   
   const [quizState, setQuizState] = useState<QuizState>('setup');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
@@ -34,6 +36,24 @@ export default function PracticeQuizPage() {
   const [quizQuestions, setQuizQuestions] = useState<Array<typeof QUIZ_QUESTIONS[0] & { id: string }>>([]);
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
+
+  if (examTrack === 'ps') {
+    return (
+      <div className="p-8 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-practice-quiz">Practice Quiz</h1>
+        <Card className="p-8">
+          <div className="text-center">
+            <Construction className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <h2 className="text-2xl font-bold mb-2">Coming Soon for {examName}</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Practice quizzes for the PS exam are currently under development. 
+              In the meantime, you can study using flashcards and interactive lessons.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   // Query to detect existing draft on page load
   const { data: draftData, isLoading: isDraftLoading } = useQuery<QuizDraft | null>({

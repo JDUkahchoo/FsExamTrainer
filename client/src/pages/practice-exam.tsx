@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw, Layers, FileText, ListChecks, ArrowUpDown, Calculator } from 'lucide-react';
+import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw, Layers, FileText, ListChecks, ArrowUpDown, Calculator, Construction } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { EXAM_QUESTIONS } from '@shared/data/examQuestions';
 import { NCEES_STYLE_QUESTIONS, getScenarioContext, type NCEESQuestion } from '@shared/data/nceesStyleQuestions';
@@ -14,6 +14,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import type { Domain, ExamDraft } from '@shared/schema';
+import { useExamTrack } from '@/contexts/exam-track-context';
 
 const EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
 const TOTAL_QUESTIONS = 110;
@@ -26,6 +27,7 @@ type ExamMode = 'standard' | 'ncees-style';
 type ExtendedAnswer = number | number[];
 
 export default function PracticeExamPage() {
+  const { examTrack, examName } = useExamTrack();
   const [examState, setExamState] = useState<ExamState>('setup');
   const [examMode, setExamMode] = useState<ExamMode>('standard');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -34,6 +36,24 @@ export default function PracticeExamPage() {
   const [examQuestions, setExamQuestions] = useState<Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>>([]);
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
+
+  if (examTrack === 'ps') {
+    return (
+      <div className="p-8 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-practice-exam">Practice Exam</h1>
+        <Card className="p-8">
+          <div className="text-center">
+            <Construction className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <h2 className="text-2xl font-bold mb-2">Coming Soon for {examName}</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Full-length practice exams for the PS exam are currently under development. 
+              In the meantime, you can study using flashcards and interactive lessons.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   // Query to detect existing draft on page load
   const { data: draftData, isLoading: isDraftLoading } = useQuery<ExamDraft | null>({
