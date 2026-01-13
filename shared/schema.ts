@@ -1273,6 +1273,7 @@ export type QuestType = typeof QUEST_TYPES[number];
 export const dailyQuests = pgTable("daily_quests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' or 'ps'
   date: timestamp("date").notNull(), // The day this quest is for
   questType: varchar("quest_type").notNull(), // e.g., 'complete_flashcards', 'complete_lesson'
   title: varchar("title").notNull(),
@@ -1305,6 +1306,7 @@ export type DailyQuest = typeof dailyQuests.$inferSelect;
 export const reviewSchedule = pgTable("review_schedule", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' or 'ps'
   itemType: varchar("item_type").notNull(), // 'flashcard', 'concept', 'lesson'
   itemId: varchar("item_id").notNull(),
   itemTitle: varchar("item_title").notNull(),

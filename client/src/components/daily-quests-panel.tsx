@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Target, BookOpen, Brain, Dumbbell, Loader2, Sparkles } from 'lucide-react';
+import { useExamTrack } from '@/contexts/exam-track-context';
 import type { DailyQuest } from '@shared/schema';
 
 const questIcons: Record<string, any> = {
@@ -15,8 +16,14 @@ const questIcons: Record<string, any> = {
 };
 
 export function DailyQuestsPanel() {
+  const { examTrack } = useExamTrack();
   const { data: quests = [], isLoading } = useQuery<DailyQuest[]>({
-    queryKey: ['/api/daily-quests']
+    queryKey: ['/api/daily-quests', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/daily-quests?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch quests');
+      return res.json();
+    }
   });
 
   if (isLoading) {

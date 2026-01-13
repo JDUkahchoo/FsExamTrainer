@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Bell, Clock, BookOpen, Brain, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { useExamTrack } from '@/contexts/exam-track-context';
 import type { ReviewSchedule } from '@shared/schema';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -17,12 +18,24 @@ interface ReviewAlertsProps {
 }
 
 export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
+  const { examTrack } = useExamTrack();
+  
   const { data: dueReviews = [], isLoading } = useQuery<ReviewSchedule[]>({
-    queryKey: ['/api/reviews/due']
+    queryKey: ['/api/reviews/due', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/reviews/due?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch due reviews');
+      return res.json();
+    }
   });
 
   const { data: upcomingReviews = [] } = useQuery<ReviewSchedule[]>({
-    queryKey: ['/api/reviews/upcoming']
+    queryKey: ['/api/reviews/upcoming', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/reviews/upcoming?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch upcoming reviews');
+      return res.json();
+    }
   });
 
   if (isLoading) {

@@ -1,12 +1,22 @@
-import { useParams, Link } from 'wouter';
+import { useParams, Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Brain, ClipboardCheck, GraduationCap, BarChart3, Flame, Target, Trophy } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  BookOpen, Brain, ClipboardCheck, GraduationCap, BarChart3, Flame, Target, Trophy,
+  Clock, TrendingUp, Zap, CheckCircle2, Lightbulb, FileText, BookMarked
+} from 'lucide-react';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { EXAM_TRACKS } from '@shared/schema';
+import { StudyCoachBriefing } from '@/components/study-coach-briefing';
+import { DailyQuestsPanel } from '@/components/daily-quests-panel';
+import { ReviewAlerts } from '@/components/review-alerts';
+import { WeeklyLeaderboard } from '@/components/weekly-leaderboard';
+import { ForgettingCurveChart } from '@/components/forgetting-curve-chart';
+import type { UserPreferences } from '@shared/schema';
 
 interface StudyStats {
   lessonsCompleted: number;
@@ -19,6 +29,7 @@ interface StudyStats {
 
 export default function ExamDashboard() {
   const params = useParams<{ examTrack: string }>();
+  const [, setLocation] = useLocation();
   const examTrack = params.examTrack || 'fs';
   const { examName, lessonCount, domainCount } = useExamTrack();
   const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);
@@ -29,6 +40,10 @@ export default function ExamDashboard() {
 
   const { data: lessonsProgress } = useQuery<{ completed: number; total: number }>({
     queryKey: ['/api/lessons/progress', examTrack],
+  });
+
+  const { data: preferences } = useQuery<UserPreferences>({
+    queryKey: ['/api/preferences'],
   });
 
   const completedLessons = lessonsProgress?.completed || 0;
@@ -65,9 +80,152 @@ export default function ExamDashboard() {
     },
   ];
 
+  const strategies = [
+    {
+      id: 'standard',
+      name: 'Standard Mode',
+      icon: BookOpen,
+      color: 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800',
+      description: 'Balanced approach covering all domains evenly',
+      timeline: '16 weeks',
+      weeklyCommitment: '6-8 hours/week',
+      dailyCommitment: '~1 hour/day',
+      benefits: [
+        'Structured weekly schedule',
+        'All domains covered equally',
+        'Best for consistent learners',
+        'READ → FOCUS → APPLY → REINFORCE framework'
+      ],
+      bestFor: 'Students with flexible schedules',
+      recommended: !preferences?.studyMode || preferences.studyMode === 'standard'
+    },
+    {
+      id: 'result-driven',
+      name: 'Result-Driven Mode',
+      icon: TrendingUp,
+      color: 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800',
+      description: 'Prioritizes weak domains identified in your pretest',
+      timeline: '16 weeks',
+      weeklyCommitment: '7-9 hours/week',
+      dailyCommitment: '~1.5 hours/day',
+      benefits: [
+        'Custom domain prioritization',
+        'Weak areas get more focus',
+        'Data-driven approach',
+        'Improves overall pass rate faster'
+      ],
+      bestFor: 'Students with specific weak areas',
+      recommended: preferences?.studyMode === 'result-driven'
+    },
+    {
+      id: 'working-professional',
+      name: 'Working Professional',
+      icon: Clock,
+      color: 'bg-purple-50 dark:bg-purple-950 border-purple-200 dark:border-purple-800',
+      description: 'Optimized for busy schedules with manageable daily loads',
+      timeline: '16 weeks',
+      weeklyCommitment: '9-11 hours/week',
+      dailyCommitment: '~1hr M-F + 2-3hrs weekends',
+      benefits: [
+        '3 lessons/week max',
+        'Round-robin domain cycling',
+        'Perfect for full-time work',
+        'Flexible weekend study'
+      ],
+      bestFor: 'Working professionals',
+      recommended: preferences?.studyMode === 'working-professional'
+    },
+    {
+      id: 'custom',
+      name: 'Custom Plan',
+      icon: Zap,
+      color: 'bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800',
+      description: 'Build your own timeline and select specific domains',
+      timeline: '8-16 weeks',
+      weeklyCommitment: 'Your choice',
+      dailyCommitment: 'Your choice',
+      benefits: [
+        'Complete control over timeline',
+        'Select domains to prioritize',
+        'Adjust based on progress',
+        'Maximum flexibility'
+      ],
+      bestFor: 'Self-directed learners',
+      recommended: preferences?.studyMode === 'custom'
+    }
+  ];
+
+  const tools = [
+    {
+      icon: BookOpen,
+      name: 'Study Plan',
+      description: 'Your weekly roadmap with interactive lessons following the READ → FOCUS → APPLY → REINFORCE framework.',
+      link: `/app/${examTrack}/study-plan`
+    },
+    {
+      icon: Brain,
+      name: 'Practice Quiz',
+      description: 'Test your knowledge with domain-specific or exam-style quizzes with instant feedback.',
+      link: `/app/${examTrack}/quiz`
+    },
+    {
+      icon: ClipboardCheck,
+      name: 'Flashcards',
+      description: 'Master key concepts with spaced repetition and multiple study modes.',
+      link: `/app/${examTrack}/flashcards`
+    },
+    {
+      icon: GraduationCap,
+      name: 'Practice Exam',
+      description: 'Full exam simulator with timer and detailed score breakdown by domain.',
+      link: `/app/${examTrack}/exam`
+    },
+    {
+      icon: FileText,
+      name: 'Study Notes',
+      description: 'Rich text editor for taking notes each week with auto-save.',
+      link: `/app/${examTrack}/notes`
+    },
+    {
+      icon: BarChart3,
+      name: 'Progress Dashboard',
+      description: 'Track improvement with visual analytics and domain mastery insights.',
+      link: `/app/${examTrack}/progress`
+    },
+    {
+      icon: BookMarked,
+      name: 'Resources',
+      description: 'Access formula sheets, memory techniques, and professional references.',
+      link: `/app/${examTrack}/resources`
+    }
+  ];
+
+  const quickTips = [
+    {
+      title: 'Start with the Pretest',
+      description: 'Take the diagnostic pretest first to identify your weak areas.',
+      step: 1
+    },
+    {
+      title: 'Choose Your Study Mode',
+      description: 'Select a study mode that matches your schedule and learning style.',
+      step: 2
+    },
+    {
+      title: 'Follow the Weekly Schedule',
+      description: 'Complete each week\'s lessons, quizzes, and notes to stay on track.',
+      step: 3
+    },
+    {
+      title: 'Review Weak Domains',
+      description: 'Use Practice Quiz and Progress Dashboard to identify and focus on weak areas.',
+      step: 4
+    }
+  ];
+
   return (
     <div className="container mx-auto p-6 max-w-6xl">
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <GraduationCap className="h-7 w-7" />
@@ -79,134 +237,338 @@ export default function ExamDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card data-testid="stat-lessons">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lessons Progress</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{completedLessons}/{lessonCount}</div>
-            <Progress value={progressPercent} className="mt-2" />
-            <p className="text-xs text-muted-foreground mt-1">{progressPercent}% complete</p>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4" data-testid="dashboard-tabs">
+          <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
+          <TabsTrigger value="coaching" data-testid="tab-coaching">AI Coaching</TabsTrigger>
+          <TabsTrigger value="tools" data-testid="tab-tools">Study Tools</TabsTrigger>
+          <TabsTrigger value="planner" data-testid="tab-planner">Planner</TabsTrigger>
+        </TabsList>
 
-        <Card data-testid="stat-domains">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Domains</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{domainCount}</div>
-            <p className="text-xs text-muted-foreground mt-1">Knowledge areas to master</p>
-          </CardContent>
-        </Card>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card data-testid="stat-lessons">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Lessons Progress</CardTitle>
+                <BookOpen className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{completedLessons}/{lessonCount}</div>
+                <Progress value={progressPercent} className="mt-2" />
+                <p className="text-xs text-muted-foreground mt-1">{progressPercent}% complete</p>
+              </CardContent>
+            </Card>
 
-        <Card data-testid="stat-streak">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Study Streak</CardTitle>
-            <Flame className="h-4 w-4 text-orange-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.currentStreak || 0} days</div>
-            <p className="text-xs text-muted-foreground mt-1">Keep it going!</p>
-          </CardContent>
-        </Card>
+            <Card data-testid="stat-domains">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Domains</CardTitle>
+                <Target className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{domainCount}</div>
+                <p className="text-xs text-muted-foreground mt-1">Knowledge areas to master</p>
+              </CardContent>
+            </Card>
 
-        <Card data-testid="stat-xp">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total XP</CardTitle>
-            <Trophy className="h-4 w-4 text-yellow-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalXp || 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Experience earned</p>
-          </CardContent>
-        </Card>
-      </div>
+            <Card data-testid="stat-streak">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Study Streak</CardTitle>
+                <Flame className="h-4 w-4 text-orange-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats?.currentStreak || 0} days</div>
+                <p className="text-xs text-muted-foreground mt-1">Keep it going!</p>
+              </CardContent>
+            </Card>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {quickActions.map((action) => (
-            <Link key={action.href} href={action.href}>
-              <Card className="hover-elevate cursor-pointer h-full" data-testid={action.testId}>
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <action.icon className="h-5 w-5" />
+            <Card data-testid="stat-xp">
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total XP</CardTitle>
+                <Trophy className="h-4 w-4 text-yellow-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats?.totalXp || 0}</div>
+                <p className="text-xs text-muted-foreground mt-1">Experience earned</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {quickActions.map((action) => (
+                <Link key={action.href} href={action.href}>
+                  <Card className="hover-elevate cursor-pointer h-full" data-testid={action.testId}>
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          <action.icon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">{action.label}</CardTitle>
+                          <CardDescription className="text-xs">{action.description}</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card data-testid="card-progress-overview">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Progress Overview
+                </CardTitle>
+                <CardDescription>Your learning journey at a glance</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Overall Progress</span>
+                      <span className="text-muted-foreground">{progressPercent}%</span>
                     </div>
-                    <div>
-                      <CardTitle className="text-base">{action.label}</CardTitle>
-                      <CardDescription className="text-xs">{action.description}</CardDescription>
+                    <Progress value={progressPercent} />
+                  </div>
+                  <Link href={`/app/${examTrack}/progress`}>
+                    <Button variant="outline" className="w-full mt-4" data-testid="button-view-progress">
+                      View Detailed Progress
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card data-testid="card-exam-info">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5" />
+                  Exam Information
+                </CardTitle>
+                <CardDescription>About the {examName}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Exam Type</span>
+                    <Badge variant="secondary">{examTrack.toUpperCase()}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Total Lessons</span>
+                    <span className="font-medium">{lessonCount}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Knowledge Domains</span>
+                    <span className="font-medium">{domainCount}</span>
+                  </div>
+                  <Link href={`/app/${examTrack}/resources`}>
+                    <Button variant="outline" className="w-full mt-4" data-testid="button-view-resources">
+                      View Study Resources
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="coaching" className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">AI Study Coaching</h2>
+              <p className="text-muted-foreground">Personalized guidance, quests, and review optimization</p>
+            </div>
+            <Badge variant="outline">Personalized for you</Badge>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-1">
+              <StudyCoachBriefing />
+            </div>
+            <div className="lg:col-span-1">
+              <DailyQuestsPanel />
+            </div>
+            <div className="lg:col-span-1">
+              <ReviewAlerts />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <WeeklyLeaderboard compact />
+            <ForgettingCurveChart compact />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="tools" className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Your Study Tools</h2>
+            <p className="text-muted-foreground">
+              Each tool is designed to support different parts of your learning journey. Use them together for maximum effectiveness.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tools.map((tool, i) => {
+              const Icon = tool.icon;
+              return (
+                <Card key={i} className="p-4 space-y-3 flex flex-col hover-elevate" data-testid={`tool-card-${tool.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <h3 className="font-semibold">{tool.name}</h3>
                     </div>
                   </div>
-                </CardHeader>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </div>
+                  <p className="text-sm text-muted-foreground flex-1">{tool.description}</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setLocation(tool.link)}
+                    data-testid={`button-open-${tool.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    Open {tool.name}
+                  </Button>
+                </Card>
+              );
+            })}
+          </div>
+        </TabsContent>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card data-testid="card-progress-overview">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Progress Overview
-            </CardTitle>
-            <CardDescription>Your learning journey at a glance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Overall Progress</span>
-                  <span className="text-muted-foreground">{progressPercent}%</span>
+        <TabsContent value="planner" className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Quick Start (4 Steps)</h2>
+            <p className="text-muted-foreground">Follow these steps to get started on your exam preparation journey.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {quickTips.map((tip) => (
+              <Card key={tip.step} className="p-4 space-y-3 hover-elevate" data-testid={`quick-tip-${tip.step}`}>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-semibold">
+                    {tip.step}
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <h3 className="font-semibold">{tip.title}</h3>
+                    <p className="text-sm text-muted-foreground">{tip.description}</p>
+                  </div>
                 </div>
-                <Progress value={progressPercent} />
-              </div>
-              <Link href={`/app/${examTrack}/progress`}>
-                <Button variant="outline" className="w-full mt-4" data-testid="button-view-progress">
-                  View Detailed Progress
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+              </Card>
+            ))}
+          </div>
 
-        <Card data-testid="card-exam-info">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <GraduationCap className="h-5 w-5" />
-              Exam Information
-            </CardTitle>
-            <CardDescription>About the {examName}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Exam Type</span>
-                <Badge variant="secondary">{examTrack.toUpperCase()}</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Lessons</span>
-                <span className="font-medium">{lessonCount}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Knowledge Domains</span>
-                <span className="font-medium">{domainCount}</span>
-              </div>
-              <Link href={`/app/${examTrack}/resources`}>
-                <Button variant="outline" className="w-full mt-4" data-testid="button-view-resources">
-                  View Study Resources
-                </Button>
-              </Link>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Choose Your Study Mode</h2>
+            <p className="text-muted-foreground">
+              Select the strategy that best fits your schedule and learning goals.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {strategies.map((strategy) => {
+                const StrategyIcon = strategy.icon;
+                return (
+                  <Card
+                    key={strategy.id}
+                    className={`p-6 space-y-4 border-2 cursor-pointer transition-all hover-elevate ${
+                      strategy.recommended
+                        ? strategy.color + ' ring-2 ring-primary'
+                        : 'border-border'
+                    }`}
+                    data-testid={`card-strategy-${strategy.id}`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                          <StrategyIcon className="h-5 w-5 text-primary" />
+                        </div>
+                        <h3 className="font-bold text-lg">{strategy.name}</h3>
+                      </div>
+                      {strategy.recommended && (
+                        <Badge variant="default" data-testid={`badge-recommended-${strategy.id}`}>
+                          Current
+                        </Badge>
+                      )}
+                    </div>
+
+                    <p className="text-sm text-muted-foreground">{strategy.description}</p>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Clock className="h-4 w-4 text-primary" />
+                        <span className="font-medium">{strategy.weeklyCommitment}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span className="font-medium">Daily: {strategy.dailyCommitment}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-muted-foreground">KEY BENEFITS</p>
+                      <ul className="space-y-1">
+                        {strategy.benefits.map((benefit, i) => (
+                          <li key={i} className="text-sm flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                            <span>{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="space-y-1 pt-2 border-t border-border">
+                      <p className="text-xs font-semibold text-muted-foreground">BEST FOR</p>
+                      <p className="text-sm">{strategy.bestFor}</p>
+                    </div>
+
+                    <Button
+                      onClick={() => setLocation(`/app/${examTrack}/study-plan`)}
+                      className="w-full"
+                      variant={strategy.recommended ? "default" : "outline"}
+                      data-testid={`button-select-${strategy.id}`}
+                    >
+                      {strategy.recommended ? 'Current Mode' : 'Select Mode'}
+                    </Button>
+                  </Card>
+                );
+              })}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+
+          <div className="space-y-4 bg-accent/5 border border-border rounded-lg p-6">
+            <div className="flex gap-3">
+              <Lightbulb className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
+              <div className="space-y-3">
+                <h3 className="font-bold text-lg">Tips for Success</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li><span className="font-medium text-foreground">Consistency matters</span> - Study a little bit each day rather than cramming</li>
+                  <li><span className="font-medium text-foreground">Mix your tools</span> - Combine lessons, quizzes, and flashcards for better retention</li>
+                  <li><span className="font-medium text-foreground">Track progress</span> - Check your Progress Dashboard weekly to stay motivated</li>
+                  <li><span className="font-medium text-foreground">Focus on weak areas</span> - Use Result-Driven mode or manually focus extra time where needed</li>
+                  <li><span className="font-medium text-foreground">Take the practice exam</span> - Use it as a final check before the real exam</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4 bg-primary/10 border border-primary/20 rounded-lg p-6 text-center">
+            <h3 className="font-bold text-lg">Ready to Get Started?</h3>
+            <p className="text-muted-foreground">
+              Choose a study mode above and head to your Study Plan to begin. Your journey to passing the {examName} starts here!
+            </p>
+            <div className="flex gap-3 justify-center flex-wrap">
+              <Button onClick={() => setLocation(`/app/${examTrack}/pretest`)} data-testid="button-take-pretest">
+                Take Diagnostic Pretest
+              </Button>
+              <Button onClick={() => setLocation(`/app/${examTrack}/study-plan`)} variant="outline" data-testid="button-start-study-plan">
+                Go to Study Plan
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

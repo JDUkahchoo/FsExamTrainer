@@ -2238,7 +2238,7 @@ export class DatabaseStorage implements IStorage {
 
   // --- Daily Quests Methods ---
 
-  async getDailyQuests(userId: string): Promise<DailyQuest[]> {
+  async getDailyQuests(userId: string, examTrack: string = 'fs'): Promise<DailyQuest[]> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -2249,13 +2249,14 @@ export class DatabaseStorage implements IStorage {
       .from(dailyQuests)
       .where(and(
         eq(dailyQuests.userId, userId),
+        eq(dailyQuests.examTrack, examTrack),
         gte(dailyQuests.date, today),
         lte(dailyQuests.date, tomorrow)
       ))
       .orderBy(dailyQuests.createdAt);
   }
 
-  async generateDailyQuests(userId: string): Promise<DailyQuest[]> {
+  async generateDailyQuests(userId: string, examTrack: string = 'fs'): Promise<DailyQuest[]> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -2267,6 +2268,7 @@ export class DatabaseStorage implements IStorage {
       .from(dailyQuests)
       .where(and(
         eq(dailyQuests.userId, userId),
+        eq(dailyQuests.examTrack, examTrack),
         gte(dailyQuests.date, today),
         lte(dailyQuests.date, tomorrow)
       ));
@@ -2279,6 +2281,7 @@ export class DatabaseStorage implements IStorage {
           .insert(dailyQuests)
           .values({
             userId,
+            examTrack,
             date: today,
             questType: 'complete_flashcards',
             title: 'Flashcard Master',
@@ -2359,6 +2362,7 @@ export class DatabaseStorage implements IStorage {
         .insert(dailyQuests)
         .values({
           userId,
+          examTrack,
           date: today,
           questType: quest.questType,
           title: quest.title,
@@ -2375,7 +2379,7 @@ export class DatabaseStorage implements IStorage {
     return createdQuests;
   }
 
-  async updateQuestProgress(userId: string, questType: string, increment: number = 1): Promise<DailyQuest | null> {
+  async updateQuestProgress(userId: string, questType: string, increment: number = 1, examTrack: string = 'fs'): Promise<DailyQuest | null> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -2384,6 +2388,7 @@ export class DatabaseStorage implements IStorage {
       .from(dailyQuests)
       .where(and(
         eq(dailyQuests.userId, userId),
+        eq(dailyQuests.examTrack, examTrack),
         eq(dailyQuests.questType, questType),
         gte(dailyQuests.date, today),
         eq(dailyQuests.isCompleted, false)
@@ -2410,7 +2415,7 @@ export class DatabaseStorage implements IStorage {
 
   // --- Review Schedule Methods (Spaced Repetition) ---
 
-  async getUpcomingReviews(userId: string, limit: number = 10): Promise<ReviewSchedule[]> {
+  async getUpcomingReviews(userId: string, limit: number = 10, examTrack: string = 'fs'): Promise<ReviewSchedule[]> {
     const now = new Date();
     
     return db
@@ -2418,13 +2423,14 @@ export class DatabaseStorage implements IStorage {
       .from(reviewSchedule)
       .where(and(
         eq(reviewSchedule.userId, userId),
+        eq(reviewSchedule.examTrack, examTrack),
         gte(reviewSchedule.nextReviewAt, new Date(now.getTime() - 24 * 60 * 60 * 1000)) // Include past due
       ))
       .orderBy(reviewSchedule.nextReviewAt)
       .limit(limit);
   }
 
-  async getDueReviews(userId: string): Promise<ReviewSchedule[]> {
+  async getDueReviews(userId: string, examTrack: string = 'fs'): Promise<ReviewSchedule[]> {
     const now = new Date();
     
     return db
@@ -2432,6 +2438,7 @@ export class DatabaseStorage implements IStorage {
       .from(reviewSchedule)
       .where(and(
         eq(reviewSchedule.userId, userId),
+        eq(reviewSchedule.examTrack, examTrack),
         lte(reviewSchedule.nextReviewAt, now)
       ))
       .orderBy(reviewSchedule.nextReviewAt);
@@ -2443,7 +2450,8 @@ export class DatabaseStorage implements IStorage {
     itemId: string, 
     itemTitle: string,
     domain?: string,
-    quality: number = 3 // 0-5 quality rating for SM-2
+    quality: number = 3, // 0-5 quality rating for SM-2
+    examTrack: string = 'fs'
   ): Promise<ReviewSchedule> {
     // Check if item already exists
     const [existing] = await db
@@ -2451,6 +2459,7 @@ export class DatabaseStorage implements IStorage {
       .from(reviewSchedule)
       .where(and(
         eq(reviewSchedule.userId, userId),
+        eq(reviewSchedule.examTrack, examTrack),
         eq(reviewSchedule.itemId, itemId)
       ))
       .limit(1);
@@ -2504,6 +2513,7 @@ export class DatabaseStorage implements IStorage {
         .insert(reviewSchedule)
         .values({
           userId,
+          examTrack,
           itemType,
           itemId,
           itemTitle,
@@ -2522,7 +2532,7 @@ export class DatabaseStorage implements IStorage {
 
   // --- AI Study Coach Briefing ---
 
-  async getStudyCoachBriefing(userId: string): Promise<{
+  async getStudyCoachBriefing(userId: string, examTrack: string = 'fs'): Promise<{
     greeting: string;
     focusRecommendation: string;
     progressInsight: string;
@@ -2531,8 +2541,8 @@ export class DatabaseStorage implements IStorage {
     dueReviews: ReviewSchedule[];
   }> {
     const analytics = await this.getPersonalAnalytics(userId);
-    const dueReviews = await this.getDueReviews(userId);
-    const todaysQuests = await this.getDailyQuests(userId);
+    const dueReviews = await this.getDueReviews(userId, examTrack);
+    const todaysQuests = await this.getDailyQuests(userId, examTrack);
     const todaysFlashcardSessions = await this.getTodayFlashcardSessions(userId);
     
     // Get user preferences for exam date

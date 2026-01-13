@@ -457,8 +457,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/daily-quests", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const examTrack = req.query.examTrack as string;
+      if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+        return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
+      }
       // Generate quests if none exist for today, otherwise return existing
-      const quests = await storage.generateDailyQuests(userId);
+      const quests = await storage.generateDailyQuests(userId, examTrack);
       res.json(quests);
     } catch (error) {
       console.error("Error fetching daily quests:", error);
@@ -469,13 +473,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/daily-quests/progress", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { questType, increment = 1 } = req.body;
+      const { questType, increment = 1, examTrack } = req.body;
       
       if (!questType) {
         return res.status(400).json({ error: "questType is required" });
       }
+      if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+        return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
+      }
       
-      const updated = await storage.updateQuestProgress(userId, questType, increment);
+      const updated = await storage.updateQuestProgress(userId, questType, increment, examTrack);
       res.json({ updated, awarded: updated?.isCompleted });
     } catch (error) {
       console.error("Error updating quest progress:", error);
@@ -489,7 +496,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const limit = parseInt(req.query.limit as string) || 10;
-      const reviews = await storage.getUpcomingReviews(userId, limit);
+      const examTrack = req.query.examTrack as string;
+      if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+        return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
+      }
+      const reviews = await storage.getUpcomingReviews(userId, limit, examTrack);
       res.json(reviews);
     } catch (error) {
       console.error("Error fetching upcoming reviews:", error);
@@ -500,7 +511,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/reviews/due", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const reviews = await storage.getDueReviews(userId);
+      const examTrack = req.query.examTrack as string;
+      if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+        return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
+      }
+      const reviews = await storage.getDueReviews(userId, examTrack);
       res.json(reviews);
     } catch (error) {
       console.error("Error fetching due reviews:", error);
@@ -511,13 +526,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/reviews", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { itemType, itemId, itemTitle, domain, quality = 3 } = req.body;
+      const { itemType, itemId, itemTitle, domain, quality = 3, examTrack } = req.body;
       
       if (!itemType || !itemId || !itemTitle) {
         return res.status(400).json({ error: "itemType, itemId, and itemTitle are required" });
       }
+      if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+        return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
+      }
       
-      const review = await storage.createOrUpdateReviewItem(userId, itemType, itemId, itemTitle, domain, quality);
+      const review = await storage.createOrUpdateReviewItem(userId, itemType, itemId, itemTitle, domain, quality, examTrack);
       res.json(review);
     } catch (error) {
       console.error("Error creating/updating review:", error);
@@ -530,7 +548,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/study-coach/briefing", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const briefing = await storage.getStudyCoachBriefing(userId);
+      const examTrack = req.query.examTrack as string;
+      if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+        return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
+      }
+      const briefing = await storage.getStudyCoachBriefing(userId, examTrack);
       res.json(briefing);
     } catch (error) {
       console.error("Error fetching study coach briefing:", error);

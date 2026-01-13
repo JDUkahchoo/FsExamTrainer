@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Target, TrendingUp, Lightbulb, Clock, AlertCircle, Loader2 } from 'lucide-react';
+import { useExamTrack } from '@/contexts/exam-track-context';
 import type { ReviewSchedule } from '@shared/schema';
 
-interface StudyCoachBriefing {
+interface StudyCoachBriefingData {
   greeting: string;
   focusRecommendation: string;
   progressInsight: string;
@@ -14,8 +15,14 @@ interface StudyCoachBriefing {
 }
 
 export function StudyCoachBriefing() {
-  const { data: briefing, isLoading, error } = useQuery<StudyCoachBriefing>({
-    queryKey: ['/api/study-coach/briefing']
+  const { examTrack } = useExamTrack();
+  const { data: briefing, isLoading, error } = useQuery<StudyCoachBriefingData>({
+    queryKey: ['/api/study-coach/briefing', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/study-coach/briefing?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch briefing');
+      return res.json();
+    }
   });
 
   if (isLoading) {
