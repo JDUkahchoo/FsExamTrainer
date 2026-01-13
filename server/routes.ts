@@ -1421,10 +1421,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       
-      // Validate exam track - only allow 'fs' for now (ps and state-specific are coming soon)
+      // Validate exam track - fs and ps are available, state-specific is coming soon
       const requestedExamTrack = req.body.preferredExamTrack;
-      if (requestedExamTrack && requestedExamTrack !== 'fs') {
-        return res.status(400).json({ error: "Only FS exam is currently available. PS and State-Specific exams are coming soon." });
+      if (requestedExamTrack && requestedExamTrack === 'state-specific') {
+        return res.status(400).json({ error: "State-Specific exams are coming soon. Please select FS or PS exam." });
       }
       
       // Get existing preferences to merge with partial updates

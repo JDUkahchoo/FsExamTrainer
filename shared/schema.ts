@@ -32,7 +32,7 @@ export type ExamTrack = 'fs' | 'ps' | 'state-specific';
 
 export const EXAM_TRACKS: { id: ExamTrack; name: string; status: 'ready' | 'coming-soon'; description: string }[] = [
   { id: 'fs', name: 'FS Exam', status: 'ready', description: 'Fundamentals of Surveying - Entry-level exam' },
-  { id: 'ps', name: 'PS Exam', status: 'coming-soon', description: 'Principles and Practice of Surveying - Professional licensure exam' },
+  { id: 'ps', name: 'PS Exam', status: 'ready', description: 'Principles and Practice of Surveying - Professional licensure exam' },
   { id: 'state-specific', name: 'State-Specific', status: 'coming-soon', description: 'State laws, rules, and regulations for your jurisdiction' },
 ];
 
