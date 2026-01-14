@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRoute, useLocation } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, Trophy, BookOpen } from "
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { getAllLessonReferences, type BookReference } from "@shared/data/referenceManualMappings";
+import { useExamTrack } from "@/contexts/exam-track-context";
 
 type QuestionType = "multiple_choice" | "fill_in_blank" | "drag_drop";
 
@@ -60,11 +61,11 @@ interface SubmitResponse {
 }
 
 export default function LessonPage() {
-  const [, params] = useRoute("/app/:examTrack/lesson/:id");
+  const params = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const lessonId = params?.id;
-  const examTrack = params?.examTrack || 'fs';
+  const { examTrack } = useExamTrack();
+  const lessonId = params.id;
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});

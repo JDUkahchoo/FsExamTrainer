@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -30,29 +31,38 @@ import LessonPage from "@/pages/lesson";
 import ReferenceCompanionPage from "@/pages/reference-companion";
 import SettingsPage from "@/pages/settings";
 
-function ExamRoutes() {
+function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' }) {
   return (
     <ExamLayout>
-      <ExamTrackProvider>
-        <Switch>
-          <Route path="/app/:examTrack/dashboard" component={ExamDashboard} />
-          <Route path="/app/:examTrack/study-plan" component={StudyPlan} />
-          <Route path="/app/:examTrack/lessons" component={LessonsPage} />
-          <Route path="/app/:examTrack/lesson/:id" component={LessonPage} />
-          <Route path="/app/:examTrack/quiz" component={PracticeQuizPage} />
-          <Route path="/app/:examTrack/flashcards" component={FlashcardsPage} />
-          <Route path="/app/:examTrack/exam" component={PracticeExamPage} />
-          <Route path="/app/:examTrack/notes" component={NotesPage} />
-          <Route path="/app/:examTrack/progress" component={ProgressPage} />
-          <Route path="/app/:examTrack/resources" component={ResourcesPage} />
-          <Route path="/app/:examTrack/reference-companion" component={ReferenceCompanionPage} />
-          <Route path="/app/:examTrack/pretest" component={PretestPage} />
-          <Route path="/app/:examTrack/pretest/results" component={PretestResultsPage} />
-          <Route path="/app/:examTrack/settings" component={SettingsPage} />
-          <Route component={NotFound} />
-        </Switch>
+      <ExamTrackProvider examTrackOverride={examTrack}>
+        {children}
       </ExamTrackProvider>
     </ExamLayout>
+  );
+}
+
+function ExamRoutes({ examTrack }: { examTrack: string }) {
+  const track = (examTrack === 'ps' ? 'ps' : 'fs') as 'fs' | 'ps';
+  return (
+    <ExamPage examTrack={track}>
+      <Switch>
+        <Route path="/dashboard" component={ExamDashboard} />
+        <Route path="/study-plan" component={StudyPlan} />
+        <Route path="/lessons" component={LessonsPage} />
+        <Route path="/lesson/:id" component={LessonPage} />
+        <Route path="/quiz" component={PracticeQuizPage} />
+        <Route path="/flashcards" component={FlashcardsPage} />
+        <Route path="/exam" component={PracticeExamPage} />
+        <Route path="/notes" component={NotesPage} />
+        <Route path="/progress" component={ProgressPage} />
+        <Route path="/resources" component={ResourcesPage} />
+        <Route path="/reference-companion" component={ReferenceCompanionPage} />
+        <Route path="/pretest" component={PretestPage} />
+        <Route path="/pretest/results" component={PretestResultsPage} />
+        <Route path="/settings" component={SettingsPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </ExamPage>
   );
 }
 
@@ -84,7 +94,9 @@ function Router() {
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/disclaimer" component={DisclaimerPage} />
-      <Route path="/app/:examTrack/:rest*" component={ExamRoutes} />
+      <Route path="/app/:examTrack" nest>
+        {(params) => <ExamRoutes examTrack={params.examTrack || 'fs'} />}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
