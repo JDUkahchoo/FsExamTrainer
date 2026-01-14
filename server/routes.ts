@@ -181,6 +181,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const data = insertWeekProgressSchema.parse({ ...req.body, userId });
       const progress = await storage.upsertWeekProgress(data);
+      
+      // Log daily activity for streak tracking based on which pillars have items
+      if (data.readCompleted && data.readCompleted.length > 0) {
+        await storage.logDailyActivity(userId, 'read');
+      }
+      if (data.focusCompleted && data.focusCompleted.length > 0) {
+        await storage.logDailyActivity(userId, 'focus');
+      }
+      if (data.applyCompleted && data.applyCompleted.length > 0) {
+        await storage.logDailyActivity(userId, 'apply');
+      }
+      if (data.reinforceCompleted && data.reinforceCompleted.length > 0) {
+        await storage.logDailyActivity(userId, 'reinforce');
+      }
+      
       res.json(progress);
     } catch (error) {
       console.error("Error saving progress:", error);
@@ -575,6 +590,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const updated = await storage.updateQuestProgress(userId, questType, increment, examTrack);
+      
+      // Log daily activity for streak tracking when quest is completed
+      if (updated?.isCompleted) {
+        await storage.logDailyActivity(userId, 'daily_quest');
+      }
+      
       res.json({ updated, awarded: updated?.isCompleted });
     } catch (error) {
       console.error("Error updating quest progress:", error);
