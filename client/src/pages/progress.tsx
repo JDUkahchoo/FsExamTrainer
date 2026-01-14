@@ -97,10 +97,16 @@ export default function ProgressPage() {
     domainNumber: number;
     domain: string;
     currentScore: number;
+    lessonsCompleted: number;
+    lessonsTotal: number;
+    lessonProgress: number;
+    quizAccuracy: number;
+    questionsAnswered: number;
+    overallProgress: number;
     isStagnant: boolean;
     alert?: string;
   }>>({
-    queryKey: ['/api/progress/domain-mastery'],
+    queryKey: ['/api/progress/domain-mastery', examTrack],
     refetchOnMount: 'always'
   });
 
@@ -602,6 +608,7 @@ export default function ProgressPage() {
                       <Badge 
                         variant={
                           item.alert === 'Mastered!' ? 'default' :
+                          item.alert === 'Good progress' ? 'secondary' :
                           item.alert === 'Needs focus' ? 'destructive' :
                           'secondary'
                         }
@@ -615,14 +622,37 @@ export default function ProgressPage() {
                   
                   <div className="mb-3">
                     <div className="flex items-end gap-2 mb-2">
-                      <span className="text-2xl font-bold text-foreground">{item.currentScore}%</span>
-                      <span className="text-xs text-muted-foreground mb-1">Mastery</span>
+                      <span className="text-2xl font-bold text-foreground">{item.overallProgress}%</span>
+                      <span className="text-xs text-muted-foreground mb-1">Overall Progress</span>
                     </div>
-                    <Progress value={item.currentScore} className="h-2" />
+                    <Progress value={item.overallProgress} className="h-2" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-border/50">
+                    <div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <BookOpen className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Lessons</span>
+                      </div>
+                      <div className="text-sm font-medium">
+                        {item.lessonsCompleted}/{item.lessonsTotal}
+                        <span className="text-xs text-muted-foreground ml-1">({item.lessonProgress}%)</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <Brain className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Quiz Accuracy</span>
+                      </div>
+                      <div className="text-sm font-medium">
+                        {item.quizAccuracy}%
+                        <span className="text-xs text-muted-foreground ml-1">({item.questionsAnswered} Q)</span>
+                      </div>
+                    </div>
                   </div>
 
                   {item.isStagnant && (
-                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-3 flex items-center gap-1">
                       <Target className="h-3 w-3" />
                       Focus needed for improvement
                     </p>
@@ -633,7 +663,7 @@ export default function ProgressPage() {
           ) : (
             <Card className="p-6">
               <p className="text-center text-muted-foreground py-8">
-                Complete quizzes to track domain mastery progress.
+                Complete lessons and quizzes to track domain progress.
               </p>
             </Card>
           )}

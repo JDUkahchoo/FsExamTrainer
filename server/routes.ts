@@ -521,11 +521,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Domain mastery tracking route
+  // Domain mastery tracking route with exam track support
   app.get("/api/progress/domain-mastery", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const domainMastery = await storage.getDomainMastery(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const domainMastery = await storage.getDomainMastery(userId, examTrack);
       res.json(domainMastery);
     } catch (error) {
       console.error("Error fetching domain mastery:", error);

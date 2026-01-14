@@ -1842,48 +1842,103 @@ export class DatabaseStorage implements IStorage {
     return question;
   }
 
-  // Domain mastery tracking
-  async getDomainMastery(userId: string): Promise<Array<{
+  // Domain mastery tracking with comprehensive progress
+  async getDomainMastery(userId: string, examTrack: string = 'fs'): Promise<Array<{
     domainNumber: number;
     domain: string;
     currentScore: number;
+    lessonsCompleted: number;
+    lessonsTotal: number;
+    lessonProgress: number;
+    quizAccuracy: number;
+    questionsAnswered: number;
+    overallProgress: number;
     isStagnant: boolean;
     alert?: string;
   }>> {
-    const DOMAINS_LIST = ['Math & Basic Science', 'Field Data Acquisition', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Surveying Principles', 'Survey Computations & Applications', 'Professional Practice', 'Applied Mathematics & Statistics'];
+    const FS_DOMAINS_LIST = ['Math & Basic Science', 'Field Data Acquisition', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Surveying Principles', 'Survey Computations & Applications', 'Professional Practice', 'Applied Mathematics & Statistics'];
+    const PS_DOMAINS_LIST = ['Legal Principles', 'Professional Survey Practices', 'Standards and Specifications', 'Business Practices', 'Areas of Practice'];
+    
+    const DOMAINS_LIST = examTrack === 'ps' ? PS_DOMAINS_LIST : FS_DOMAINS_LIST;
+    const domainCount = DOMAINS_LIST.length;
+    const startIndex = examTrack === 'ps' ? 1 : 0;
     
     const result: Array<any> = [];
     
-    for (let i = 0; i < 8; i++) {
-      const domain = DOMAINS_LIST[i];
+    // Get all lessons for this exam track
+    const allLessons = await db.select()
+      .from(lessons)
+      .where(eq(lessons.examTrack, examTrack));
+    
+    // Get user's lesson progress for this exam track
+    const userLessonProgress = await db.select()
+      .from(lessonProgress)
+      .innerJoin(lessons, eq(lessonProgress.lessonId, lessons.id))
+      .where(and(
+        eq(lessonProgress.userId, userId),
+        eq(lessons.examTrack, examTrack)
+      ));
+    
+    for (let i = 0; i < domainCount; i++) {
+      const domainNumber = startIndex + i;
+      const domainName = DOMAINS_LIST[i];
+      
+      // Count lessons in this domain
+      const domainLessons = allLessons.filter(l => l.domainNumber === domainNumber);
+      const lessonsTotal = domainLessons.length;
+      
+      // Count completed lessons in this domain (Drizzle joins use table variable names as keys)
+      const completedLessons = userLessonProgress.filter(
+        p => p.lessons.domainNumber === domainNumber && p.lessonProgress?.completed
+      );
+      const lessonsCompleted = completedLessons.length;
+      const lessonProgress = lessonsTotal > 0 ? Math.round((lessonsCompleted / lessonsTotal) * 100) : 0;
       
       // Get quiz results for this domain
       const domainResults = await db.select()
         .from(quizResults)
-        .where(and(eq(quizResults.userId, userId), eq(quizResults.domain, domain)));
+        .where(and(eq(quizResults.userId, userId), eq(quizResults.domain, domainName)));
       
-      let currentScore = 0;
-      if (domainResults.length > 0) {
+      let quizAccuracy = 0;
+      const questionsAnswered = domainResults.length;
+      if (questionsAnswered > 0) {
         const correct = domainResults.filter((r: any) => r.isCorrect).length;
-        currentScore = Math.round((correct / domainResults.length) * 100);
+        quizAccuracy = Math.round((correct / questionsAnswered) * 100);
       }
+      
+      // Calculate overall progress: weighted average of lessons (60%) and quiz accuracy (40%)
+      let overallProgress = 0;
+      if (questionsAnswered > 0) {
+        overallProgress = Math.round(lessonProgress * 0.6 + quizAccuracy * 0.4);
+      } else {
+        overallProgress = lessonProgress;
+      }
+      
+      const currentScore = quizAccuracy;
       
       let isStagnant = false;
       let alert: string | undefined;
       
-      // Check if domain hasn't improved in 2 weeks
-      if (currentScore > 0 && currentScore < 70) {
-        alert = currentScore < 50 ? 'Needs focus' : 'Keep practicing';
-      }
-      
-      if (currentScore >= 85) {
+      if (overallProgress >= 85) {
         alert = 'Mastered!';
+      } else if (overallProgress >= 70) {
+        alert = 'Good progress';
+      } else if (overallProgress > 0 && overallProgress < 50) {
+        alert = 'Needs focus';
+      } else if (overallProgress >= 50 && overallProgress < 70) {
+        alert = 'Keep practicing';
       }
       
       result.push({
-        domainNumber: i,
-        domain,
+        domainNumber,
+        domain: domainName,
         currentScore,
+        lessonsCompleted,
+        lessonsTotal,
+        lessonProgress,
+        quizAccuracy,
+        questionsAnswered,
+        overallProgress,
         isStagnant,
         alert
       });
