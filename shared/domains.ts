@@ -2,14 +2,14 @@
 // Centralized domain mappings for consistency across application
 
 export const NCEES_FS_DOMAINS = {
-  0: "Math & Science Foundations",
-  1: "Surveying Processes and Methods",
-  2: "Mapping Processes and Methods",
-  3: "Boundary Law and Real Property Principles",
+  0: "Math & Basic Science",
+  1: "Field Data Acquisition",
+  2: "Mapping, GIS, and CAD",
+  3: "Boundary Law & PLSS",
   4: "Surveying Principles",
-  5: "Survey Computations and Computer Applications",
-  6: "Business Concepts",
-  7: "Applied Mathematics and Statistics"
+  5: "Survey Computations & Applications",
+  6: "Professional Practice",
+  7: "Applied Mathematics & Statistics"
 } as const;
 
 // NCEES PS Exam - 5 Knowledge Areas
