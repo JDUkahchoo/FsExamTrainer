@@ -38,6 +38,7 @@ function ExamRoutes() {
           <Route path="/app/:examTrack/dashboard" component={ExamDashboard} />
           <Route path="/app/:examTrack/study-plan" component={StudyPlan} />
           <Route path="/app/:examTrack/lessons" component={LessonsPage} />
+          <Route path="/app/:examTrack/lesson/:id" component={LessonPage} />
           <Route path="/app/:examTrack/quiz" component={PracticeQuizPage} />
           <Route path="/app/:examTrack/flashcards" component={FlashcardsPage} />
           <Route path="/app/:examTrack/exam" component={PracticeExamPage} />
@@ -47,7 +48,6 @@ function ExamRoutes() {
           <Route path="/app/:examTrack/reference-companion" component={ReferenceCompanionPage} />
           <Route path="/app/:examTrack/pretest" component={PretestPage} />
           <Route path="/app/:examTrack/pretest/results" component={PretestResultsPage} />
-          <Route path="/app/:examTrack/lesson/:id" component={LessonPage} />
           <Route path="/app/:examTrack/settings" component={SettingsPage} />
           <Route component={NotFound} />
         </Switch>
@@ -67,21 +67,24 @@ function Router() {
     );
   }
 
+  if (!isAuthenticated) {
+    return (
+      <Switch>
+        <Route path="/" component={Landing} />
+        <Route component={NotFound} />
+      </Switch>
+    );
+  }
+
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          <Route path="/" component={GettingStartedPage} />
-          <Route path="/getting-started" component={GettingStartedPage} />
-          <Route path="/feedback" component={FeedbackPage} />
-          <Route path="/testimonials" component={TestimonialsPage} />
-          <Route path="/privacy" component={PrivacyPolicyPage} />
-          <Route path="/disclaimer" component={DisclaimerPage} />
-          <Route path="/app/:examTrack/:rest*" component={ExamRoutes} />
-        </>
-      )}
+      <Route path="/" component={GettingStartedPage} />
+      <Route path="/getting-started" component={GettingStartedPage} />
+      <Route path="/feedback" component={FeedbackPage} />
+      <Route path="/testimonials" component={TestimonialsPage} />
+      <Route path="/privacy" component={PrivacyPolicyPage} />
+      <Route path="/disclaimer" component={DisclaimerPage} />
+      <Route path="/app/:examTrack/:rest*" component={ExamRoutes} />
       <Route component={NotFound} />
     </Switch>
   );
