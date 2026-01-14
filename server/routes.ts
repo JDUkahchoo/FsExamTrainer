@@ -27,6 +27,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User reset endpoint - clears all study data for the logged-in user only
+  app.post('/api/user/reset', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { confirm } = req.body;
+      
+      if (confirm !== true) {
+        return res.status(400).json({ 
+          error: "Please confirm the reset by sending { confirm: true }" 
+        });
+      }
+      
+      const result = await storage.resetUserStudyData(userId);
+      res.json({ 
+        message: "Your study data has been reset. You can start fresh!",
+        ...result 
+      });
+    } catch (error) {
+      console.error("Error resetting user data:", error);
+      res.status(500).json({ message: "Failed to reset study data" });
+    }
+  });
+
   // Admin endpoint to check and seed lessons (protected by secret key)
   app.post('/api/admin/seed-lessons', async (req, res) => {
     try {
