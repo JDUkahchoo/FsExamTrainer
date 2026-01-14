@@ -215,6 +215,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const data = insertReadingProgressSchema.parse({ ...req.body, userId });
       const progress = await storage.upsertReadingProgress(data);
+      
+      // Award XP for READ checkpoint completion (25 XP per chapter, only when completed)
+      if (data.week && data.chapterIndex !== undefined && data.completed === true) {
+        const activityKey = `read:week${data.week}:chapter${data.chapterIndex}`;
+        await storage.awardXp(userId, 25, activityKey);
+      }
+      
       res.json(progress);
     } catch (error) {
       console.error("Error saving reading progress:", error);
@@ -287,6 +294,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         completedAt: new Date(),
       };
       const attempt = await storage.updateApplyChallengeAttempt(userId, attemptId, updates);
+      
+      // Award XP for APPLY challenge completion (75 XP, only when passed)
+      if (attempt && req.body.passed === true) {
+        const activityKey = `apply:challenge:${attemptId}`;
+        await storage.awardXp(userId, 75, activityKey);
+      }
+      
       res.json(attempt);
     } catch (error) {
       console.error("Error updating apply attempt:", error);
@@ -399,6 +413,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const updated = await storage.updateRetentionReview(userId, reviewId, updates);
+      
+      // Award XP for REINFORCE review completion (15 XP, only for successful recall quality >= 3)
+      if (updated && quality >= 3) {
+        const activityKey = `reinforce:review:${reviewId}`;
+        await storage.awardXp(userId, 15, activityKey);
+      }
+      
       res.json(updated);
     } catch (error) {
       console.error("Error updating retention review:", error);
@@ -647,6 +668,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const data = insertQuizSessionSchema.parse({ ...req.body, userId });
       const session = await storage.createQuizSession(data);
+      
+      // Award XP for quiz completion (50 XP per quiz session, idempotent)
+      if (session) {
+        const activityKey = `quiz:session:${session.id}`;
+        await storage.awardXp(userId, 50, activityKey);
+      }
+      
       res.json(session);
     } catch (error) {
       console.error("Error saving quiz session:", error);
@@ -1062,6 +1090,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             explanation: validatedQr.explanation || ""
           });
         }
+      }
+      
+      // Award XP for practice exam completion (100 XP per exam, idempotent)
+      if (exam) {
+        const activityKey = `exam:practice:${exam.id}`;
+        await storage.awardXp(userId, 100, activityKey);
       }
       
       res.json(exam);
@@ -1984,6 +2018,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       console.log(`[Submit Lesson] Progress saved:`, progress);
+
+      // Award XP for lesson completion (50 XP per lesson, only on first completion)
+      if (completed && !existingProgress?.completed) {
+        const activityKey = `lesson:complete:${lessonId}`;
+        await storage.awardXp(userId, 50, activityKey);
+      }
 
       res.json({
         progress,
