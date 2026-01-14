@@ -3126,6 +3126,112 @@ export class DatabaseStorage implements IStorage {
 
     return Number(result[0]?.count || 0);
   }
+
+  async resetUserStudyData(userId: string): Promise<{ success: boolean; tablesCleared: string[] }> {
+    const tablesCleared: string[] = [];
+    
+    try {
+      // Delete all user-specific study data (but keep the user account)
+      await db.delete(weekProgress).where(eq(weekProgress.userId, userId));
+      tablesCleared.push('weekProgress');
+      
+      await db.delete(quizResults).where(eq(quizResults.userId, userId));
+      tablesCleared.push('quizResults');
+      
+      await db.delete(quizSessions).where(eq(quizSessions.userId, userId));
+      tablesCleared.push('quizSessions');
+      
+      await db.delete(flashcardMastery).where(eq(flashcardMastery.userId, userId));
+      tablesCleared.push('flashcardMastery');
+      
+      await db.delete(flashcardFeynmanScores).where(eq(flashcardFeynmanScores.userId, userId));
+      tablesCleared.push('flashcardFeynmanScores');
+      
+      await db.delete(flashcardMnemonics).where(eq(flashcardMnemonics.userId, userId));
+      tablesCleared.push('flashcardMnemonics');
+      
+      await db.delete(flashcardTriadProgress).where(eq(flashcardTriadProgress.userId, userId));
+      tablesCleared.push('flashcardTriadProgress');
+      
+      await db.delete(flashcardReviewSessions).where(eq(flashcardReviewSessions.userId, userId));
+      tablesCleared.push('flashcardReviewSessions');
+      
+      await db.delete(dailyFlashcardProgress).where(eq(dailyFlashcardProgress.userId, userId));
+      tablesCleared.push('dailyFlashcardProgress');
+      
+      await db.delete(practiceExams).where(eq(practiceExams.userId, userId));
+      tablesCleared.push('practiceExams');
+      
+      await db.delete(practiceExamResults).where(eq(practiceExamResults.userId, userId));
+      tablesCleared.push('practiceExamResults');
+      
+      await db.delete(pretestResults).where(eq(pretestResults.userId, userId));
+      tablesCleared.push('pretestResults');
+      
+      await db.delete(pretestQuestionResults).where(eq(pretestQuestionResults.userId, userId));
+      tablesCleared.push('pretestQuestionResults');
+      
+      await db.delete(studyNotes).where(eq(studyNotes.userId, userId));
+      tablesCleared.push('studyNotes');
+      
+      await db.delete(readingProgress).where(eq(readingProgress.userId, userId));
+      tablesCleared.push('readingProgress');
+      
+      await db.delete(quizDrafts).where(eq(quizDrafts.userId, userId));
+      tablesCleared.push('quizDrafts');
+      
+      await db.delete(examDrafts).where(eq(examDrafts.userId, userId));
+      tablesCleared.push('examDrafts');
+      
+      await db.delete(dailyActivity).where(eq(dailyActivity.userId, userId));
+      tablesCleared.push('dailyActivity');
+      
+      await db.delete(achievements).where(eq(achievements.userId, userId));
+      tablesCleared.push('achievements');
+      
+      await db.delete(customWeeks).where(eq(customWeeks.userId, userId));
+      tablesCleared.push('customWeeks');
+      
+      await db.delete(dailyLogs).where(eq(dailyLogs.userId, userId));
+      tablesCleared.push('dailyLogs');
+      
+      await db.delete(studyCycles).where(eq(studyCycles.userId, userId));
+      tablesCleared.push('studyCycles');
+      
+      await db.delete(lessonProgress).where(eq(lessonProgress.userId, userId));
+      tablesCleared.push('lessonProgress');
+      
+      await db.delete(domainProgressSnapshots).where(eq(domainProgressSnapshots.userId, userId));
+      tablesCleared.push('domainProgressSnapshots');
+      
+      await db.delete(applyChallengeAttempts).where(eq(applyChallengeAttempts.userId, userId));
+      tablesCleared.push('applyChallengeAttempts');
+      
+      await db.delete(retentionReviews).where(eq(retentionReviews.userId, userId));
+      tablesCleared.push('retentionReviews');
+      
+      await db.delete(xpGrants).where(eq(xpGrants.userId, userId));
+      tablesCleared.push('xpGrants');
+      
+      await db.delete(dailyQuests).where(eq(dailyQuests.userId, userId));
+      tablesCleared.push('dailyQuests');
+      
+      await db.delete(reviewSchedule).where(eq(reviewSchedule.userId, userId));
+      tablesCleared.push('reviewSchedule');
+      
+      await db.delete(userDifficultySettings).where(eq(userDifficultySettings.userId, userId));
+      tablesCleared.push('userDifficultySettings');
+      
+      // Reset XP on user record but keep preferences
+      await db.update(users).set({ xp: 0 }).where(eq(users.id, userId));
+      tablesCleared.push('userXpReset');
+      
+      return { success: true, tablesCleared };
+    } catch (error) {
+      console.error('Error resetting user study data:', error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();
