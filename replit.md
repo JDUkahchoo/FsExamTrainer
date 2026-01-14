@@ -37,6 +37,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   XP Idempotency System to prevent duplicate XP awards.
 -   Multi-Exam Architecture with isolated routes (`/app/:examTrack/*`) for FS and PS exams, allowing for distinct content and future monetization.
 -   ExamTrackProvider Context for centralized exam track state and configuration.
+-   Flashcard Session Resume System: Sessions persist user state (deck, domains, card index, study mode) and can be resumed from exact position. Review events logged individually for accurate statistics and streak tracking.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

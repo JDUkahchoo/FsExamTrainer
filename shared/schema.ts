@@ -414,6 +414,7 @@ export type ReviewPeriod = typeof REVIEW_PERIODS[number];
 export const flashcardReviewSessions = pgTable("flashcard_review_sessions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' or 'ps'
   period: varchar("period").notNull(), // 'morning', 'afternoon', 'evening'
   cardsReviewed: integer("cards_reviewed").notNull().default(0),
   avgMasteryRating: real("avg_mastery_rating"), // Average rating for this session (1-5)
@@ -422,7 +423,52 @@ export const flashcardReviewSessions = pgTable("flashcard_review_sessions", {
   xpAwarded: boolean("xp_awarded").notNull().default(false), // Idempotency flag for XP
   startedAt: timestamp("started_at").notNull().defaultNow(),
   completedAt: timestamp("completed_at"),
+  // Resume state - stores current position and filters for resuming session
+  userState: jsonb("user_state"), // { deck, domains, shuffledIndices, currentIndex, studyMode }
 });
+
+// --- Flashcard Review Events (tracks each individual card review) ---
+
+export const flashcardReviewEvents = pgTable("flashcard_review_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: varchar("session_id").notNull().references(() => flashcardReviewSessions.id, { onDelete: 'cascade' }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  cardId: varchar("card_id").notNull(),
+  deck: varchar("deck").notNull(), // 'original' or 'comprehensive'
+  mode: varchar("mode").notNull(), // 'quick', 'triad', 'feynman', 'mnemonic'
+  rating: integer("rating"), // 1-5 mastery rating
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const flashcardReviewEventsRelations = relations(flashcardReviewEvents, ({ one }) => ({
+  session: one(flashcardReviewSessions, {
+    fields: [flashcardReviewEvents.sessionId],
+    references: [flashcardReviewSessions.id],
+  }),
+  user: one(users, {
+    fields: [flashcardReviewEvents.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertFlashcardReviewEventSchema = createInsertSchema(flashcardReviewEvents).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertFlashcardReviewEvent = z.infer<typeof insertFlashcardReviewEventSchema>;
+export type FlashcardReviewEvent = typeof flashcardReviewEvents.$inferSelect;
+
+// Type for userState JSON stored in flashcard_review_sessions
+export type FlashcardSessionState = {
+  deck: 'original' | 'comprehensive';
+  domains: string[];
+  shuffledIndices: number[];
+  currentIndex: number;
+  studyMode: FlashcardMode;
+  masteryRatings: number[];
+  startTime: number;
+};
 
 export const flashcardReviewSessionsRelations = relations(flashcardReviewSessions, ({ one }) => ({
   user: one(users, {
@@ -729,6 +775,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   flashcardMnemonics: many(flashcardMnemonics),
   flashcardTriadProgress: many(flashcardTriadProgress),
   flashcardReviewSessions: many(flashcardReviewSessions),
+  flashcardReviewEvents: many(flashcardReviewEvents),
   dailyFlashcardProgress: many(dailyFlashcardProgress),
   practiceExams: many(practiceExams),
   practiceExamResults: many(practiceExamResults),

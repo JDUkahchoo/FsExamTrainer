@@ -1027,23 +1027,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get active (incomplete) session for resume functionality
+  app.get("/api/flashcards/sessions/active", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      
+      const session = await storage.getActiveFlashcardSession(userId, examTrack);
+      res.json(session || null);
+    } catch (error) {
+      console.error("Error fetching active session:", error);
+      res.status(500).json({ error: "Failed to fetch active session" });
+    }
+  });
+
   app.post("/api/flashcards/sessions/start", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const period = getReviewPeriod();
+      const examTrack = req.body.examTrack || 'fs';
+      const userState = req.body.userState || null;
       
+      // Auto-complete any stale sessions first
+      await storage.autoCompleteStaleFlashcardSessions(userId, examTrack);
+      
+      // Check for existing active session to resume
+      const existingSession = await storage.getActiveFlashcardSession(userId, examTrack);
+      if (existingSession) {
+        // Return existing session for resume
+        return res.json(existingSession);
+      }
+      
+      // Create new session
       const session = await storage.createFlashcardReviewSession({
         userId,
+        examTrack,
         period,
         cardsReviewed: 0,
         timeSpentSeconds: 0,
-        xpAwarded: false
+        xpAwarded: false,
+        userState
       });
       
       res.json(session);
     } catch (error) {
       console.error("Error starting review session:", error);
       res.status(400).json({ error: "Failed to start review session" });
+    }
+  });
+
+  // Update session state (for resume persistence) - supports both PATCH and POST for sendBeacon
+  const updateSessionState = async (req: any, res: any) => {
+    try {
+      const { sessionId } = req.params;
+      const userState = req.body;
+      
+      const session = await storage.updateFlashcardSessionState(sessionId, userState);
+      res.json(session);
+    } catch (error) {
+      console.error("Error updating session state:", error);
+      res.status(400).json({ error: "Failed to update session state" });
+    }
+  };
+  
+  app.patch("/api/flashcards/sessions/:sessionId/state", isAuthenticated, updateSessionState);
+  app.post("/api/flashcards/sessions/:sessionId/state", isAuthenticated, updateSessionState);
+
+  // Log individual flashcard review event
+  app.post("/api/flashcards/sessions/:sessionId/review", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { sessionId } = req.params;
+      const { cardId, deck, mode, rating } = req.body;
+      
+      if (!cardId || !deck || !mode) {
+        return res.status(400).json({ error: "cardId, deck, and mode are required" });
+      }
+      
+      const event = await storage.logFlashcardReviewEvent({
+        sessionId,
+        userId,
+        cardId,
+        deck,
+        mode,
+        rating
+      });
+      
+      // Also record progress for quest tracking
+      await storage.recordFlashcardProgress(userId, cardId, mode);
+      
+      // Get current event count for this session to determine if XP should be awarded
+      const eventCount = await storage.getFlashcardReviewEventCount(userId, new Date());
+      
+      res.json({ 
+        event,
+        todayReviewCount: eventCount 
+      });
+    } catch (error) {
+      console.error("Error logging review event:", error);
+      res.status(400).json({ error: "Failed to log review event" });
     }
   });
 

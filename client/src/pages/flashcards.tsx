@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { RotateCcw, Shuffle, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { RotateCcw, Shuffle, ChevronLeft, ChevronRight, Star, StopCircle } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { FLASHCARDS } from '@shared/data/flashcards';
 import { COMPREHENSIVE_FLASHCARDS } from '@shared/data/flashcardsComprehensive';
@@ -13,7 +13,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS } from '@shared/schema';
-import type { Domain, FlashcardMastery } from '@shared/schema';
+import type { Domain, FlashcardMastery, FlashcardSessionState, FlashcardReviewSession } from '@shared/schema';
 import { FlashcardModeSelector, type FlashcardMode } from '@/components/flashcard-mode-selector';
 import { TriadDrillCard } from '@/components/triad-drill-card';
 import { FeynmanModeCard } from '@/components/feynman-mode-card';
@@ -48,6 +48,7 @@ export default function FlashcardsPage() {
 
   // Session tracking state
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [isResumingSession, setIsResumingSession] = useState(false);
   const sessionStatsRef = useRef<SessionStats>({
     cardsReviewed: 0,
     masteryRatings: [],
@@ -55,23 +56,87 @@ export default function FlashcardsPage() {
     startTime: Date.now()
   });
 
-  // Start session mutation
+  // Start session mutation - now handles resume
   const startSessionMutation = useMutation({
-    mutationFn: () => apiRequest('POST', '/api/flashcards/sessions/start'),
-    onSuccess: (data: any) => {
-      console.log('Session started:', data.id);
+    mutationFn: () => apiRequest('POST', '/api/flashcards/sessions/start', { examTrack }),
+    onSuccess: (data: FlashcardReviewSession) => {
+      console.log('Session started/resumed:', data.id);
       setCurrentSessionId(data.id);
-      sessionStatsRef.current = {
-        cardsReviewed: 0,
-        masteryRatings: [],
-        domainsReviewed: {},
-        startTime: Date.now()
-      };
+      
+      // Check if this is a resume (session has userState)
+      const savedState = data.userState as FlashcardSessionState | null;
+      if (savedState && !data.completedAt) {
+        setIsResumingSession(true);
+        // Restore session state
+        setSelectedDeck(savedState.deck);
+        setSelectedDomains(savedState.domains as Domain[]);
+        setStudyMode(savedState.studyMode);
+        setShuffledIndices(savedState.shuffledIndices);
+        setCurrentIndex(savedState.currentIndex);
+        sessionStatsRef.current = {
+          cardsReviewed: savedState.masteryRatings.length,
+          masteryRatings: savedState.masteryRatings,
+          domainsReviewed: {},
+          startTime: savedState.startTime
+        };
+        toast({
+          title: "Session Resumed",
+          description: `Continuing from card ${savedState.currentIndex + 1}`,
+        });
+        setTimeout(() => setIsResumingSession(false), 100);
+      } else {
+        sessionStatsRef.current = {
+          cardsReviewed: 0,
+          masteryRatings: [],
+          domainsReviewed: {},
+          startTime: Date.now()
+        };
+      }
     },
     onError: (error: any) => {
       console.error('Failed to start session:', error);
     }
   });
+
+  // Update session state mutation (for persistence)
+  const updateStateMutation = useMutation({
+    mutationFn: ({ sessionId, state }: { sessionId: string; state: FlashcardSessionState }) =>
+      apiRequest('PATCH', `/api/flashcards/sessions/${sessionId}/state`, state),
+  });
+
+  // Log review event mutation
+  const logReviewEventMutation = useMutation({
+    mutationFn: ({ sessionId, cardId, deck, mode, rating }: { 
+      sessionId: string; 
+      cardId: string; 
+      deck: string; 
+      mode: string; 
+      rating?: number 
+    }) => apiRequest('POST', `/api/flashcards/sessions/${sessionId}/review`, { cardId, deck, mode, rating }),
+    onSuccess: (data: any) => {
+      // Invalidate related queries
+      queryClient.invalidateQueries({ queryKey: ['/api/daily-quests'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/activity/streak'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+    }
+  });
+
+  // Persist session state helper
+  const persistSessionState = useCallback(() => {
+    if (!currentSessionId || isResumingSession) return;
+    
+    const state: FlashcardSessionState = {
+      deck: selectedDeck,
+      domains: selectedDomains,
+      shuffledIndices,
+      currentIndex,
+      studyMode,
+      masteryRatings: sessionStatsRef.current.masteryRatings,
+      startTime: sessionStatsRef.current.startTime
+    };
+    
+    updateStateMutation.mutate({ sessionId: currentSessionId, state });
+  }, [currentSessionId, selectedDeck, selectedDomains, shuffledIndices, currentIndex, studyMode, isResumingSession]);
 
   // Complete session mutation
   const completeSessionMutation = useMutation({
@@ -133,40 +198,97 @@ export default function FlashcardsPage() {
     }
   }, [studyMode, currentSessionId, completeCurrentSession]);
 
-  // Complete session on page unload
+  // Persist state on navigation (debounced)
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (currentSessionId && sessionStatsRef.current.cardsReviewed > 0) {
-        // Use sendBeacon for reliable completion on page close
+    if (!currentSessionId || isResumingSession) return;
+    
+    // Debounce state persistence
+    const timeoutId = setTimeout(() => {
+      persistSessionState();
+    }, 500);
+    
+    return () => clearTimeout(timeoutId);
+  }, [currentIndex, currentSessionId, isResumingSession, persistSessionState]);
+
+  // Complete session on page unload/visibility change
+  useEffect(() => {
+    const sendCompleteBeacon = () => {
+      if (currentSessionId) {
         const stats = sessionStatsRef.current;
         const avgMastery = stats.masteryRatings.length > 0
           ? stats.masteryRatings.reduce((a, b) => a + b, 0) / stats.masteryRatings.length
           : 0;
         const timeSpent = Math.floor((Date.now() - stats.startTime) / 1000);
         
-        const blob = new Blob([JSON.stringify({
-          cardsReviewed: stats.cardsReviewed,
-          avgMasteryRating: avgMastery,
-          domainBreakdown: stats.domainsReviewed,
-          timeSpentSeconds: timeSpent
+        // First persist current state for potential resume
+        const stateBlob = new Blob([JSON.stringify({
+          deck: selectedDeck,
+          domains: selectedDomains,
+          shuffledIndices,
+          currentIndex,
+          studyMode,
+          masteryRatings: stats.masteryRatings,
+          startTime: stats.startTime
         })], { type: 'application/json' });
         
         navigator.sendBeacon(
-          `/api/flashcards/sessions/${currentSessionId}/complete`,
-          blob
+          `/api/flashcards/sessions/${currentSessionId}/state`,
+          stateBlob
         );
+        
+        // Only complete if we have reviews
+        if (stats.cardsReviewed > 0) {
+          const completeBlob = new Blob([JSON.stringify({
+            cardsReviewed: stats.cardsReviewed,
+            avgMasteryRating: avgMastery,
+            domainBreakdown: stats.domainsReviewed,
+            timeSpentSeconds: timeSpent
+          })], { type: 'application/json' });
+          
+          navigator.sendBeacon(
+            `/api/flashcards/sessions/${currentSessionId}/complete`,
+            completeBlob
+          );
+        }
       }
     };
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        // Page is being hidden - persist state
+        persistSessionState();
+      }
+    };
+
+    const handlePageHide = (event: PageTransitionEvent) => {
+      // pagehide fires on navigation, closing tab, etc.
+      if (event.persisted) {
+        // Page is being cached (bfcache), just persist state
+        persistSessionState();
+      } else {
+        // Page is being unloaded
+        sendCompleteBeacon();
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      sendCompleteBeacon();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pagehide', handlePageHide);
     window.addEventListener('beforeunload', handleBeforeUnload);
+    
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pagehide', handlePageHide);
       window.removeEventListener('beforeunload', handleBeforeUnload);
       // Also complete session on component unmount
       if (currentSessionId && sessionStatsRef.current.cardsReviewed > 0) {
         completeCurrentSession();
       }
     };
-  }, [currentSessionId, completeCurrentSession]);
+  }, [currentSessionId, completeCurrentSession, selectedDeck, selectedDomains, shuffledIndices, currentIndex, studyMode, persistSessionState]);
 
   const { data: masteryData } = useQuery<FlashcardMastery[]>({
     queryKey: ['/api/flashcards/mastery']
@@ -308,7 +430,7 @@ export default function FlashcardsPage() {
     const wasMastered = masteredCards.has(cardId);
     const newMasteryLevel = wasMastered ? 2 : 5;
     
-    // Track session stats
+    // Track session stats and log review event
     if (currentSessionId) {
       sessionStatsRef.current.cardsReviewed += 1;
       sessionStatsRef.current.masteryRatings.push(newMasteryLevel);
@@ -316,6 +438,15 @@ export default function FlashcardsPage() {
       sessionStatsRef.current.domainsReviewed[domain] = 
         (sessionStatsRef.current.domainsReviewed[domain] || 0) + 1;
       console.log('Card reviewed in session:', currentSessionId, 'Total:', sessionStatsRef.current.cardsReviewed);
+      
+      // Log review event for accurate tracking
+      logReviewEventMutation.mutate({
+        sessionId: currentSessionId,
+        cardId,
+        deck: selectedDeck,
+        mode: studyMode,
+        rating: newMasteryLevel
+      });
     } else {
       console.log('No active session - card review not tracked');
     }
@@ -426,6 +557,21 @@ export default function FlashcardsPage() {
         </Button>
       </div>
 
+      {currentSessionId && sessionStatsRef.current.cardsReviewed > 0 && (
+        <div className="flex justify-center mb-4">
+          <Button
+            variant="outline"
+            onClick={() => completeCurrentSession()}
+            disabled={completeSessionMutation.isPending}
+            data-testid="button-end-session"
+            className="text-muted-foreground"
+          >
+            <StopCircle className="w-4 h-4 mr-2" />
+            End Session ({sessionStatsRef.current.cardsReviewed} cards reviewed)
+          </Button>
+        </div>
+      )}
+
       <Card className="p-4 bg-muted">
         <p className="text-sm text-muted-foreground text-center">
           <strong>Tip:</strong> Review mastered cards periodically using spaced repetition for better retention.
@@ -437,6 +583,23 @@ export default function FlashcardsPage() {
 
   const renderEnhancedMode = () => {
     const handleModeComplete = () => {
+      // Log review event for accurate tracking (same as quick mode)
+      if (currentSessionId) {
+        sessionStatsRef.current.cardsReviewed += 1;
+        sessionStatsRef.current.masteryRatings.push(3); // Default rating for enhanced modes
+        const domain = currentCard.domain;
+        sessionStatsRef.current.domainsReviewed[domain] = 
+          (sessionStatsRef.current.domainsReviewed[domain] || 0) + 1;
+        
+        logReviewEventMutation.mutate({
+          sessionId: currentSessionId,
+          cardId: currentCardId,
+          deck: selectedDeck,
+          mode: studyMode,
+          rating: 3
+        });
+      }
+      
       // Record progress for the current card in this mode
       recordProgressMutation.mutate({ cardId: currentCardId, mode: studyMode });
       

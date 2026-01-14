@@ -64,6 +64,9 @@ import type {
   InsertFlashcardTriadProgress,
   FlashcardReviewSession,
   InsertFlashcardReviewSession,
+  FlashcardReviewEvent,
+  InsertFlashcardReviewEvent,
+  FlashcardSessionState,
   DailyQuest,
   InsertDailyQuest,
   ReviewSchedule,
@@ -109,6 +112,7 @@ import {
   flashcardMnemonics,
   flashcardTriadProgress,
   flashcardReviewSessions,
+  flashcardReviewEvents,
   dailyFlashcardProgress,
   dailyQuests,
   reviewSchedule,
@@ -172,6 +176,15 @@ export interface IStorage {
   getTodayFlashcardSessions(userId: string): Promise<FlashcardReviewSession[]>;
   createFlashcardReviewSession(session: InsertFlashcardReviewSession): Promise<FlashcardReviewSession>;
   completeFlashcardReviewSession(sessionId: string, data: { cardsReviewed: number; avgMasteryRating?: number; domainBreakdown?: Record<string, { reviewed: number; avgRating: number }>; timeSpentSeconds: number }): Promise<FlashcardReviewSession>;
+  
+  // Active session state management (for resume functionality)
+  getActiveFlashcardSession(userId: string, examTrack: string): Promise<FlashcardReviewSession | undefined>;
+  updateFlashcardSessionState(sessionId: string, state: FlashcardSessionState): Promise<FlashcardReviewSession>;
+  autoCompleteStaleFlashcardSessions(userId: string, examTrack: string): Promise<void>;
+  
+  // Flashcard Review Events (tracks each individual card review)
+  logFlashcardReviewEvent(event: InsertFlashcardReviewEvent): Promise<FlashcardReviewEvent>;
+  getFlashcardReviewEventCount(userId: string, date?: Date): Promise<number>;
   
   // Daily Flashcard Progress (for quest tracking - idempotent per card per day)
   recordFlashcardProgress(userId: string, cardId: string, mode: string): Promise<{ isNew: boolean; todayCount: number }>;
@@ -3037,11 +3050,137 @@ export class DatabaseStorage implements IStorage {
         avgMasteryRating: data.avgMasteryRating,
         domainBreakdown: data.domainBreakdown,
         timeSpentSeconds: data.timeSpentSeconds,
-        completedAt: new Date()
+        completedAt: new Date(),
+        userState: null // Clear state on completion
       })
       .where(eq(flashcardReviewSessions.id, sessionId))
       .returning();
     return updated;
+  }
+
+  // Get active (incomplete) flashcard session for resume functionality
+  async getActiveFlashcardSession(userId: string, examTrack: string): Promise<FlashcardReviewSession | undefined> {
+    const [session] = await db
+      .select()
+      .from(flashcardReviewSessions)
+      .where(and(
+        eq(flashcardReviewSessions.userId, userId),
+        eq(flashcardReviewSessions.examTrack, examTrack),
+        sql`${flashcardReviewSessions.completedAt} IS NULL`
+      ))
+      .orderBy(desc(flashcardReviewSessions.startedAt))
+      .limit(1);
+    return session;
+  }
+
+  // Update session state (for resume persistence)
+  async updateFlashcardSessionState(sessionId: string, state: FlashcardSessionState): Promise<FlashcardReviewSession> {
+    const [updated] = await db
+      .update(flashcardReviewSessions)
+      .set({ userState: state })
+      .where(eq(flashcardReviewSessions.id, sessionId))
+      .returning();
+    return updated;
+  }
+
+  // Auto-complete stale sessions older than 24 hours
+  async autoCompleteStaleFlashcardSessions(userId: string, examTrack: string): Promise<void> {
+    const oneDayAgo = new Date();
+    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    
+    // Get stale sessions
+    const staleSessions = await db
+      .select()
+      .from(flashcardReviewSessions)
+      .where(and(
+        eq(flashcardReviewSessions.userId, userId),
+        eq(flashcardReviewSessions.examTrack, examTrack),
+        sql`${flashcardReviewSessions.completedAt} IS NULL`,
+        lte(flashcardReviewSessions.startedAt, oneDayAgo)
+      ));
+    
+    for (const session of staleSessions) {
+      // Get review event count for this session
+      const events = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(flashcardReviewEvents)
+        .where(eq(flashcardReviewEvents.sessionId, session.id));
+      
+      const cardsReviewed = Number(events[0]?.count || 0);
+      const timeSpent = Math.floor((Date.now() - new Date(session.startedAt).getTime()) / 1000);
+      
+      // Complete the stale session with review event data
+      await db
+        .update(flashcardReviewSessions)
+        .set({
+          cardsReviewed,
+          timeSpentSeconds: Math.min(timeSpent, 86400), // Cap at 24 hours
+          completedAt: new Date(),
+          userState: null
+        })
+        .where(eq(flashcardReviewSessions.id, session.id));
+      
+      // Award XP if threshold met (5+ cards)
+      if (cardsReviewed >= 5 && !session.xpAwarded) {
+        await this.awardFlashcardReviewXp(userId, session.id, session.period);
+      }
+    }
+  }
+
+  // Log individual flashcard review event
+  async logFlashcardReviewEvent(event: InsertFlashcardReviewEvent): Promise<FlashcardReviewEvent> {
+    const [created] = await db
+      .insert(flashcardReviewEvents)
+      .values(event)
+      .returning();
+    
+    // Log daily activity on first review event of the day
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+    
+    const todayEvents = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(flashcardReviewEvents)
+      .where(and(
+        eq(flashcardReviewEvents.userId, event.userId),
+        gte(flashcardReviewEvents.createdAt, today),
+        lte(flashcardReviewEvents.createdAt, endOfDay)
+      ));
+    
+    // Log daily activity if this is the first review of the day
+    if (Number(todayEvents[0]?.count || 0) === 1) {
+      await this.logDailyActivity(event.userId, 'flashcard_review');
+    }
+    
+    return created;
+  }
+
+  // Get flashcard review event count for stats
+  async getFlashcardReviewEventCount(userId: string, date?: Date): Promise<number> {
+    if (date) {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      const result = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(flashcardReviewEvents)
+        .where(and(
+          eq(flashcardReviewEvents.userId, userId),
+          gte(flashcardReviewEvents.createdAt, startOfDay),
+          lte(flashcardReviewEvents.createdAt, endOfDay)
+        ));
+      return Number(result[0]?.count || 0);
+    }
+    
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(flashcardReviewEvents)
+      .where(eq(flashcardReviewEvents.userId, userId));
+    return Number(result[0]?.count || 0);
   }
 
   // Award XP for flashcard review session (idempotent per period per day)
