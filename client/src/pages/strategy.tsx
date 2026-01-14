@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Clock, TrendingUp, BookOpen, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useExamTrack } from "@/contexts/exam-track-context";
 import type { UserPreferences } from "@shared/schema";
 
 export default function Strategy() {
   const [, setLocation] = useLocation();
+  const { examTrack } = useExamTrack();
   const { data: preferences } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
   });
@@ -190,7 +192,7 @@ export default function Strategy() {
                 <Button 
                   className="w-full" 
                   variant={strategy.recommended ? "secondary" : "default"}
-                  onClick={() => setLocation('/study-plan')}
+                  onClick={() => setLocation(`/app/${examTrack}/study-plan`)}
                 >
                   {strategy.recommended ? 'View Your Plan' : 'Choose This Mode'}
                 </Button>
@@ -234,7 +236,7 @@ export default function Strategy() {
             <div>
               <h3 className="font-semibold mb-2">Not Sure Yet?</h3>
               <p className="text-sm text-muted-foreground mb-3">Take the diagnostic pretest to get personalized recommendations based on your current knowledge.</p>
-              <Button variant="outline" size="sm" onClick={() => setLocation('/pretest')}>
+              <Button variant="outline" size="sm" onClick={() => setLocation(`/app/${examTrack}/pretest`)}>
                 Take Pretest
               </Button>
             </div>
@@ -249,7 +251,7 @@ export default function Strategy() {
             <div>
               <h3 className="font-semibold mb-2">Ready to Start?</h3>
               <p className="text-sm text-muted-foreground mb-3">Jump into your study plan and begin with the READ phase of this week's lessons.</p>
-              <Button size="sm" onClick={() => setLocation('/study-plan')}>
+              <Button size="sm" onClick={() => setLocation(`/app/${examTrack}/study-plan`)}>
                 Go to Study Plan
               </Button>
             </div>

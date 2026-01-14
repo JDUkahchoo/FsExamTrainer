@@ -49,7 +49,8 @@ export function WelcomeDialog() {
   const handleTakePretest = async () => {
     await updatePreferencesMutation.mutateAsync({ hasSeenWelcome: true });
     setIsOpen(false);
-    setLocation('/pretest');
+    const examTrack = preferences?.preferredExamTrack || 'fs';
+    setLocation(`/app/${examTrack}/pretest`);
   };
 
   const handleSkip = async () => {

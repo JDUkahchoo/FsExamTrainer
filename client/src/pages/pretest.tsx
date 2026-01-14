@@ -11,11 +11,13 @@ import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useLocation } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
+import { useExamTrack } from '@/contexts/exam-track-context';
 import type { Domain } from '@shared/schema';
 
 export default function PretestPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { examTrack } = useExamTrack();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [timeElapsed, setTimeElapsed] = useState(0); // in seconds
@@ -59,7 +61,7 @@ export default function PretestPage() {
       apiRequest('POST', '/api/pretest/results', data),
     onSuccess: () => {
       // Navigate to results page
-      setLocation('/pretest/results');
+      setLocation(`/app/${examTrack}/pretest/results`);
     },
     onError: (error: any) => {
       console.error('Pretest submission error:', error);

@@ -933,7 +933,7 @@ export default function StudyPlan() {
                                     key={`srm-${ch.chapter}`} 
                                     variant="outline"
                                     className="text-xs cursor-pointer hover-elevate"
-                                    onClick={() => navigate('/reference-companion')}
+                                    onClick={() => navigate(`/app/${examTrack}/reference-companion`)}
                                     data-testid={`badge-srm-ch-${ch.chapter}`}
                                   >
                                     Ch. {ch.chapter}: {ch.title}
@@ -951,7 +951,7 @@ export default function StudyPlan() {
                                     key={`es-${ch.chapter}`} 
                                     variant="outline"
                                     className="text-xs cursor-pointer hover-elevate"
-                                    onClick={() => navigate('/reference-companion')}
+                                    onClick={() => navigate(`/app/${examTrack}/reference-companion`)}
                                     data-testid={`badge-es-ch-${ch.chapter}`}
                                   >
                                     Ch. {ch.chapter}: {ch.title}

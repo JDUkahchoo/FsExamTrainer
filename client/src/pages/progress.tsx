@@ -245,14 +245,14 @@ export default function ProgressPage() {
             </div>
           </div>
           <div className="flex flex-col gap-2 w-full md:w-auto">
-            <Link href="/pretest">
+            <Link href={`/app/${examTrack}/pretest`}>
               <Button variant="outline" size="sm" className="w-full" data-testid="button-retake-pretest">
                 <Target className="h-4 w-4 mr-2" />
                 {displayPreferences.hasCompletedPretest ? 'Retake Pretest' : 'Take Pretest'}
               </Button>
             </Link>
             {displayPreferences.hasCompletedPretest && (
-              <Link href="/pretest-results">
+              <Link href={`/app/${examTrack}/pretest/results`}>
                 <Button variant="ghost" size="sm" className="w-full" data-testid="button-view-results">
                   <Settings className="h-4 w-4 mr-2" />
                   View Results
@@ -318,7 +318,7 @@ export default function ProgressPage() {
             </Button>
             {!isInMaintenanceMode && (
               <>
-                <Link href="/study-plan">
+                <Link href={`/app/${examTrack}/study-plan`}>
                   <Button variant="default" size="sm" className="w-full" data-testid="button-continue-studying">
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Continue Studying
@@ -338,7 +338,7 @@ export default function ProgressPage() {
             )}
             {isInMaintenanceMode && (
               <>
-                <Link href="/resources">
+                <Link href={`/app/${examTrack}/resources`}>
                   <Button variant="outline" size="sm" className="w-full" data-testid="button-review-materials">
                     <Brain className="h-4 w-4 mr-2" />
                     Review Materials

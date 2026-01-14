@@ -9,10 +9,12 @@ import { getDomainConfig } from '@/lib/domains';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useLocation } from 'wouter';
+import { useExamTrack } from '@/contexts/exam-track-context';
 import type { Domain, PretestResult } from '@shared/schema';
 
 export default function PretestResultsPage() {
   const [, setLocation] = useLocation();
+  const { examTrack } = useExamTrack();
 
   // Fetch latest pretest result
   const { data: pretestResult, isLoading, isError, error } = useQuery<PretestResult>({
@@ -30,17 +32,17 @@ export default function PretestResultsPage() {
 
   const handleChooseStandard = async () => {
     await updatePreferencesMutation.mutateAsync({ studyMode: 'standard' });
-    setLocation('/study-plan');
+    setLocation(`/app/${examTrack}/study-plan`);
   };
 
   const handleChoosePersonalized = async () => {
     await updatePreferencesMutation.mutateAsync({ studyMode: 'personalized' });
-    setLocation('/study-plan');
+    setLocation(`/app/${examTrack}/study-plan`);
   };
 
   const handleChooseSelfDirected = async () => {
     await updatePreferencesMutation.mutateAsync({ studyMode: 'self-directed' });
-    setLocation('/resources');
+    setLocation(`/app/${examTrack}/resources`);
   };
 
   if (isLoading) {
@@ -63,7 +65,7 @@ export default function PretestResultsPage() {
               Failed to load pretest results. {error?.message || 'Please try again later.'}
             </AlertDescription>
           </Alert>
-          <Button onClick={() => setLocation('/pretest')} data-testid="button-retake-pretest">
+          <Button onClick={() => setLocation(`/app/${examTrack}/pretest`)} data-testid="button-retake-pretest">
             Retake Diagnostic Test
           </Button>
         </Card>
@@ -76,7 +78,7 @@ export default function PretestResultsPage() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Card className="p-8">
           <p>No pretest results found. Please take the pretest first.</p>
-          <Button onClick={() => setLocation('/pretest')} className="mt-4" data-testid="button-take-pretest">
+          <Button onClick={() => setLocation(`/app/${examTrack}/pretest`)} className="mt-4" data-testid="button-take-pretest">
             Take Diagnostic Test
           </Button>
         </Card>
