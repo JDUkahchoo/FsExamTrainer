@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, ComponentType } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -41,29 +41,14 @@ function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs
   );
 }
 
-function ExamRoutes({ examTrack }: { examTrack: string }) {
-  const track = (examTrack === 'ps' ? 'ps' : 'fs') as 'fs' | 'ps';
-  return (
-    <ExamPage examTrack={track}>
-      <Switch>
-        <Route path="dashboard" component={ExamDashboard} />
-        <Route path="study-plan" component={StudyPlan} />
-        <Route path="lessons" component={LessonsPage} />
-        <Route path="lesson/:id" component={LessonPage} />
-        <Route path="quiz" component={PracticeQuizPage} />
-        <Route path="flashcards" component={FlashcardsPage} />
-        <Route path="exam" component={PracticeExamPage} />
-        <Route path="notes" component={NotesPage} />
-        <Route path="progress" component={ProgressPage} />
-        <Route path="resources" component={ResourcesPage} />
-        <Route path="reference-companion" component={ReferenceCompanionPage} />
-        <Route path="pretest" component={PretestPage} />
-        <Route path="pretest/results" component={PretestResultsPage} />
-        <Route path="settings" component={SettingsPage} />
-        <Route path="*" component={NotFound} />
-      </Switch>
-    </ExamPage>
-  );
+function withExamTrack(Component: ComponentType<any>, examTrack: 'fs' | 'ps') {
+  return function WrappedComponent(props: any) {
+    return (
+      <ExamPage examTrack={examTrack}>
+        <Component {...props} />
+      </ExamPage>
+    );
+  };
 }
 
 function Router() {
@@ -94,9 +79,37 @@ function Router() {
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/disclaimer" component={DisclaimerPage} />
-      <Route path="/app/:examTrack" nest>
-        {(params) => <ExamRoutes examTrack={params.examTrack || 'fs'} />}
-      </Route>
+      
+      <Route path="/app/fs/dashboard" component={withExamTrack(ExamDashboard, 'fs')} />
+      <Route path="/app/fs/study-plan" component={withExamTrack(StudyPlan, 'fs')} />
+      <Route path="/app/fs/lessons" component={withExamTrack(LessonsPage, 'fs')} />
+      <Route path="/app/fs/lesson/:id" component={withExamTrack(LessonPage, 'fs')} />
+      <Route path="/app/fs/quiz" component={withExamTrack(PracticeQuizPage, 'fs')} />
+      <Route path="/app/fs/flashcards" component={withExamTrack(FlashcardsPage, 'fs')} />
+      <Route path="/app/fs/exam" component={withExamTrack(PracticeExamPage, 'fs')} />
+      <Route path="/app/fs/notes" component={withExamTrack(NotesPage, 'fs')} />
+      <Route path="/app/fs/progress" component={withExamTrack(ProgressPage, 'fs')} />
+      <Route path="/app/fs/resources" component={withExamTrack(ResourcesPage, 'fs')} />
+      <Route path="/app/fs/reference-companion" component={withExamTrack(ReferenceCompanionPage, 'fs')} />
+      <Route path="/app/fs/pretest" component={withExamTrack(PretestPage, 'fs')} />
+      <Route path="/app/fs/pretest/results" component={withExamTrack(PretestResultsPage, 'fs')} />
+      <Route path="/app/fs/settings" component={withExamTrack(SettingsPage, 'fs')} />
+      
+      <Route path="/app/ps/dashboard" component={withExamTrack(ExamDashboard, 'ps')} />
+      <Route path="/app/ps/study-plan" component={withExamTrack(StudyPlan, 'ps')} />
+      <Route path="/app/ps/lessons" component={withExamTrack(LessonsPage, 'ps')} />
+      <Route path="/app/ps/lesson/:id" component={withExamTrack(LessonPage, 'ps')} />
+      <Route path="/app/ps/quiz" component={withExamTrack(PracticeQuizPage, 'ps')} />
+      <Route path="/app/ps/flashcards" component={withExamTrack(FlashcardsPage, 'ps')} />
+      <Route path="/app/ps/exam" component={withExamTrack(PracticeExamPage, 'ps')} />
+      <Route path="/app/ps/notes" component={withExamTrack(NotesPage, 'ps')} />
+      <Route path="/app/ps/progress" component={withExamTrack(ProgressPage, 'ps')} />
+      <Route path="/app/ps/resources" component={withExamTrack(ResourcesPage, 'ps')} />
+      <Route path="/app/ps/reference-companion" component={withExamTrack(ReferenceCompanionPage, 'ps')} />
+      <Route path="/app/ps/pretest" component={withExamTrack(PretestPage, 'ps')} />
+      <Route path="/app/ps/pretest/results" component={withExamTrack(PretestResultsPage, 'ps')} />
+      <Route path="/app/ps/settings" component={withExamTrack(SettingsPage, 'ps')} />
+      
       <Route component={NotFound} />
     </Switch>
   );
