@@ -15,6 +15,7 @@ import {
   Layers
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { useExamTrack } from "@/contexts/exam-track-context";
 import { 
   REFERENCE_BOOKS, 
   SRM_TOPICS, 
@@ -40,6 +41,7 @@ const DOMAIN_COLORS: Record<number, string> = {
 
 export default function ReferenceCompanion() {
   const [, setLocation] = useLocation();
+  const { examTrack } = useExamTrack();
   const [selectedBook, setSelectedBook] = useState<string>("SRM");
   const [viewMode, setViewMode] = useState<"by-chapter" | "by-domain">("by-chapter");
 
@@ -83,7 +85,7 @@ export default function ReferenceCompanion() {
                               key={lesson.lessonId}
                               variant="secondary" 
                               className={`text-xs cursor-pointer ${DOMAIN_COLORS[lesson.domainNumber]}`}
-                              onClick={() => setLocation(`/lesson/${lesson.lessonId}`)}
+                              onClick={() => setLocation(`/app/${examTrack}/lesson/${lesson.lessonId}`)}
                               data-testid={`link-lesson-${lesson.lessonId}`}
                             >
                               {lesson.lessonTitle.length > 25 
@@ -163,7 +165,7 @@ export default function ReferenceCompanion() {
                               key={lesson.lessonId}
                               variant="secondary" 
                               className={`text-xs cursor-pointer ${DOMAIN_COLORS[lesson.domainNumber]}`}
-                              onClick={() => setLocation(`/lesson/${lesson.lessonId}`)}
+                              onClick={() => setLocation(`/app/${examTrack}/lesson/${lesson.lessonId}`)}
                               data-testid={`link-es-lesson-${lesson.lessonId}`}
                             >
                               {lesson.lessonTitle.length > 25 
@@ -223,7 +225,7 @@ export default function ReferenceCompanion() {
                     <div 
                       key={lesson.lessonId}
                       className="flex items-start gap-3 p-3 rounded-md bg-muted/50 hover-elevate cursor-pointer"
-                      onClick={() => setLocation(`/lesson/${lesson.lessonId}`)}
+                      onClick={() => setLocation(`/app/${examTrack}/lesson/${lesson.lessonId}`)}
                       data-testid={`card-lesson-${lesson.lessonId}`}
                     >
                       <BookOpen className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
