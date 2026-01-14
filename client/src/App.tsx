@@ -46,21 +46,21 @@ function ExamRoutes({ examTrack }: { examTrack: string }) {
   return (
     <ExamPage examTrack={track}>
       <Switch>
-        <Route path="/dashboard" component={ExamDashboard} />
-        <Route path="/study-plan" component={StudyPlan} />
-        <Route path="/lessons" component={LessonsPage} />
-        <Route path="/lesson/:id" component={LessonPage} />
-        <Route path="/quiz" component={PracticeQuizPage} />
-        <Route path="/flashcards" component={FlashcardsPage} />
-        <Route path="/exam" component={PracticeExamPage} />
-        <Route path="/notes" component={NotesPage} />
-        <Route path="/progress" component={ProgressPage} />
-        <Route path="/resources" component={ResourcesPage} />
-        <Route path="/reference-companion" component={ReferenceCompanionPage} />
-        <Route path="/pretest" component={PretestPage} />
-        <Route path="/pretest/results" component={PretestResultsPage} />
-        <Route path="/settings" component={SettingsPage} />
-        <Route component={NotFound} />
+        <Route path="dashboard" component={ExamDashboard} />
+        <Route path="study-plan" component={StudyPlan} />
+        <Route path="lessons" component={LessonsPage} />
+        <Route path="lesson/:id" component={LessonPage} />
+        <Route path="quiz" component={PracticeQuizPage} />
+        <Route path="flashcards" component={FlashcardsPage} />
+        <Route path="exam" component={PracticeExamPage} />
+        <Route path="notes" component={NotesPage} />
+        <Route path="progress" component={ProgressPage} />
+        <Route path="resources" component={ResourcesPage} />
+        <Route path="reference-companion" component={ReferenceCompanionPage} />
+        <Route path="pretest" component={PretestPage} />
+        <Route path="pretest/results" component={PretestResultsPage} />
+        <Route path="settings" component={SettingsPage} />
+        <Route path="*" component={NotFound} />
       </Switch>
     </ExamPage>
   );
