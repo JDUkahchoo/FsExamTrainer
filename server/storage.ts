@@ -2419,6 +2419,13 @@ export class DatabaseStorage implements IStorage {
       .where(eq(dailyQuests.id, quest.id))
       .returning();
 
+    // Award XP when quest is completed
+    if (isNowComplete && updated) {
+      const dateKey = today.toISOString().split('T')[0];
+      const activityKey = `daily_quest:${examTrack}:${dateKey}:${questType}`;
+      await this.awardXp(userId, quest.xpReward, activityKey);
+    }
+
     return updated;
   }
 
