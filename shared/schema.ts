@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, boolean, jsonb, timestamp, index, real } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, boolean, jsonb, timestamp, index, real, uniqueIndex } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -786,7 +786,9 @@ export const dailyActivity = pgTable("daily_activity", {
   date: text("date").notNull(), // YYYY-MM-DD format
   activityTypes: text("activity_types").array().notNull().default(sql`'{}'::text[]`), // ['quiz', 'flashcard', 'notes', 'week_complete']
   createdAt: timestamp("created_at").notNull().defaultNow(),
-});
+}, (table) => ({
+  userDateIdx: uniqueIndex('daily_activity_user_date_idx').on(table.userId, table.date),
+}));
 
 export const dailyActivityRelations = relations(dailyActivity, ({ one }) => ({
   user: one(users, {

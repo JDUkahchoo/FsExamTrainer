@@ -220,6 +220,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (data.week && data.chapterIndex !== undefined && data.completed === true) {
         const activityKey = `read:week${data.week}:chapter${data.chapterIndex}`;
         await storage.awardXp(userId, 25, activityKey);
+        
+        // Log daily activity for streak tracking
+        await storage.logDailyActivity(userId, 'reading');
       }
       
       res.json(progress);
@@ -300,6 +303,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const activityKey = `apply:challenge:${attemptId}`;
         await storage.awardXp(userId, 75, activityKey);
       }
+      
+      // Log daily activity for streak tracking
+      await storage.logDailyActivity(userId, 'apply_challenge');
       
       res.json(attempt);
     } catch (error) {
@@ -419,6 +425,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const activityKey = `reinforce:review:${reviewId}`;
         await storage.awardXp(userId, 15, activityKey);
       }
+      
+      // Log daily activity for streak tracking
+      await storage.logDailyActivity(userId, 'retention_review');
       
       res.json(updated);
     } catch (error) {
@@ -677,6 +686,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.awardXp(userId, 50, activityKey);
       }
       
+      // Log daily activity for streak tracking
+      await storage.logDailyActivity(userId, 'quiz');
+      
       res.json(session);
     } catch (error) {
       console.error("Error saving quiz session:", error);
@@ -801,6 +813,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[Flashcard POST] Parsed data:", data);
       const mastery = await storage.upsertFlashcardMastery(data);
       console.log("[Flashcard POST] Upserted mastery:", mastery);
+      
+      // Log daily activity for streak tracking
+      await storage.logDailyActivity(userId, 'flashcard_review');
+      
       res.json(mastery);
     } catch (error) {
       console.error("Error saving flashcard mastery:", error);
@@ -1099,6 +1115,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const activityKey = `exam:practice:${exam.id}`;
         await storage.awardXp(userId, 100, activityKey);
       }
+      
+      // Log daily activity for streak tracking
+      await storage.logDailyActivity(userId, 'practice_exam');
       
       res.json(exam);
     } catch (error) {
@@ -1781,33 +1800,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const xpData = await storage.getUserXp(userId);
       const totalXp = xpData.xp;
       
-      // Calculate streak from daily logs
+      // Calculate streak from daily_activity table (auto-logged activities)
+      const streakData = await storage.calculateStreak(userId);
+      const currentStreak = streakData.currentStreak;
+      
+      // Calculate total hours spent from lesson progress (auto-tracked time during lessons)
+      const totalSecondsFromLessons = progress.reduce((sum, p) => sum + (p.timeSpentSeconds || 0), 0);
+      const autoTrackedMinutes = Math.round(totalSecondsFromLessons / 60);
+      
+      // Daily logs are separate manual entries for general study time (not lesson-specific)
+      // These are additive to auto-tracked time since they represent different activities
       const dailyLogs = await storage.getDailyLogs(userId);
-      const today = new Date();
-      let currentStreak = 0;
+      const manualLogMinutes = dailyLogs.reduce((sum, log) => sum + (log.timeSpent || 0), 0);
       
-      // Sort logs by date descending
-      const sortedLogs = dailyLogs.sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-      
-      // Count consecutive days with activity
-      for (let i = 0; i < 30; i++) { // Check last 30 days max
-        const checkDate = new Date(today);
-        checkDate.setDate(checkDate.getDate() - i);
-        const dateStr = checkDate.toISOString().split('T')[0];
-        
-        const hasActivity = sortedLogs.some(log => {
-          const logDateStr = new Date(log.date).toISOString().split('T')[0];
-          return logDateStr === dateStr;
-        });
-        
-        if (hasActivity) {
-          currentStreak++;
-        } else if (i > 0) { // Skip today if no activity yet
-          break;
-        }
-      }
+      // Total study time = auto-tracked lesson time + manually logged study time
+      const totalMinutesSpent = autoTrackedMinutes + manualLogMinutes;
+      const hoursSpent = Math.round((totalMinutesSpent / 60) * 10) / 10; // Round to 1 decimal
       
       res.json({
         lessonsCompleted,
@@ -1815,7 +1823,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         flashcardsReviewed: 0,
         quizzesTaken: 0,
         currentStreak,
-        totalXp
+        totalXp,
+        hoursSpent
       });
     } catch (error) {
       console.error("Error fetching study stats:", error);
@@ -2026,6 +2035,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const activityKey = `lesson:complete:${lessonId}`;
         await storage.awardXp(userId, 50, activityKey);
       }
+
+      // Log daily activity for streak tracking (any lesson attempt counts)
+      await storage.logDailyActivity(userId, 'lesson');
 
       res.json({
         progress,

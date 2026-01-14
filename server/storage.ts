@@ -997,38 +997,18 @@ export class DatabaseStorage implements IStorage {
   async logDailyActivity(userId: string, activityType: string): Promise<void> {
     const today = new Date().toISOString().split('T')[0];
 
-    // Check if there's already an entry for today
-    const [existing] = await db
-      .select()
-      .from(dailyActivity)
-      .where(and(
-        eq(dailyActivity.userId, userId),
-        eq(dailyActivity.date, today)
-      ));
-
-    if (existing) {
-      // Update existing entry with new activity type if not already included
-      if (!existing.activityTypes.includes(activityType)) {
-        await db
-          .update(dailyActivity)
-          .set({
-            activityTypes: [...existing.activityTypes, activityType]
-          })
-          .where(and(
-            eq(dailyActivity.userId, userId),
-            eq(dailyActivity.date, today)
-          ));
-      }
-    } else {
-      // Create new entry for today
-      await db
-        .insert(dailyActivity)
-        .values({
-          userId,
-          date: today,
-          activityTypes: [activityType]
-        });
-    }
+    // Use atomic upsert with array_append to prevent race conditions
+    // The unique index on (userId, date) ensures only one row per user per day
+    await db.execute(sql`
+      INSERT INTO daily_activity (id, user_id, date, activity_types, created_at)
+      VALUES (gen_random_uuid(), ${userId}, ${today}, ARRAY[${activityType}]::text[], NOW())
+      ON CONFLICT (user_id, date)
+      DO UPDATE SET activity_types = 
+        CASE 
+          WHEN ${activityType} = ANY(daily_activity.activity_types) THEN daily_activity.activity_types
+          ELSE array_append(daily_activity.activity_types, ${activityType})
+        END
+    `);
   }
 
   async calculateStreak(userId: string): Promise<StudyStreak> {
@@ -1887,9 +1867,9 @@ export class DatabaseStorage implements IStorage {
       const domainLessons = allLessons.filter(l => l.domainNumber === domainNumber);
       const lessonsTotal = domainLessons.length;
       
-      // Count completed lessons in this domain (Drizzle joins use table variable names as keys)
+      // Count completed lessons in this domain (Drizzle joins use table names as keys)
       const completedLessons = userLessonProgress.filter(
-        p => p.lessons.domainNumber === domainNumber && p.lessonProgress?.completed
+        p => p.lessons.domainNumber === domainNumber && p.lesson_progress?.completed
       );
       const lessonsCompleted = completedLessons.length;
       const lessonProgress = lessonsTotal > 0 ? Math.round((lessonsCompleted / lessonsTotal) * 100) : 0;
