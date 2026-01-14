@@ -28,6 +28,7 @@ import PretestPage from "@/pages/pretest";
 import PretestResultsPage from "@/pages/pretest-results";
 import LessonPage from "@/pages/lesson";
 import ReferenceCompanionPage from "@/pages/reference-companion";
+import SettingsPage from "@/pages/settings";
 
 function ExamRoutes() {
   return (
@@ -47,6 +48,7 @@ function ExamRoutes() {
           <Route path="/app/:examTrack/pretest" component={PretestPage} />
           <Route path="/app/:examTrack/pretest/results" component={PretestResultsPage} />
           <Route path="/app/:examTrack/lesson/:id" component={LessonPage} />
+          <Route path="/app/:examTrack/settings" component={SettingsPage} />
           <Route component={NotFound} />
         </Switch>
       </ExamTrackProvider>

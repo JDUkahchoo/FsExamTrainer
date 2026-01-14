@@ -1,6 +1,6 @@
 import { type ReactNode, type CSSProperties } from 'react';
 import { useParams, useLocation, Redirect } from 'wouter';
-import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, Library, ArrowLeft } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, Library, ArrowLeft, Settings } from 'lucide-react';
 import { Link } from 'wouter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import {
@@ -33,6 +33,7 @@ const getMenuItems = (examTrack: string) => [
   { id: `/app/${examTrack}/progress`, icon: BarChart3, label: 'Progress', testId: 'nav-progress' },
   { id: `/app/${examTrack}/resources`, icon: BookMarked, label: 'Resources', testId: 'nav-resources' },
   { id: `/app/${examTrack}/reference-companion`, icon: Library, label: 'Reference Companion', testId: 'nav-reference-companion' },
+  { id: `/app/${examTrack}/settings`, icon: Settings, label: 'Settings', testId: 'nav-settings' },
 ];
 
 function ExamSidebar({ examTrack }: { examTrack: string }) {
