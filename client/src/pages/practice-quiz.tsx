@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearch } from 'wouter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS, FS_DOMAINS, PS_DOMAINS } from '@shared/schema';
 import type { Domain, QuizDraft } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
+import { shuffleQuestionOptions, type ShuffledQuestion } from '@/lib/shuffleOptions';
 
 type QuizState = 'setup' | 'active' | 'completed';
 
@@ -37,6 +38,7 @@ export default function PracticeQuizPage() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState<Array<typeof QUIZ_QUESTIONS[0] & { id: string }>>([]);
+  const [shuffledOptionsMap, setShuffledOptionsMap] = useState<Record<number, { options: string[]; correctIndex: number }>>({});
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
 
@@ -176,20 +178,34 @@ export default function PracticeQuizPage() {
       return { ...question, id };
     }).filter(Boolean) as Array<typeof QUIZ_QUESTIONS[0] & { id: string }>;
 
-    // Reconstruct answered questions
+    // Shuffle answer options for resumed questions using stable seed based on question ID
+    const shuffledMap: Record<number, { options: string[]; correctIndex: number }> = {};
+    reconstructedQuestions.forEach((q, index) => {
+      // Use question ID hash as seed for consistent shuffling per question
+      const seed = q.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) + index;
+      const shuffled = shuffleQuestionOptions(q, seed);
+      shuffledMap[index] = {
+        options: shuffled.shuffledOptions,
+        correctIndex: shuffled.shuffledCorrectIndex
+      };
+    });
+
+    // Reconstruct answered questions using shuffled correct indices
     const reconstructedAnswers: Record<number, { selected: number; correct: boolean }> = {};
     Object.entries(draftData.userAnswers as Record<string, number>).forEach(([indexStr, selectedAnswer]) => {
       const index = parseInt(indexStr);
       const question = reconstructedQuestions[index];
-      if (question) {
+      const shuffledData = shuffledMap[index];
+      if (question && shuffledData) {
         reconstructedAnswers[index] = {
           selected: selectedAnswer,
-          correct: selectedAnswer === question.correctAnswer
+          correct: selectedAnswer === shuffledData.correctIndex
         };
       }
     });
 
     // Restore state
+    setShuffledOptionsMap(shuffledMap);
     setQuizQuestions(reconstructedQuestions);
     setSelectedDomain(draftData.domain as Domain | 'all');
     setCurrentQuestionIndex(draftData.currentQuestionIndex);
@@ -249,6 +265,18 @@ export default function PracticeQuizPage() {
       id: `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
     }));
     
+    // Shuffle answer options for each question and store the mapping
+    const shuffledMap: Record<number, { options: string[]; correctIndex: number }> = {};
+    const seedBase = Date.now();
+    questionsWithIds.forEach((q, index) => {
+      const shuffled = shuffleQuestionOptions(q, seedBase + index);
+      shuffledMap[index] = {
+        options: shuffled.shuffledOptions,
+        correctIndex: shuffled.shuffledCorrectIndex
+      };
+    });
+    
+    setShuffledOptionsMap(shuffledMap);
     setQuizQuestions(questionsWithIds);
     setQuizState('active');
     setStartTime(Date.now());
@@ -274,7 +302,10 @@ export default function PracticeQuizPage() {
       return;
     }
     
-    const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+    // Use shuffled correct index for comparison
+    const shuffledData = shuffledOptionsMap[currentQuestionIndex];
+    const correctIndex = shuffledData?.correctIndex ?? currentQuestion.correctAnswer;
+    const isCorrect = selectedAnswer === correctIndex;
     setAnsweredQuestions({
       ...answeredQuestions,
       [currentQuestionIndex]: { selected: selectedAnswer, correct: isCorrect }
@@ -343,8 +374,11 @@ export default function PracticeQuizPage() {
       ? Object.keys(answeredQuestions).length + 1 
       : Object.keys(answeredQuestions).length;
     
+    // Use shuffled correct index for final calculation
+    const currentShuffledData = shuffledOptionsMap[currentQuestionIndex];
+    const currentCorrectIndex = currentShuffledData?.correctIndex ?? currentQuestion?.correctAnswer;
     const finalCorrectCount = selectedAnswer !== null && !answeredQuestions[currentQuestionIndex]
-      ? (selectedAnswer === currentQuestion?.correctAnswer ? correctCount + 1 : correctCount)
+      ? (selectedAnswer === currentCorrectIndex ? correctCount + 1 : correctCount)
       : correctCount;
     
     // Delete the draft before saving session
@@ -584,7 +618,10 @@ export default function PracticeQuizPage() {
 
   const domainConfig = getDomainConfig(currentQuestion.domain as Domain);
   const Icon = domainConfig.icon;
-  const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+  const shuffledData = shuffledOptionsMap[currentQuestionIndex];
+  const displayOptions = shuffledData?.options ?? currentQuestion.options;
+  const correctAnswerIndex = shuffledData?.correctIndex ?? currentQuestion.correctAnswer;
+  const isCorrect = selectedAnswer === correctAnswerIndex;
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -643,9 +680,9 @@ export default function PracticeQuizPage() {
         </h2>
 
         <div className="space-y-3">
-          {currentQuestion.options.map((option: string, index: number) => {
+          {displayOptions.map((option: string, index: number) => {
             const isSelected = selectedAnswer === index;
-            const isCorrectAnswer = index === currentQuestion.correctAnswer;
+            const isCorrectAnswer = index === correctAnswerIndex;
             const showCorrectIndicator = showExplanation && isCorrectAnswer;
             const showIncorrectIndicator = showExplanation && isSelected && !isCorrect;
 
