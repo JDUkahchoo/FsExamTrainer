@@ -125,6 +125,7 @@ export interface IStorage {
   // User methods (required for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUserName(id: string, firstName?: string, lastName?: string): Promise<User>;
 
   // Week Progress methods
   getWeekProgress(userId: string, week: number): Promise<WeekProgress | undefined>;
@@ -315,6 +316,19 @@ export class DatabaseStorage implements IStorage {
           updatedAt: new Date(),
         },
       })
+      .returning();
+    return user;
+  }
+
+  async updateUserName(id: string, firstName?: string, lastName?: string): Promise<User> {
+    const updateData: Partial<UpsertUser> = { updatedAt: new Date() };
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    
+    const [user] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
       .returning();
     return user;
   }

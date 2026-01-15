@@ -27,6 +27,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { firstName, lastName } = req.body;
+      
+      if (firstName !== undefined && (typeof firstName !== 'string' || firstName.length > 50)) {
+        return res.status(400).json({ error: "First name must be a string with max 50 characters" });
+      }
+      if (lastName !== undefined && (typeof lastName !== 'string' || lastName.length > 50)) {
+        return res.status(400).json({ error: "Last name must be a string with max 50 characters" });
+      }
+      
+      // Only update if at least one name field is provided
+      if (firstName === undefined && lastName === undefined) {
+        const user = await storage.getUser(userId);
+        return res.json(user);
+      }
+      
+      const user = await storage.updateUserName(userId, firstName, lastName);
+      res.json(user);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
   // User reset endpoint - clears all study data for the logged-in user only
   app.post('/api/user/reset', isAuthenticated, async (req: any, res) => {
     try {
@@ -728,6 +754,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (session) {
         const activityKey = `quiz:session:${session.id}`;
         await storage.awardXp(userId, 50, activityKey);
+        
+        // Update daily quest progress for quiz completion
+        // Get examTrack from request body, fallback to user preferences
+        let examTrack = req.body.examTrack;
+        if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+          const prefs = await storage.getUserPreferences(userId);
+          examTrack = prefs?.preferredExamTrack || 'fs';
+        }
+        await storage.updateQuestProgress(userId, 'complete_quiz', 1, examTrack);
       }
       
       // Log daily activity for streak tracking
@@ -2160,6 +2195,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (completed && !existingProgress?.completed) {
         const activityKey = `lesson:complete:${lessonId}`;
         await storage.awardXp(userId, 50, activityKey);
+        
+        // Update daily quest progress for lesson completion
+        const examTrack = lesson.examTrack || 'fs';
+        await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack);
       }
 
       // Log daily activity for streak tracking (any lesson attempt counts)

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +27,78 @@ import { Link } from 'wouter';
 import type { UserPreferences } from '@shared/schema';
 
 type Theme = 'light' | 'dark' | 'system';
+
+function ProfileNameForm({ user }: { user?: { id: string; email?: string; firstName?: string; lastName?: string; profileImageUrl?: string } }) {
+  const { toast } = useToast();
+  const [firstName, setFirstName] = useState(user?.firstName || '');
+  const [lastName, setLastName] = useState(user?.lastName || '');
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+    }
+  }, [user]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await apiRequest('PATCH', '/api/auth/user', { firstName, lastName });
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+      toast({ title: "Name updated", description: "Your display name has been saved." });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to update name.", variant: "destructive" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const hasChanges = firstName !== (user?.firstName || '') || lastName !== (user?.lastName || '');
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="firstName">First Name</Label>
+          <Input
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="Enter your first name"
+            maxLength={50}
+            data-testid="input-first-name"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="lastName">Last Name</Label>
+          <Input
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Enter your last name"
+            maxLength={50}
+            data-testid="input-last-name"
+          />
+        </div>
+      </div>
+      <Button 
+        onClick={handleSave} 
+        disabled={!hasChanges || isSaving}
+        data-testid="button-save-name"
+      >
+        {isSaving ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            Saving...
+          </>
+        ) : (
+          'Save Changes'
+        )}
+      </Button>
+    </div>
+  );
+}
 
 export default function SettingsPage() {
   const { toast } = useToast();
@@ -295,7 +368,7 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
-              <CardDescription>Your account details from Replit</CardDescription>
+              <CardDescription>Manage your display name and profile</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
@@ -317,9 +390,10 @@ export default function SettingsPage() {
                   <p className="text-sm text-muted-foreground">{user?.email || 'Replit User'}</p>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Profile information is managed through your Replit account.
-              </p>
+              
+              <Separator />
+              
+              <ProfileNameForm user={user} />
             </CardContent>
           </Card>
 
