@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,7 @@ import { useActivityLogger } from '@/hooks/use-activity-logger';
 import type { Domain, ExamDraft } from '@shared/schema';
 import { PS_DOMAINS, FS_DOMAINS } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
+import { shuffleQuestionOptions } from '@/lib/shuffleOptions';
 
 const FS_EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
 const PS_EXAM_DURATION_MINUTES = 300; // 5 hours = 300 minutes
@@ -49,6 +50,7 @@ export default function PracticeExamPage() {
   const [answers, setAnswers] = useState<Record<number, ExtendedAnswer>>({});
   const [timeRemaining, setTimeRemaining] = useState(EXAM_DURATION_MINUTES * 60); // in seconds
   const [examQuestions, setExamQuestions] = useState<Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>>([]);
+  const [shuffledOptionsMap, setShuffledOptionsMap] = useState<Record<number, { options: string[]; shuffledToOriginal: number[] }>>({});
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const { logActivity } = useActivityLogger();
 
@@ -166,7 +168,14 @@ export default function PracticeExamPage() {
       return { ...question, id };
     }).filter(Boolean) as Array<typeof EXAM_QUESTIONS[0] & { id: string }>;
 
+    // Create shuffled options using stable seed based on question IDs
+    const seedBase = draftData.questionIds.reduce((acc, id) => 
+      acc + id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0), 0
+    );
+    const shuffledMap = createShuffledOptionsMapFromQuestions(reconstructedQuestions, seedBase);
+
     // Restore state
+    setShuffledOptionsMap(shuffledMap);
     setExamQuestions(reconstructedQuestions);
     setCurrentQuestionIndex(draftData.currentQuestionIndex);
     setAnswers(draftData.userAnswers as Record<number, number>);
@@ -181,6 +190,32 @@ export default function PracticeExamPage() {
     // Delete the draft since we're resuming
     deleteDraftMutation.mutate();
   };
+  
+  // Helper to create shuffled options map from reconstructed questions
+  const createShuffledOptionsMapFromQuestions = (questions: Array<any>, seedBase: number) => {
+    const shuffledMap: Record<number, { options: string[]; shuffledToOriginal: number[] }> = {};
+    
+    questions.forEach((q, index) => {
+      if (Array.isArray(q.options) && q.options.length > 0) {
+        // Use question id + index as seed for consistent shuffling
+        const seed = q.id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) + index;
+        const fakeQuestion = { options: q.options as string[], correctAnswer: q.correctAnswer || 0 };
+        const shuffled = shuffleQuestionOptions(fakeQuestion, seed);
+        
+        const shuffledToOriginal: number[] = [];
+        shuffled.originalToShuffledMap.forEach((shuffledIdx, originalIdx) => {
+          shuffledToOriginal[shuffledIdx] = originalIdx;
+        });
+        
+        shuffledMap[index] = {
+          options: shuffled.shuffledOptions,
+          shuffledToOriginal
+        };
+      }
+    });
+    
+    return shuffledMap;
+  };
 
   const handleStartFresh = () => {
     // Delete the draft
@@ -188,9 +223,38 @@ export default function PracticeExamPage() {
     setShowResumeDialog(false);
   };
 
+  // Helper to create shuffled options map for a set of questions
+  const createShuffledOptionsMap = (questions: Array<any>, seedBase: number) => {
+    const shuffledMap: Record<number, { options: string[]; shuffledToOriginal: number[] }> = {};
+    
+    questions.forEach((q, index) => {
+      // Only shuffle standard MCQ questions (not select-all, priority-ranking, etc.)
+      const isStandardMCQ = !isNCEESQuestion(q) || q.questionType === 'multiple_choice' || q.questionType === 'scenario_based' || q.questionType === 'computational';
+      if (isStandardMCQ && Array.isArray(q.options) && q.options.length > 0) {
+        const seed = seedBase + index;
+        const fakeQuestion = { options: q.options as string[], correctAnswer: q.correctAnswer || 0 };
+        const shuffled = shuffleQuestionOptions(fakeQuestion, seed);
+        
+        // Create reverse mapping: shuffled index -> original index
+        const shuffledToOriginal: number[] = [];
+        shuffled.originalToShuffledMap.forEach((shuffledIdx, originalIdx) => {
+          shuffledToOriginal[shuffledIdx] = originalIdx;
+        });
+        
+        shuffledMap[index] = {
+          options: shuffled.shuffledOptions,
+          shuffledToOriginal
+        };
+      }
+    });
+    
+    return shuffledMap;
+  };
+
   // Generate exam questions when starting
   const startExam = (mode: ExamMode = 'standard') => {
     setExamMode(mode);
+    const seedBase = Date.now();
     
     if (mode === 'standard') {
       // Standard exam - shuffle and select questions from appropriate pool
@@ -207,6 +271,7 @@ export default function PracticeExamPage() {
       }));
       
       setExamQuestions(questionsWithIds);
+      setShuffledOptionsMap(createShuffledOptionsMap(questionsWithIds, seedBase));
     } else {
       // NCEES-style exam - only available for FS exam currently
       if (examTrack === 'ps') {
@@ -218,6 +283,7 @@ export default function PracticeExamPage() {
           id: `ps-exam-${PS_EXAM_QUESTIONS.indexOf(q)}`
         }));
         setExamQuestions(questionsWithIds);
+        setShuffledOptionsMap(createShuffledOptionsMap(questionsWithIds, seedBase));
       } else {
         // NCEES-style exam for FS - use questions with alternative item types
         // Filter out scenario context questions (they're displayed with their related questions)
@@ -230,6 +296,7 @@ export default function PracticeExamPage() {
         const selected = shuffled.slice(0, Math.min(NCEES_TOTAL_QUESTIONS, shuffled.length));
         
         setExamQuestions(selected);
+        setShuffledOptionsMap(createShuffledOptionsMap(selected, seedBase));
       }
     }
     
@@ -244,8 +311,11 @@ export default function PracticeExamPage() {
     return 'questionType' in q;
   };
 
-  const handleAnswerSelect = (questionIndex: number, answerIndex: number) => {
-    setAnswers(prev => ({ ...prev, [questionIndex]: answerIndex }));
+  const handleAnswerSelect = (questionIndex: number, shuffledAnswerIndex: number) => {
+    // Map shuffled index back to original index
+    const shuffledData = shuffledOptionsMap[questionIndex];
+    const originalIndex = shuffledData?.shuffledToOriginal?.[shuffledAnswerIndex] ?? shuffledAnswerIndex;
+    setAnswers(prev => ({ ...prev, [questionIndex]: originalIndex }));
     // Auto-save draft when user selects an answer
     setTimeout(() => saveDraft(), 100);
   };
@@ -757,31 +827,40 @@ export default function PracticeExamPage() {
               ) : (
                 /* Standard MCQ options */
                 <div className="space-y-3">
-                  {currentQuestion.options.map((option, index) => {
-                    const isSelected = answers[currentQuestionIndex] === index;
+                  {(() => {
+                    // Use shuffled options if available
+                    const shuffledData = shuffledOptionsMap[currentQuestionIndex];
+                    const displayOptions = shuffledData?.options ?? currentQuestion.options;
+                    const storedAnswer = answers[currentQuestionIndex];
                     
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => handleAnswerSelect(currentQuestionIndex, index)}
-                        className={`
-                          w-full p-4 rounded-lg border-2 text-left transition-all hover-elevate
-                          ${isSelected ? 'border-primary bg-primary/5' : 'border-border'}
-                        `}
-                        data-testid={`option-${index}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className={`
-                            flex h-8 w-8 items-center justify-center rounded-full border-2 font-semibold text-sm
-                            ${isSelected ? 'border-primary text-primary bg-primary/10' : 'border-border text-muted-foreground'}
-                          `}>
-                            {String.fromCharCode(65 + index)}
-                          </span>
-                          <span className="flex-1 text-foreground">{option}</span>
-                        </div>
-                      </button>
-                    );
-                  })}
+                    return displayOptions.map((option, shuffledIndex) => {
+                      // Map stored original answer back to shuffled index for display
+                      const originalIndex = shuffledData?.shuffledToOriginal?.[shuffledIndex] ?? shuffledIndex;
+                      const isSelected = storedAnswer === originalIndex;
+                      
+                      return (
+                        <button
+                          key={shuffledIndex}
+                          onClick={() => handleAnswerSelect(currentQuestionIndex, shuffledIndex)}
+                          className={`
+                            w-full p-4 rounded-lg border-2 text-left transition-all hover-elevate
+                            ${isSelected ? 'border-primary bg-primary/5' : 'border-border'}
+                          `}
+                          data-testid={`option-${shuffledIndex}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className={`
+                              flex h-8 w-8 items-center justify-center rounded-full border-2 font-semibold text-sm
+                              ${isSelected ? 'border-primary text-primary bg-primary/10' : 'border-border text-muted-foreground'}
+                            `}>
+                              {String.fromCharCode(65 + shuffledIndex)}
+                            </span>
+                            <span className="flex-1 text-foreground">{option}</span>
+                          </div>
+                        </button>
+                      );
+                    });
+                  })()}
                 </div>
               )}
             </>

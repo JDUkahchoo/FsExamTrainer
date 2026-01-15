@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { getAllLessonReferences, type BookReference } from "@shared/data/referenceManualMappings";
 import { useExamTrack } from "@/contexts/exam-track-context";
+import { shuffleQuestionOptions } from "@/lib/shuffleOptions";
 
 type QuestionType = "multiple_choice" | "fill_in_blank" | "drag_drop";
 
@@ -78,6 +79,38 @@ export default function LessonPage() {
     queryKey: ["/api/lessons", lessonId],
     enabled: !!lessonId,
   });
+
+  // Compute shuffled options for multiple choice questions
+  // Map from question id to { shuffledOptions, shuffledToOriginal }
+  const shuffledOptionsMap = useMemo(() => {
+    if (!lessonData?.questions) return {};
+    
+    const map: Record<string, { options: string[]; shuffledToOriginal: number[] }> = {};
+    
+    lessonData.questions.forEach((q, qIndex) => {
+      if (q.questionType === 'multiple_choice' && Array.isArray(q.options)) {
+        // Use question id + index as seed for consistent shuffling
+        const seed = q.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) + qIndex;
+        
+        // Create a fake question object for shuffling
+        const fakeQuestion = { options: q.options as string[], correctAnswer: 0 };
+        const shuffled = shuffleQuestionOptions(fakeQuestion, seed);
+        
+        // Create reverse mapping: shuffled index -> original index
+        const shuffledToOriginal: number[] = [];
+        shuffled.originalToShuffledMap.forEach((shuffledIdx, originalIdx) => {
+          shuffledToOriginal[shuffledIdx] = originalIdx;
+        });
+        
+        map[q.id] = {
+          options: shuffled.shuffledOptions,
+          shuffledToOriginal
+        };
+      }
+    });
+    
+    return map;
+  }, [lessonData?.questions]);
 
   const submitMutation = useMutation({
     mutationFn: async (data: { answers: Record<string, any>; questionIds: string[]; timeSpentSeconds: number }) => {
@@ -190,8 +223,17 @@ export default function LessonPage() {
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
+  // Get shuffled options for current question if available
+  const currentShuffledData = shuffledOptionsMap[currentQuestion?.id];
+
   const handleAnswer = (value: any) => {
     setAnswers({ ...answers, [currentQuestion.id]: value });
+  };
+
+  // For multiple choice with shuffled options, map shuffled index to original index
+  const handleMultipleChoiceAnswer = (shuffledIndex: number) => {
+    const originalIndex = currentShuffledData?.shuffledToOriginal?.[shuffledIndex] ?? shuffledIndex;
+    setAnswers({ ...answers, [currentQuestion.id]: originalIndex });
   };
 
   const handleNext = () => {
@@ -488,18 +530,30 @@ export default function LessonPage() {
             {/* Multiple Choice */}
             {currentQuestion.questionType === "multiple_choice" && currentQuestion.options && (
               <div className="space-y-3">
-                {Array.isArray(currentQuestion.options) && (currentQuestion.options as string[]).map((option, index) => (
-                  <Button
-                    key={index}
-                    variant={answers[currentQuestion.id] === index ? "default" : "outline"}
-                    className="w-full justify-start text-left h-auto py-3 px-4"
-                    onClick={() => handleAnswer(index)}
-                    data-testid={`button-option-${index}`}
-                  >
-                    <span className="font-medium mr-3">{String.fromCharCode(65 + index)}.</span>
-                    {option}
-                  </Button>
-                ))}
+                {(() => {
+                  // Use shuffled options if available, otherwise use original
+                  const displayOptions = currentShuffledData?.options ?? (currentQuestion.options as string[]);
+                  const storedAnswer = answers[currentQuestion.id];
+                  
+                  return displayOptions.map((option, shuffledIndex) => {
+                    // Map stored original answer back to shuffled index for display
+                    const originalIndex = currentShuffledData?.shuffledToOriginal?.[shuffledIndex] ?? shuffledIndex;
+                    const isSelected = storedAnswer === originalIndex;
+                    
+                    return (
+                      <Button
+                        key={shuffledIndex}
+                        variant={isSelected ? "default" : "outline"}
+                        className="w-full justify-start text-left h-auto py-3 px-4"
+                        onClick={() => handleMultipleChoiceAnswer(shuffledIndex)}
+                        data-testid={`button-option-${shuffledIndex}`}
+                      >
+                        <span className="font-medium mr-3">{String.fromCharCode(65 + shuffledIndex)}.</span>
+                        {option}
+                      </Button>
+                    );
+                  });
+                })()}
               </div>
             )}
 
