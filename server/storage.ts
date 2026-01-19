@@ -2506,10 +2506,10 @@ export class DatabaseStorage implements IStorage {
       sessionKey = `weak_domain_quest:${sessionId}`;
       const [existingCredit] = await db
         .select()
-        .from(xpHistory)
+        .from(xpGrants)
         .where(and(
-          eq(xpHistory.userId, userId),
-          eq(xpHistory.activityKey, sessionKey)
+          eq(xpGrants.userId, userId),
+          eq(xpGrants.activityKey, sessionKey)
         ))
         .limit(1);
       
@@ -2560,14 +2560,21 @@ export class DatabaseStorage implements IStorage {
     const normalizedQuizDomain = quizDomain.toLowerCase();
 
     // Flexible matching: check if domains match, contain each other, or share significant words
-    const weakDomainWords = normalizedWeakDomain.split(/[\s,&]+/).filter(w => w.length > 2);
-    const quizDomainWords = normalizedQuizDomain.split(/[\s,&]+/).filter(w => w.length > 2);
+    // Filter out very common words that don't help with matching
+    const stopWords = ['and', 'the', 'for', 'with', 'from', 'basic', 'foundations', 'principles', 'practices', 'concepts'];
+    const weakDomainWords = normalizedWeakDomain.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
+    const quizDomainWords = normalizedQuizDomain.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
     
-    // Check for exact match, containment, or significant word overlap
+    // Check for exact match, containment, or significant word overlap (at least 1 key word)
+    const matchingWords = weakDomainWords.filter(w => quizDomainWords.includes(w));
     const isMatch = normalizedQuizDomain === normalizedWeakDomain ||
                     normalizedQuizDomain.includes(normalizedWeakDomain) || 
                     normalizedWeakDomain.includes(normalizedQuizDomain) ||
-                    weakDomainWords.some(w => quizDomainWords.includes(w));
+                    matchingWords.length >= 1; // At least one meaningful word matches
+
+    console.log(`[WeakDomainQuest] Matching: quest="${weakDomain}" vs quiz="${quizDomain}"`);
+    console.log(`[WeakDomainQuest] Words: weak=[${weakDomainWords}] quiz=[${quizDomainWords}] matching=[${matchingWords}]`);
+    console.log(`[WeakDomainQuest] Result: ${isMatch ? 'MATCH' : 'NO MATCH'}`);
 
     if (!isMatch) return null;
 
@@ -2587,11 +2594,10 @@ export class DatabaseStorage implements IStorage {
 
     // Record session marker AFTER successful quest update (prevents blocking legitimate retries)
     if (updated && sessionKey) {
-      await db.insert(xpHistory).values({
+      await db.insert(xpGrants).values({
         userId,
         amount: 0,
         activityKey: sessionKey,
-        description: 'Weak domain quest session tracking'
       });
     }
 
