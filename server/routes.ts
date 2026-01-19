@@ -278,18 +278,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const data = insertReadingProgressSchema.parse({ ...req.body, userId });
+      
+      // Check if this is a FIRST-EVER completion (completedAt was never set)
+      // This is immutable: once completedAt is set, it stays set forever
+      // This prevents XP farming via toggle off/on
+      let isFirstCompletion = false;
+      if (data.week && data.chapterIndex !== undefined && data.completed === true) {
+        const existingProgress = await storage.getReadingProgress(userId, data.week);
+        const existingChapter = existingProgress.find(p => p.chapterIndex === data.chapterIndex);
+        // Only award XP if completedAt was never set (not just if currently incomplete)
+        isFirstCompletion = !existingChapter?.completedAt;
+      }
+      
       const progress = await storage.upsertReadingProgress(data);
       
-      // Award XP for READ checkpoint completion (25 XP per chapter, only when completed)
-      if (data.week && data.chapterIndex !== undefined && data.completed === true) {
+      // Award XP and quest progress ONLY for FIRST-EVER completions
+      // Belt-and-suspenders: XP system also has idempotency via activityKey
+      if (isFirstCompletion) {
         const activityKey = `read:week${data.week}:chapter${data.chapterIndex}`;
-        await storage.awardXp(userId, 25, activityKey);
+        const xpResult = await storage.awardXp(userId, 25, activityKey);
+        
+        // Double-check XP was actually awarded (prevents edge cases)
+        if (!xpResult.awarded) {
+          // This means the activity was already credited, don't update quests
+          return res.json({ ...progress, isNewCompletion: false });
+        }
         
         // Log daily activity for streak tracking
         await storage.logDailyActivity(userId, 'reading');
+        
+        // Update daily quest progress for lesson/reading completion
+        let examTrack = req.body.examTrack;
+        if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+          const prefs = await storage.getUserPreferences(userId);
+          examTrack = prefs?.preferredExamTrack || 'fs';
+        }
+        await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack);
       }
       
-      res.json(progress);
+      // Return isFirstCompletion flag so client knows whether to show XP toast
+      res.json({ ...progress, isNewCompletion: isFirstCompletion });
     } catch (error) {
       console.error("Error saving reading progress:", error);
       res.status(400).json({ error: "Invalid reading progress data" });
@@ -763,6 +791,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           examTrack = prefs?.preferredExamTrack || 'fs';
         }
         await storage.updateQuestProgress(userId, 'complete_quiz', 1, examTrack);
+        
+        // Update weak domain quest progress if quiz domain matches user's weak area
+        // Require minimum 50% accuracy to count toward quest (prevents low-effort farming)
+        // Session-based idempotency prevents the same quiz from being counted multiple times
+        const accuracy = data.totalQuestions > 0 ? data.correctAnswers / data.totalQuestions : 0;
+        if (data.domain && data.domain !== 'all' && data.correctAnswers > 0 && accuracy >= 0.5 && session) {
+          await storage.updateWeakDomainQuestProgress(userId, data.domain, data.correctAnswers, examTrack, session.id);
+        }
       }
       
       // Log daily activity for streak tracking
@@ -2195,8 +2231,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (completed && !existingProgress?.completed) {
         const activityKey = `lesson:complete:${lessonId}`;
         await storage.awardXp(userId, 50, activityKey);
-        
-        // Update daily quest progress for lesson completion
+      }
+      
+      // Update daily quest progress for lesson completion (counts every time you pass)
+      if (completed) {
         const examTrack = lesson.examTrack || 'fs';
         await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack);
       }

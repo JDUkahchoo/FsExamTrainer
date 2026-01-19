@@ -796,6 +796,7 @@ export default function StudyPlan() {
                     week={plan.week}
                     chapters={plan.read}
                     colorClass="text-primary"
+                    examTrack={examTrack}
                   />
                   <FocusWeaknessScanner
                     week={plan.week}

@@ -21,9 +21,10 @@ interface ReadCheckpointProps {
   week: number;
   chapters: string[];
   colorClass?: string;
+  examTrack?: string;
 }
 
-export function ReadCheckpoint({ week, chapters, colorClass = "text-primary" }: ReadCheckpointProps) {
+export function ReadCheckpoint({ week, chapters, colorClass = "text-primary", examTrack = "fs" }: ReadCheckpointProps) {
   const [expandedChapter, setExpandedChapter] = useState<number | null>(null);
   const [localNotes, setLocalNotes] = useState<Record<number, string>>({});
   const [localRatings, setLocalRatings] = useState<Record<number, number>>({});
@@ -64,28 +65,26 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-primary" }: 
 
   const saveProgressMutation = useMutation({
     mutationFn: async (data: { chapterIndex: number; completed: boolean; confidenceRating?: number; takeawayNote?: string }) => {
-      return apiRequest('POST', '/api/reading-progress', {
+      const res = await apiRequest('POST', '/api/reading-progress', {
         week,
         chapterIndex: data.chapterIndex,
         completed: data.completed,
         confidenceRating: data.confidenceRating,
         takeawayNote: data.takeawayNote,
+        examTrack,
       });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/reading-progress/${week}`] });
-      queryClient.invalidateQueries({ queryKey: ['/api/reading-progress'] });
-    },
-  });
-
-  const awardXpMutation = useMutation({
-    mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
-      const res = await apiRequest('POST', '/api/xp/award', data);
-      return res.json() as Promise<{ xp: number; level: number; leveledUp: boolean; awarded: boolean; reason: string }>;
+      return res.json() as Promise<{ isNewCompletion: boolean }>;
     },
     onSuccess: (data) => {
-      if (data.awarded) {
+      queryClient.invalidateQueries({ queryKey: [`/api/reading-progress/${week}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/reading-progress'] });
+      // Show XP toast only for NEW completions (backend handles the actual XP award)
+      if (data.isNewCompletion) {
         queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+        toast({ 
+          title: `+${XP_AWARDS.READ_CHECKPOINT} XP`, 
+          description: "Chapter checkpoint completed!" 
+        });
       }
     },
   });
@@ -99,30 +98,13 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-primary" }: 
     const wasCompleted = current?.completed ?? false;
     const newCompleted = !wasCompleted;
     
+    // Backend handles XP awarding and quest progress, returns isNewCompletion flag
     saveProgressMutation.mutate({
       chapterIndex: index,
       completed: newCompleted,
       confidenceRating: localRatings[index],
       takeawayNote: localNotes[index],
     });
-    
-    // Award XP with backend idempotency (activity key prevents duplicate awards)
-    if (newCompleted) {
-      awardXpMutation.mutate({ 
-        amount: XP_AWARDS.READ_CHECKPOINT, 
-        reason: 'Chapter checkpoint completed',
-        activityKey: `read:week${week}:chapter${index}`
-      }, {
-        onSuccess: (data) => {
-          if (data.awarded) {
-            toast({ 
-              title: `+${XP_AWARDS.READ_CHECKPOINT} XP`, 
-              description: "Chapter checkpoint completed!" 
-            });
-          }
-        }
-      });
-    }
   };
 
   const handleRatingChange = (index: number, rating: number) => {

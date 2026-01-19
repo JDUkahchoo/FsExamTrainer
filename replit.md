@@ -34,7 +34,9 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Server-side validation and security for interactive lessons.
 -   Domain-Based Lesson Architecture for flexible study distribution.
 -   Question Archetype System for deterministic question generation and variations using seeded RNG.
--   XP Idempotency System to prevent duplicate XP awards.
+-   XP Idempotency System to prevent duplicate XP awards using activity keys.
+-   Reading Checkpoint Completion Guard: Uses immutable `completedAt` timestamp to prevent XP farming via toggle off/on cycles. XP and quest progress only awarded on first-ever completion.
+-   Weak Domain Quest Guard: Requires minimum 50% accuracy AND session-based idempotency to prevent farming via repeated low-effort quizzes.
 -   Multi-Exam Architecture with isolated routes (`/app/:examTrack/*`) for FS and PS exams, allowing for distinct content and future monetization.
 -   ExamTrackProvider Context for centralized exam track state and configuration.
 -   Flashcard Session Resume System: Sessions persist user state (deck, domains, card index, study mode) and can be resumed from exact position. Review events logged individually for accurate statistics and streak tracking.

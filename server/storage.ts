@@ -856,13 +856,18 @@ export class DatabaseStorage implements IStorage {
       .limit(1);
 
     if (existing.length > 0) {
+      // IMMUTABLE: Never reset completedAt once set (prevents XP farming via toggle)
+      // Only set completedAt if completing for the first time
+      const shouldSetCompletedAt = progress.completed && !existing[0].completedAt;
+      
       const [updated] = await db
         .update(readingProgress)
         .set({
           completed: progress.completed,
           confidenceRating: progress.confidenceRating,
           takeawayNote: progress.takeawayNote,
-          completedAt: progress.completed ? new Date() : null,
+          // Preserve existing completedAt, only set on first completion
+          completedAt: shouldSetCompletedAt ? new Date() : existing[0].completedAt,
           updatedAt: new Date(),
         })
         .where(eq(readingProgress.id, existing[0].id))
@@ -2485,6 +2490,115 @@ export class DatabaseStorage implements IStorage {
     if (isNowComplete && updated) {
       const dateKey = today.toISOString().split('T')[0];
       const activityKey = `daily_quest:${examTrack}:${dateKey}:${questType}`;
+      await this.awardXp(userId, quest.xpReward, activityKey);
+    }
+
+    return updated;
+  }
+
+  async updateWeakDomainQuestProgress(userId: string, quizDomain: string, correctAnswerCount: number, examTrack: string = 'fs', sessionId?: string): Promise<DailyQuest | null> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Session-based idempotency: check if this session already contributed to quest
+    let sessionKey: string | null = null;
+    if (sessionId) {
+      sessionKey = `weak_domain_quest:${sessionId}`;
+      const [existingCredit] = await db
+        .select()
+        .from(xpHistory)
+        .where(and(
+          eq(xpHistory.userId, userId),
+          eq(xpHistory.activityKey, sessionKey)
+        ))
+        .limit(1);
+      
+      if (existingCredit) {
+        // This session already contributed to the quest
+        return null;
+      }
+      // Note: We'll record the session marker AFTER successful quest update
+    }
+
+    // Find active weak domain quest for today
+    const [quest] = await db
+      .select()
+      .from(dailyQuests)
+      .where(and(
+        eq(dailyQuests.userId, userId),
+        eq(dailyQuests.examTrack, examTrack),
+        eq(dailyQuests.questType, 'review_weak_domain'),
+        gte(dailyQuests.date, today),
+        eq(dailyQuests.isCompleted, false)
+      ))
+      .limit(1);
+
+    if (!quest) return null;
+
+    // Extract weak domain from multiple sources for robustness:
+    // 1. Title format: "{domain} Focus"
+    // 2. Description format: "Practice 5 questions in your weak area: {domain}"
+    let weakDomain = '';
+    
+    // Try title first (more reliable - format: "Domain Name Focus")
+    const titleMatch = quest.title?.match(/^(.+)\s+Focus$/i);
+    if (titleMatch) {
+      weakDomain = titleMatch[1].trim();
+    }
+    
+    // Fallback to description
+    if (!weakDomain) {
+      const descMatch = quest.description?.match(/weak area:\s*(.+)$/i);
+      if (descMatch) {
+        weakDomain = descMatch[1].trim();
+      }
+    }
+    
+    if (!weakDomain) return null;
+
+    const normalizedWeakDomain = weakDomain.toLowerCase();
+    const normalizedQuizDomain = quizDomain.toLowerCase();
+
+    // Flexible matching: check if domains match, contain each other, or share significant words
+    const weakDomainWords = normalizedWeakDomain.split(/[\s,&]+/).filter(w => w.length > 2);
+    const quizDomainWords = normalizedQuizDomain.split(/[\s,&]+/).filter(w => w.length > 2);
+    
+    // Check for exact match, containment, or significant word overlap
+    const isMatch = normalizedQuizDomain === normalizedWeakDomain ||
+                    normalizedQuizDomain.includes(normalizedWeakDomain) || 
+                    normalizedWeakDomain.includes(normalizedQuizDomain) ||
+                    weakDomainWords.some(w => quizDomainWords.includes(w));
+
+    if (!isMatch) return null;
+
+    // Update quest progress (using correct answer count, not total questions)
+    const newCount = Math.min(quest.currentCount + correctAnswerCount, quest.targetCount);
+    const isNowComplete = newCount >= quest.targetCount;
+
+    const [updated] = await db
+      .update(dailyQuests)
+      .set({
+        currentCount: newCount,
+        isCompleted: isNowComplete,
+        completedAt: isNowComplete ? new Date() : null
+      })
+      .where(eq(dailyQuests.id, quest.id))
+      .returning();
+
+    // Record session marker AFTER successful quest update (prevents blocking legitimate retries)
+    if (updated && sessionKey) {
+      await db.insert(xpHistory).values({
+        userId,
+        amount: 0,
+        activityKey: sessionKey,
+        description: 'Weak domain quest session tracking'
+      });
+    }
+
+    // Award XP when quest is completed
+    if (isNowComplete && updated) {
+      const dateKey = today.toISOString().split('T')[0];
+      const activityKey = `daily_quest:${examTrack}:${dateKey}:review_weak_domain`;
       await this.awardXp(userId, quest.xpReward, activityKey);
     }
 
