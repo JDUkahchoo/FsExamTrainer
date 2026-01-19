@@ -1868,19 +1868,23 @@ export class DatabaseStorage implements IStorage {
     isStagnant: boolean;
     alert?: string;
   }>> {
-    const FS_DOMAINS_LIST = ['Math & Basic Science', 'Field Data Acquisition', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Surveying Principles', 'Survey Computations & Applications', 'Professional Practice', 'Applied Mathematics & Statistics'];
-    const PS_DOMAINS_LIST = ['Legal Principles', 'Professional Survey Practices', 'Standards and Specifications', 'Business Practices', 'Areas of Practice'];
-    
-    const DOMAINS_LIST = examTrack === 'ps' ? PS_DOMAINS_LIST : FS_DOMAINS_LIST;
-    const domainCount = DOMAINS_LIST.length;
-    const startIndex = examTrack === 'ps' ? 1 : 0;
-    
     const result: Array<any> = [];
     
     // Get all lessons for this exam track
     const allLessons = await db.select()
       .from(lessons)
       .where(eq(lessons.examTrack, examTrack));
+    
+    // Get unique domains from actual lesson data (instead of hardcoded list)
+    const domainMap = new Map<number, string>();
+    allLessons.forEach(l => {
+      if (!domainMap.has(l.domainNumber)) {
+        domainMap.set(l.domainNumber, l.domain);
+      }
+    });
+    
+    // Sort domain numbers for consistent ordering
+    const domainNumbers = Array.from(domainMap.keys()).sort((a, b) => a - b);
     
     // Get user's lesson progress for this exam track
     const userLessonProgress = await db.select()
@@ -1891,9 +1895,13 @@ export class DatabaseStorage implements IStorage {
         eq(lessons.examTrack, examTrack)
       ));
     
-    for (let i = 0; i < domainCount; i++) {
-      const domainNumber = startIndex + i;
-      const domainName = DOMAINS_LIST[i];
+    // Get all quiz results for this user to match against domains
+    const allQuizResults = await db.select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, userId));
+    
+    for (const domainNumber of domainNumbers) {
+      const domainName = domainMap.get(domainNumber) || `Domain ${domainNumber}`;
       
       // Count lessons in this domain
       const domainLessons = allLessons.filter(l => l.domainNumber === domainNumber);
@@ -1906,10 +1914,25 @@ export class DatabaseStorage implements IStorage {
       const lessonsCompleted = completedLessons.length;
       const lessonProgress = lessonsTotal > 0 ? Math.round((lessonsCompleted / lessonsTotal) * 100) : 0;
       
-      // Get quiz results for this domain
-      const domainResults = await db.select()
-        .from(quizResults)
-        .where(and(eq(quizResults.userId, userId), eq(quizResults.domain, domainName)));
+      // Match quiz results to this domain using flexible matching (handles name variations)
+      // e.g., "Survey Computations & Applications" should match "Survey Computations and Computer Applications"
+      const stopWords = ['and', 'the', 'for', 'with', 'from'];
+      const normalizedDomainName = domainName.toLowerCase();
+      const domainWords = normalizedDomainName.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
+      
+      const domainResults = allQuizResults.filter(r => {
+        if (!r.domain) return false;
+        const quizDomain = r.domain.toLowerCase();
+        // Exact match
+        if (quizDomain === normalizedDomainName) return true;
+        // Containment match (one contains the other)
+        if (quizDomain.includes(normalizedDomainName) || normalizedDomainName.includes(quizDomain)) return true;
+        // Word overlap matching - require at least 1 significant word, or 2 if we have 3+ words
+        const quizWords = quizDomain.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
+        const matchingWords = domainWords.filter(w => quizWords.includes(w));
+        const minRequired = Math.min(domainWords.length, Math.max(1, Math.floor(domainWords.length / 2)));
+        return matchingWords.length >= minRequired;
+      });
       
       let quizAccuracy = 0;
       const questionsAnswered = domainResults.length;
