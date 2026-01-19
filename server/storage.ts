@@ -2350,6 +2350,8 @@ export class DatabaseStorage implements IStorage {
       ));
 
     if (existingQuests.length > 0) {
+      const newQuests: DailyQuest[] = [];
+      
       // Check if flashcard quest exists - if not, add it (for backwards compatibility)
       const hasFlashcardQuest = existingQuests.some(q => q.questType === 'complete_flashcards');
       if (!hasFlashcardQuest) {
@@ -2368,16 +2370,66 @@ export class DatabaseStorage implements IStorage {
             isCompleted: false
           })
           .returning();
-        return [...existingQuests, flashcardQuest];
+        newQuests.push(flashcardQuest);
       }
-      return existingQuests;
+      
+      // Check if weak domain quest exists - if not, add it (for backwards compatibility)
+      const hasWeakDomainQuest = existingQuests.some(q => q.questType === 'review_weak_domain');
+      if (!hasWeakDomainQuest) {
+        const analytics = await this.getPersonalAnalytics(userId);
+        // Get weak domains, or use all domains as fallback if no predictions
+        let weakDomains = analytics.weaknessPredictions
+          .filter(w => w.predictedStruggle)
+          .map(w => w.domain);
+        
+        // Fallback: use highest confidence struggle domain (or just pick first one)
+        if (weakDomains.length === 0 && analytics.weaknessPredictions.length > 0) {
+          // Pick the domain with highest struggle confidence, or just the first
+          const highestConfidence = analytics.weaknessPredictions.reduce((max, w) => 
+            w.confidence > max.confidence ? w : max
+          );
+          weakDomains = [highestConfidence.domain];
+        }
+        
+        if (weakDomains.length > 0) {
+          const weakDomain = weakDomains[0];
+          const [weakDomainQuest] = await db
+            .insert(dailyQuests)
+            .values({
+              userId,
+              examTrack,
+              date: today,
+              questType: 'review_weak_domain',
+              title: `${weakDomain} Focus`,
+              description: `Practice 5 questions in your weak area: ${weakDomain}`,
+              targetCount: 5,
+              xpReward: 75,
+              currentCount: 0,
+              isCompleted: false
+            })
+            .returning();
+          newQuests.push(weakDomainQuest);
+          console.log(`[DailyQuests] Added weak domain quest retroactively: ${weakDomain}`);
+        }
+      }
+      
+      return [...existingQuests, ...newQuests];
     }
 
     // Get user's weak domains from analytics - use predictedStruggle flag
     const analytics = await this.getPersonalAnalytics(userId);
-    const weakDomains = analytics.weaknessPredictions
+    let weakDomains = analytics.weaknessPredictions
       .filter(w => w.predictedStruggle)
       .map(w => w.domain);
+    
+    // Fallback: use highest confidence struggle domain (or just pick first one)
+    if (weakDomains.length === 0 && analytics.weaknessPredictions.length > 0) {
+      const highestConfidence = analytics.weaknessPredictions.reduce((max, w) => 
+        w.confidence > max.confidence ? w : max
+      );
+      weakDomains = [highestConfidence.domain];
+      console.log(`[DailyQuests] Using fallback weak domain: ${highestConfidence.domain} (confidence: ${highestConfidence.confidence}%)`);
+    }
 
     // Core quests that are always included
     const coreQuests = [
@@ -2497,6 +2549,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateWeakDomainQuestProgress(userId: string, quizDomain: string, correctAnswerCount: number, examTrack: string = 'fs', sessionId?: string): Promise<DailyQuest | null> {
+    console.log(`[WeakDomainQuest] Called with: userId=${userId}, domain=${quizDomain}, count=${correctAnswerCount}, track=${examTrack}, session=${sessionId}`);
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -2533,7 +2587,12 @@ export class DatabaseStorage implements IStorage {
       ))
       .limit(1);
 
-    if (!quest) return null;
+    if (!quest) {
+      console.log(`[WeakDomainQuest] No active review_weak_domain quest found for user ${userId}, examTrack ${examTrack}`);
+      return null;
+    }
+    
+    console.log(`[WeakDomainQuest] Found quest: id=${quest.id}, title="${quest.title}", current=${quest.currentCount}/${quest.targetCount}`);
 
     // Extract weak domain from multiple sources for robustness:
     // 1. Title format: "{domain} Focus"
