@@ -2237,6 +2237,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (completed) {
         const examTrack = lesson.examTrack || 'fs';
         await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack);
+        
+        // Update weak domain quest progress if lesson domain matches user's weak area
+        // Quest tracks "questions practiced" - use total questions in the lesson
+        const questionsPracticed = questions.length;
+        if (lesson.domain && questionsPracticed > 0) {
+          // Use lesson ID as "session" for idempotency within same lesson attempt
+          const lessonSessionKey = `lesson:${lessonId}:attempt:${attempts}`;
+          await storage.updateWeakDomainQuestProgress(userId, lesson.domain, questionsPracticed, examTrack, lessonSessionKey);
+        }
       }
 
       // Log daily activity for streak tracking (any lesson attempt counts)
