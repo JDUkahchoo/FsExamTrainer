@@ -15,7 +15,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   **Personalized Learning:** Custom Plan Builder; Study Cycles System for multi-pass learning; Adaptive Difficulty System based on user performance; Optimal Review Timing using SM-2 algorithm for spaced repetition.
 -   **Engagement & Motivation:** Progress Dashboard with Gamification (XP System with 10 Surveyor Ranks, Study Streaks, Achievements); Daily Quests System; Weekly Leaderboard.
 -   **AI-Powered Guidance:** AI Study Coach Briefing provides personalized daily guidance, focus recommendations, and progress insights.
--   **Study Tools:** Enhanced Study Notes with CRUD operations; Study Resources library; Interactive Lessons System (Duolingo-style, domain-based).
+-   **Study Tools:** Enhanced Study Notes with CRUD operations; Study Resources library; Interactive Lessons System (Duolingo-style, domain-based); Procedures & Standards reference with BLM Glossary and exam traps.
 -   **Analytics & Insights:** Personal Analytics Dashboard with learning velocity, time investment ROI, weakness predictions, and progress trajectory; Forgetting Curve Visualization.
 -   **Content & Coverage:** Expanded Question Pool (1,825 questions from 365 archetypes) with variation system; Complete NCEES coverage for all 7 FS domains and 5 PS domains; Dual textbook reference (SRM and Elementary Surveying).
 -   **Multi-Exam Support:** Supports both FS (73 lessons, 8 domains) and PS (55 lessons, 5 domains) exams with isolated experiences.
