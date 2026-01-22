@@ -30,6 +30,7 @@ import PretestResultsPage from "@/pages/pretest-results";
 import LessonPage from "@/pages/lesson";
 import ReferenceCompanionPage from "@/pages/reference-companion";
 import SettingsPage from "@/pages/settings";
+import ProceduresPage from "@/pages/procedures";
 
 function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' }) {
   return (
@@ -91,6 +92,7 @@ function Router() {
       <Route path="/app/fs/progress" component={withExamTrack(ProgressPage, 'fs')} />
       <Route path="/app/fs/resources" component={withExamTrack(ResourcesPage, 'fs')} />
       <Route path="/app/fs/reference-companion" component={withExamTrack(ReferenceCompanionPage, 'fs')} />
+      <Route path="/app/fs/procedures" component={withExamTrack(ProceduresPage, 'fs')} />
       <Route path="/app/fs/pretest" component={withExamTrack(PretestPage, 'fs')} />
       <Route path="/app/fs/pretest/results" component={withExamTrack(PretestResultsPage, 'fs')} />
       <Route path="/app/fs/settings" component={withExamTrack(SettingsPage, 'fs')} />
@@ -106,6 +108,7 @@ function Router() {
       <Route path="/app/ps/progress" component={withExamTrack(ProgressPage, 'ps')} />
       <Route path="/app/ps/resources" component={withExamTrack(ResourcesPage, 'ps')} />
       <Route path="/app/ps/reference-companion" component={withExamTrack(ReferenceCompanionPage, 'ps')} />
+      <Route path="/app/ps/procedures" component={withExamTrack(ProceduresPage, 'ps')} />
       <Route path="/app/ps/pretest" component={withExamTrack(PretestPage, 'ps')} />
       <Route path="/app/ps/pretest/results" component={withExamTrack(PretestResultsPage, 'ps')} />
       <Route path="/app/ps/settings" component={withExamTrack(SettingsPage, 'ps')} />

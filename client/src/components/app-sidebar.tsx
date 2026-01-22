@@ -1,4 +1,4 @@
-import { BookOpen, Brain, ClipboardCheck, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +25,7 @@ const menuItems = [
   { id: '/progress', icon: BarChart3, label: 'Progress', testId: 'nav-progress' },
   { id: '/resources', icon: BookMarked, label: 'Resources', testId: 'nav-resources' },
   { id: '/reference-companion', icon: Library, label: 'Reference Companion', testId: 'nav-reference-companion' },
+  { id: '/procedures', icon: ClipboardList, label: 'Procedures & Standards', testId: 'nav-procedures' },
 ];
 
 const communityItems = [
@@ -69,16 +70,19 @@ export function AppSidebar() {
           <SidebarGroupLabel>Study Tools</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton asChild isActive={location === item.id} data-testid={item.testId}>
-                    <Link href={item.id}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.map((item) => {
+                const fullPath = `/app/${currentExam}${item.id}`;
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton asChild isActive={location === fullPath || location.endsWith(item.id)} data-testid={item.testId}>
+                      <Link href={fullPath}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
