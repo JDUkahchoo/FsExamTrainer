@@ -34,6 +34,13 @@ export const REFERENCE_BOOKS = {
     author: "Charles D. Ghilani & Paul R. Wolf",
     edition: "15th Edition",
     publisher: "Pearson",
+  },
+  SSP: {
+    id: "SSP",
+    title: "Surveying Solved Problems",
+    author: "Jan Van Sickle, PLS",
+    edition: "5th Edition",
+    publisher: "PPI",
   }
 } as const;
 

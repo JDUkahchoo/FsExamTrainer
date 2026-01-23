@@ -12,7 +12,8 @@ import {
   Link2,
   ExternalLink,
   Search,
-  Layers
+  Layers,
+  FileText
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useExamTrack } from "@/contexts/exam-track-context";
@@ -27,6 +28,7 @@ import {
   type LessonMapping 
 } from "@shared/data/referenceManualMappings";
 import { NCEES_DOMAINS } from "@shared/domains";
+import { solvedProblemsTopics } from "@shared/data/solved-problems-reference";
 
 const DOMAIN_COLORS: Record<number, string> = {
   0: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200",
@@ -260,12 +262,86 @@ export default function ReferenceCompanion() {
     );
   };
 
+  const renderSolvedProblemsView = () => {
+    const groupedByDomain: Record<string, typeof solvedProblemsTopics> = {};
+    
+    solvedProblemsTopics.forEach(topic => {
+      const domains = examTrack === 'fs' ? topic.nceesDomainsFS : topic.nceesDomainsPS;
+      domains.forEach(domain => {
+        if (!groupedByDomain[domain]) {
+          groupedByDomain[domain] = [];
+        }
+        groupedByDomain[domain].push(topic);
+      });
+    });
+
+    return (
+      <div className="space-y-4">
+        <Card className="p-4 bg-muted/30">
+          <div className="flex items-start gap-3">
+            <FileText className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-foreground font-medium">Additional Practice Problems</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                These topics from Surveying Solved Problems provide extra practice with worked solutions. 
+                Each topic includes problems and detailed step-by-step solutions.
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {Object.entries(groupedByDomain).map(([domain, topics]) => (
+          <Card key={domain} className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="secondary">{domain}</Badge>
+              <span className="text-sm text-muted-foreground ml-auto">
+                {topics.length} topics
+              </span>
+            </div>
+            <div className="space-y-2">
+              {topics.map((topic) => (
+                <div 
+                  key={topic.id}
+                  className="flex items-start gap-3 p-3 rounded-md bg-muted/50"
+                  data-testid={`card-solved-problem-${topic.id}`}
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
+                    <span className="text-sm font-medium text-primary">{topic.topicNumber}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm text-foreground">{topic.title}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Problems: {topic.problemPages} | Solutions: {topic.solutionPages}
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {topic.keyTopics.slice(0, 4).map((keyTopic, idx) => (
+                        <Badge key={idx} variant="outline" className="text-xs">
+                          {keyTopic}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
   const totalLessons = LESSON_MAPPINGS.length;
   const esLessonsWithMappings = Object.keys(ES_LESSON_MAPPINGS).length;
-  const totalChapters = selectedBook === "ES" ? Object.keys(ES_CHAPTERS).length : chapters.length;
+  const totalChapters = selectedBook === "SSP" 
+    ? solvedProblemsTopics.length 
+    : selectedBook === "ES" 
+      ? Object.keys(ES_CHAPTERS).length 
+      : chapters.length;
   const lessonsWithReferences = selectedBook === "ES" 
     ? esLessonsWithMappings 
-    : LESSON_MAPPINGS.filter(m => m.references.length > 0).length;
+    : selectedBook === "SSP"
+      ? solvedProblemsTopics.length
+      : LESSON_MAPPINGS.filter(m => m.references.length > 0).length;
 
   return (
     <div className="container max-w-5xl mx-auto py-6 px-4 space-y-6">
@@ -309,6 +385,14 @@ export default function ReferenceCompanion() {
               data-testid="button-select-es"
             >
               Elementary Surveying
+            </Button>
+            <Button
+              variant={selectedBook === "SSP" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedBook("SSP")}
+              data-testid="button-select-ssp"
+            >
+              Solved Problems
             </Button>
           </div>
         </div>
@@ -359,7 +443,11 @@ export default function ReferenceCompanion() {
 
       {/* Content */}
       <ScrollArea className="h-[calc(100vh-450px)] min-h-[400px]">
-        {viewMode === "by-chapter" ? renderChapterView() : renderDomainView()}
+        {selectedBook === "SSP" 
+          ? renderSolvedProblemsView() 
+          : viewMode === "by-chapter" 
+            ? renderChapterView() 
+            : renderDomainView()}
       </ScrollArea>
 
       {/* Footer Note */}
