@@ -4,8 +4,8 @@ export interface SolvedProblemsTopic {
   title: string;
   problemPages: string;
   solutionPages: string;
-  nceesDomainsFS: string[];
-  nceesDomainsPS: string[];
+  nceesDomainsFS: number[];
+  nceesDomainsPS: number[];
   description: string;
   keyTopics: string[];
 }
@@ -26,8 +26,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Surveying Mathematics",
     problemPages: "1-1",
     solutionPages: "1-25",
-    nceesDomainsFS: ["Mathematics"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [1],
+    nceesDomainsPS: [1],
     description: "Fundamental mathematical concepts used in surveying calculations including trigonometry, geometry, and algebraic problem solving.",
     keyTopics: ["Trigonometry", "Geometry", "Unit conversions", "Coordinate calculations", "Angular measurements"]
   },
@@ -37,8 +37,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Advanced Mathematics",
     problemPages: "2-1",
     solutionPages: "2-11",
-    nceesDomainsFS: ["Mathematics"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [1],
+    nceesDomainsPS: [1],
     description: "Advanced mathematical applications including calculus concepts, statistics, and complex geometric calculations.",
     keyTopics: ["Calculus applications", "Statistics", "Error analysis", "Least squares", "Matrix operations"]
   },
@@ -48,8 +48,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Land Boundary Law",
     problemPages: "3-1",
     solutionPages: "3-29",
-    nceesDomainsFS: ["Land Surveying & Boundary Law"],
-    nceesDomainsPS: ["Boundary Law"],
+    nceesDomainsFS: [4],
+    nceesDomainsPS: [2],
     description: "Legal principles governing land boundaries, property rights, and the interpretation of deeds and legal documents.",
     keyTopics: ["Deed interpretation", "Priority of calls", "Riparian rights", "Adverse possession", "Easements", "Evidence hierarchy"]
   },
@@ -59,8 +59,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Surveying Astronomy",
     problemPages: "4-1",
     solutionPages: "4-14",
-    nceesDomainsFS: ["Survey Computations & Applications"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [2],
+    nceesDomainsPS: [1],
     description: "Astronomical observations for determining azimuth and position, including solar and stellar observations.",
     keyTopics: ["Solar observations", "Polaris observations", "Azimuth determination", "Time conversions", "Ephemeris data"]
   },
@@ -70,8 +70,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Public Land Surveying System",
     problemPages: "5-1",
     solutionPages: "5-30",
-    nceesDomainsFS: ["Land Surveying & Boundary Law"],
-    nceesDomainsPS: ["Boundary Law"],
+    nceesDomainsFS: [4],
+    nceesDomainsPS: [2],
     description: "The rectangular survey system used in the United States, including township/range/section descriptions and corner restoration procedures.",
     keyTopics: ["Township/Range/Section", "Corner restoration", "Proportionate measurement", "BLM Manual procedures", "Meander lines", "Subdivision of sections"]
   },
@@ -81,8 +81,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Surveying Instruments and Procedures",
     problemPages: "6-1",
     solutionPages: "6-20",
-    nceesDomainsFS: ["Survey Equipment & Operations"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [5],
+    nceesDomainsPS: [1],
     description: "Field surveying instruments, their calibration, operation, and standard surveying procedures.",
     keyTopics: ["Total stations", "Levels", "EDM", "Instrument adjustments", "Field procedures", "Error sources"]
   },
@@ -92,8 +92,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Legal Descriptions",
     problemPages: "7-1",
     solutionPages: "7-13",
-    nceesDomainsFS: ["Land Surveying & Boundary Law"],
-    nceesDomainsPS: ["Boundary Law"],
+    nceesDomainsFS: [4],
+    nceesDomainsPS: [2],
     description: "Writing and interpreting legal descriptions of property including metes and bounds, PLSS, and lot/block descriptions.",
     keyTopics: ["Metes and bounds", "PLSS descriptions", "Lot and block", "Description ambiguities", "Senior/junior rights"]
   },
@@ -103,8 +103,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Photogrammetry",
     problemPages: "8-1",
     solutionPages: "8-13",
-    nceesDomainsFS: ["Survey Computations & Applications"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [2],
+    nceesDomainsPS: [1],
     description: "Aerial photography and photogrammetric mapping principles, including scale, relief displacement, and flight planning.",
     keyTopics: ["Photo scale", "Relief displacement", "Parallax", "Flight planning", "Orthophotos", "Stereo viewing"]
   },
@@ -114,8 +114,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Geodetic and Control Surveys",
     problemPages: "9-1",
     solutionPages: "9-17",
-    nceesDomainsFS: ["Survey Computations & Applications"],
-    nceesDomainsPS: ["Geodesy"],
+    nceesDomainsFS: [3],
+    nceesDomainsPS: [3],
     description: "Geodetic concepts including datums, projections, and control survey procedures.",
     keyTopics: ["Geodetic datums", "Map projections", "State plane coordinates", "Geoid/ellipsoid", "Control networks", "NGS data sheets"]
   },
@@ -125,8 +125,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Plats and Mapping",
     problemPages: "10-1",
     solutionPages: "10-9",
-    nceesDomainsFS: ["Survey Computations & Applications"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [2],
+    nceesDomainsPS: [1],
     description: "Survey plat preparation, mapping standards, and cartographic principles.",
     keyTopics: ["Plat requirements", "Map scales", "Contour mapping", "Drafting standards", "Recording requirements"]
   },
@@ -136,8 +136,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Global Positioning System (GPS)",
     problemPages: "11-1",
     solutionPages: "11-6",
-    nceesDomainsFS: ["Survey Equipment & Operations"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [5],
+    nceesDomainsPS: [1],
     description: "GPS/GNSS surveying principles, equipment, and procedures for positioning.",
     keyTopics: ["GPS principles", "RTK surveying", "Static surveying", "GNSS errors", "Coordinate transformations", "OPUS"]
   },
@@ -147,8 +147,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Project Management",
     problemPages: "12-1",
     solutionPages: "12-11",
-    nceesDomainsFS: ["Professional Surveying Responsibilities"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [7],
+    nceesDomainsPS: [1],
     description: "Survey project planning, cost estimation, scheduling, and management principles.",
     keyTopics: ["Project planning", "Cost estimation", "Scheduling", "Quality control", "Client relations", "Contract management"]
   },
@@ -158,8 +158,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Hydrography",
     problemPages: "13-1",
     solutionPages: "13-8",
-    nceesDomainsFS: ["Survey Computations & Applications"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [2],
+    nceesDomainsPS: [1],
     description: "Hydrographic surveying for water body mapping, depth measurements, and tidal datums.",
     keyTopics: ["Bathymetric surveys", "Tidal datums", "Sounding methods", "Water boundaries", "Riparian/littoral rights"]
   },
@@ -169,8 +169,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Geographic Information System (GIS)",
     problemPages: "14-1",
     solutionPages: "14-5",
-    nceesDomainsFS: ["Geographic Information Systems"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [6],
+    nceesDomainsPS: [5],
     description: "GIS concepts, data structures, and applications in surveying and mapping.",
     keyTopics: ["Spatial data", "Vector/raster data", "Attribute tables", "Coordinate systems", "Data accuracy"]
   },
@@ -180,8 +180,8 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Written Communication",
     problemPages: "15-1",
     solutionPages: "15-5",
-    nceesDomainsFS: ["Professional Surveying Responsibilities"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [7],
+    nceesDomainsPS: [1],
     description: "Technical writing and communication skills for surveying professionals.",
     keyTopics: ["Report writing", "Technical documentation", "Client communication", "Expert testimony"]
   },
@@ -191,17 +191,17 @@ export const solvedProblemsTopics: SolvedProblemsTopic[] = [
     title: "Computer Operations",
     problemPages: "16-1",
     solutionPages: "16-4",
-    nceesDomainsFS: ["Geographic Information Systems"],
-    nceesDomainsPS: ["Practice of Surveying"],
+    nceesDomainsFS: [6],
+    nceesDomainsPS: [5],
     description: "Computer applications in surveying including CADD, data processing, and software tools.",
     keyTopics: ["CADD software", "Data processing", "File formats", "Software applications"]
   }
 ];
 
-export function getTopicsByDomain(domain: string, examTrack: 'fs' | 'ps' = 'fs'): SolvedProblemsTopic[] {
+export function getTopicsByDomain(domain: number, examTrack: 'fs' | 'ps' = 'fs'): SolvedProblemsTopic[] {
   return solvedProblemsTopics.filter(topic => {
     const domains = examTrack === 'fs' ? topic.nceesDomainsFS : topic.nceesDomainsPS;
-    return domains.some(d => d.toLowerCase().includes(domain.toLowerCase()));
+    return domains.includes(domain);
   });
 }
 

@@ -263,26 +263,30 @@ export default function ReferenceCompanion() {
   };
 
   const renderSolvedProblemsView = () => {
-    const groupedByDomain: Record<string, typeof solvedProblemsTopics> = {};
+    const groupedByDomain: Record<number, typeof solvedProblemsTopics> = {};
     
     solvedProblemsTopics.forEach(topic => {
-      const domains = examTrack === 'fs' ? topic.nceesDomainsFS : topic.nceesDomainsPS;
-      domains.forEach(domain => {
-        if (!groupedByDomain[domain]) {
-          groupedByDomain[domain] = [];
+      const domainNumbers = examTrack === 'fs' ? topic.nceesDomainsFS : topic.nceesDomainsPS;
+      domainNumbers.forEach(domainNum => {
+        if (!groupedByDomain[domainNum]) {
+          groupedByDomain[domainNum] = [];
         }
-        groupedByDomain[domain].push(topic);
+        groupedByDomain[domainNum].push(topic);
       });
     });
 
+    const sortedDomains = Object.keys(groupedByDomain)
+      .map(Number)
+      .sort((a, b) => a - b);
+
     return (
       <div className="space-y-4">
-        <Card className="p-4 bg-muted/30">
+        <Card className="p-4 bg-muted/30" data-testid="card-ssp-description">
           <div className="flex items-start gap-3">
             <FileText className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm text-foreground font-medium">Additional Practice Problems</p>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-foreground font-medium" data-testid="text-ssp-title">Additional Practice Problems</p>
+              <p className="text-sm text-muted-foreground mt-1" data-testid="text-ssp-subtitle">
                 These topics from Surveying Solved Problems provide extra practice with worked solutions. 
                 Each topic includes problems and detailed step-by-step solutions.
               </p>
@@ -290,42 +294,50 @@ export default function ReferenceCompanion() {
           </div>
         </Card>
 
-        {Object.entries(groupedByDomain).map(([domain, topics]) => (
-          <Card key={domain} className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Badge variant="secondary">{domain}</Badge>
-              <span className="text-sm text-muted-foreground ml-auto">
-                {topics.length} topics
-              </span>
-            </div>
-            <div className="space-y-2">
-              {topics.map((topic) => (
-                <div 
-                  key={topic.id}
-                  className="flex items-start gap-3 p-3 rounded-md bg-muted/50"
-                  data-testid={`card-solved-problem-${topic.id}`}
-                >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">{topic.topicNumber}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm text-foreground">{topic.title}</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Problems: {topic.problemPages} | Solutions: {topic.solutionPages}
+        {sortedDomains.map((domainNum) => {
+          const topics = groupedByDomain[domainNum];
+          const domainName = NCEES_DOMAINS[domainNum] || `Domain ${domainNum}`;
+          
+          return (
+            <Card key={domainNum} className="p-4" data-testid={`card-ssp-domain-${domainNum}`}>
+              <div className="flex items-center gap-2 mb-3">
+                <Badge className={DOMAIN_COLORS[domainNum]} data-testid={`badge-ssp-domain-${domainNum}`}>
+                  Domain {domainNum}
+                </Badge>
+                <h3 className="font-semibold text-foreground" data-testid={`text-ssp-domain-name-${domainNum}`}>{domainName}</h3>
+                <span className="text-sm text-muted-foreground ml-auto" data-testid={`text-ssp-topic-count-${domainNum}`}>
+                  {topics.length} topics
+                </span>
+              </div>
+              <div className="space-y-2">
+                {topics.map((topic) => (
+                  <div 
+                    key={topic.id}
+                    className="flex items-start gap-3 p-3 rounded-md bg-muted/50"
+                    data-testid={`card-solved-problem-${topic.id}`}
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
+                      <span className="text-sm font-medium text-primary" data-testid={`text-topic-number-${topic.id}`}>{topic.topicNumber}</span>
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {topic.keyTopics.slice(0, 4).map((keyTopic, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {keyTopic}
-                        </Badge>
-                      ))}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-foreground" data-testid={`text-topic-title-${topic.id}`}>{topic.title}</div>
+                      <div className="text-xs text-muted-foreground mt-1" data-testid={`text-topic-pages-${topic.id}`}>
+                        Problems: {topic.problemPages} | Solutions: {topic.solutionPages}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {topic.keyTopics.slice(0, 4).map((keyTopic, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs" data-testid={`badge-key-topic-${topic.id}-${idx}`}>
+                            {keyTopic}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        ))}
+                ))}
+              </div>
+            </Card>
+          );
+        })}
       </div>
     );
   };
