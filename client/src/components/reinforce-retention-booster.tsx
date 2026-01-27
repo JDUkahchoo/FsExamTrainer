@@ -137,13 +137,28 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
     await refetchDue();
   }, [week, weekReviews, createReviewMutation, refetchDue]);
 
-  const startSession = useCallback(() => {
-    setSessionCards([...dueReviews]);
+  const startSession = useCallback(async () => {
+    // Refetch to ensure we have fresh data
+    const { data: freshReviews } = await refetchDue();
+    const reviewsToUse = freshReviews || dueReviews;
+    
+    if (!reviewsToUse || reviewsToUse.length === 0) {
+      toast({
+        title: 'No reviews available',
+        description: 'Please add concepts first or check back later.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    console.log('[Retention] Starting session with reviews:', reviewsToUse.map(r => ({ id: r.id, conceptId: r.conceptId })));
+    
+    setSessionCards([...reviewsToUse]);
     setReviewedCardIds(new Set());
     setCurrentCardIndex(0);
     setIsFlipped(false);
     setSessionActive(true);
-  }, [dueReviews]);
+  }, [dueReviews, refetchDue, toast]);
 
   const awardXpMutation = useMutation({
     mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
@@ -160,6 +175,20 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   const handleQualityRating = useCallback(async (quality: number) => {
     if (sessionCards.length > 0 && currentCardIndex < sessionCards.length) {
       const review = sessionCards[currentCardIndex];
+      
+      // Validate review has a proper ID before proceeding
+      if (!review.id || typeof review.id !== 'string' || review.id.length < 10) {
+        console.error('[Retention] Invalid review ID:', review.id, review);
+        toast({
+          title: 'Review Error',
+          description: 'Invalid review data. Please restart the session.',
+          variant: 'destructive',
+        });
+        setSessionActive(false);
+        return;
+      }
+      
+      console.log('[Retention] Rating card:', { id: review.id, conceptId: review.conceptId, quality });
       setActiveRating(quality);
       
       try {

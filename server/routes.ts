@@ -469,6 +469,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const currentReview = await storage.getRetentionReviews(userId);
       const review = currentReview.find(r => r.id === reviewId);
       
+      console.log(`[Retention] PATCH /api/retention/reviews/${reviewId}`, { 
+        userId, 
+        reviewId, 
+        reviewsFound: currentReview.length, 
+        matchFound: !!review,
+        reviewIds: currentReview.map(r => r.id).slice(0, 5)
+      });
+      
       if (!review) {
         return res.status(404).json({ error: "Review not found" });
       }
