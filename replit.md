@@ -40,6 +40,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Multi-Exam Architecture with isolated routes (`/app/:examTrack/*`) for FS and PS exams, allowing for distinct content and future monetization.
 -   ExamTrackProvider Context for centralized exam track state and configuration.
 -   Flashcard Session Resume System: Sessions persist user state (deck, domains, card index, study mode) and can be resumed from exact position. Review events logged individually for accurate statistics and streak tracking.
+-   Retention Booster User Ownership: Client-side validation ensures reviews belong to current user before use. Cache control headers prevent CDN/browser caching of user-specific API responses. Auto-recovery creates fresh reviews when foreign data detected or 403 errors occur.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
