@@ -16,11 +16,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
   // Disable caching for all API routes to prevent stale user data
+  // This is critical for user-specific endpoints
+  app.disable('etag');
   app.use('/api', (req, res, next) => {
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Cache-Control', 'private, no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     res.set('Pragma', 'no-cache');
     res.set('Expires', '0');
     res.set('Surrogate-Control', 'no-store');
+    res.set('Vary', 'Cookie, Authorization');
     next();
   });
 
@@ -433,6 +436,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const week = req.query.week ? parseInt(req.query.week as string) : undefined;
       const dueReviews = await storage.getDueRetentionReviews(userId, week);
+      // Debug: log userId and what reviews are returned
+      const reviewUserIds = Array.from(new Set(dueReviews.map(r => r.userId)));
+      console.log('[RETENTION DUE] userId:', userId, 'week:', week, 'reviewCount:', dueReviews.length, 
+        'reviewUserIds:', reviewUserIds);
       res.json(dueReviews);
     } catch (error) {
       console.error("Error fetching due reviews:", error);
