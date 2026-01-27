@@ -9,6 +9,7 @@ import { apiRequest } from '@/lib/queryClient';
 import type { RetentionReview } from '@shared/schema';
 import { DOMAINS, XP_AWARDS } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface RetentionStats {
   totalReviews: number;
@@ -51,12 +52,14 @@ const SAMPLE_CONCEPTS = [
 export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
   const [reviewedCardIds, setReviewedCardIds] = useState<Set<string>>(new Set());
   const [sessionCards, setSessionCards] = useState<RetentionReview[]>([]);
   const [activeRating, setActiveRating] = useState<number | null>(null);
+  const [isCreatingReviews, setIsCreatingReviews] = useState(false);
 
   const { data: stats, isLoading: statsLoading } = useQuery<RetentionStats>({
     queryKey: ['/api/retention/stats', week],
@@ -121,6 +124,32 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
     },
   });
 
+  // Helper to create fresh reviews for current user
+  const createFreshReviews = useCallback(async () => {
+    setIsCreatingReviews(true);
+    try {
+      for (const concept of SAMPLE_CONCEPTS) {
+        await createReviewMutation.mutateAsync({
+          week,
+          conceptId: concept.id,
+          conceptType: concept.type,
+          conceptText: concept.text,
+          domain: concept.domain,
+        });
+      }
+      // Invalidate and refetch all retention queries
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
+      return true;
+    } catch (error) {
+      console.error('[Retention] Error creating fresh reviews:', error);
+      return false;
+    } finally {
+      setIsCreatingReviews(false);
+    }
+  }, [week, createReviewMutation, queryClient]);
+
   const initializeReviews = useCallback(async () => {
     for (const concept of SAMPLE_CONCEPTS) {
       const exists = weekReviews.some(r => r.conceptId === concept.id);
@@ -140,7 +169,44 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   const startSession = useCallback(async () => {
     // Refetch to ensure we have fresh data
     const { data: freshReviews } = await refetchDue();
-    const reviewsToUse = freshReviews || dueReviews;
+    let reviewsToUse = freshReviews || dueReviews;
+    
+    // Check if reviews belong to current user (detect stale cached data from other users)
+    const currentUserId = (user as { id?: string } | null)?.id;
+    if (reviewsToUse && reviewsToUse.length > 0 && currentUserId) {
+      const foreignReviews = reviewsToUse.filter(r => r.userId !== currentUserId);
+      if (foreignReviews.length > 0) {
+        console.warn('[Retention] Detected reviews from different user:', 
+          foreignReviews.map(r => ({ id: r.id, userId: r.userId })));
+        
+        // Filter out foreign reviews - only use current user's reviews
+        const ownReviews = reviewsToUse.filter(r => r.userId === currentUserId);
+        
+        if (ownReviews.length === 0) {
+          // No reviews for current user - create fresh ones
+          toast({
+            title: 'Setting up your reviews',
+            description: 'Creating fresh review cards for you...',
+          });
+          
+          const success = await createFreshReviews();
+          if (success) {
+            // Refetch after creation
+            const { data: newReviews } = await refetchDue();
+            reviewsToUse = newReviews || [];
+          } else {
+            toast({
+              title: 'Setup failed',
+              description: 'Could not create reviews. Please try again.',
+              variant: 'destructive',
+            });
+            return;
+          }
+        } else {
+          reviewsToUse = ownReviews;
+        }
+      }
+    }
     
     if (!reviewsToUse || reviewsToUse.length === 0) {
       toast({
@@ -151,14 +217,14 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
       return;
     }
     
-    console.log('[Retention] Starting session with reviews:', reviewsToUse.map(r => ({ id: r.id, conceptId: r.conceptId })));
+    console.log('[Retention] Starting session with reviews:', reviewsToUse.map(r => ({ id: r.id, conceptId: r.conceptId, userId: r.userId })));
     
     setSessionCards([...reviewsToUse]);
     setReviewedCardIds(new Set());
     setCurrentCardIndex(0);
     setIsFlipped(false);
     setSessionActive(true);
-  }, [dueReviews, refetchDue, toast]);
+  }, [dueReviews, refetchDue, toast, user, createFreshReviews]);
 
   const awardXpMutation = useMutation({
     mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
@@ -218,14 +284,36 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
           setReviewedCardIds(new Set());
           setCurrentCardIndex(0);
         }
-      } catch (error) {
-        // Error toast is handled by mutation onError
+      } catch (error: any) {
         console.error('Rating submission failed:', error);
+        
+        // Handle 403 (unauthorized) - this means reviews belong to different user
+        // Auto-recover by creating fresh reviews and restarting session
+        if (error?.message?.includes('403') || error?.message?.includes('Not authorized')) {
+          toast({
+            title: 'Session Reset',
+            description: 'Creating fresh review cards for you...',
+          });
+          
+          // End current session and create fresh reviews
+          setSessionActive(false);
+          setSessionCards([]);
+          setCurrentCardIndex(0);
+          
+          const success = await createFreshReviews();
+          if (success) {
+            toast({
+              title: 'Ready to review',
+              description: 'New review cards created. Click "Start Review Session" to begin.',
+            });
+          }
+        }
+        // Other errors are handled by mutation onError
       } finally {
         setActiveRating(null);
       }
     }
-  }, [sessionCards, currentCardIndex, updateReviewMutation, awardXpMutation, toast]);
+  }, [sessionCards, currentCardIndex, updateReviewMutation, awardXpMutation, toast, createFreshReviews]);
 
   const getDecayColor = (score: number): string => {
     if (score >= 80) return 'text-green-500';
