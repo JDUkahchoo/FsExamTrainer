@@ -423,7 +423,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const week = req.query.week ? parseInt(req.query.week as string) : undefined;
+      console.log(`[Retention] GET /api/retention/due`, { userId, week });
       const dueReviews = await storage.getDueRetentionReviews(userId, week);
+      console.log(`[Retention] Due reviews found:`, dueReviews.map(r => ({ id: r.id, week: r.week, conceptId: r.conceptId })));
       res.json(dueReviews);
     } catch (error) {
       console.error("Error fetching due reviews:", error);
@@ -446,11 +448,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/retention/reviews", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      console.log(`[Retention] POST /api/retention/reviews`, { userId, body: req.body });
       const data = insertRetentionReviewSchema.parse({ ...req.body, userId });
       const review = await storage.createRetentionReview(data);
+      console.log(`[Retention] Created review:`, { id: review.id, week: review.week, conceptId: review.conceptId });
       res.json(review);
     } catch (error) {
-      console.error("Error creating retention review:", error);
+      console.error("[Retention] Error creating retention review:", error);
       res.status(400).json({ error: "Invalid retention review data" });
     }
   });
@@ -471,10 +475,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`[Retention] PATCH /api/retention/reviews/${reviewId}`, { 
         userId, 
+        userIdType: typeof userId,
         reviewId, 
+        reviewIdType: typeof reviewId,
         reviewsFound: currentReview.length, 
         matchFound: !!review,
-        reviewIds: currentReview.map(r => r.id).slice(0, 5)
+        reviewIds: currentReview.map(r => r.id),
+        reviewUserIds: currentReview.map(r => r.userId).slice(0, 2)
       });
       
       if (!review) {
