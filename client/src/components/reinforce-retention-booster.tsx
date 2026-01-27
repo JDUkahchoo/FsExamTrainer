@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Brain, Timer, RefreshCw, CheckCircle, XCircle, AlertTriangle, Sparkles, Zap } from 'lucide-react';
+import { Brain, Timer, RefreshCw, CheckCircle, XCircle, AlertTriangle, Sparkles, Zap, Loader2 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { RetentionReview } from '@shared/schema';
 import { DOMAINS, XP_AWARDS } from '@shared/schema';
@@ -56,6 +56,7 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   const [sessionActive, setSessionActive] = useState(false);
   const [reviewedCardIds, setReviewedCardIds] = useState<Set<string>>(new Set());
   const [sessionCards, setSessionCards] = useState<RetentionReview[]>([]);
+  const [activeRating, setActiveRating] = useState<number | null>(null);
 
   const { data: stats, isLoading: statsLoading } = useQuery<RetentionStats>({
     queryKey: ['/api/retention/stats', week],
@@ -99,6 +100,10 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   const updateReviewMutation = useMutation({
     mutationFn: async ({ id, quality }: { id: string; quality: number }) => {
       const response = await apiRequest('PATCH', `/api/retention/reviews/${id}`, { quality });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to update review (${response.status})`);
+      }
       return response.json();
     },
     onSuccess: async () => {
@@ -106,6 +111,13 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Review Failed',
+        description: error.message || 'Could not save your rating. Please try again.',
+        variant: 'destructive',
+      });
     },
   });
 
@@ -148,31 +160,40 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   const handleQualityRating = useCallback(async (quality: number) => {
     if (sessionCards.length > 0 && currentCardIndex < sessionCards.length) {
       const review = sessionCards[currentCardIndex];
-      await updateReviewMutation.mutateAsync({ id: review.id, quality });
+      setActiveRating(quality);
       
-      // Award XP with backend idempotency (activity key prevents duplicate awards)
-      awardXpMutation.mutate({ 
-        amount: XP_AWARDS.REINFORCE_REVIEW, 
-        reason: 'Retention card reviewed',
-        activityKey: `reinforce:review:${review.id}`
-      });
-      
-      setReviewedCardIds(prev => { const newSet = new Set(prev); newSet.add(review.id); return newSet; });
-      
-      const isLastCard = currentCardIndex >= sessionCards.length - 1;
-      
-      if (!isLastCard) {
-        setCurrentCardIndex(prev => prev + 1);
-        setIsFlipped(false);
-      } else {
-        toast({ 
-          title: `+${XP_AWARDS.REINFORCE_REVIEW * sessionCards.length} XP`, 
-          description: `Session complete! ${sessionCards.length} cards reviewed.` 
+      try {
+        await updateReviewMutation.mutateAsync({ id: review.id, quality });
+        
+        // Award XP with backend idempotency (activity key prevents duplicate awards)
+        awardXpMutation.mutate({ 
+          amount: XP_AWARDS.REINFORCE_REVIEW, 
+          reason: 'Retention card reviewed',
+          activityKey: `reinforce:review:${review.id}`
         });
-        setSessionActive(false);
-        setSessionCards([]);
-        setReviewedCardIds(new Set());
-        setCurrentCardIndex(0);
+        
+        setReviewedCardIds(prev => { const newSet = new Set(prev); newSet.add(review.id); return newSet; });
+        
+        const isLastCard = currentCardIndex >= sessionCards.length - 1;
+        
+        if (!isLastCard) {
+          setCurrentCardIndex(prev => prev + 1);
+          setIsFlipped(false);
+        } else {
+          toast({ 
+            title: `+${XP_AWARDS.REINFORCE_REVIEW * sessionCards.length} XP`, 
+            description: `Session complete! ${sessionCards.length} cards reviewed.` 
+          });
+          setSessionActive(false);
+          setSessionCards([]);
+          setReviewedCardIds(new Set());
+          setCurrentCardIndex(0);
+        }
+      } catch (error) {
+        // Error toast is handled by mutation onError
+        console.error('Rating submission failed:', error);
+      } finally {
+        setActiveRating(null);
       }
     }
   }, [sessionCards, currentCardIndex, updateReviewMutation, awardXpMutation, toast]);
@@ -344,10 +365,14 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
                         variant="outline"
                         className="flex-col h-auto py-2 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400"
                         onClick={() => handleQualityRating(1)}
-                        disabled={updateReviewMutation.isPending}
+                        disabled={activeRating !== null}
                         data-testid="button-rating-forgot"
                       >
-                        <XCircle className="h-4 w-4 mb-1" />
+                        {activeRating === 1 ? (
+                          <Loader2 className="h-4 w-4 mb-1 animate-spin" />
+                        ) : (
+                          <XCircle className="h-4 w-4 mb-1" />
+                        )}
                         <span className="text-xs">Forgot</span>
                       </Button>
                       <Button
@@ -355,10 +380,14 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
                         variant="outline"
                         className="flex-col h-auto py-2 border-orange-300 dark:border-orange-700 text-orange-600 dark:text-orange-400"
                         onClick={() => handleQualityRating(2)}
-                        disabled={updateReviewMutation.isPending}
+                        disabled={activeRating !== null}
                         data-testid="button-rating-hard"
                       >
-                        <AlertTriangle className="h-4 w-4 mb-1" />
+                        {activeRating === 2 ? (
+                          <Loader2 className="h-4 w-4 mb-1 animate-spin" />
+                        ) : (
+                          <AlertTriangle className="h-4 w-4 mb-1" />
+                        )}
                         <span className="text-xs">Hard</span>
                       </Button>
                       <Button
@@ -366,10 +395,14 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
                         variant="outline"
                         className="flex-col h-auto py-2 border-yellow-300 dark:border-yellow-700 text-yellow-600 dark:text-yellow-400"
                         onClick={() => handleQualityRating(3)}
-                        disabled={updateReviewMutation.isPending}
+                        disabled={activeRating !== null}
                         data-testid="button-rating-good"
                       >
-                        <Timer className="h-4 w-4 mb-1" />
+                        {activeRating === 3 ? (
+                          <Loader2 className="h-4 w-4 mb-1 animate-spin" />
+                        ) : (
+                          <Timer className="h-4 w-4 mb-1" />
+                        )}
                         <span className="text-xs">Good</span>
                       </Button>
                       <Button
@@ -377,10 +410,14 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
                         variant="outline"
                         className="flex-col h-auto py-2 border-green-300 dark:border-green-700 text-green-600 dark:text-green-400"
                         onClick={() => handleQualityRating(5)}
-                        disabled={updateReviewMutation.isPending}
+                        disabled={activeRating !== null}
                         data-testid="button-rating-easy"
                       >
-                        <CheckCircle className="h-4 w-4 mb-1" />
+                        {activeRating === 5 ? (
+                          <Loader2 className="h-4 w-4 mb-1 animate-spin" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4 mb-1" />
+                        )}
                         <span className="text-xs">Easy</span>
                       </Button>
                     </div>
