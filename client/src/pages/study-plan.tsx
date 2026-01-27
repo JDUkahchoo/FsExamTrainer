@@ -49,7 +49,9 @@ import {
   getSRMWeeklyChapters,
   getChaptersForLessons 
 } from '@shared/data/referenceManualMappings';
+import { solvedProblemsTopics, type SolvedProblemsTopic } from '@shared/data/solved-problems-reference';
 import { useExamTrack } from '@/contexts/exam-track-context';
+import { FileText } from 'lucide-react';
 
 export default function StudyPlan() {
   const [, navigate] = useLocation();
@@ -122,6 +124,18 @@ export default function StudyPlan() {
     }
   });
 
+  // Fetch overall progress for the progress indicator
+  const { data: overallProgressData } = useQuery<{
+    overallProgress: number;
+    weeksCompleted: number;
+    totalWeeks: number;
+    quizAccuracy: number;
+    flashcardsMastered: number;
+    currentStreak: number;
+  }>({
+    queryKey: ['/api/progress/overall']
+  });
+
   // Identify weak domains from pretest results (accuracy < 60%)
   const weakDomains = useMemo(() => {
     if (!pretestResult?.domainScores) return new Set<Domain>();
@@ -178,6 +192,44 @@ export default function StudyPlan() {
   // Check if a week covers any weak domains
   const coversWeakDomain = (domains: Domain[]) => {
     return domains.some(d => weakDomains.has(d));
+  };
+
+  // Get solved problems for a week's domains
+  const getSolvedProblemsForDomains = (domains: Domain[]): SolvedProblemsTopic[] => {
+    // FS domain name to number mapping (based on NCEES_FS_DOMAINS)
+    const fsDomainToNumber: Record<string, number> = {
+      'Math & Basic Science': 0,
+      'Field Data Acquisition': 1,
+      'Mapping, GIS, and CAD': 2,
+      'Boundary Law & PLSS': 3,
+      'Surveying Principles': 4,
+      'Survey Computations & Applications': 5,
+      'Professional Practice': 6,
+      'Applied Mathematics & Statistics': 7,
+    };
+    
+    // PS domain name to number mapping (based on NCEES_PS_DOMAINS)
+    const psDomainToNumber: Record<string, number> = {
+      'Legal Principles': 1,
+      'Professional Survey Practices': 2,
+      'Standards and Specifications': 3,
+      'Business Practices': 4,
+      'Areas of Practice': 5,
+    };
+    
+    const domainMapping = examTrack === 'ps' ? psDomainToNumber : fsDomainToNumber;
+    const domainNumbers = domains.map(d => domainMapping[d]).filter(n => n !== undefined);
+    
+    const uniqueTopics = new Map<string, SolvedProblemsTopic>();
+    
+    solvedProblemsTopics.forEach(topic => {
+      const topicDomains = examTrack === 'fs' ? topic.nceesDomainsFS : topic.nceesDomainsPS;
+      if (topicDomains.some(d => domainNumbers.includes(d))) {
+        uniqueTopics.set(topic.id, topic);
+      }
+    });
+    
+    return Array.from(uniqueTopics.values());
   };
 
   // Convert database format to UI format (Set-based)
@@ -554,6 +606,39 @@ export default function StudyPlan() {
               Working Professional Schedule
             </Badge>
           ) : null}
+          
+          {/* Overall Progress Indicator */}
+          {overallProgressData && (
+            <div className="mt-4 p-4 rounded-lg border border-border bg-muted/30">
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <span className="text-sm font-medium text-foreground">Overall Progress</span>
+                <span className="text-lg font-bold text-primary" data-testid="text-overall-progress">
+                  {overallProgressData.overallProgress}%
+                </span>
+              </div>
+              <Progress value={overallProgressData.overallProgress} className="h-2 mb-3" />
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <div className="text-lg font-semibold text-foreground" data-testid="text-weeks-completed">
+                    {overallProgressData.weeksCompleted}/{overallProgressData.totalWeeks}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Weeks</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-foreground" data-testid="text-quiz-accuracy">
+                    {overallProgressData.quizAccuracy}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">Quiz Accuracy</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-foreground" data-testid="text-current-streak">
+                    {overallProgressData.currentStreak}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Day Streak</div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="flex flex-col gap-2">
@@ -916,13 +1001,15 @@ export default function StudyPlan() {
                       esChapters = getESWeeklyChapters(studyMode, plan.week);
                     }
                     
+                    const solvedProblems = getSolvedProblemsForDomains(plan.domains);
                     const hasChapters = srmChapters.length > 0 || esChapters.length > 0;
+                    const hasResources = hasChapters || solvedProblems.length > 0;
                     
-                    return hasChapters && (
+                    return hasResources && (
                       <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
                         <div className="flex items-center gap-2 text-primary font-semibold uppercase text-sm tracking-wider mb-4">
                           <BookOpen className="w-4 h-4" />
-                          Recommended Textbook Chapters
+                          Recommended Study Resources
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {srmChapters.length > 0 && (
@@ -961,9 +1048,43 @@ export default function StudyPlan() {
                               </div>
                             </div>
                           )}
+                          {solvedProblems.length > 0 && (
+                            <div className="p-4 rounded-lg border border-border bg-muted/30 md:col-span-2">
+                              <div className="flex items-center gap-2 mb-2">
+                                <FileText className="w-4 h-4 text-muted-foreground" />
+                                <div className="text-sm font-medium text-foreground">Surveying Solved Problems (5th Ed)</div>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                {solvedProblems.slice(0, 6).map((topic) => (
+                                  <Badge 
+                                    key={topic.id} 
+                                    variant="outline"
+                                    className="text-xs cursor-pointer hover-elevate"
+                                    onClick={() => navigate(`/app/${examTrack}/reference-companion`)}
+                                    data-testid={`badge-ssp-${topic.id}`}
+                                  >
+                                    {topic.topicNumber}. {topic.title}
+                                  </Badge>
+                                ))}
+                                {solvedProblems.length > 6 && (
+                                  <Badge 
+                                    variant="secondary"
+                                    className="text-xs cursor-pointer hover-elevate"
+                                    onClick={() => navigate(`/app/${examTrack}/reference-companion`)}
+                                    data-testid="badge-ssp-more"
+                                  >
+                                    +{solvedProblems.length - 6} more
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-2">
+                                Practice problems with step-by-step solutions
+                              </p>
+                            </div>
+                          )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-2">
-                          Click any chapter to view the Reference Companion for more details.
+                          Click any resource to view the Reference Companion for more details.
                         </p>
                       </div>
                     );
