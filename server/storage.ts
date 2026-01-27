@@ -219,6 +219,7 @@ export interface IStorage {
 
   // REINFORCE Retention Reviews methods (Spaced Repetition)
   getRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]>;
+  getRetentionReviewById(reviewId: string): Promise<RetentionReview | null>;
   getDueRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]>;
   createRetentionReview(review: InsertRetentionReview): Promise<RetentionReview>;
   updateRetentionReview(userId: string, reviewId: string, updates: Partial<InsertRetentionReview>): Promise<RetentionReview>;
@@ -932,6 +933,15 @@ export class DatabaseStorage implements IStorage {
       .from(retentionReviews)
       .where(eq(retentionReviews.userId, userId))
       .orderBy(desc(retentionReviews.createdAt));
+  }
+
+  async getRetentionReviewById(reviewId: string): Promise<RetentionReview | null> {
+    const [review] = await db
+      .select()
+      .from(retentionReviews)
+      .where(eq(retentionReviews.id, reviewId))
+      .limit(1);
+    return review || null;
   }
 
   async getDueRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]> {

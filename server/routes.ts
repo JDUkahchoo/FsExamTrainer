@@ -466,17 +466,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Validate quality rating (0-5) using Zod
       const { quality } = retentionReviewUpdateSchema.parse(req.body);
-      const currentReview = await storage.getRetentionReviews(userId);
-      const review = currentReview.find(r => r.id === reviewId);
+      
+      // Direct lookup by review ID for more reliable retrieval
+      const review = await storage.getRetentionReviewById(reviewId);
       
       // Debug logging for production issue
-      console.log('[RETENTION PATCH] userId:', userId, 'reviewId:', reviewId, 'totalReviewsFound:', currentReview.length, 'foundMatch:', !!review);
-      if (!review && currentReview.length > 0) {
-        console.log('[RETENTION PATCH] Review IDs in DB:', currentReview.map(r => r.id).slice(0, 5));
-      }
+      console.log('[RETENTION PATCH] userId:', userId, 'reviewId:', reviewId, 'foundReview:', !!review, 'reviewUserId:', review?.userId);
       
       if (!review) {
+        console.log('[RETENTION PATCH] Review not found by ID:', reviewId);
         return res.status(404).json({ error: "Review not found" });
+      }
+      
+      // Verify ownership - user can only update their own reviews
+      if (review.userId !== userId) {
+        console.log('[RETENTION PATCH] User mismatch! requestUserId:', userId, 'reviewUserId:', review.userId);
+        return res.status(403).json({ error: "Not authorized to update this review" });
       }
 
       // SM-2 algorithm
