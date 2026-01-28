@@ -188,7 +188,7 @@ export interface IStorage {
   getFlashcardReviewEventCount(userId: string, date?: Date): Promise<number>;
   
   // Daily Flashcard Progress (for quest tracking - idempotent per card per day)
-  recordFlashcardProgress(userId: string, cardId: string, mode: string): Promise<{ isNew: boolean; todayCount: number }>;
+  recordFlashcardProgress(userId: string, cardId: string, mode: string, examTrack?: string): Promise<{ isNew: boolean; todayCount: number }>;
   getTodayFlashcardProgressCount(userId: string): Promise<number>;
 
   // Practice Exam methods
@@ -3434,7 +3434,7 @@ export class DatabaseStorage implements IStorage {
 
   // --- Daily Flashcard Progress Methods (for quest tracking) ---
 
-  async recordFlashcardProgress(userId: string, cardId: string, mode: string): Promise<{ isNew: boolean; todayCount: number }> {
+  async recordFlashcardProgress(userId: string, cardId: string, mode: string, examTrack: string = 'fs'): Promise<{ isNew: boolean; todayCount: number }> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const endOfDay = new Date(today);
@@ -3464,8 +3464,8 @@ export class DatabaseStorage implements IStorage {
       });
       isNew = true;
       
-      // Update the daily quest for flashcards
-      await this.updateQuestProgress(userId, 'complete_flashcards', 1);
+      // Update the daily quest for flashcards (pass examTrack for correct quest matching)
+      await this.updateQuestProgress(userId, 'complete_flashcards', 1, examTrack);
     }
 
     // Get today's total count

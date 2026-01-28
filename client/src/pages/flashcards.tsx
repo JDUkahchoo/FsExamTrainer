@@ -112,10 +112,12 @@ export default function FlashcardsPage() {
       deck: string; 
       mode: string; 
       rating?: number 
-    }) => apiRequest('POST', `/api/flashcards/sessions/${sessionId}/review`, { cardId, deck, mode, rating }),
+    }) => apiRequest('POST', `/api/flashcards/sessions/${sessionId}/review`, { cardId, deck, mode, rating, examTrack }),
     onSuccess: (data: any) => {
-      // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: ['/api/daily-quests'] });
+      // Invalidate related queries - use predicate for partial matching on daily-quests
+      queryClient.invalidateQueries({ predicate: (query) => 
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/activity/streak'] });
       queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
     }
@@ -163,7 +165,10 @@ export default function FlashcardsPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions/today'] });
       queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
       queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/daily-quests'] });
+      // Use predicate for partial matching on daily-quests (query key includes examTrack)
+      queryClient.invalidateQueries({ predicate: (query) => 
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
       
       if (data.xpAwarded) {
         toast({
@@ -309,9 +314,12 @@ export default function FlashcardsPage() {
   // Record flashcard progress mutation (for Daily Quest tracking) - must be before early return
   const recordProgressMutation = useMutation({
     mutationFn: ({ cardId, mode }: { cardId: string; mode: string }) =>
-      apiRequest('POST', '/api/flashcards/progress', { cardId, mode }),
+      apiRequest('POST', '/api/flashcards/progress', { cardId, mode, examTrack }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/daily-quests'] });
+      // Use predicate for partial matching on daily-quests (query key includes examTrack)
+      queryClient.invalidateQueries({ predicate: (query) => 
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
     }
   });
 

@@ -114,6 +114,10 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+      // Invalidate daily quests (use predicate for partial matching with examTrack)
+      await queryClient.invalidateQueries({ predicate: (query) => 
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
     },
     onError: (error: Error) => {
       toast({

@@ -1196,7 +1196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const { sessionId } = req.params;
-      const { cardId, deck, mode, rating } = req.body;
+      const { cardId, deck, mode, rating, examTrack } = req.body;
       
       if (!cardId || !deck || !mode) {
         return res.status(400).json({ error: "cardId, deck, and mode are required" });
@@ -1211,8 +1211,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rating
       });
       
-      // Also record progress for quest tracking
-      await storage.recordFlashcardProgress(userId, cardId, mode);
+      // Also record progress for quest tracking (pass examTrack for correct quest matching)
+      await storage.recordFlashcardProgress(userId, cardId, mode, examTrack || 'fs');
       
       // Get current event count for this session to determine if XP should be awarded
       const eventCount = await storage.getFlashcardReviewEventCount(userId, new Date());
@@ -1259,13 +1259,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/flashcards/progress", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { cardId, mode } = req.body;
+      const { cardId, mode, examTrack } = req.body;
       
       if (!cardId || !mode) {
         return res.status(400).json({ error: "cardId and mode are required" });
       }
       
-      const result = await storage.recordFlashcardProgress(userId, cardId, mode);
+      // Pass examTrack for correct quest matching
+      const result = await storage.recordFlashcardProgress(userId, cardId, mode, examTrack || 'fs');
       res.json(result);
     } catch (error) {
       console.error("Error recording flashcard progress:", error);

@@ -49,6 +49,10 @@ export function MicroDrillModal({ open, onOpenChange, focusDomains }: MicroDrill
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/focus/domain-stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/focus/recent-misses'] });
+      // Invalidate daily quests (use predicate for partial matching with examTrack)
+      queryClient.invalidateQueries({ predicate: (query) => 
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
     }
   });
 
