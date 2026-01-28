@@ -464,6 +464,9 @@ export default function FlashcardsPage() {
       masteryLevel: newMasteryLevel,
       lastReviewed: new Date()
     });
+    
+    // Record progress for daily quest tracking
+    recordProgressMutation.mutate({ cardId, mode: studyMode });
   };
 
   const handleReset = async () => {
