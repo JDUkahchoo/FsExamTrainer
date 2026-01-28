@@ -2543,6 +2543,10 @@ export class DatabaseStorage implements IStorage {
   async updateQuestProgress(userId: string, questType: string, increment: number = 1, examTrack: string = 'fs'): Promise<DailyQuest | null> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    console.log(`[QuestProgress] Looking for quest: userId=${userId}, type=${questType}, track=${examTrack}, today=${today.toISOString()}, tomorrow=${tomorrow.toISOString()}`);
 
     const [quest] = await db
       .select()
@@ -2552,9 +2556,12 @@ export class DatabaseStorage implements IStorage {
         eq(dailyQuests.examTrack, examTrack),
         eq(dailyQuests.questType, questType),
         gte(dailyQuests.date, today),
+        lte(dailyQuests.date, tomorrow),
         eq(dailyQuests.isCompleted, false)
       ))
       .limit(1);
+
+    console.log(`[QuestProgress] Found quest: ${quest ? `id=${quest.id}, date=${quest.date}, currentCount=${quest.currentCount}` : 'null'}`);
 
     if (!quest) return null;
 
