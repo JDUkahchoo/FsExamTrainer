@@ -119,7 +119,7 @@ import {
   userDifficultySettings,
   DOMAINS
 } from "@shared/schema";
-import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
+import { eq, and, desc, gte, lte, lt, sql, inArray } from "drizzle-orm";
 
 /**
  * Get today's midnight and tomorrow's midnight in the user's timezone.
@@ -141,29 +141,30 @@ function getLocalMidnight(timezone: string = 'America/Chicago'): { today: Date; 
   // Get the local date string (YYYY-MM-DD format)
   const localDateStr = formatter.format(now);
   
-  // Create a date object for local midnight using the timezone
-  // We create a date string with midnight time and parse it in the timezone
-  const todayMidnightStr = `${localDateStr}T00:00:00`;
-  const tomorrowDate = new Date(now);
+  // Calculate today's midnight in user's timezone
+  const todayParts = localDateStr.split('-');
+  const todayYear = parseInt(todayParts[0]);
+  const todayMonth = parseInt(todayParts[1]) - 1;
+  const todayDay = parseInt(todayParts[2]);
   
-  // Calculate tomorrow in the user's timezone
-  const parts = localDateStr.split('-');
-  const year = parseInt(parts[0]);
-  const month = parseInt(parts[1]) - 1;
-  const day = parseInt(parts[2]);
+  // Calculate tomorrow's date (handles month/year rollover)
+  const tomorrowLocal = new Date(todayYear, todayMonth, todayDay + 1);
+  const tomorrowYear = tomorrowLocal.getFullYear();
+  const tomorrowMonth = tomorrowLocal.getMonth();
+  const tomorrowDay = tomorrowLocal.getDate();
   
-  // Create UTC dates that represent local midnight
-  // This is a simplified approach - we'll use the offset to adjust
-  const tempDate = new Date(Date.UTC(year, month, day, 0, 0, 0));
+  // Helper to get UTC time for local midnight in timezone
+  // This correctly handles DST by calculating each day's offset independently
+  function getUtcMidnight(year: number, month: number, day: number): Date {
+    const tempDate = new Date(Date.UTC(year, month, day, 0, 0, 0));
+    const localMidnightInTz = new Date(tempDate.toLocaleString('en-US', { timeZone: timezone }));
+    const utcMidnight = new Date(tempDate.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const offsetMs = utcMidnight.getTime() - localMidnightInTz.getTime();
+    return new Date(tempDate.getTime() + offsetMs);
+  }
   
-  // Get the timezone offset for this date
-  const localMidnightInTz = new Date(tempDate.toLocaleString('en-US', { timeZone: timezone }));
-  const utcMidnight = new Date(tempDate.toLocaleString('en-US', { timeZone: 'UTC' }));
-  const offsetMs = utcMidnight.getTime() - localMidnightInTz.getTime();
-  
-  // Adjust to get the correct UTC time that represents local midnight
-  const today = new Date(tempDate.getTime() + offsetMs);
-  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+  const today = getUtcMidnight(todayYear, todayMonth, todayDay);
+  const tomorrow = getUtcMidnight(tomorrowYear, tomorrowMonth, tomorrowDay);
   
   return { today, tomorrow };
 }
@@ -2404,7 +2405,7 @@ export class DatabaseStorage implements IStorage {
         eq(dailyQuests.userId, userId),
         eq(dailyQuests.examTrack, examTrack),
         gte(dailyQuests.date, today),
-        lte(dailyQuests.date, tomorrow)
+        lt(dailyQuests.date, tomorrow)
       ))
       .orderBy(dailyQuests.createdAt);
   }
@@ -2413,6 +2414,7 @@ export class DatabaseStorage implements IStorage {
     const { today, tomorrow } = getLocalMidnight(timezone);
 
     // Check if quests already exist for today (strictly today only in user's timezone)
+    // Uses lt(tomorrow) to create half-open interval [today, tomorrow) avoiding midnight overlap
     const existingQuests = await db
       .select()
       .from(dailyQuests)
@@ -2420,7 +2422,7 @@ export class DatabaseStorage implements IStorage {
         eq(dailyQuests.userId, userId),
         eq(dailyQuests.examTrack, examTrack),
         gte(dailyQuests.date, today),
-        lte(dailyQuests.date, tomorrow)
+        lt(dailyQuests.date, tomorrow)
       ));
 
     if (existingQuests.length > 0) {
@@ -2594,7 +2596,7 @@ export class DatabaseStorage implements IStorage {
         eq(dailyQuests.examTrack, examTrack),
         eq(dailyQuests.questType, questType),
         gte(dailyQuests.date, today),
-        lte(dailyQuests.date, tomorrow),
+        lt(dailyQuests.date, tomorrow),
         eq(dailyQuests.isCompleted, false)
       ))
       .limit(1);
@@ -3490,7 +3492,7 @@ export class DatabaseStorage implements IStorage {
         eq(dailyFlashcardProgress.cardId, cardId),
         eq(dailyFlashcardProgress.mode, mode),
         gte(dailyFlashcardProgress.date, today),
-        lte(dailyFlashcardProgress.date, tomorrow)
+        lt(dailyFlashcardProgress.date, tomorrow)
       ))
       .limit(1);
 
@@ -3524,7 +3526,7 @@ export class DatabaseStorage implements IStorage {
       .where(and(
         eq(dailyFlashcardProgress.userId, userId),
         gte(dailyFlashcardProgress.date, today),
-        lte(dailyFlashcardProgress.date, tomorrow)
+        lt(dailyFlashcardProgress.date, tomorrow)
       ));
 
     return Number(result[0]?.count || 0);
