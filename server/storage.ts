@@ -121,6 +121,53 @@ import {
 } from "@shared/schema";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 
+/**
+ * Get today's midnight and tomorrow's midnight in the user's timezone.
+ * This ensures quests reset at the user's local midnight, not UTC midnight.
+ * @param timezone IANA timezone string (e.g., 'America/Chicago')
+ * @returns { today: Date, tomorrow: Date } - Both in UTC but representing local midnight
+ */
+function getLocalMidnight(timezone: string = 'America/Chicago'): { today: Date; tomorrow: Date } {
+  const now = new Date();
+  
+  // Format the current time in the user's timezone to get the local date
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  
+  // Get the local date string (YYYY-MM-DD format)
+  const localDateStr = formatter.format(now);
+  
+  // Create a date object for local midnight using the timezone
+  // We create a date string with midnight time and parse it in the timezone
+  const todayMidnightStr = `${localDateStr}T00:00:00`;
+  const tomorrowDate = new Date(now);
+  
+  // Calculate tomorrow in the user's timezone
+  const parts = localDateStr.split('-');
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1;
+  const day = parseInt(parts[2]);
+  
+  // Create UTC dates that represent local midnight
+  // This is a simplified approach - we'll use the offset to adjust
+  const tempDate = new Date(Date.UTC(year, month, day, 0, 0, 0));
+  
+  // Get the timezone offset for this date
+  const localMidnightInTz = new Date(tempDate.toLocaleString('en-US', { timeZone: timezone }));
+  const utcMidnight = new Date(tempDate.toLocaleString('en-US', { timeZone: 'UTC' }));
+  const offsetMs = utcMidnight.getTime() - localMidnightInTz.getTime();
+  
+  // Adjust to get the correct UTC time that represents local midnight
+  const today = new Date(tempDate.getTime() + offsetMs);
+  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+  
+  return { today, tomorrow };
+}
+
 export interface IStorage {
   // User methods (required for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
@@ -2347,11 +2394,8 @@ export class DatabaseStorage implements IStorage {
 
   // --- Daily Quests Methods ---
 
-  async getDailyQuests(userId: string, examTrack: string = 'fs'): Promise<DailyQuest[]> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+  async getDailyQuests(userId: string, examTrack: string = 'fs', timezone: string = 'America/Chicago'): Promise<DailyQuest[]> {
+    const { today, tomorrow } = getLocalMidnight(timezone);
     
     return db
       .select()
@@ -2365,13 +2409,10 @@ export class DatabaseStorage implements IStorage {
       .orderBy(dailyQuests.createdAt);
   }
 
-  async generateDailyQuests(userId: string, examTrack: string = 'fs'): Promise<DailyQuest[]> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+  async generateDailyQuests(userId: string, examTrack: string = 'fs', timezone: string = 'America/Chicago'): Promise<DailyQuest[]> {
+    const { today, tomorrow } = getLocalMidnight(timezone);
 
-    // Check if quests already exist for today (strictly today only)
+    // Check if quests already exist for today (strictly today only in user's timezone)
     const existingQuests = await db
       .select()
       .from(dailyQuests)
@@ -2540,13 +2581,10 @@ export class DatabaseStorage implements IStorage {
     return createdQuests;
   }
 
-  async updateQuestProgress(userId: string, questType: string, increment: number = 1, examTrack: string = 'fs'): Promise<DailyQuest | null> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+  async updateQuestProgress(userId: string, questType: string, increment: number = 1, examTrack: string = 'fs', timezone: string = 'America/Chicago'): Promise<DailyQuest | null> {
+    const { today, tomorrow } = getLocalMidnight(timezone);
 
-    console.log(`[QuestProgress] Looking for quest: userId=${userId}, type=${questType}, track=${examTrack}, today=${today.toISOString()}, tomorrow=${tomorrow.toISOString()}`);
+    console.log(`[QuestProgress] Looking for quest: userId=${userId}, type=${questType}, track=${examTrack}, tz=${timezone}, today=${today.toISOString()}, tomorrow=${tomorrow.toISOString()}`);
 
     const [quest] = await db
       .select()
@@ -2588,11 +2626,10 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async updateWeakDomainQuestProgress(userId: string, quizDomain: string, correctAnswerCount: number, examTrack: string = 'fs', sessionId?: string): Promise<DailyQuest | null> {
-    console.log(`[WeakDomainQuest] Called with: userId=${userId}, domain=${quizDomain}, count=${correctAnswerCount}, track=${examTrack}, session=${sessionId}`);
+  async updateWeakDomainQuestProgress(userId: string, quizDomain: string, correctAnswerCount: number, examTrack: string = 'fs', sessionId?: string, timezone: string = 'America/Chicago'): Promise<DailyQuest | null> {
+    console.log(`[WeakDomainQuest] Called with: userId=${userId}, domain=${quizDomain}, count=${correctAnswerCount}, track=${examTrack}, session=${sessionId}, tz=${timezone}`);
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const { today } = getLocalMidnight(timezone);
 
     // Session-based idempotency: check if this session already contributed to quest
     let sessionKey: string | null = null;

@@ -975,6 +975,7 @@ export const userPreferences = pgTable("user_preferences", {
   customTimeline: integer("custom_timeline").default(12), // Number of weeks for custom study plan (8-16)
   preferredExamTrack: text("preferred_exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'state-specific'
   stateCode: text("state_code").default('TX'), // US state code (e.g., 'TX' for Texas)
+  timezone: text("timezone").default('America/Chicago'), // User's timezone for midnight reset (IANA format)
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 

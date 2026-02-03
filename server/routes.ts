@@ -320,12 +320,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.logDailyActivity(userId, 'reading');
         
         // Update daily quest progress for lesson/reading completion
+        const prefs = await storage.getUserPreferences(userId);
         let examTrack = req.body.examTrack;
         if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
-          const prefs = await storage.getUserPreferences(userId);
           examTrack = prefs?.preferredExamTrack || 'fs';
         }
-        await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack);
+        const timezone = prefs?.timezone || 'America/Chicago';
+        await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack, timezone);
       }
       
       // Return isFirstCompletion flag so client knows whether to show XP toast
@@ -672,8 +673,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
         return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
       }
+      // Get user's timezone for midnight reset
+      const prefs = await storage.getUserPreferences(userId);
+      const timezone = prefs?.timezone || 'America/Chicago';
+      
       // Generate quests if none exist for today, otherwise return existing
-      const quests = await storage.generateDailyQuests(userId, examTrack);
+      const quests = await storage.generateDailyQuests(userId, examTrack, timezone);
       res.json(quests);
     } catch (error) {
       console.error("Error fetching daily quests:", error);
@@ -693,7 +698,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
       }
       
-      const updated = await storage.updateQuestProgress(userId, questType, increment, examTrack);
+      // Get user's timezone for midnight reset
+      const prefs = await storage.getUserPreferences(userId);
+      const timezone = prefs?.timezone || 'America/Chicago';
+      
+      const updated = await storage.updateQuestProgress(userId, questType, increment, examTrack, timezone);
       
       // Log daily activity for streak tracking when quest is completed
       if (updated?.isCompleted) {
@@ -812,19 +821,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Update daily quest progress for quiz completion
         // Get examTrack from request body, fallback to user preferences
+        const prefs = await storage.getUserPreferences(userId);
         let examTrack = req.body.examTrack;
         if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
-          const prefs = await storage.getUserPreferences(userId);
           examTrack = prefs?.preferredExamTrack || 'fs';
         }
-        await storage.updateQuestProgress(userId, 'complete_quiz', 1, examTrack);
+        const timezone = prefs?.timezone || 'America/Chicago';
+        await storage.updateQuestProgress(userId, 'complete_quiz', 1, examTrack, timezone);
         
         // Update weak domain quest progress if quiz domain matches user's weak area
         // Require minimum 50% accuracy to count toward quest (prevents low-effort farming)
         // Session-based idempotency prevents the same quiz from being counted multiple times
         const accuracy = data.totalQuestions > 0 ? data.correctAnswers / data.totalQuestions : 0;
         if (data.domain && data.domain !== 'all' && data.correctAnswers > 0 && accuracy >= 0.5 && session) {
-          await storage.updateWeakDomainQuestProgress(userId, data.domain, data.correctAnswers, examTrack, session.id);
+          await storage.updateWeakDomainQuestProgress(userId, data.domain, data.correctAnswers, examTrack, session.id, timezone);
         }
       }
       
@@ -2263,8 +2273,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update daily quest progress for lesson completion (counts every time you pass)
       if (completed) {
+        const prefs = await storage.getUserPreferences(userId);
         const examTrack = lesson.examTrack || 'fs';
-        await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack);
+        const timezone = prefs?.timezone || 'America/Chicago';
+        await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack, timezone);
         
         // Update weak domain quest progress if lesson domain matches user's weak area
         // Quest tracks "questions practiced" - use total questions in the lesson
@@ -2272,7 +2284,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (lesson.domain && questionsPracticed > 0) {
           // Use lesson ID as "session" for idempotency within same lesson attempt
           const lessonSessionKey = `lesson:${lessonId}:attempt:${attempts}`;
-          await storage.updateWeakDomainQuestProgress(userId, lesson.domain, questionsPracticed, examTrack, lessonSessionKey);
+          await storage.updateWeakDomainQuestProgress(userId, lesson.domain, questionsPracticed, examTrack, lessonSessionKey, timezone);
         }
       }
 
