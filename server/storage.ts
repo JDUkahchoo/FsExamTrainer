@@ -2631,7 +2631,7 @@ export class DatabaseStorage implements IStorage {
   async updateWeakDomainQuestProgress(userId: string, quizDomain: string, correctAnswerCount: number, examTrack: string = 'fs', sessionId?: string, timezone: string = 'America/Chicago'): Promise<DailyQuest | null> {
     console.log(`[WeakDomainQuest] Called with: userId=${userId}, domain=${quizDomain}, count=${correctAnswerCount}, track=${examTrack}, session=${sessionId}, tz=${timezone}`);
     
-    const { today } = getLocalMidnight(timezone);
+    const { today, tomorrow } = getLocalMidnight(timezone);
 
     // Session-based idempotency: check if this session already contributed to quest
     let sessionKey: string | null = null;
@@ -2653,7 +2653,7 @@ export class DatabaseStorage implements IStorage {
       // Note: We'll record the session marker AFTER successful quest update
     }
 
-    // Find active weak domain quest for today
+    // Find active weak domain quest for today (half-open interval [today, tomorrow))
     const [quest] = await db
       .select()
       .from(dailyQuests)
@@ -2662,6 +2662,7 @@ export class DatabaseStorage implements IStorage {
         eq(dailyQuests.examTrack, examTrack),
         eq(dailyQuests.questType, 'review_weak_domain'),
         gte(dailyQuests.date, today),
+        lt(dailyQuests.date, tomorrow),
         eq(dailyQuests.isCompleted, false)
       ))
       .limit(1);
