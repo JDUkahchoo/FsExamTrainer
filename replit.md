@@ -41,6 +41,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   ExamTrackProvider Context for centralized exam track state and configuration.
 -   Flashcard Session Resume System: Sessions persist user state (deck, domains, card index, study mode) and can be resumed from exact position. Review events logged individually for accurate statistics and streak tracking.
 -   Retention Booster User Ownership: Client-side validation ensures reviews belong to current user before use. Cache control headers prevent CDN/browser caching of user-specific API responses. Auto-recovery creates fresh reviews when foreign data detected or 403 errors occur.
+-   Timezone-Aware Quest System: Daily quests reset at the user's local midnight, not a rolling 24-hour window. User timezone is auto-detected from browser (`Intl.DateTimeFormat`) and stored in preferences. Server-side `getLocalMidnight(timezone)` helper calculates UTC boundaries for the user's local day. All quest generation, retrieval, and progress tracking use timezone-aware date comparisons.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.
