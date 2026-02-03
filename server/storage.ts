@@ -235,8 +235,8 @@ export interface IStorage {
   getFlashcardReviewEventCount(userId: string, date?: Date): Promise<number>;
   
   // Daily Flashcard Progress (for quest tracking - idempotent per card per day)
-  recordFlashcardProgress(userId: string, cardId: string, mode: string, examTrack?: string): Promise<{ isNew: boolean; todayCount: number }>;
-  getTodayFlashcardProgressCount(userId: string): Promise<number>;
+  recordFlashcardProgress(userId: string, cardId: string, mode: string, examTrack?: string, timezone?: string): Promise<{ isNew: boolean; todayCount: number }>;
+  getTodayFlashcardProgressCount(userId: string, timezone?: string): Promise<number>;
 
   // Practice Exam methods
   getPracticeExams(userId: string): Promise<PracticeExam[]>;
@@ -3478,11 +3478,8 @@ export class DatabaseStorage implements IStorage {
 
   // --- Daily Flashcard Progress Methods (for quest tracking) ---
 
-  async recordFlashcardProgress(userId: string, cardId: string, mode: string, examTrack: string = 'fs'): Promise<{ isNew: boolean; todayCount: number }> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(today);
-    endOfDay.setHours(23, 59, 59, 999);
+  async recordFlashcardProgress(userId: string, cardId: string, mode: string, examTrack: string = 'fs', timezone: string = 'America/Chicago'): Promise<{ isNew: boolean; todayCount: number }> {
+    const { today, tomorrow } = getLocalMidnight(timezone);
 
     // Check if this card was already recorded today for this mode
     const existing = await db
@@ -3493,7 +3490,7 @@ export class DatabaseStorage implements IStorage {
         eq(dailyFlashcardProgress.cardId, cardId),
         eq(dailyFlashcardProgress.mode, mode),
         gte(dailyFlashcardProgress.date, today),
-        lte(dailyFlashcardProgress.date, endOfDay)
+        lte(dailyFlashcardProgress.date, tomorrow)
       ))
       .limit(1);
 
@@ -3508,21 +3505,18 @@ export class DatabaseStorage implements IStorage {
       });
       isNew = true;
       
-      // Update the daily quest for flashcards (pass examTrack for correct quest matching)
-      await this.updateQuestProgress(userId, 'complete_flashcards', 1, examTrack);
+      // Update the daily quest for flashcards (pass examTrack and timezone for correct quest matching)
+      await this.updateQuestProgress(userId, 'complete_flashcards', 1, examTrack, timezone);
     }
 
-    // Get today's total count
-    const todayCount = await this.getTodayFlashcardProgressCount(userId);
+    // Get today's total count (use same timezone)
+    const todayCount = await this.getTodayFlashcardProgressCount(userId, timezone);
     
     return { isNew, todayCount };
   }
 
-  async getTodayFlashcardProgressCount(userId: string): Promise<number> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(today);
-    endOfDay.setHours(23, 59, 59, 999);
+  async getTodayFlashcardProgressCount(userId: string, timezone: string = 'America/Chicago'): Promise<number> {
+    const { today, tomorrow } = getLocalMidnight(timezone);
 
     const result = await db
       .select({ count: sql<number>`count(*)` })
@@ -3530,7 +3524,7 @@ export class DatabaseStorage implements IStorage {
       .where(and(
         eq(dailyFlashcardProgress.userId, userId),
         gte(dailyFlashcardProgress.date, today),
-        lte(dailyFlashcardProgress.date, endOfDay)
+        lte(dailyFlashcardProgress.date, tomorrow)
       ));
 
     return Number(result[0]?.count || 0);

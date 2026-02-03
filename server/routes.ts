@@ -1275,8 +1275,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "cardId and mode are required" });
       }
       
-      // Pass examTrack for correct quest matching
-      const result = await storage.recordFlashcardProgress(userId, cardId, mode, examTrack || 'fs');
+      // Get user's timezone for midnight reset
+      const prefs = await storage.getUserPreferences(userId);
+      const timezone = prefs?.timezone || 'America/Chicago';
+      
+      // Pass examTrack and timezone for correct quest matching
+      const result = await storage.recordFlashcardProgress(userId, cardId, mode, examTrack || 'fs', timezone);
       res.json(result);
     } catch (error) {
       console.error("Error recording flashcard progress:", error);
@@ -1288,7 +1292,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/flashcards/progress/today", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const count = await storage.getTodayFlashcardProgressCount(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const timezone = prefs?.timezone || 'America/Chicago';
+      const count = await storage.getTodayFlashcardProgressCount(userId, timezone);
       res.json({ count });
     } catch (error) {
       console.error("Error fetching flashcard progress:", error);

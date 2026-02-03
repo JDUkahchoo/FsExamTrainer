@@ -1,8 +1,9 @@
-import { createContext, useContext, ReactNode, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { createContext, useContext, ReactNode, useMemo, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import type { UserPreferences } from "@shared/schema";
 import { getAllFSDomains, getAllPSDomains } from "@shared/domains";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export interface DomainInfo {
   number: number;
@@ -31,6 +32,26 @@ export function ExamTrackProvider({ children, examTrackOverride }: ExamTrackProv
   const { data: preferences, isLoading } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
   });
+
+  const updateTimezone = useMutation({
+    mutationFn: async (timezone: string) => {
+      return apiRequest('PATCH', '/api/preferences', { timezone });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+    },
+  });
+
+  useEffect(() => {
+    if (!preferences || isLoading) return;
+    
+    const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+    if (preferences.timezone !== browserTimezone && !updateTimezone.isPending) {
+      console.log(`[Timezone] Detected browser timezone: ${browserTimezone}, updating from: ${preferences.timezone}`);
+      updateTimezone.mutate(browserTimezone);
+    }
+  }, [preferences, isLoading]);
 
   const examTrack: 'fs' | 'ps' = useMemo(() => {
     if (examTrackOverride) return examTrackOverride;
