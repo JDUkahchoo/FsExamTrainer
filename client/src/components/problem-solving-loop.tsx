@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { 
   HelpCircle, 
@@ -11,13 +9,11 @@ import {
   ChevronRight, 
   ChevronDown,
   CheckCircle2,
-  Send
+  Lightbulb
 } from 'lucide-react';
 
 interface ProblemSolvingLoopProps {
-  onConfirmSubmit: () => void;
   isVisible: boolean;
-  questionDomain?: string;
 }
 
 interface StepState {
@@ -55,7 +51,7 @@ const STEPS = [
     id: 'units',
     number: 3,
     title: 'Check the units',
-    description: 'Verify unit consistency. Many exam errors come from unit mismatches.',
+    description: 'Verify unit consistency — many exam errors come from unit mismatches.',
     prompts: [
       'Are all measurements in the same unit system?',
       'Survey feet vs. international feet?',
@@ -77,7 +73,8 @@ const STEPS = [
   },
 ];
 
-export function ProblemSolvingLoop({ onConfirmSubmit, isVisible }: ProblemSolvingLoopProps) {
+export function ProblemSolvingLoop({ isVisible }: ProblemSolvingLoopProps) {
+  const [expanded, setExpanded] = useState(false);
   const [steps, setSteps] = useState<Record<string, StepState>>(() => {
     const initial: Record<string, StepState> = {};
     STEPS.forEach(step => {
@@ -86,12 +83,9 @@ export function ProblemSolvingLoop({ onConfirmSubmit, isVisible }: ProblemSolvin
     return initial;
   });
 
-  const [collapsed, setCollapsed] = useState(false);
-
   if (!isVisible) return null;
 
   const confirmedCount = Object.values(steps).filter(s => s.confirmed).length;
-  const allConfirmed = confirmedCount === STEPS.length;
 
   const toggleStep = (stepId: string) => {
     setSteps(prev => ({
@@ -103,7 +97,7 @@ export function ProblemSolvingLoop({ onConfirmSubmit, isVisible }: ProblemSolvin
   const confirmStep = (stepId: string) => {
     setSteps(prev => ({
       ...prev,
-      [stepId]: { ...prev[stepId], confirmed: true, expanded: false },
+      [stepId]: { ...prev[stepId], confirmed: !prev[stepId].confirmed, expanded: false },
     }));
   };
 
@@ -115,149 +109,93 @@ export function ProblemSolvingLoop({ onConfirmSubmit, isVisible }: ProblemSolvin
   };
 
   return (
-    <Card className="p-4 mb-6 border-primary/30 bg-primary/5" data-testid="card-problem-solving-loop">
+    <div className="mb-4" data-testid="card-problem-solving-loop">
       <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center justify-between gap-2"
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-2 text-sm text-muted-foreground hover-elevate rounded-md px-2 py-1.5 transition-colors"
         data-testid="button-toggle-loop"
       >
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            {STEPS.map((step) => {
-              const isConfirmed = steps[step.id].confirmed;
-              return (
-                <div
-                  key={step.id}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    isConfirmed ? 'bg-success' : 'bg-border'
-                  }`}
-                />
-              );
-            })}
-          </div>
-          <span className="text-sm font-semibold text-foreground">
-            Problem-Solving Checklist
-          </span>
-          <Badge variant="secondary" className="text-xs">
-            {confirmedCount}/{STEPS.length}
-          </Badge>
-        </div>
-        {collapsed ? (
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+        <Lightbulb className="w-4 h-4" />
+        <span>Stuck? Try the 4-step breakdown</span>
+        {confirmedCount > 0 && (
+          <span className="text-xs text-success">({confirmedCount}/4)</span>
+        )}
+        {expanded ? (
+          <ChevronDown className="w-3.5 h-3.5" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+          <ChevronRight className="w-3.5 h-3.5" />
         )}
       </button>
 
-      {!collapsed && (
-        <div className="mt-4 space-y-2">
+      {expanded && (
+        <div className="mt-2 space-y-1.5 pl-2 border-l-2 border-border ml-2">
           {STEPS.map((step) => {
             const state = steps[step.id];
             const StepIcon = step.icon;
 
             return (
-              <div
-                key={step.id}
-                className={`rounded-lg border transition-colors ${
-                  state.confirmed
-                    ? 'border-success/30 bg-success/5'
-                    : 'border-border bg-background'
-                }`}
-                data-testid={`step-${step.id}`}
-              >
+              <div key={step.id} data-testid={`step-${step.id}`}>
                 <button
-                  onClick={() => toggleStep(step.id)}
-                  className="w-full flex items-center gap-3 p-3 text-left"
+                  onClick={() => state.confirmed ? confirmStep(step.id) : toggleStep(step.id)}
+                  className="w-full flex items-center gap-2.5 py-1.5 px-2 text-left rounded-md hover-elevate transition-colors"
                   data-testid={`button-step-${step.id}`}
                 >
-                  <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
+                  <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shrink-0 ${
                     state.confirmed
                       ? 'bg-success text-success-foreground'
                       : 'bg-muted text-muted-foreground'
                   }`}>
                     {state.confirmed ? (
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="w-3.5 h-3.5" />
                     ) : (
                       step.number
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <StepIcon className={`w-4 h-4 ${state.confirmed ? 'text-success' : 'text-muted-foreground'}`} />
-                      <span className={`text-sm font-medium ${state.confirmed ? 'text-success line-through' : 'text-foreground'}`}>
-                        {step.title}
-                      </span>
-                    </div>
-                  </div>
-                  {!state.confirmed && (
-                    state.expanded ? (
-                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                    )
-                  )}
+                  <StepIcon className={`w-3.5 h-3.5 shrink-0 ${state.confirmed ? 'text-success' : 'text-muted-foreground'}`} />
+                  <span className={`text-sm ${state.confirmed ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                    {step.title}
+                  </span>
                 </button>
 
                 {state.expanded && !state.confirmed && (
-                  <div className="px-3 pb-3 space-y-3">
-                    <p className="text-xs text-muted-foreground pl-10">
+                  <div className="ml-11 pb-2 space-y-2">
+                    <p className="text-xs text-muted-foreground">
                       {step.description}
                     </p>
-                    <div className="pl-10 space-y-1.5">
+                    <div className="space-y-1">
                       {step.prompts.map((prompt, i) => (
-                        <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                          <span className="text-primary mt-0.5">&#8226;</span>
+                        <div key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                          <span className="mt-0.5">&#8226;</span>
                           <span>{prompt}</span>
                         </div>
                       ))}
                     </div>
-                    <div className="pl-10">
-                      <Textarea
-                        placeholder="Quick notes (optional)..."
-                        value={state.note}
-                        onChange={(e) => updateNote(step.id, e.target.value)}
-                        className="text-xs min-h-[48px] resize-none"
-                        data-testid={`textarea-${step.id}`}
-                      />
-                    </div>
-                    <div className="pl-10">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          confirmStep(step.id);
-                        }}
-                        data-testid={`button-confirm-${step.id}`}
-                      >
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Done
-                      </Button>
-                    </div>
+                    <Textarea
+                      placeholder="Quick notes (optional)..."
+                      value={state.note}
+                      onChange={(e) => updateNote(step.id, e.target.value)}
+                      className="text-xs min-h-[40px] resize-none"
+                      data-testid={`textarea-${step.id}`}
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        confirmStep(step.id);
+                      }}
+                      data-testid={`button-confirm-${step.id}`}
+                    >
+                      <CheckCircle2 className="w-3 h-3 mr-1" />
+                      Got it
+                    </Button>
                   </div>
                 )}
               </div>
             );
           })}
-
-          <div className="pt-2">
-            <Button
-              onClick={onConfirmSubmit}
-              className="w-full"
-              disabled={!allConfirmed}
-              data-testid="button-confirm-submit"
-            >
-              <Send className="w-4 h-4 mr-2" />
-              {allConfirmed ? 'Submit Answer' : `Complete all ${STEPS.length} steps first`}
-            </Button>
-            {!allConfirmed && (
-              <p className="text-xs text-muted-foreground text-center mt-2">
-                Work through each step to build strong exam-day habits
-              </p>
-            )}
-          </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }
