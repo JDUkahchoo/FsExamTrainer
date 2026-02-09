@@ -11,7 +11,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 
 **Key Features:**
 -   **Study Plans:** 16-week structured plans with flexible modes (Standard, Result-Driven, Working Professional, Custom), progress tracking, and textbook chapter recommendations.
--   **Practice & Assessment:** Mixed Exam and Domain Practice Quizzes with instant feedback; Enhanced Flashcard System (Quick Review, Triad Drill, Feynman Mode, Mnemonic Builder); Full Practice Exam Simulator (110 questions) and NCEES-Style Practice Exam (60 questions, including AITs).
+-   **Practice & Assessment:** Mixed Exam and Domain Practice Quizzes with instant feedback and 4-Step Problem-Solving Loop (Understand → Formula → Units → Sense-Check); Enhanced Flashcard System (Quick Review, Triad Drill, Feynman Mode, Mnemonic Builder); Full Practice Exam Simulator (110 questions) and NCEES-Style Practice Exam (60 questions, including AITs).
 -   **Personalized Learning:** Custom Plan Builder; Study Cycles System for multi-pass learning; Adaptive Difficulty System based on user performance; Optimal Review Timing using SM-2 algorithm for spaced repetition.
 -   **Engagement & Motivation:** Progress Dashboard with Gamification (XP System with 10 Surveyor Ranks, Study Streaks, Achievements); Daily Quests System; Weekly Leaderboard.
 -   **AI-Powered Guidance:** AI Study Coach Briefing provides personalized daily guidance, focus recommendations, and progress insights.
@@ -42,6 +42,7 @@ The application features a comprehensive UI/UX with domain-specific color coding
 -   Flashcard Session Resume System: Sessions persist user state (deck, domains, card index, study mode) and can be resumed from exact position. Review events logged individually for accurate statistics and streak tracking.
 -   Retention Booster User Ownership: Client-side validation ensures reviews belong to current user before use. Cache control headers prevent CDN/browser caching of user-specific API responses. Auto-recovery creates fresh reviews when foreign data detected or 403 errors occur.
 -   Timezone-Aware Quest System: Daily quests reset at the user's local midnight, not a rolling 24-hour window. User timezone is auto-detected from browser (`Intl.DateTimeFormat`) and stored in preferences. Server-side `getLocalMidnight(timezone)` helper calculates UTC boundaries for the user's local day. All quest generation, retrieval, and progress tracking use timezone-aware date comparisons.
+-   4-Step Problem-Solving Loop: Integrated into practice quizzes before answer submission. Steps: (1) What is the problem asking? (2) Which formula/concept applies? (3) Check units. (4) Does the answer make sense? Each step has guided prompts and optional notes. All 4 steps must be confirmed before submission. Component: `client/src/components/problem-solving-loop.tsx`.
 
 ## External Dependencies
 -   **PostgreSQL:** Relational database for persistent data storage.

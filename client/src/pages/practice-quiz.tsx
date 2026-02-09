@@ -16,6 +16,7 @@ import { DOMAINS, FS_DOMAINS, PS_DOMAINS } from '@shared/schema';
 import type { Domain, QuizDraft } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { shuffleQuestionOptions, type ShuffledQuestion } from '@/lib/shuffleOptions';
+import { ProblemSolvingLoop } from '@/components/problem-solving-loop';
 
 type QuizState = 'setup' | 'active' | 'completed';
 
@@ -40,6 +41,7 @@ export default function PracticeQuizPage() {
   const [quizQuestions, setQuizQuestions] = useState<Array<typeof QUIZ_QUESTIONS[0] & { id: string }>>([]);
   const [shuffledOptionsMap, setShuffledOptionsMap] = useState<Record<number, { options: string[]; correctIndex: number }>>({});
   const [showResumeDialog, setShowResumeDialog] = useState(false);
+  const [showSolvingLoop, setShowSolvingLoop] = useState(false);
   const { logActivity } = useActivityLogger();
 
   // Query to detect existing draft on page load
@@ -326,7 +328,6 @@ export default function PracticeQuizPage() {
   };
 
   const handleNext = () => {
-    // Auto-submit current answer if one is selected but not yet submitted
     if (selectedAnswer !== null && !answeredQuestions[currentQuestionIndex]) {
       handleSubmit();
     }
@@ -334,8 +335,8 @@ export default function PracticeQuizPage() {
     if (currentQuestionIndex < totalQuestions - 1) {
       const nextIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(nextIndex);
+      setShowSolvingLoop(false);
       
-      // If the next question was already answered, restore its state
       const existingAnswer = answeredQuestions[nextIndex];
       if (existingAnswer) {
         setSelectedAnswer(existingAnswer.selected);
@@ -345,7 +346,6 @@ export default function PracticeQuizPage() {
         setShowExplanation(false);
       }
       
-      // Auto-save draft when user moves to next question (use nextIndex to avoid stale closure)
       setTimeout(() => saveDraft(nextIndex), 100);
     }
   };
@@ -354,8 +354,8 @@ export default function PracticeQuizPage() {
     if (currentQuestionIndex > 0) {
       const prevIndex = currentQuestionIndex - 1;
       setCurrentQuestionIndex(prevIndex);
+      setShowSolvingLoop(false);
       
-      // If the previous question was already answered, restore its state
       const existingAnswer = answeredQuestions[prevIndex];
       if (existingAnswer) {
         setSelectedAnswer(existingAnswer.selected);
@@ -403,6 +403,7 @@ export default function PracticeQuizPage() {
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setShowExplanation(false);
+    setShowSolvingLoop(false);
     setAnsweredQuestions({});
     setStartTime(null);
     setElapsedSeconds(0);
@@ -722,17 +723,30 @@ export default function PracticeQuizPage() {
           })}
         </div>
 
-        {!showExplanation && (
+        {!showExplanation && !showSolvingLoop && (
           <Button
-            onClick={handleSubmit}
+            onClick={() => {
+              if (selectedAnswer === null || answeredQuestions[currentQuestionIndex]) return;
+              setShowSolvingLoop(true);
+            }}
             disabled={selectedAnswer === null || saveResultMutation.isPending || !!answeredQuestions[currentQuestionIndex]}
             className="w-full mt-6"
             data-testid="button-submit"
           >
-            {saveResultMutation.isPending ? 'Submitting...' : 'Submit Answer'}
+            Check My Thinking
           </Button>
         )}
       </Card>
+
+      <ProblemSolvingLoop
+        key={`loop-${currentQuestionIndex}`}
+        isVisible={showSolvingLoop && !showExplanation}
+        onConfirmSubmit={() => {
+          setShowSolvingLoop(false);
+          handleSubmit();
+        }}
+        questionDomain={currentQuestion?.domain}
+      />
 
       {showExplanation && (
         <Alert className={`mb-6 ${isCorrect ? 'border-success bg-success/10' : 'border-destructive bg-destructive/10'}`} data-testid="alert-explanation">
