@@ -1,4 +1,4 @@
-import { useParams, Link } from 'wouter';
+import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,9 +24,7 @@ interface LessonProgress {
 }
 
 export default function LessonsPage() {
-  const params = useParams<{ examTrack: string }>();
-  const examTrack = params.examTrack || 'fs';
-  const { domains, examName } = useExamTrack();
+  const { examTrack, domains, examName } = useExamTrack();
 
   const { data: lessons = [], isLoading } = useQuery<Lesson[]>({
     queryKey: ['/api/lessons', examTrack],

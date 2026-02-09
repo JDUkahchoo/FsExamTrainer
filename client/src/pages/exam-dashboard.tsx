@@ -1,4 +1,4 @@
-import { useParams, Link, useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,10 +28,8 @@ interface StudyStats {
 }
 
 export default function ExamDashboard() {
-  const params = useParams<{ examTrack: string }>();
   const [, setLocation] = useLocation();
-  const examTrack = params.examTrack || 'fs';
-  const { examName, lessonCount, domainCount } = useExamTrack();
+  const { examTrack, examName, lessonCount, domainCount } = useExamTrack();
   const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);
 
   const { data: stats } = useQuery<StudyStats>({
