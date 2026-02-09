@@ -21,19 +21,20 @@ import { STUDY_READINGS } from '@shared/data/studyReadings';
 
 const WEEK_TO_READING_IDS: Record<number, string[]> = {
   1: ['fs-d0-trig', 'fs-d0-cogo', 'fs-d0-units'],
-  2: ['fs-d1-leveling'],
-  3: ['fs-d1-angles'],
-  4: ['fs-d2-traverse'],
-  5: ['fs-d2-areas'],
+  2: ['fs-d1-leveling', 'fs-d1-topo'],
+  3: ['fs-d1-angles', 'fs-d1-construction'],
+  4: ['fs-d2-traverse', 'fs-d2-alta'],
+  5: ['fs-d2-areas', 'fs-d1-uas'],
   6: ['fs-d2-curves'],
-  7: ['fs-d3-geodesy'],
-  8: ['fs-d3-gnss'],
-  9: ['fs-d4-mapping'],
-  10: ['fs-d5-boundary'],
-  11: ['fs-d5-plss'],
-  12: ['fs-d5-corners'],
-  13: ['fs-d5-boundary'],
-  14: ['fs-d6-ethics'],
+  7: ['fs-d3-geodesy', 'fs-d4-advgeo'],
+  8: ['fs-d3-gnss', 'fs-d4-historical'],
+  9: ['fs-d4-mapping', 'fs-d6-project'],
+  10: ['fs-d5-boundary', 'fs-d5-easements'],
+  11: ['fs-d5-plss', 'fs-d5-conveyances'],
+  12: ['fs-d5-corners', 'fs-d5-commonlaw', 'fs-d5-sources'],
+  13: ['fs-d6-ethics', 'fs-d6-liability'],
+  14: ['fs-d7-errorprop', 'fs-d7-leastsquares', 'fs-d7-hypothesis'],
+  15: ['fs-std-alta', 'fs-std-fema', 'fs-std-fgcs', 'fs-std-nsps'],
 };
 
 interface ReadCheckpointProps {
