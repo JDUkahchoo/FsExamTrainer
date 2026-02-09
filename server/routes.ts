@@ -2505,6 +2505,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // --- Study Reading Progress Routes ---
+
+  app.get("/api/study-reading-progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const progress = await storage.getAllStudyReadingProgress(userId);
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch study reading progress" });
+    }
+  });
+
+  app.get("/api/study-reading-progress/:readingId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const readingId = req.params.readingId;
+      const progress = await storage.getStudyReadingProgress(userId, readingId);
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch study reading progress" });
+    }
+  });
+
+  app.post("/api/study-reading-progress/:readingId/section/:sectionId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { readingId, sectionId } = req.params;
+
+      const progress = await storage.markStudyReadingSectionComplete(userId, readingId, sectionId);
+
+      const activityKey = `reading:${readingId}:${sectionId}`;
+      await storage.awardXp(userId, 5, activityKey);
+
+      res.json(progress);
+    } catch (error) {
+      console.error("Error marking reading section complete:", error);
+      res.status(500).json({ error: "Failed to mark section complete" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -1462,3 +1462,86 @@ export type ForgettingCurvePoint = {
   nextReviewIn: number | null;
   easeFactor: number;
 };
+
+// --- Interactive Study Readings ---
+
+export interface ReadingFormulaVariable {
+  symbol: string;
+  description: string;
+}
+
+export interface ReadingFormula {
+  expression: string;
+  variables: ReadingFormulaVariable[];
+  whenToUse: string;
+}
+
+export interface ReadingWorkedExample {
+  problem: string;
+  steps: { step: number; description: string; calculation?: string }[];
+  answer: string;
+}
+
+export interface ReadingKnowledgeCheck {
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+export interface ReadingFurtherRef {
+  book: string;
+  chapter: string;
+  topic: string;
+}
+
+export interface ReadingSection {
+  id: string;
+  type: 'concept' | 'formula' | 'worked_example' | 'knowledge_check' | 'further_reading';
+  title?: string;
+  content?: string;
+  formula?: ReadingFormula;
+  workedExample?: ReadingWorkedExample;
+  knowledgeCheck?: ReadingKnowledgeCheck;
+  furtherReading?: ReadingFurtherRef[];
+}
+
+export interface ReadingModule {
+  id: string;
+  examTrack: 'fs' | 'ps';
+  domainNumber: number;
+  domain: string;
+  title: string;
+  description: string;
+  estimatedMinutes: number;
+  sections: ReadingSection[];
+}
+
+// --- Study Reading Progress Table ---
+
+export const studyReadingProgress = pgTable("study_reading_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  readingId: varchar("reading_id").notNull(),
+  sectionId: varchar("section_id").notNull(),
+  completed: boolean("completed").notNull().default(false),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  uniqueUserSection: sql`UNIQUE (user_id, reading_id, section_id)`,
+}));
+
+export const studyReadingProgressRelations = relations(studyReadingProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [studyReadingProgress.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertStudyReadingProgressSchema = createInsertSchema(studyReadingProgress).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertStudyReadingProgress = z.infer<typeof insertStudyReadingProgressSchema>;
+export type StudyReadingProgress = typeof studyReadingProgress.$inferSelect;

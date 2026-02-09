@@ -1,4 +1,4 @@
-import { BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library, ScrollText } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ import { EXAM_TRACKS, US_STATES, type UserPreferences, type ExamTrack } from '@s
 const menuItems = [
   { id: '/getting-started', icon: HelpCircle, label: 'Getting Started', testId: 'nav-getting-started' },
   { id: '/study-plan', icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan' },
+  { id: '/readings', icon: ScrollText, label: 'Study Readings', testId: 'nav-readings' },
   { id: '/quiz', icon: Brain, label: 'Practice Quiz', testId: 'nav-quiz' },
   { id: '/flashcards', icon: ClipboardCheck, label: 'Flashcards', testId: 'nav-flashcards' },
   { id: '/exam', icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam' },

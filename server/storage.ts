@@ -19,6 +19,8 @@ import type {
   InsertStudyNote,
   ReadingProgress,
   InsertReadingProgress,
+  StudyReadingProgress,
+  InsertStudyReadingProgress,
   QuizDraft,
   InsertQuizDraft,
   ExamDraft,
@@ -117,6 +119,7 @@ import {
   dailyQuests,
   reviewSchedule,
   userDifficultySettings,
+  studyReadingProgress,
   DOMAINS
 } from "@shared/schema";
 import { eq, and, desc, gte, lte, lt, sql, inArray } from "drizzle-orm";
@@ -345,6 +348,11 @@ export interface IStorage {
   getUserXp(userId: string): Promise<{ xp: number; level: number }>;
   awardXp(userId: string, amount: number, activityKey: string): Promise<{ xp: number; level: number; leveledUp: boolean; awarded: boolean }>;
   hasXpGrant(userId: string, activityKey: string): Promise<boolean>;
+
+  // Study Reading Progress methods
+  getStudyReadingProgress(userId: string, readingId: string): Promise<StudyReadingProgress[]>;
+  getAllStudyReadingProgress(userId: string): Promise<StudyReadingProgress[]>;
+  markStudyReadingSectionComplete(userId: string, readingId: string, sectionId: string): Promise<StudyReadingProgress>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -3637,6 +3645,45 @@ export class DatabaseStorage implements IStorage {
       console.error('Error resetting user study data:', error);
       throw error;
     }
+  }
+
+  async getStudyReadingProgress(userId: string, readingId: string): Promise<StudyReadingProgress[]> {
+    return db.select().from(studyReadingProgress).where(
+      and(
+        eq(studyReadingProgress.userId, userId),
+        eq(studyReadingProgress.readingId, readingId)
+      )
+    );
+  }
+
+  async getAllStudyReadingProgress(userId: string): Promise<StudyReadingProgress[]> {
+    return db.select().from(studyReadingProgress).where(
+      eq(studyReadingProgress.userId, userId)
+    );
+  }
+
+  async markStudyReadingSectionComplete(userId: string, readingId: string, sectionId: string): Promise<StudyReadingProgress> {
+    const existing = await db.select().from(studyReadingProgress).where(
+      and(
+        eq(studyReadingProgress.userId, userId),
+        eq(studyReadingProgress.readingId, readingId),
+        eq(studyReadingProgress.sectionId, sectionId)
+      )
+    );
+
+    if (existing.length > 0) {
+      return existing[0];
+    }
+
+    const [progress] = await db.insert(studyReadingProgress).values({
+      userId,
+      readingId,
+      sectionId,
+      completed: true,
+      completedAt: new Date(),
+    }).returning();
+
+    return progress;
   }
 }
 
