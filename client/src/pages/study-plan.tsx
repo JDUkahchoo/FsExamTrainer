@@ -893,6 +893,7 @@ export default function StudyPlan() {
                   />
                   <ReinforceRetentionBooster
                     week={plan.week}
+                    domains={plan.domains as string[]}
                   />
 
                   {/* Interactive Lessons Section */}
