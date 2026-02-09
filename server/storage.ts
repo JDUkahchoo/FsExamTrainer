@@ -1051,19 +1051,22 @@ export class DatabaseStorage implements IStorage {
     const totalMastery = allReviews.reduce((sum, r) => sum + r.masteryLevel, 0);
     const averageMastery = totalMastery / allReviews.length;
     
-    // Calculate retention score based on decay from last review
     const now = Date.now();
     let totalRetention = 0;
     for (const review of allReviews) {
       if (!review.lastReviewedAt) {
-        totalRetention += 0; // Never reviewed = 0 retention
+        totalRetention += 0;
       } else {
         const daysSinceReview = (now - new Date(review.lastReviewedAt).getTime()) / (1000 * 60 * 60 * 24);
-        // Exponential decay formula based on interval
         const expectedInterval = review.intervalDays || 1;
-        const decayRate = 0.5; // Memory halves after expected interval
-        const retention = Math.pow(decayRate, daysSinceReview / expectedInterval) * 100;
-        totalRetention += Math.min(100, Math.max(0, retention));
+        if (daysSinceReview <= expectedInterval) {
+          totalRetention += 100;
+        } else {
+          const overdueDays = daysSinceReview - expectedInterval;
+          const decayRate = 0.5;
+          const retention = Math.pow(decayRate, overdueDays / expectedInterval) * 100;
+          totalRetention += Math.min(100, Math.max(0, retention));
+        }
       }
     }
     const retentionScore = Math.round(totalRetention / allReviews.length);

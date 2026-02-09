@@ -56,6 +56,7 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
+  const [sessionCompleted, setSessionCompleted] = useState(false);
   const [reviewedCardIds, setReviewedCardIds] = useState<Set<string>>(new Set());
   const [sessionCards, setSessionCards] = useState<RetentionReview[]>([]);
   const [activeRating, setActiveRating] = useState<number | null>(null);
@@ -227,6 +228,7 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
     setReviewedCardIds(new Set());
     setCurrentCardIndex(0);
     setIsFlipped(false);
+    setSessionCompleted(false);
     setSessionActive(true);
   }, [dueReviews, refetchDue, toast, user, createFreshReviews]);
 
@@ -284,9 +286,13 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
             description: `Session complete! ${sessionCards.length} cards reviewed.` 
           });
           setSessionActive(false);
+          setSessionCompleted(true);
           setSessionCards([]);
           setReviewedCardIds(new Set());
           setCurrentCardIndex(0);
+          await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
+          await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
+          await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
         }
       } catch (error: any) {
         console.error('Rating submission failed:', error);
@@ -410,7 +416,12 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
 
         {!sessionActive ? (
           <div className="space-y-3">
-            {dueCount > 0 ? (
+            {sessionCompleted ? (
+              <div className="flex items-center gap-2 p-3 rounded-md bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
+                <CheckCircle className="h-4 w-4" />
+                <span className="text-sm">Session complete! All concepts reviewed. Check back later.</span>
+              </div>
+            ) : dueCount > 0 ? (
               <>
                 <div className="flex items-center gap-2 p-3 rounded-md bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
                   <AlertTriangle className="h-4 w-4" />
@@ -550,15 +561,6 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
                 <CheckCircle className="h-8 w-8 mx-auto text-green-500 mb-2" />
                 <p className="text-sm font-medium">Session Complete!</p>
                 <p className="text-xs text-muted-foreground">Great job reinforcing your knowledge.</p>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="mt-2"
-                  onClick={() => setSessionActive(false)}
-                  data-testid="button-finish-session"
-                >
-                  Done
-                </Button>
               </div>
             )}
           </div>
