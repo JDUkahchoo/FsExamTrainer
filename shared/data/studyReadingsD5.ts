@@ -1,0 +1,347 @@
+import type { ReadingModule } from '../schema';
+
+export const STUDY_READINGS_D5: ReadingModule[] = [
+  {
+    id: 'fs-d5-boundary',
+    examTrack: 'fs',
+    domainNumber: 5,
+    domain: 'Boundary Law & PLSS',
+    title: 'Boundary Law Principles',
+    description: 'Explore the foundational legal concepts that govern property boundaries, including the hierarchy of conflicting title elements, types of deeds, easements, adverse possession, and water boundary doctrines. These principles are essential for interpreting legal descriptions and resolving boundary disputes on the FS exam.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'fs-d5-boundary-s1',
+        type: 'concept',
+        title: 'Hierarchy of Conflicting Title Elements',
+        content: 'When a legal description contains conflicting calls, courts and surveyors follow a well-established hierarchy to determine which element controls. This priority system reflects the principle that the most reliable evidence of the original surveyor\'s intent should prevail over less reliable evidence.\n\nThe hierarchy, from highest to lowest priority, is:\n\n1. Natural Monuments: These are naturally occurring features such as rivers, lakes, ridgelines, marked trees, and large boulders referenced in the description. Natural monuments are given the highest weight because they are the features most likely to have been observed and identified by the original parties to the conveyance. They are difficult to move or fabricate.\n\n2. Artificial Monuments: These are human-made objects set or referenced during the survey, including iron pins, concrete monuments, fence posts, stone walls, or buildings called for in the description. While reliable, they can be moved, destroyed, or placed incorrectly, so they rank below natural monuments.\n\n3. Distances: Measured distances stated in the description, such as "thence North 200 feet," carry less weight than monuments because measurement errors were common, especially in older surveys conducted with chains and compasses.\n\n4. Directions (Bearings and Angles): Bearings and angles are subordinate to distances because directional measurements historically were more susceptible to error from magnetic declination changes, instrument calibration, and local magnetic attraction.\n\n5. Area: The stated acreage in a description is considered one of the least reliable elements. Area was often estimated rather than precisely calculated, and early conveyances frequently used phrases like "more or less" after the stated acreage to acknowledge this uncertainty.\n\n6. Coordinates: State plane or geodetic coordinates occupy the lowest position in the hierarchy. While modern coordinate systems are highly precise, older coordinate values may have been computed from the less reliable distance and direction measurements already described, propagating those errors into the coordinate values.\n\nThis hierarchy is not absolute. Courts may deviate from it when the facts of a particular case warrant a different conclusion, but the general order is consistently applied across most jurisdictions as the starting point for resolving ambiguities in a legal description.',
+      },
+      {
+        id: 'fs-d5-boundary-s2',
+        type: 'concept',
+        title: 'Types of Deeds and What Each Conveys',
+        content: 'A deed is the legal instrument used to transfer ownership of real property from one party (the grantor) to another (the grantee). Different types of deeds provide different levels of protection to the grantee. Understanding these differences is critical for surveyors who research title chains and interpret property records.\n\nGeneral Warranty Deed: This deed provides the greatest protection to the grantee. The grantor warrants (guarantees) that the title is free and clear of all encumbrances and defects, not only those arising during the grantor\'s period of ownership but throughout the entire chain of title. The six traditional covenants included are: the covenant of seisin (the grantor owns the property), the covenant of right to convey (the grantor has the legal authority to transfer it), the covenant against encumbrances (there are no undisclosed liens or easements), the covenant of quiet enjoyment (the grantee will not be disturbed by superior claims), the covenant of warranty (the grantor will defend against all claims), and the covenant of further assurance (the grantor will take any necessary steps to perfect the title). General warranty deeds are the standard in most arms-length residential transactions.\n\nSpecial Warranty Deed (also called a Limited Warranty Deed): This deed provides more limited protection. The grantor warrants the title only against defects or encumbrances that arose during the grantor\'s own period of ownership. The grantor makes no guarantees about title problems that existed before the grantor acquired the property. Special warranty deeds are commonly used in commercial transactions, transfers by fiduciaries such as executors or trustees, and bank sales of foreclosed properties.\n\nQuitclaim Deed: This deed provides no warranties whatsoever. The grantor simply conveys whatever interest, if any, the grantor holds in the property. If the grantor has no interest, the grantee receives nothing, and the grantor has no liability. Quitclaim deeds are frequently used to clear clouds on title, to transfer property between family members, to convey property as part of a divorce settlement, or to release potential claims. They are not typically used in standard purchase transactions because they offer the grantee no recourse if a title defect is discovered later.\n\nOther deed forms encountered in practice include bargain and sale deeds (the grantor implies ownership but makes limited or no warranties), trustee\'s deeds (used by trustees in trust-related transfers), and sheriff\'s deeds (issued following a judicial sale). Each state may have specific statutory requirements for deed form, execution, and recording.',
+      },
+      {
+        id: 'fs-d5-boundary-s3',
+        type: 'knowledge_check',
+        title: 'Deed Types Knowledge Check',
+        knowledgeCheck: {
+          question: 'A property owner transfers land using a deed that only warrants the title against defects that arose during the owner\'s period of ownership, but makes no guarantees about prior title issues. What type of deed was used?',
+          options: [
+            'General Warranty Deed',
+            'Special Warranty Deed',
+            'Quitclaim Deed',
+            'Bargain and Sale Deed',
+          ],
+          correctIndex: 1,
+          explanation: 'A Special Warranty Deed (also called a Limited Warranty Deed) warrants the title only against defects or encumbrances that arose during the grantor\'s own period of ownership. The grantor does not guarantee against problems that existed before acquisition. A General Warranty Deed would warrant against all defects throughout the entire chain of title. A Quitclaim Deed provides no warranties at all. A Bargain and Sale Deed implies ownership but provides limited or no express warranties.',
+        },
+      },
+      {
+        id: 'fs-d5-boundary-s4',
+        type: 'concept',
+        title: 'Easements: Types and Classifications',
+        content: 'An easement is a non-possessory right to use another person\'s land for a specific purpose. Easements do not transfer ownership; they grant limited use rights. Surveyors frequently encounter easements during boundary surveys and must understand how they affect property rights and descriptions.\n\nEasement Appurtenant: This type of easement benefits a particular parcel of land (the dominant estate) and burdens an adjacent or nearby parcel (the servient estate). The easement "runs with the land," meaning it automatically transfers with ownership of the dominant estate. A classic example is a driveway easement that allows a landlocked parcel to cross a neighboring property to reach a public road. If the dominant estate is sold, the new owner inherits the easement rights. If the servient estate is sold, the new owner takes it subject to the existing easement.\n\nEasement in Gross: This type of easement benefits a specific person or entity rather than a parcel of land. There is a servient estate but no dominant estate. Utility easements granted to power companies, pipeline companies, or telecommunications providers are common examples of commercial easements in gross. Personal easements in gross, such as a right granted to a specific individual to fish on someone\'s land, may not be transferable depending on state law.\n\nEasements are also classified by how they are created:\n\nExpress Easement: Created by a written instrument, typically a deed or a separate easement agreement, and recorded in the public records. Express easements have clearly defined terms, locations, and permitted uses.\n\nImplied Easement: Arises by operation of law based on the circumstances of a property division. When a landowner subdivides property and one resulting parcel has no access to a public road but was previously served by an existing path across the other parcel, courts may recognize an implied easement by prior use if the use was apparent, continuous, and reasonably necessary at the time of severance.\n\nEasement by Necessity: A specific form of implied easement created when a parcel is completely landlocked with no legal access to a public road. Courts recognize this easement based on the public policy that no parcel should be rendered inaccessible. It terminates when the necessity ends.\n\nPrescriptive Easement: Acquired through long-term, continuous, open, and hostile use of another\'s property without permission, similar to adverse possession but without acquiring title. The required duration varies by state statute. Unlike adverse possession, a prescriptive easement grants only a right of use, not ownership. The use must be adverse (without the owner\'s consent), and the claimant must demonstrate continuous use for the full statutory period.',
+      },
+      {
+        id: 'fs-d5-boundary-s5',
+        type: 'concept',
+        title: 'Adverse Possession: The OCEAN Elements',
+        content: 'Adverse possession is a legal doctrine that allows a person who occupies another\'s land for a specified period under certain conditions to acquire legal title to that land. The doctrine is based on the policy that land should be put to productive use and that owners who fail to protect their interests over long periods should not be allowed to reclaim land that another has openly occupied and improved.\n\nThe required elements of adverse possession can be remembered using the mnemonic OCEAN:\n\nOpen: The possession must be open and visible, not hidden or secretive. The occupant must use the land in a manner that would put a reasonable owner on notice that someone is claiming the property. Building structures, cultivating crops, installing fencing, and maintaining a yard are examples of open possession.\n\nContinuous: The possession must be uninterrupted for the entire statutory period. The claimant does not need to be physically present every moment, but the use must be consistent with how a typical owner would use that type of property. Seasonal use of a vacation property, for example, may satisfy continuity if that is how an owner would normally use such land. Tacking is permitted in most jurisdictions, meaning successive adverse possessors can combine their periods of occupation if there is privity between them (such as a transfer or inheritance).\n\nExclusive: The claimant must possess the land to the exclusion of the true owner and the general public. Sharing possession with the owner or using it as common land open to anyone undermines the exclusivity requirement. The claimant must behave as the sole owner of the land.\n\nAdverse (Hostile): The possession must be without the permission of the true owner. If the owner grants consent, the possession is permissive and cannot ripen into adverse possession regardless of how long it continues. Hostility does not require ill intent or knowledge that the land belongs to someone else; it simply means the possession is without authorization. In some jurisdictions, an honest mistake about a boundary line can still satisfy the hostility requirement.\n\nNotorious: The possession must be sufficiently visible and apparent that the true owner knew or should have known about it. This requirement overlaps with the "open" element but emphasizes that the use must be conspicuous enough to serve as constructive notice to the property owner.\n\nStatutory Period: Each state establishes its own statute of limitations for adverse possession claims, typically ranging from 5 to 21 years. Some states have shorter periods when the claimant possesses under color of title (a defective deed or other document that appears to convey title) or has been paying property taxes on the disputed land.\n\nAdverse possession does not apply to government-owned land in most jurisdictions under the doctrine of sovereign immunity.',
+      },
+      {
+        id: 'fs-d5-boundary-s6',
+        type: 'knowledge_check',
+        title: 'Adverse Possession Knowledge Check',
+        knowledgeCheck: {
+          question: 'A landowner verbally grants a neighbor permission to use a strip of land along the property line for a garden. The neighbor gardens the strip openly for 25 years. Can the neighbor claim adverse possession of the strip?',
+          options: [
+            'Yes, because 25 years exceeds most statutory periods',
+            'Yes, because the use was open and continuous',
+            'No, because the use was permissive, not hostile or adverse',
+            'No, because gardening is not exclusive use',
+          ],
+          correctIndex: 2,
+          explanation: 'Adverse possession requires that the use be hostile, meaning without the permission of the true owner. Because the landowner explicitly granted permission for the neighbor to use the strip, the possession is permissive and can never ripen into adverse possession, regardless of how long it continues. The neighbor would need to repudiate the permission and assert an adverse claim, at which point the statutory clock would restart. All five OCEAN elements must be satisfied simultaneously for the full statutory period.',
+        },
+      },
+      {
+        id: 'fs-d5-boundary-s7',
+        type: 'concept',
+        title: 'Water Boundaries: Navigable vs Non-Navigable Waters',
+        content: 'Water boundaries present some of the most complex issues in boundary law because water features change over time, and the legal rules governing riparian (riverbank) and littoral (lakeshore/coastal) boundaries differ depending on whether the water body is classified as navigable or non-navigable.\n\nNavigable Waters: Under the federal test established by the Supreme Court, a water body is navigable if it was used or susceptible to use for commercial navigation at the time of statehood. Under the equal footing doctrine, the beds of navigable waters passed to each state upon its admission to the Union. This means that private ownership of land bordering navigable water typically extends only to the ordinary high-water mark (or the mean high-tide line for tidal waters). The state owns the bed and submerged lands beneath navigable waters in trust for the public. Some states apply a broader navigability test that includes recreational use.\n\nNon-Navigable Waters: The beds of non-navigable streams, lakes, and ponds are generally owned by the adjacent riparian landowners. For a non-navigable stream, each bank owner typically owns the bed to the center thread (thalweg or center line) of the stream. For a non-navigable lake, ownership of the bed may be divided among the surrounding owners using lines projected from the shoreline toward the center of the lake, though state laws vary.\n\nRiparian Rights: Riparian rights are water-use rights that attach to land bordering a natural watercourse such as a river or stream. A riparian owner has the right to make reasonable use of the water, including domestic consumption, irrigation, and livestock watering, as long as the use does not unreasonably diminish the flow available to downstream riparian owners. Riparian rights are part of the land and transfer with it.\n\nLittoral Rights: Littoral rights apply to land bordering large standing bodies of water such as lakes, seas, and oceans. Littoral owners have rights to access the water, to use the shore, and to accretions (gradual additions of land by water action). The term "littoral" is specifically associated with the shore of a large body of water as distinguished from "riparian," which is associated with the bank of a flowing stream.\n\nThe distinction between riparian and littoral is important for determining what legal rules apply to boundary changes caused by water action, as discussed in the following section.',
+      },
+      {
+        id: 'fs-d5-boundary-s8',
+        type: 'concept',
+        title: 'Accretion, Reliction, Avulsion, and Erosion',
+        content: 'The boundaries of properties that border water bodies can shift over time as the water changes the shape of the land. The legal treatment of such changes depends on whether the change is gradual or sudden.\n\nAccretion: The gradual and imperceptible buildup of land along a water boundary through the deposit of sediment, soil, or other material by the natural action of water. Accreted land belongs to the adjacent riparian or littoral owner. The boundary shifts with the water\'s edge as new land forms. Accretion is the most common mechanism by which water boundaries change.\n\nReliction (also called Dereliction): The gradual and imperceptible exposure of land that was previously submerged, caused by the permanent recession or withdrawal of a body of water. Like accretion, the newly exposed land belongs to the adjacent owner, and the boundary moves with the receding waterline. Reliction typically occurs when a lake level drops permanently or a river channel shifts gradually.\n\nErosion: The gradual and imperceptible wearing away of land by the natural action of water. Erosion is the opposite of accretion. When water slowly erodes a riverbank, the boundary moves with the water, and the riparian owner loses the eroded land. The eroded material may be deposited downstream as accretion on another owner\'s property.\n\nAvulsion: A sudden and perceptible change in the course of a water body or the rapid loss or addition of land caused by a violent event such as a flood, earthquake, or abrupt channel shift. The critical distinction is that avulsion does not change property boundaries. When a river suddenly cuts a new channel, the boundary remains in the old channel location. The landowner whose property was suddenly submerged retains title to the land beneath the new channel, and the landowner on the opposite side does not gain title to the exposed former riverbed.\n\nThe gradual-versus-sudden distinction is the key to determining whether boundaries shift. Gradual changes (accretion, reliction, erosion) move the boundary with the water. Sudden changes (avulsion) leave the boundary in its pre-existing location. This principle applies in virtually all jurisdictions and is a frequently tested concept on the FS exam.',
+      },
+      {
+        id: 'fs-d5-boundary-s9',
+        type: 'knowledge_check',
+        title: 'Water Boundaries Knowledge Check',
+        knowledgeCheck: {
+          question: 'A major flood causes a river to abruptly shift its channel 300 feet to the east, exposing the former riverbed on the west side and submerging land on the east side. Where is the property boundary located after this event?',
+          options: [
+            'Along the new channel centerline, because the boundary always follows the water',
+            'Along the old channel centerline, because avulsion does not change boundaries',
+            'At the ordinary high-water mark of the new channel',
+            'Midway between the old and new channel locations',
+          ],
+          correctIndex: 1,
+          explanation: 'An avulsion is a sudden and perceptible change in a water course. The fundamental rule is that avulsion does not move property boundaries. The boundary remains at the old channel centerline (or the location established before the sudden shift). Gradual changes such as accretion, reliction, and erosion move the boundary with the water, but sudden events do not. The landowner whose property was submerged by the new channel retains title, and the owner on the other side does not gain ownership of the exposed former riverbed.',
+        },
+      },
+      {
+        id: 'fs-d5-boundary-s10',
+        type: 'further_reading',
+        title: 'Further Reading for Boundary Law Principles',
+        furtherReading: [
+          { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 20', topic: 'Property surveys, legal descriptions, and boundary law principles' },
+          { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 21', topic: 'Boundary surveys and conveyance documents' },
+          { book: 'Surveyor Reference Manual', chapter: 'Chapter 11', topic: 'Legal principles for property and boundary surveying' },
+          { book: 'Brown\'s Boundary Control and Legal Principles', chapter: 'Various chapters', topic: 'Comprehensive boundary law reference covering hierarchy of calls, riparian rights, and adverse possession' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'fs-d5-plss',
+    examTrack: 'fs',
+    domainNumber: 5,
+    domain: 'Boundary Law & PLSS',
+    title: 'The Public Land Survey System',
+    description: 'Learn the structure and mechanics of the Public Land Survey System (PLSS), including initial points, township and range numbering, section numbering, aliquot part subdivision and acreage calculations, corner types, and correction line systems. The PLSS is the framework for describing and locating land in 30 states and is heavily tested on the FS exam.',
+    estimatedMinutes: 22,
+    sections: [
+      {
+        id: 'fs-d5-plss-s1',
+        type: 'concept',
+        title: 'PLSS Overview: Initial Points, Principal Meridians, and Baselines',
+        content: 'The Public Land Survey System (PLSS) is the rectangular survey system established by the Land Ordinance of 1785 and subsequent legislation to divide public domain lands of the United States into manageable parcels for sale, settlement, and administration. The PLSS covers approximately 30 states, primarily those west of the original 13 colonies and those states formed from the Northwest Territory.\n\nThe framework of the PLSS begins with an initial point, which is a precisely established geographic location from which all surveys in a given region originate. There are 37 initial points across the United States, each serving as the origin for a distinct survey network.\n\nFrom each initial point, two reference lines extend:\n\nPrincipal Meridian: A true north-south line running through the initial point. The principal meridian serves as the vertical reference axis of the survey grid. Each principal meridian has a unique name or number (e.g., the Sixth Principal Meridian, the San Bernardino Meridian, the Willamette Meridian).\n\nBaseline: A true east-west line running through the initial point, perpendicular to the principal meridian. The baseline serves as the horizontal reference axis.\n\nTogether, the principal meridian and baseline create a coordinate-like framework that divides the land into a grid of townships. Each township is identified by its position north or south of the baseline and east or west of the principal meridian.\n\nIt is important to note that the PLSS is not a coordinate system in the modern sense. It is a physical system of monumented surveys on the ground. The original survey monuments and the field notes of the original government surveyors carry legal authority and define the positions of section and township corners. The physical evidence of the original survey always controls over computed positions.',
+      },
+      {
+        id: 'fs-d5-plss-s2',
+        type: 'concept',
+        title: 'Township and Range Numbering System',
+        content: 'The PLSS divides land into a grid of approximately six-mile-square units called townships. Each township is identified by two components: its township number (indicating position relative to the baseline) and its range number (indicating position relative to the principal meridian).\n\nTownship Lines: East-west lines drawn parallel to the baseline at six-mile intervals. These lines define the north and south boundaries of each township row.\n\nRange Lines: North-south lines drawn parallel to the principal meridian at six-mile intervals. These lines define the east and west boundaries of each township column.\n\nThe numbering convention uses "Township" (abbreviated T) for the north-south position and "Range" (abbreviated R) for the east-west position:\n\nTownship rows are numbered sequentially starting from the baseline. Rows north of the baseline are designated T1N, T2N, T3N, and so on. Rows south are designated T1S, T2S, T3S, and so on.\n\nRange columns are numbered sequentially starting from the principal meridian. Columns east of the principal meridian are designated R1E, R2E, R3E, and so on. Columns west are designated R1W, R2W, R3W, and so on.\n\nA full township designation combines both components. For example, T3N, R5W describes the township in the third row north of the baseline and the fifth column west of the principal meridian. The principal meridian name is often appended for clarity when multiple meridians exist in a state.\n\nBecause the earth is a sphere, the north-south range lines (meridians) converge toward the poles. This convergence means that the north boundary of a township is slightly shorter than the south boundary, and a perfect six-mile grid cannot be maintained indefinitely. Correction mechanisms (discussed later) address this convergence.',
+      },
+      {
+        id: 'fs-d5-plss-s3',
+        type: 'concept',
+        title: 'Section Numbering Within a Township',
+        content: 'Each township is subdivided into 36 sections, each nominally one mile square and containing approximately 640 acres. Sections are numbered 1 through 36 following a specific serpentine (boustrophedon) pattern that begins in the northeast corner of the township.\n\nThe numbering proceeds as follows:\n\nRow 1 (top row): Sections 1 through 6 are numbered from east to west across the top of the township. Section 1 is in the northeast corner, and Section 6 is in the northwest corner.\n\nRow 2: Sections 7 through 12 are numbered from west to east. Section 7 is directly below Section 6 in the northwest area, and Section 12 is directly below Section 1 in the northeast area.\n\nRow 3: Sections 13 through 18 are numbered from east to west again.\n\nRow 4: Sections 19 through 24 are numbered from west to east.\n\nRow 5: Sections 25 through 30 are numbered from east to west.\n\nRow 6 (bottom row): Sections 31 through 36 are numbered from west to east. Section 31 is in the southwest corner, and Section 36 is in the southeast corner.\n\nThis back-and-forth pattern means that Section 1 is always in the northeast corner and Section 36 is always in the southeast corner of a standard township. Section 16 was traditionally reserved for school purposes under the original land ordinances, with Section 36 also reserved in many later states.\n\nIn practice, sections along the north and west boundaries of a township absorb the excess or deficiency caused by convergence of meridians and measurement errors. These sections may be irregular in shape and contain more or less than 640 acres. The sections along the east and south boundaries are surveyed first and are intended to be as close to the nominal dimensions as possible.',
+      },
+      {
+        id: 'fs-d5-plss-s4',
+        type: 'knowledge_check',
+        title: 'Section Numbering Knowledge Check',
+        knowledgeCheck: {
+          question: 'In a standard PLSS township, which section is located directly south of Section 6?',
+          options: [
+            'Section 5',
+            'Section 7',
+            'Section 12',
+            'Section 31',
+          ],
+          correctIndex: 1,
+          explanation: 'Section numbering in a PLSS township follows a serpentine pattern. The first row (top) runs east to west: 1, 2, 3, 4, 5, 6. The second row reverses direction and runs west to east: 7, 8, 9, 10, 11, 12. Therefore, Section 7 is directly below Section 6 in the northwest portion of the township. Section 5 is to the east of Section 6 in the top row. Section 12 is directly below Section 1 in the northeast corner.',
+        },
+      },
+      {
+        id: 'fs-d5-plss-s5',
+        type: 'concept',
+        title: 'Subdivision of Sections: Aliquot Parts',
+        content: 'Sections are further divided into smaller parcels using aliquot parts, which are fractional subdivisions based on halves and quarters. The aliquot part system provides a standardized method for describing any rectangular portion of a section without requiring a metes and bounds description.\n\nThe basic subdivisions are:\n\nHalves: A section can be divided into two equal halves: the North Half (N1/2), South Half (S1/2), East Half (E1/2), or West Half (W1/2). Each half contains approximately 320 acres.\n\nQuarters: A section can be divided into four quarter sections: the Northeast Quarter (NE1/4), Northwest Quarter (NW1/4), Southeast Quarter (SE1/4), and Southwest Quarter (SW1/4). Each quarter section contains approximately 160 acres.\n\nQuarter-Quarters: Each quarter section can be further divided into four quarter-quarter sections. For example, the NE1/4 of the NW1/4 describes a 40-acre parcel in the north-central portion of the section. The description is read from the smallest part to the largest: "the NE1/4 of the NW1/4" means you first locate the NW1/4 of the section, then take the NE1/4 of that quarter.\n\nDescriptions can be nested to any depth needed. The S1/2 of the NE1/4 of the SW1/4 describes a 20-acre parcel. To locate it, start with the full section, find the SW1/4 (160 acres), then find the NE1/4 of that quarter (40 acres), then take the S1/2 of that parcel (20 acres).\n\nMultiple aliquot parts can be combined in a single description using "and." For example, "the N1/2 of the NE1/4 and the SE1/4 of the NE1/4 of Section 10" describes two parcels within the NE1/4: the N1/2 (80 acres) and the SE1/4 (40 acres), totaling 120 acres.\n\nAliquot part descriptions always read from the inside out, identifying the smallest subdivision first and working outward to the section, township, and range.',
+      },
+      {
+        id: 'fs-d5-plss-s6',
+        type: 'formula',
+        title: 'Aliquot Part Acreage Calculation',
+        formula: {
+          expression: 'Acreage = 640 / (product of all denominators)',
+          variables: [
+            { symbol: '640', description: 'The nominal acreage of a full section (one square mile)' },
+            { symbol: 'Product of denominators', description: 'Multiply together the denominator of each fractional subdivision in the description. For a half (1/2), the denominator is 2. For a quarter (1/4), the denominator is 4.' },
+          ],
+          whenToUse: 'Use this formula to quickly calculate the acreage of any aliquot part description. For each fraction in the description (reading from smallest to largest), extract the denominator and multiply all denominators together, then divide 640 by that product. For example, the NE 1/4 of the SW 1/4 has denominators 4 and 4, so the acreage is 640 / (4 * 4) = 640 / 16 = 40 acres. The S 1/2 of the NE 1/4 has denominators 2 and 4, so the acreage is 640 / (2 * 4) = 640 / 8 = 80 acres.',
+        },
+      },
+      {
+        id: 'fs-d5-plss-s7',
+        type: 'worked_example',
+        title: 'Calculating Acreage of a Complex Aliquot Description',
+        workedExample: {
+          problem: 'Calculate the acreage of the S1/2 of the NE1/4 of the SE1/4 of Section 14.',
+          steps: [
+            { step: 1, description: 'Identify each fractional subdivision in the description, reading from left to right.', calculation: 'S1/2 (denominator = 2), NE1/4 (denominator = 4), SE1/4 (denominator = 4)' },
+            { step: 2, description: 'Multiply all denominators together to get the total divisor.', calculation: 'Product = 2 * 4 * 4 = 32' },
+            { step: 3, description: 'Divide 640 acres by the product of the denominators.', calculation: 'Acreage = 640 / 32 = 20 acres' },
+            { step: 4, description: 'Verify by working through the subdivision step by step.', calculation: 'SE1/4 of section = 640/4 = 160 acres. NE1/4 of that = 160/4 = 40 acres. S1/2 of that = 40/2 = 20 acres. Confirmed.' },
+          ],
+          answer: 'The S1/2 of the NE1/4 of the SE1/4 of Section 14 contains 20 acres.',
+        },
+      },
+      {
+        id: 'fs-d5-plss-s8',
+        type: 'knowledge_check',
+        title: 'Aliquot Parts Knowledge Check',
+        knowledgeCheck: {
+          question: 'How many acres are contained in the NW1/4 of the NW1/4 of the SW1/4 of a standard section?',
+          options: [
+            '10 acres',
+            '20 acres',
+            '40 acres',
+            '80 acres',
+          ],
+          correctIndex: 0,
+          explanation: 'Using the aliquot part acreage formula: identify the denominators as 4 (NW1/4), 4 (NW1/4), and 4 (SW1/4). The product of the denominators is 4 * 4 * 4 = 64. Acreage = 640 / 64 = 10 acres. Alternatively, verify step by step: SW1/4 = 160 acres, NW1/4 of that = 40 acres, NW1/4 of that = 10 acres.',
+        },
+      },
+      {
+        id: 'fs-d5-plss-s9',
+        type: 'concept',
+        title: 'Types of PLSS Corners and Their Hierarchy',
+        content: 'The PLSS established specific types of corners during the original surveys, each serving a different function. Understanding corner types is essential for retracement surveys and corner restoration.\n\nStandard Corners: These are the primary corners established during the original survey. They include township corners (set at the intersection of township and range lines) and section corners (set at the corners of each section). Standard corners on the south boundary and east boundary of a township are placed at regular intervals of 40 or 80 chains and define the framework of the survey. The positions of standard corners are authoritative and are not adjusted for discrepancies.\n\nClosing Corners: When a survey line meets a previously established line, a closing corner is set at the point of intersection. Closing corners are typically found on the north and west boundaries of a township where the survey closes onto previously established township or range lines. Because of convergence and measurement variations, the closing corner usually does not coincide with the corresponding standard corner on the existing line. The offset between the closing corner and the standard corner is recorded in the field notes.\n\nMeander Corners: Set at the intersection of a section line or township line with the bank of a navigable body of water (river, lake, or other meandered water body). Meander corners mark the point where the regular rectangular survey meets a water boundary. The meander line connecting successive meander corners approximates the shape of the shoreline but is not a boundary line; the actual water boundary is the bank or shoreline itself.\n\nWitness Corners: Set on a survey line near a regular corner position when the actual corner point falls in a location where a monument cannot be practically placed (such as in a river, on a steep cliff, or in a roadway). The witness corner is set at a measured distance from the true corner point along the survey line and bears a marking indicating the direction and distance to the true corner position.\n\nCorners established during the original government survey have the highest legal authority. The original survey monuments, as described in the original field notes and plats, define the legal positions of property boundaries within the PLSS. Subsequent resurveys and retracements must follow the footsteps of the original surveyor.',
+      },
+      {
+        id: 'fs-d5-plss-s10',
+        type: 'concept',
+        title: 'Correction Lines, Guide Meridians, and Standard Parallels',
+        content: 'Because the earth is curved, lines of longitude (meridians) converge as they extend toward the poles. In the PLSS, the north-south range lines are true meridians, and they converge northward. Without correction, townships in the northern portions of a survey area would become progressively narrower, and sections would deviate significantly from the intended one-square-mile size.\n\nTo compensate for convergence, the PLSS uses a system of correction lines:\n\nStandard Parallels (also called Correction Lines): These are east-west lines established at intervals of 24 miles (every four townships) north and south of the baseline. Standard parallels are surveyed as true east-west lines and serve as new baselines from which range lines are re-established at the proper six-mile spacing. The first standard parallel north is 24 miles north of the baseline, the second is 48 miles north, and so on. Standard parallels south follow the same pattern.\n\nGuide Meridians: These are north-south lines established at intervals of 24 miles east and west of the principal meridian. Guide meridians are run as true north-south lines from one standard parallel to the next, re-establishing the correct meridional spacing. Together with the standard parallels, guide meridians create 24-mile-square tracts called quadrangles or check areas.\n\nWithin each quadrangle, the regular township and section surveys are conducted. The convergence error accumulates over the 24-mile span between correction lines and is absorbed at the correction line boundaries. This is why township boundaries along standard parallels and guide meridians often show jogs or offsets where the corrected lines do not align perfectly with the lines from the adjacent quadrangle.\n\nThe north and west boundaries of each township absorb the remaining effects of convergence within the six-mile township. Sections along these boundaries may be fractional, containing more or less than the standard 640 acres. Section 6 (northwest corner of a township) often shows the greatest departure from the nominal dimensions because it absorbs convergence effects from both the north and west boundaries.',
+      },
+      {
+        id: 'fs-d5-plss-s11',
+        type: 'further_reading',
+        title: 'Further Reading for the Public Land Survey System',
+        furtherReading: [
+          { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 22', topic: 'The U.S. Public Land Survey System and its application' },
+          { book: 'Surveyor Reference Manual', chapter: 'Chapter 12', topic: 'Public land surveys, section subdivision, and aliquot parts' },
+          { book: 'BLM Manual of Surveying Instructions, 2009', chapter: 'Chapters 1-3', topic: 'History, organization, and execution of the PLSS rectangular surveys' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'fs-d5-corners',
+    examTrack: 'fs',
+    domainNumber: 5,
+    domain: 'Boundary Law & PLSS',
+    title: 'Restoration of Lost & Obliterated Corners',
+    description: 'Understand the critical distinction between lost and obliterated corners and the approved methods for restoring each. Master single and double proportionate measurement techniques, which are essential tools for retracing the Public Land Survey System and are regularly tested on the FS exam.',
+    estimatedMinutes: 18,
+    sections: [
+      {
+        id: 'fs-d5-corners-s1',
+        type: 'concept',
+        title: 'Lost vs Obliterated Corners: The Critical Distinction',
+        content: 'The Bureau of Land Management (BLM) Manual of Surveying Instructions draws a fundamental distinction between lost and obliterated corners. The classification determines what restoration method is legally appropriate, and confusing the two categories is a serious error.\n\nObliterated Corner: A corner whose position can no longer be identified by the original monument or its accessories (bearing trees, pits, mounds, or other reference marks), but whose location can be established through other reliable evidence. Evidence that may be used to restore an obliterated corner includes testimony from witnesses who saw the original monument, fence lines or occupation lines that are consistent with the original corner position, survey records from other surveyors who previously found the corner in place, and physical traces such as charred remains of a wooden post, decayed fragments of a stone monument, or an old fence corner that is consistent with the record measurements.\n\nThe key characteristic of an obliterated corner is that its position CAN be determined from evidence beyond the monument itself. When an obliterated corner is restored, the surveyor uses all available evidence to determine where the original monument stood and re-establishes the corner at that original location. The restoration is based on evidence of the original position, not on proportionate measurement.\n\nLost Corner: A corner whose position cannot be determined beyond reasonable doubt, either from traces of the original monument or from acceptable evidence of its position. When every means of identifying the original corner location has been exhausted and no reliable evidence remains, the corner is classified as lost.\n\nThe key characteristic of a lost corner is that its position CANNOT be determined from any available evidence. Lost corners must be restored using prescribed mathematical methods, primarily single or double proportionate measurement, that distribute the effects of accumulated measurement error proportionally.\n\nA corner should be classified as lost only after every reasonable effort to locate evidence of its original position has been made. Surveyors must exhaust all avenues of investigation before resorting to proportionate measurement. Prematurely classifying a corner as lost when evidence of its position exists is improper practice.',
+      },
+      {
+        id: 'fs-d5-corners-s2',
+        type: 'concept',
+        title: 'Rules for Restoring Obliterated Corners',
+        content: 'When a corner is classified as obliterated (its position can be determined from evidence), the surveyor must restore it to its original position using the best available evidence. The BLM Manual establishes guidelines for weighing different types of evidence.\n\nThe restoration of an obliterated corner involves the following principles:\n\n1. Use All Available Evidence: The surveyor must gather and evaluate every piece of evidence that bears on the original corner location. No single type of evidence should be relied upon exclusively if other evidence is available.\n\n2. Original Physical Evidence: Remnants of the original monument carry the greatest weight. A decayed wooden post stub, fragments of a stone monument, or remnants of the original pit and mound bear directly on the physical location of the corner as originally set.\n\n3. Accessory Evidence: The original survey field notes describe accessories such as bearing trees (trees marked with blazes and scribe marks recording their distance and direction from the corner). If bearing trees or their stumps can be identified, they provide strong evidence of the corner position.\n\n4. Testimony and Records: Statements from credible witnesses who previously saw the monument in place, or records from other licensed surveyors who found and referenced the corner before it was disturbed, constitute valuable evidence. The weight given to testimony depends on the credibility and specificity of the witness account.\n\n5. Lines of Occupation: Fences, walls, hedgerows, or other occupation lines that are consistent with the original survey measurements and have been maintained for a long period may corroborate the corner position, though they are generally secondary to direct physical evidence.\n\n6. Record Measurements: The original field notes and plat provide the record distances and bearings from neighboring corners to the obliterated corner. These measurements help the surveyor evaluate whether other evidence is consistent with the original survey.\n\nThe restored position should represent the surveyor\'s best professional judgment of where the original monument was placed, based on the totality of the evidence. Unlike lost corner restoration, proportionate measurement is not used for obliterated corners because evidence of the actual original position exists.',
+      },
+      {
+        id: 'fs-d5-corners-s3',
+        type: 'concept',
+        title: 'Single Proportionate Measurement',
+        content: 'Single proportionate measurement is the standard method for restoring a lost corner that lies on a line between two existing corners. It is used for interior section corners, quarter-section corners, and other corners that were established along a single survey line.\n\nThe method is based on the principle that measurement errors in the original survey should be distributed proportionally across the entire line rather than concentrated at one location. The lost corner is placed at a position that preserves its proportional relationship to the existing corners, as indicated by the original record distances.\n\nThe procedure involves the following steps:\n\n1. Identify the two nearest existing corners on the line on which the lost corner was originally established. These controlling corners must be verified (their positions must be known and accepted).\n\n2. Measure the total distance between the two existing controlling corners using modern methods.\n\n3. Obtain the record distances from the original field notes. The record distance from the first controlling corner to the lost corner, and the total record distance between the two controlling corners, are needed.\n\n4. Calculate the proportionate distance: multiply the measured distance between the existing corners by the ratio of the record distance to the lost corner divided by the total record distance.\n\n5. Set the restored corner at the calculated proportionate distance from the first controlling corner along the line between the two controlling corners.\n\nThe bearing of the restored line is established by the two controlling corners, not by the original record bearing. The restored corner falls on the straight line connecting the two controlling corners at the proportionate distance.\n\nSingle proportionate measurement distributes the difference between the original record distance and the modern measured distance uniformly across all the intervals along the line. If the original surveyor measured 80.00 chains between two section corners but the modern measurement is 80.24 chains, each intermediate corner along that line is shifted proportionally to account for the 0.24-chain discrepancy.',
+      },
+      {
+        id: 'fs-d5-corners-s4',
+        type: 'formula',
+        title: 'Proportionate Distance Formula',
+        formula: {
+          expression: 'Proportionate Distance = (Record Distance to Lost Corner / Total Record Distance) * Measured Distance Between Existing Corners',
+          variables: [
+            { symbol: 'Record Distance to Lost Corner', description: 'The distance from the first controlling corner to the lost corner as recorded in the original survey field notes' },
+            { symbol: 'Total Record Distance', description: 'The total distance between the two controlling (existing) corners as recorded in the original survey field notes' },
+            { symbol: 'Measured Distance Between Existing Corners', description: 'The total distance between the two controlling corners as measured on the ground with modern equipment' },
+          ],
+          whenToUse: 'Use this formula to restore a lost corner that lies on a line between two existing corners using single proportionate measurement. The formula distributes the discrepancy between the original record distance and the modern measured distance proportionally, placing the lost corner at the same relative position along the line as it was originally established.',
+        },
+      },
+      {
+        id: 'fs-d5-corners-s5',
+        type: 'worked_example',
+        title: 'Single Proportionate Measurement to Restore a Lost Quarter Corner',
+        workedExample: {
+          problem: 'The quarter-section corner between Section 10 and Section 15 has been lost. The two controlling section corners (the corner common to Sections 10, 11, 14, and 15 on the east, and the corner common to Sections 9, 10, 15, and 16 on the west) are both in place. The original field notes record 40.00 chains from the west section corner to the quarter corner and 80.00 chains for the total line between the two section corners. The modern measured distance between the two section corners is 80.32 chains. Where should the restored quarter corner be placed?',
+          steps: [
+            { step: 1, description: 'Identify the record distances from the original field notes.', calculation: 'Record distance to quarter corner = 40.00 chains. Total record distance = 80.00 chains.' },
+            { step: 2, description: 'Calculate the proportionate ratio.', calculation: 'Ratio = 40.00 / 80.00 = 0.5000' },
+            { step: 3, description: 'Apply the ratio to the modern measured distance.', calculation: 'Proportionate distance = 0.5000 * 80.32 = 40.16 chains' },
+            { step: 4, description: 'State the result and verify it is reasonable.', calculation: 'The restored quarter corner is placed 40.16 chains from the west section corner along the line toward the east section corner. The 0.16-chain adjustment (approximately 10.6 feet) reflects the proportional distribution of the 0.32-chain total discrepancy.' },
+          ],
+          answer: 'The lost quarter corner should be restored at a point 40.16 chains from the west section corner along the straight line connecting the two existing section corners. This places it at the midpoint of the measured line, consistent with its original proportional position.',
+        },
+      },
+      {
+        id: 'fs-d5-corners-s6',
+        type: 'knowledge_check',
+        title: 'Lost vs Obliterated Corners Knowledge Check',
+        knowledgeCheck: {
+          question: 'A surveyor cannot find the original monument for a section corner, but discovers a fence corner that aligns perfectly with record measurements from neighboring corners, and an adjacent property owner provides credible testimony about the monument\'s former location before it was removed during road construction. How should this corner be classified?',
+          options: [
+            'Lost, because the original monument is gone',
+            'Obliterated, because evidence exists to determine the original position',
+            'Lost, because witness testimony is not acceptable evidence',
+            'Obliterated, but it must still be restored using proportionate measurement',
+          ],
+          correctIndex: 1,
+          explanation: 'This corner is obliterated, not lost. An obliterated corner is one where the original monument is gone but the position can be determined from other reliable evidence. Here, the fence corner alignment and credible witness testimony provide evidence of the original position. The surveyor should restore the corner to its original position based on this evidence. Proportionate measurement is only used for lost corners, where no evidence of the original position remains. A corner is classified as lost only after all avenues for determining its position have been exhausted.',
+        },
+      },
+      {
+        id: 'fs-d5-corners-s7',
+        type: 'concept',
+        title: 'Double Proportionate Measurement',
+        content: 'Double proportionate measurement is used to restore a lost corner that was established at the intersection of two survey lines, typically an interior township corner or a standard corner at the intersection of township and range lines. Unlike single proportion, which works along one line, double proportion considers controlling corners from two perpendicular lines (north-south and east-west).\n\nThe method is required because an interior corner is defined by the intersection of both a township line (east-west) and a range line (north-south). Restoring such a corner using only one line would ignore the positional control provided by the other line.\n\nThe double proportionate measurement procedure:\n\n1. Identify the four controlling corners: two on the north-south line (one to the north and one to the south of the lost corner) and two on the east-west line (one to the east and one to the west). All four controlling corners must be existing corners whose positions are accepted.\n\n2. Determine the record distances from the original field notes: the distances from the north and south controlling corners to the lost corner along the north-south line, and the distances from the east and west controlling corners to the lost corner along the east-west line.\n\n3. Apply single proportionate measurement independently on each line. First, calculate the proportionate position along the north-south line between the north and south controlling corners. Then, calculate the proportionate position along the east-west line between the east and west controlling corners.\n\n4. The two single proportions will generally yield two different points. The restored corner is placed at the intersection of the two proportioned lines: the east-west line through the north-south proportioned point and the north-south line through the east-west proportioned point.\n\nIn practice, the latitude (north-south position) of the restored corner is controlled by the east-west proportioned line, and the departure (east-west position) is controlled by the north-south proportioned line. This ensures that both sets of controlling corners influence the final position.\n\nDouble proportionate measurement applies the same underlying principle as single proportion: measurement errors are distributed proportionally. However, it accounts for two dimensions simultaneously by using two independent sets of controlling evidence.\n\nWhen one pair of controlling corners is closer to the lost corner than the other pair, the closer pair exerts more influence on the restored position because the proportional adjustment is smaller over a shorter distance.',
+      },
+      {
+        id: 'fs-d5-corners-s8',
+        type: 'worked_example',
+        title: 'Double Proportionate Measurement for an Interior Township Corner',
+        workedExample: {
+          problem: 'An interior section corner has been lost. The four controlling corners are the nearest found section corners to the north, south, east, and west along the original survey lines. Describe the double proportion process to restore this corner, given the following data: Record distance north to south = 80.00 chains, measured N-S distance = 80.40 chains, record distance from south corner to lost corner = 40.00 chains. Record distance east to west = 80.00 chains, measured E-W distance = 79.80 chains, record distance from west corner to lost corner = 40.00 chains.',
+          steps: [
+            { step: 1, description: 'Perform single proportion on the north-south line.', calculation: 'N-S ratio = 40.00 / 80.00 = 0.5000. Proportionate N-S distance from south corner = 0.5000 * 80.40 = 40.20 chains. This establishes a temporary point on the N-S line.' },
+            { step: 2, description: 'Perform single proportion on the east-west line.', calculation: 'E-W ratio = 40.00 / 80.00 = 0.5000. Proportionate E-W distance from west corner = 0.5000 * 79.80 = 39.90 chains. This establishes a temporary point on the E-W line.' },
+            { step: 3, description: 'Combine the two results to fix the restored corner position.', calculation: 'The latitude (N-S position) is taken from the E-W proportion: the restored corner lies on the east-west line through the N-S proportioned point. The departure (E-W position) is taken from the N-S proportion: the restored corner lies on the north-south line through the E-W proportioned point. The intersection of these two lines is the restored position.' },
+            { step: 4, description: 'State the final restored position relative to the controlling corners.', calculation: 'The restored corner is placed 40.20 chains from the south controlling corner (along the line to the north corner) and 39.90 chains from the west controlling corner (along the line to the east corner). Both perpendicular relationships are satisfied simultaneously.' },
+          ],
+          answer: 'The lost interior section corner is restored at the intersection of the two proportioned lines: 40.20 chains from the south corner along the N-S line and 39.90 chains from the west corner along the E-W line. Double proportion ensures that all four controlling corners influence the restored position proportionally.',
+        },
+      },
+      {
+        id: 'fs-d5-corners-s9',
+        type: 'knowledge_check',
+        title: 'Corner Restoration Methods Knowledge Check',
+        knowledgeCheck: {
+          question: 'A lost quarter-section corner lies on a line between two existing section corners. No other survey lines intersect at this point. Which restoration method should be used?',
+          options: [
+            'Double proportionate measurement using four controlling corners',
+            'Single proportionate measurement using the two section corners on the line',
+            'Compute the position from state plane coordinates of the section corners',
+            'Place the corner at exactly the midpoint between the two section corners',
+          ],
+          correctIndex: 1,
+          explanation: 'Single proportionate measurement is the correct method for restoring a lost corner that lies on a line between two existing corners. The quarter-section corner was originally established on the line between the two section corners, and only one line controls its position. Double proportionate measurement is reserved for corners at the intersection of two survey lines, such as interior section corners that lie at the crossing of both an east-west and a north-south line. Simply placing the corner at the midpoint would be correct only if the record distances happened to be equal, but the proper method uses the actual record distances from the field notes to calculate the proportionate position.',
+        },
+      },
+      {
+        id: 'fs-d5-corners-s10',
+        type: 'further_reading',
+        title: 'Further Reading for Lost & Obliterated Corner Restoration',
+        furtherReading: [
+          { book: 'BLM Manual of Surveying Instructions, 2009', chapter: 'Chapter 5', topic: 'Principles of resurveys, restoration of lost and obliterated corners' },
+          { book: 'BLM Manual of Surveying Instructions, 2009', chapter: 'Chapter 7', topic: 'Detailed procedures for proportionate measurement and corner restoration' },
+        ],
+      },
+    ],
+  },
+];

@@ -880,7 +880,7 @@ export default function StudyPlan() {
                   <ReadCheckpoint
                     week={plan.week}
                     chapters={plan.read}
-                    colorClass="text-primary"
+                    colorClass="text-foreground"
                     examTrack={examTrack}
                   />
                   <FocusWeaknessScanner

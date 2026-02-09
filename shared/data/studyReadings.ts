@@ -1,6 +1,10 @@
 import type { ReadingModule } from '../schema';
+import { STUDY_READINGS_D2 } from './studyReadingsD2';
+import { STUDY_READINGS_D3 } from './studyReadingsD3';
+import { STUDY_READINGS_D4D6 } from './studyReadingsD4D6';
+import { STUDY_READINGS_D5 } from './studyReadingsD5';
 
-export const STUDY_READINGS: ReadingModule[] = [
+const STUDY_READINGS_BASE: ReadingModule[] = [
   {
     id: 'fs-d0-trig',
     examTrack: 'fs',
@@ -399,4 +403,271 @@ export const STUDY_READINGS: ReadingModule[] = [
       },
     ],
   },
+  {
+    id: 'fs-d1-leveling',
+    examTrack: 'fs',
+    domainNumber: 1,
+    domain: 'Field Data Acquisition',
+    title: 'Leveling & Distance Measurement',
+    description: 'Understand differential leveling procedures, curvature and refraction corrections, electronic distance measurement, and taping corrections used in field surveying.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'fs-d1-leveling-s1',
+        type: 'concept',
+        title: 'Differential Leveling Fundamentals',
+        content: 'Differential leveling determines elevation differences between points by taking rod readings with a leveling instrument. The process relies on establishing a Height of Instrument (HI), which is the elevation of the line of sight above the datum.\n\nKey terminology:\n- Benchmark (BM): A point with a known or assumed elevation used as a reference.\n- Backsight (BS): A rod reading taken on a point of known elevation. Adding the BS to the known elevation gives the HI.\n- Foresight (FS): A rod reading taken on a point whose elevation is unknown. Subtracting the FS from the HI gives the new point elevation.\n- Turning Point (TP): A temporary, stable point used to transfer the elevation when the instrument must be relocated. A TP receives both a foresight (from the old setup) and a backsight (from the new setup).\n\nThe basic equations are:\n  HI = Known Elevation + BS\n  New Elevation = HI - FS\n\nBy chaining these calculations through a series of turning points, you can carry an elevation across long distances. The arithmetic check at the end is: Starting BM elevation + (sum of all BS) - (sum of all FS) should equal the final elevation.',
+      },
+      {
+        id: 'fs-d1-leveling-s2',
+        type: 'formula',
+        title: 'Curvature and Refraction Correction',
+        formula: {
+          expression: 'C+R = 0.0206 * M^2 (U.S. customary) or C+R = 0.0675 * K^2 (metric)',
+          variables: [
+            { symbol: 'C+R', description: 'Combined curvature and refraction correction (feet or meters)' },
+            { symbol: 'M', description: 'Sight distance in miles (U.S. customary version)' },
+            { symbol: 'K', description: 'Sight distance in kilometers (metric version)' },
+          ],
+          whenToUse: 'Apply when sight distances are long enough that the curvature of the Earth and atmospheric refraction affect the rod reading. Generally significant for sights longer than about 300 ft (100 m). The correction is subtracted from the rod reading to obtain the true difference in elevation.',
+        },
+      },
+      {
+        id: 'fs-d1-leveling-s3',
+        type: 'worked_example',
+        title: 'Reducing Differential Leveling Notes',
+        workedExample: {
+          problem: 'A leveling circuit starts at BM A (elevation 432.56 ft) and ends at BM B. The field notes are:\n\nSetup 1: BS on BM A = 6.32 ft, FS on TP1 = 3.87 ft\nSetup 2: BS on TP1 = 7.14 ft, FS on TP2 = 4.52 ft\nSetup 3: BS on TP2 = 5.98 ft, FS on BM B = 8.21 ft\n\nCompute the elevation of BM B.',
+          steps: [
+            { step: 1, description: 'Compute HI from Setup 1.', calculation: 'HI = 432.56 + 6.32 = 438.88 ft' },
+            { step: 2, description: 'Compute elevation of TP1.', calculation: 'Elev TP1 = 438.88 - 3.87 = 435.01 ft' },
+            { step: 3, description: 'Compute HI from Setup 2.', calculation: 'HI = 435.01 + 7.14 = 442.15 ft' },
+            { step: 4, description: 'Compute elevation of TP2.', calculation: 'Elev TP2 = 442.15 - 4.52 = 437.63 ft' },
+            { step: 5, description: 'Compute HI from Setup 3.', calculation: 'HI = 437.63 + 5.98 = 443.61 ft' },
+            { step: 6, description: 'Compute elevation of BM B.', calculation: 'Elev BM B = 443.61 - 8.21 = 435.40 ft' },
+            { step: 7, description: 'Arithmetic check: Starting elev + sum BS - sum FS = final elev.', calculation: '432.56 + (6.32 + 7.14 + 5.98) - (3.87 + 4.52 + 8.21) = 432.56 + 19.44 - 16.60 = 435.40 ft (checks)' },
+          ],
+          answer: 'The elevation of BM B is 435.40 ft.',
+        },
+      },
+      {
+        id: 'fs-d1-leveling-s4',
+        type: 'knowledge_check',
+        title: 'Leveling Concepts Check',
+        knowledgeCheck: {
+          question: 'In differential leveling, the Height of Instrument (HI) is computed by:',
+          options: [
+            'Subtracting the backsight from the benchmark elevation',
+            'Adding the backsight reading to the known elevation of the occupied point',
+            'Subtracting the foresight from the benchmark elevation',
+            'Adding the foresight reading to the turning point elevation',
+          ],
+          correctIndex: 1,
+          explanation: 'The Height of Instrument is the elevation of the line of sight, calculated by adding the backsight reading (rod reading on a known point) to that point\'s known elevation: HI = Known Elevation + BS. The foresight is then subtracted from the HI to find the elevation of unknown points.',
+        },
+      },
+      {
+        id: 'fs-d1-leveling-s5',
+        type: 'concept',
+        title: 'Electronic Distance Measurement (EDM)',
+        content: 'Electronic Distance Measurement instruments determine distances by transmitting electromagnetic energy (infrared light or laser) to a reflector and measuring the travel time or phase shift of the returned signal.\n\nKey concepts:\n- EDM instruments measure slope distances, which must be reduced to horizontal distances using the vertical angle.\n- Atmospheric corrections account for temperature and pressure effects on the speed of light. Most instruments allow direct entry of temperature and pressure for automatic correction.\n- The ppm (parts per million) correction adjusts the measured distance based on actual atmospheric conditions differing from standard conditions. A correction of +10 ppm means adding 10 mm per kilometer of measured distance.\n- Prism constant: Reflector prisms have a built-in offset that must be accounted for. Modern instruments store common prism constants.\n- EDM accuracy is typically stated as a fixed error plus a proportional error, such as plus or minus (3 mm + 2 ppm). The fixed part dominates short distances, while the ppm part dominates long distances.\n\nFor the FS exam, understand that atmospheric corrections and prism constants are the most common sources of systematic EDM error.',
+      },
+      {
+        id: 'fs-d1-leveling-s6',
+        type: 'formula',
+        title: 'Taping Corrections',
+        formula: {
+          expression: 'Temperature: Ct = alpha * (T - Ts) * L; Sag: Cs = -w^2 * L^3 / (24 * P^2); Tension: Cp = (P - Ps) * L / (A * E)',
+          variables: [
+            { symbol: 'Ct', description: 'Temperature correction' },
+            { symbol: 'alpha', description: 'Coefficient of thermal expansion of the tape (typically 6.45e-6 per degree F for steel)' },
+            { symbol: 'T', description: 'Field temperature' },
+            { symbol: 'Ts', description: 'Standard temperature at which the tape was calibrated (typically 68 degrees F)' },
+            { symbol: 'L', description: 'Measured (or nominal) length of tape' },
+            { symbol: 'Cs', description: 'Sag correction (always negative, making the true distance shorter)' },
+            { symbol: 'w', description: 'Weight of the tape per unit length' },
+            { symbol: 'P', description: 'Applied tension during measurement' },
+            { symbol: 'Ps', description: 'Standard tension (tension at calibration)' },
+            { symbol: 'A', description: 'Cross-sectional area of the tape' },
+            { symbol: 'E', description: 'Modulus of elasticity of the tape material' },
+            { symbol: 'Cp', description: 'Tension (pull) correction' },
+          ],
+          whenToUse: 'Apply these corrections when precise taping is required and field conditions differ from the tape calibration standards. Temperature correction is needed when field temperature differs from standard. Sag correction applies when the tape is supported only at its ends. Tension correction applies when pull differs from the calibration tension.',
+        },
+      },
+      {
+        id: 'fs-d1-leveling-s7',
+        type: 'worked_example',
+        title: 'Tape Temperature Correction',
+        workedExample: {
+          problem: 'A 100-ft steel tape was standardized at 68 degrees F. A distance of 372.55 ft was measured when the field temperature was 95 degrees F. The coefficient of thermal expansion for the tape is 6.45 x 10^-6 per degree F. What is the corrected distance?',
+          steps: [
+            { step: 1, description: 'Determine the temperature difference.', calculation: 'T - Ts = 95 - 68 = 27 degrees F' },
+            { step: 2, description: 'Compute the temperature correction for the total measured distance.', calculation: 'Ct = 6.45e-6 * 27 * 372.55 = 0.0649 ft' },
+            { step: 3, description: 'The tape expands in heat, so the true distance is longer than measured. Add the correction.', calculation: 'Corrected distance = 372.55 + 0.06 = 372.61 ft' },
+          ],
+          answer: 'The corrected distance is 372.61 ft.',
+        },
+      },
+      {
+        id: 'fs-d1-leveling-s8',
+        type: 'knowledge_check',
+        title: 'Distance Measurement Check',
+        knowledgeCheck: {
+          question: 'An EDM instrument has a stated accuracy of plus or minus (3 mm + 5 ppm). What is the expected error for a measured distance of 2,000 m?',
+          options: [
+            'Plus or minus 3 mm',
+            'Plus or minus 8 mm',
+            'Plus or minus 10 mm',
+            'Plus or minus 13 mm',
+          ],
+          correctIndex: 3,
+          explanation: 'The fixed component is 3 mm. The proportional component is 5 ppm applied to 2,000 m: 5 * 2,000 / 1,000,000 = 0.010 m = 10 mm. Total error = 3 + 10 = 13 mm. For short distances the fixed error dominates; for long distances the ppm error dominates.',
+        },
+      },
+      {
+        id: 'fs-d1-leveling-s9',
+        type: 'further_reading',
+        title: 'Leveling and Distance Measurement References',
+        furtherReading: [
+          { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapters 4-6', topic: 'Leveling theory, equipment, and distance measurement methods' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topics 3-4', topic: 'Leveling procedures and distance measurement corrections' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'fs-d1-angles',
+    examTrack: 'fs',
+    domainNumber: 1,
+    domain: 'Field Data Acquisition',
+    title: 'Angles, Azimuths & Bearings',
+    description: 'Learn how surveyors measure and describe directions in the field, including horizontal and vertical angle measurement, azimuth and bearing systems, magnetic declination, and angular closure.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'fs-d1-angles-s1',
+        type: 'concept',
+        title: 'Types of Angles in Surveying',
+        content: 'Surveyors work with several distinct angle types:\n\nHorizontal angles are measured in the horizontal plane between two lines of sight. They describe the angular relationship between directions to two points as seen from the instrument station. Horizontal angles can be measured as interior angles (inside a polygon), deflection angles (from the prolongation of the back line), or angles to the right (measured clockwise from the backsight).\n\nVertical angles are measured in a vertical plane, above or below the horizontal. An angle of elevation is measured upward from horizontal (positive), while an angle of depression is measured downward (negative).\n\nZenith angles are measured downward from the vertical (directly overhead). A horizontal sight has a zenith angle of 90 degrees, a sight straight up is 0 degrees, and a sight straight down is 180 degrees. Most modern total stations display zenith angles rather than vertical angles. The relationship is: Vertical angle = 90 - Zenith angle.\n\nUnderstanding the distinction between these angle types is critical for correctly reducing field measurements to horizontal distances and elevation differences.',
+      },
+      {
+        id: 'fs-d1-angles-s2',
+        type: 'concept',
+        title: 'Azimuths and Bearings',
+        content: 'Azimuths and bearings are two systems for describing the direction of a line.\n\nAn azimuth is the clockwise angle from north (or sometimes south) to the line, ranging from 0 to 360 degrees. In surveying practice in the United States, azimuths are almost always referenced to north. An azimuth of 0 degrees points due north, 90 degrees points east, 180 degrees points south, and 270 degrees points west.\n\nA bearing uses quadrant notation to describe direction. It starts with either N or S, gives an angle between 0 and 90 degrees, then ends with E or W. For example, N 45 00 E indicates a direction 45 degrees clockwise from north toward east.\n\nThe back azimuth (reverse direction) of any line differs from the forward azimuth by exactly 180 degrees. If the forward azimuth is less than 180, add 180 to get the back azimuth; if it is 180 or greater, subtract 180.\n\nFor bearings, the back bearing swaps both the N/S and E/W designations. The back bearing of N 30 E is S 30 W.',
+      },
+      {
+        id: 'fs-d1-angles-s3',
+        type: 'formula',
+        title: 'Bearing to Azimuth Conversion',
+        formula: {
+          expression: 'NE quadrant: Az = bearing angle; SE quadrant: Az = 180 - bearing angle; SW quadrant: Az = 180 + bearing angle; NW quadrant: Az = 360 - bearing angle',
+          variables: [
+            { symbol: 'Az', description: 'Azimuth measured clockwise from north (0 to 360 degrees)' },
+            { symbol: 'bearing angle', description: 'The numeric angle portion of the bearing (always between 0 and 90 degrees)' },
+          ],
+          whenToUse: 'Use to convert any bearing in quadrant notation to its equivalent azimuth, or reverse the process to convert an azimuth back to a bearing. Identify the quadrant from the azimuth value: 0-90 is NE, 90-180 is SE, 180-270 is SW, 270-360 is NW.',
+        },
+      },
+      {
+        id: 'fs-d1-angles-s4',
+        type: 'worked_example',
+        title: 'Converting Bearings to Azimuths',
+        workedExample: {
+          problem: 'Convert the following bearings to azimuths: (a) N 42 30 E, (b) S 65 15 E, (c) S 28 45 W, (d) N 73 00 W.',
+          steps: [
+            { step: 1, description: '(a) N 42 30 E is in the NE quadrant. Azimuth equals the bearing angle.', calculation: 'Az = 42 degrees 30 minutes' },
+            { step: 2, description: '(b) S 65 15 E is in the SE quadrant. Azimuth = 180 - bearing angle.', calculation: 'Az = 180 - 65 degrees 15 minutes = 114 degrees 45 minutes' },
+            { step: 3, description: '(c) S 28 45 W is in the SW quadrant. Azimuth = 180 + bearing angle.', calculation: 'Az = 180 + 28 degrees 45 minutes = 208 degrees 45 minutes' },
+            { step: 4, description: '(d) N 73 00 W is in the NW quadrant. Azimuth = 360 - bearing angle.', calculation: 'Az = 360 - 73 degrees 00 minutes = 287 degrees 00 minutes' },
+          ],
+          answer: '(a) 42 deg 30 min, (b) 114 deg 45 min, (c) 208 deg 45 min, (d) 287 deg 00 min.',
+        },
+      },
+      {
+        id: 'fs-d1-angles-s5',
+        type: 'knowledge_check',
+        title: 'Bearings and Azimuths Check',
+        knowledgeCheck: {
+          question: 'A line has an azimuth of 312 degrees 20 minutes. What is the equivalent bearing?',
+          options: [
+            'N 47 40 W',
+            'N 42 20 W',
+            'S 47 40 E',
+            'N 47 40 E',
+          ],
+          correctIndex: 0,
+          explanation: 'An azimuth of 312 degrees 20 minutes falls in the NW quadrant (270-360). The bearing angle = 360 - 312 degrees 20 minutes = 47 degrees 40 minutes. Since it is in the NW quadrant, the bearing is N 47 40 W.',
+        },
+      },
+      {
+        id: 'fs-d1-angles-s6',
+        type: 'concept',
+        title: 'Magnetic Declination',
+        content: 'Magnetic declination is the angular difference between true north (geographic north) and magnetic north (the direction a compass needle points). Declination varies by location and changes over time due to shifts in the Earth\'s magnetic field.\n\nIf magnetic north is east of true north, the declination is called east (positive). If magnetic north is west of true north, the declination is west (negative).\n\nTo convert a magnetic bearing to a true bearing:\n- East declination: add the declination to the magnetic azimuth.\n- West declination: subtract the declination from the magnetic azimuth.\n\nThe general rule is: True Azimuth = Magnetic Azimuth + Declination (using the sign convention where east declination is positive and west declination is negative).\n\nDeclination values for a location can be found on USGS topographic maps (shown with a declination diagram) or calculated using the NOAA National Geophysical Data Center model. Old deed descriptions that reference magnetic bearings must be corrected for the declination at the date of the original survey, not the current declination.',
+      },
+      {
+        id: 'fs-d1-angles-s7',
+        type: 'formula',
+        title: 'Interior Angle Sum of a Polygon',
+        formula: {
+          expression: 'Sum of interior angles = (n - 2) * 180',
+          variables: [
+            { symbol: 'n', description: 'Number of sides (or vertices) of the polygon' },
+            { symbol: 'Sum', description: 'Total of all interior angles in degrees' },
+          ],
+          whenToUse: 'Use to verify angular closure in a closed traverse. After measuring all interior angles, compare their sum to the theoretical value. The difference is the angular misclosure, which must fall within the allowable tolerance for the survey order. For example, a 5-sided traverse should have interior angles summing to (5-2)*180 = 540 degrees.',
+        },
+      },
+      {
+        id: 'fs-d1-angles-s8',
+        type: 'worked_example',
+        title: 'Checking Angular Closure of a Traverse',
+        workedExample: {
+          problem: 'A four-sided closed traverse has the following measured interior angles: A = 87 degrees 14 minutes, B = 93 degrees 48 minutes, C = 91 degrees 32 minutes, D = 87 degrees 30 minutes. Determine the angular misclosure.',
+          steps: [
+            { step: 1, description: 'Compute the theoretical sum of interior angles for a 4-sided polygon.', calculation: 'Sum = (4 - 2) * 180 = 360 degrees 00 minutes' },
+            { step: 2, description: 'Sum the measured angles.', calculation: '87d 14m + 93d 48m + 91d 32m + 87d 30m = 360 degrees 04 minutes' },
+            { step: 3, description: 'Compute the misclosure by subtracting the theoretical sum from the measured sum.', calculation: 'Misclosure = 360d 04m - 360d 00m = +04 minutes' },
+            { step: 4, description: 'Distribute the correction equally if within tolerance. Each angle is adjusted by -04/4 = -01 minute.', calculation: 'Adjusted: A = 87d 13m, B = 93d 47m, C = 91d 31m, D = 87d 29m' },
+          ],
+          answer: 'The angular misclosure is 4 minutes. Each angle is adjusted by subtracting 1 minute, bringing the sum to exactly 360 degrees.',
+        },
+      },
+      {
+        id: 'fs-d1-angles-s9',
+        type: 'knowledge_check',
+        title: 'Angles and Traverse Check',
+        knowledgeCheck: {
+          question: 'What is the sum of the interior angles of a six-sided closed traverse?',
+          options: [
+            '540 degrees',
+            '720 degrees',
+            '900 degrees',
+            '1,080 degrees',
+          ],
+          correctIndex: 1,
+          explanation: 'Using the formula (n - 2) * 180, a six-sided polygon yields (6 - 2) * 180 = 4 * 180 = 720 degrees. This is the value against which you compare the sum of all measured interior angles to determine angular misclosure.',
+        },
+      },
+      {
+        id: 'fs-d1-angles-s10',
+        type: 'further_reading',
+        title: 'Angles and Direction References',
+        furtherReading: [
+          { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapters 7-8', topic: 'Angle measurement, azimuths, bearings, and compass surveying' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic 5', topic: 'Angles, directions, and traverse computations' },
+        ],
+      },
+    ],
+  },
+];
+
+export const STUDY_READINGS: ReadingModule[] = [
+  ...STUDY_READINGS_BASE,
+  ...STUDY_READINGS_D2,
+  ...STUDY_READINGS_D3,
+  ...STUDY_READINGS_D4D6,
+  ...STUDY_READINGS_D5,
 ];

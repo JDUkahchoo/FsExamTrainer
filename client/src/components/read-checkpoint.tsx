@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BookOpen, ChevronDown, ChevronUp, MessageSquare, Star, Check, Loader2, Zap } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, MessageSquare, Star, Check, Loader2, Zap, ArrowRight, ScrollText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,11 +11,30 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Link } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import type { ReadingProgress } from '@shared/schema';
 import { XP_AWARDS } from '@shared/schema';
+import { STUDY_READINGS } from '@shared/data/studyReadings';
+
+const WEEK_TO_READING_IDS: Record<number, string[]> = {
+  1: ['fs-d0-trig', 'fs-d0-cogo', 'fs-d0-units'],
+  2: ['fs-d1-leveling'],
+  3: ['fs-d1-angles'],
+  4: ['fs-d2-traverse'],
+  5: ['fs-d2-areas'],
+  6: ['fs-d2-curves'],
+  7: ['fs-d3-geodesy'],
+  8: ['fs-d3-gnss'],
+  9: ['fs-d4-mapping'],
+  10: ['fs-d5-boundary'],
+  11: ['fs-d5-plss'],
+  12: ['fs-d5-corners'],
+  13: ['fs-d5-boundary'],
+  14: ['fs-d6-ethics'],
+};
 
 interface ReadCheckpointProps {
   week: number;
@@ -24,7 +43,7 @@ interface ReadCheckpointProps {
   examTrack?: string;
 }
 
-export function ReadCheckpoint({ week, chapters, colorClass = "text-primary", examTrack = "fs" }: ReadCheckpointProps) {
+export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground", examTrack = "fs" }: ReadCheckpointProps) {
   const [expandedChapter, setExpandedChapter] = useState<number | null>(null);
   const [localNotes, setLocalNotes] = useState<Record<number, string>>({});
   const [localRatings, setLocalRatings] = useState<Record<number, number>>({});
@@ -173,6 +192,39 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-primary", ex
       </div>
 
       <Progress value={progressPercent} className="h-1.5" />
+
+      {(() => {
+        const readingIds = WEEK_TO_READING_IDS[week] || [];
+        const weekReadings = readingIds
+          .map(id => STUDY_READINGS.find(r => r.id === id))
+          .filter(Boolean);
+
+        if (weekReadings.length === 0) return null;
+
+        return (
+          <div className="space-y-1.5" data-testid={`study-readings-week-${week}`}>
+            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+              <ScrollText className="w-3.5 h-3.5" />
+              Interactive Study Readings
+            </div>
+            {weekReadings.map(reading => (
+              <Link key={reading!.id} href={`/app/${examTrack}/readings/${reading!.id}`}>
+                <a
+                  className="flex items-center gap-2 rounded-md border p-2 text-sm hover-elevate cursor-pointer no-underline text-foreground"
+                  data-testid={`link-reading-${reading!.id}`}
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  <span className="flex-1 min-w-0 truncate">{reading!.title}</span>
+                  <Badge variant="outline" className="text-xs shrink-0">
+                    ~{reading!.estimatedMinutes} min
+                  </Badge>
+                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                </a>
+              </Link>
+            ))}
+          </div>
+        );
+      })()}
 
       <div className="space-y-2">
         {chapters.map((chapter, index) => {
