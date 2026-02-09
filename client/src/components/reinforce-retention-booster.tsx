@@ -22,32 +22,142 @@ interface ReinforceRetentionBoosterProps {
   week: number;
 }
 
-const SAMPLE_CONCEPTS = [
-  {
-    id: 'bearing-azimuth',
-    type: 'formula' as const,
-    text: 'Bearing to Azimuth: If bearing is NE quadrant, Azimuth = Bearing. If SE, Az = 180 - Bearing.',
-    domain: 4,
-  },
-  {
-    id: 'closure-ratio',
-    type: 'formula' as const,
-    text: 'Closure Ratio = Linear Error of Closure / Total Distance Traversed. Express as 1:N format.',
-    domain: 5,
-  },
-  {
-    id: 'rod-reading',
-    type: 'procedure' as const,
-    text: 'HI = BS + Elevation of BM. Elevation of point = HI - FS (foresight reading).',
-    domain: 1,
-  },
-  {
-    id: 'coordinate-area',
-    type: 'formula' as const,
-    text: 'Double Area by Coordinates: 2A = Σ(Xn × Yn+1) - Σ(Yn × Xn+1). Divide by 2 for actual area.',
-    domain: 5,
-  },
-];
+type ConceptEntry = { id: string; type: 'formula' | 'procedure' | 'definition'; text: string; domain: number };
+
+const WEEK_CONCEPTS: Record<number, ConceptEntry[]> = {
+  1: [
+    { id: 'w1-sig-figs', type: 'procedure', text: 'Significant figures: When multiplying/dividing, the result has the same number of significant figures as the least precise input. When adding/subtracting, align decimal places.', domain: 1 },
+    { id: 'w1-std-dev', type: 'formula', text: 'Standard Deviation: s = sqrt( Σ(xi - x_bar)^2 / (n-1) ). Use n-1 (Bessel correction) for sample standard deviation.', domain: 1 },
+    { id: 'w1-std-error', type: 'formula', text: 'Standard Error of the Mean: SE = s / sqrt(n). More observations reduce the standard error, not the standard deviation.', domain: 1 },
+    { id: 'w1-error-prop-sum', type: 'formula', text: 'Error Propagation (sum/difference): σ_total = sqrt(σ1^2 + σ2^2 + ... + σn^2). Errors add in quadrature, not linearly.', domain: 1 },
+    { id: 'w1-unit-conv', type: 'definition', text: 'Survey Foot vs International Foot: 1 US Survey Foot = 1200/3937 m. 1 International Foot = 0.3048 m exactly. The difference is about 2 ppm.', domain: 1 },
+    { id: 'w1-acre', type: 'definition', text: 'Key conversions: 1 acre = 43,560 sq ft. 1 chain = 66 ft. 1 mile = 80 chains. 1 section = 640 acres.', domain: 1 },
+  ],
+  2: [
+    { id: 'w2-diff-level', type: 'procedure', text: 'Differential Leveling: HI = Elevation_BM + BS. Elevation of point = HI - FS. Always read BS first on known point, then FS on unknown.', domain: 2 },
+    { id: 'w2-curv-refr', type: 'formula', text: 'Curvature & Refraction correction: C&R = 0.0206 × D^2 (D in thousands of feet, result in feet). For long sights, Earth curves away and refraction bends light down.', domain: 2 },
+    { id: 'w2-edm-ppm', type: 'formula', text: 'EDM correction: Total Error = constant error + (distance × ppm/1,000,000). A 5mm + 3ppm EDM measuring 1000m has error = 5mm + 3mm = 8mm.', domain: 2 },
+    { id: 'w2-tape-temp', type: 'formula', text: 'Tape Temperature Correction: Ct = L × α × (T - Ts). α (steel) = 6.45 × 10^-6 per deg F. Positive Ct means tape is longer than standard.', domain: 2 },
+    { id: 'w2-tape-sag', type: 'formula', text: 'Tape Sag Correction: Cs = -w^2 × L^3 / (24 × P^2). Always negative (tape is shorter when sagging). w = weight per unit length, P = tension applied.', domain: 2 },
+    { id: 'w2-turning-pt', type: 'procedure', text: 'Turning Point procedure: Take FS on TP from current setup, move instrument ahead, take BS on same TP. A TP is never a benchmark - it is temporary.', domain: 2 },
+  ],
+  3: [
+    { id: 'w3-bearing-az', type: 'formula', text: 'Bearing to Azimuth: NE quadrant: Az = Bearing. SE: Az = 180 - Bearing. SW: Az = 180 + Bearing. NW: Az = 360 - Bearing.', domain: 5 },
+    { id: 'w3-angle-sum', type: 'formula', text: 'Interior Angle Sum = (n-2) × 180 degrees, where n = number of sides. A triangle = 180, quadrilateral = 360, pentagon = 540.', domain: 5 },
+    { id: 'w3-mag-decl', type: 'procedure', text: 'Magnetic Declination: True Bearing = Magnetic Bearing + East Declination (or - West Declination). Declination changes over time; use current NOAA model.', domain: 2 },
+    { id: 'w3-deflection', type: 'definition', text: 'Deflection Angles: Measured from the extension of the back line. Right deflections are positive, left are negative. Sum of deflections for a closed traverse = 360.', domain: 5 },
+    { id: 'w3-collimation', type: 'definition', text: 'Collimation Error: Line of sight not perpendicular to horizontal axis. Eliminated by observing in both Face Left and Face Right (direct and reverse).', domain: 2 },
+    { id: 'w3-back-az', type: 'formula', text: 'Back Azimuth = Forward Azimuth ± 180. If forward Az < 180, add 180. If forward Az >= 180, subtract 180.', domain: 5 },
+  ],
+  4: [
+    { id: 'w4-lat-dep', type: 'formula', text: 'Latitude = Distance × cos(Azimuth). Departure = Distance × sin(Azimuth). Lat is N/S component, Dep is E/W component.', domain: 5 },
+    { id: 'w4-compass-rule', type: 'formula', text: 'Compass Rule (Bowditch): Correction_lat = -(error_lat × distance_i / total_distance). Same for departure. Distributes error proportional to leg length.', domain: 5 },
+    { id: 'w4-closure-ratio', type: 'formula', text: 'Closure Ratio = Linear Error of Closure / Total Distance. LEC = sqrt(ΔLat^2 + ΔDep^2). Express as 1:N (e.g., 1:10,000).', domain: 5 },
+    { id: 'w4-coord-area', type: 'formula', text: 'Area by Coordinates: 2A = Σ(Xi(Yi+1 - Yi-1)). Or cross-multiply method: 2A = Σ(XiYi+1) - Σ(Xi+1Yi). Divide by 2 for area.', domain: 5 },
+    { id: 'w4-inverse', type: 'formula', text: 'Inversing: Distance = sqrt(ΔN^2 + ΔE^2). Azimuth = arctan(ΔE/ΔN), adjusted for quadrant. Always check which quadrant ΔN and ΔE place you in.', domain: 5 },
+    { id: 'w4-intersect', type: 'procedure', text: 'Line-Line Intersection: Given two points and two directions, solve using parametric equations or simultaneous lat/dep equations to find the intersection coordinates.', domain: 5 },
+  ],
+  5: [
+    { id: 'w5-avg-end', type: 'formula', text: 'Average End Area: V = L × (A1 + A2) / 2. L = distance between cross-sections. Simple but overestimates volume when areas differ significantly.', domain: 5 },
+    { id: 'w5-prismoidal', type: 'formula', text: 'Prismoidal Formula: V = L/6 × (A1 + 4Am + A2). Am = area at mid-section. More accurate than average end area; required when A1 and A2 differ greatly.', domain: 5 },
+    { id: 'w5-dmd', type: 'formula', text: 'Area by DMD: DMD of first course = its departure. DMD of next = DMD_prev + Dep_prev + Dep_current. 2A = Σ(DMD × Latitude).', domain: 5 },
+    { id: 'w5-borrow-pit', type: 'procedure', text: 'Borrow Pit Volumes: Grid the area, compute average depth at each grid cell, multiply by cell area. Volume = Σ(cell_area × avg_depth_at_corners / 4).', domain: 5 },
+    { id: 'w5-simpsons', type: 'formula', text: 'Simpson\'s 1/3 Rule (areas with curved boundary): A = d/3 × (h1 + 4h2 + 2h3 + 4h4 + ... + hn). Requires odd number of offsets (even number of intervals).', domain: 5 },
+    { id: 'w5-mass-diag', type: 'definition', text: 'Mass Diagram: Plots cumulative earthwork volume vs station. Rising = cut, falling = fill. Balance line shows where cut volume equals fill volume for optimal haul.', domain: 5 },
+  ],
+  6: [
+    { id: 'w6-horiz-curve', type: 'formula', text: 'Horizontal Curve: T = R × tan(Δ/2). L = R × Δ (radians) or L = 100 × Δ/D. E = R × (1/cos(Δ/2) - 1). M = R × (1 - cos(Δ/2)).', domain: 5 },
+    { id: 'w6-degree-curve', type: 'definition', text: 'Degree of Curve: Arc definition (highway): D subtends 100ft arc. Chord definition (railroad): D subtends 100ft chord. R_arc = 5729.58/D.', domain: 5 },
+    { id: 'w6-vert-curve', type: 'formula', text: 'Vertical Curve: y = (g2 - g1) / (2L) × x^2. High/Low point station: x = -g1 × L / (g2 - g1), measured from BVC. L in stations.', domain: 5 },
+    { id: 'w6-pc-pt', type: 'definition', text: 'Curve Points: PC (Point of Curvature) = PI - T. PT (Point of Tangency) = PC + L. PI is where the two tangent lines intersect.', domain: 5 },
+    { id: 'w6-sight-dist', type: 'formula', text: 'Stopping Sight Distance on crest curves: L = A × S^2 / (200 × (sqrt(h1) + sqrt(h2))^2). h1 = driver eye height (3.5ft), h2 = object height (2ft or 0.5ft).', domain: 5 },
+    { id: 'w6-super-elev', type: 'formula', text: 'Superelevation: e + f = V^2 / (15 × R). e = superelevation rate, f = side friction factor, V = speed (mph), R = radius (ft).', domain: 5 },
+  ],
+  7: [
+    { id: 'w7-geoid-ellip', type: 'definition', text: 'Three surfaces: Ellipsoid (mathematical reference), Geoid (equipotential gravity surface, "mean sea level"), Topographic (actual ground). h = H + N (ellipsoid = orthometric + geoid separation).', domain: 8 },
+    { id: 'w7-datums', type: 'definition', text: 'NAD83: Current horizontal datum (GRS80 ellipsoid). NAVD88: Current vertical datum (geoid-based). NAD27: Old horizontal (Clarke 1866). NGVD29: Old vertical (26 tide gauges).', domain: 8 },
+    { id: 'w7-state-plane', type: 'definition', text: 'State Plane Coordinates: Lambert Conformal Conic for wide (E-W) states. Transverse Mercator for tall (N-S) states. Scale factor varies from central meridian/standard parallels.', domain: 8 },
+    { id: 'w7-convergence', type: 'definition', text: 'Grid vs Geodetic: Convergence angle (γ) = difference between grid north and geodetic north. Grid azimuth = Geodetic azimuth - convergence. Convergence = 0 on central meridian.', domain: 8 },
+    { id: 'w7-scale-factor', type: 'formula', text: 'Combined Scale Factor = Grid Scale Factor × Elevation Scale Factor. Elevation SF = R / (R + h). Ground distance = Grid distance / Combined SF.', domain: 8 },
+    { id: 'w7-geoid-height', type: 'formula', text: 'Geoid height (N): h(ellipsoid) = H(orthometric) + N. If N is negative (most of US), the geoid is below the ellipsoid. Use NGS GEOID model for N values.', domain: 8 },
+  ],
+  8: [
+    { id: 'w8-gnss-errors', type: 'definition', text: 'GNSS Error Sources: Ionospheric delay (biggest), tropospheric delay, multipath, receiver noise, orbital errors, clock errors. Dual-frequency receivers correct ionospheric delay.', domain: 8 },
+    { id: 'w8-dop', type: 'definition', text: 'DOP (Dilution of Precision): GDOP = geometric, PDOP = position, HDOP = horizontal, VDOP = vertical. Lower is better. PDOP < 4 is good. Poor satellite geometry = high DOP.', domain: 8 },
+    { id: 'w8-rtk-static', type: 'definition', text: 'RTK: Real-time cm accuracy, needs base station or VRS network, limited range (~10km). Static: Post-processed, highest accuracy (mm), requires long occupation times (30min-2hr+).', domain: 8 },
+    { id: 'w8-opus', type: 'procedure', text: 'OPUS: Upload RINEX data to NGS, returns NAD83 coordinates. Requires dual-frequency data, 2+ hours static. Reports peak-to-peak errors; all three should be < 5cm.', domain: 8 },
+    { id: 'w8-multipath', type: 'definition', text: 'Multipath: GNSS signal reflects off surfaces before reaching antenna. Causes position errors. Worse near buildings, water, vehicles. Cannot be corrected by differential processing.', domain: 8 },
+    { id: 'w8-cors', type: 'definition', text: 'CORS (Continuously Operating Reference Stations): NGS network of permanent GNSS stations. Provide reference data for post-processing. Enable OPUS solutions and VRS networks.', domain: 8 },
+  ],
+  9: [
+    { id: 'w9-contour', type: 'definition', text: 'Contour Rules: Contours never cross (except overhangs). Evenly spaced = uniform slope. Close together = steep. V-shapes point upstream in valleys. Closed contours = hilltop or depression.', domain: 3 },
+    { id: 'w9-photo-scale', type: 'formula', text: 'Photo Scale: S = f / (H - h). f = focal length, H = flying height above datum, h = ground elevation. Scale varies across photo due to relief displacement.', domain: 3 },
+    { id: 'w9-relief-disp', type: 'formula', text: 'Relief Displacement: d = r × h / H. d = displacement on photo, r = radial distance from principal point, h = object height, H = flying height above base.', domain: 3 },
+    { id: 'w9-raster-vector', type: 'definition', text: 'GIS Data Types: Raster = grid of cells/pixels (DEMs, imagery). Vector = points, lines, polygons (parcels, roads). Raster for continuous data, vector for discrete features.', domain: 3 },
+    { id: 'w9-flying-height', type: 'formula', text: 'Flying Height: H = f / S + h_avg. For 1:10,000 scale with 6" (152mm) focal length: H = 0.152m × 10,000 + h_avg = 1,520m + h_avg above datum.', domain: 3 },
+    { id: 'w9-overlap', type: 'definition', text: 'Aerial Photo Overlap: Forward (endlap) = 60% standard for stereo coverage. Sidelap = 25-30% between flight lines. Stereo pairs require 60%+ forward overlap.', domain: 3 },
+  ],
+  10: [
+    { id: 'w10-title-elements', type: 'definition', text: 'Hierarchy of Title Elements: (1) Rights of parties in possession, (2) Senior rights/unwritten rights, (3) Written title (calls for monuments > distances > area > coordinates).', domain: 4 },
+    { id: 'w10-deed-types', type: 'definition', text: 'Deed Types: General Warranty (most protection, covenants against all defects). Special Warranty (only defects during grantor\'s ownership). Quitclaim (no warranties, transfers whatever interest grantor has).', domain: 4 },
+    { id: 'w10-easement', type: 'definition', text: 'Easement Types: Appurtenant (attached to land, has dominant/servient estate). In Gross (personal right, like utility). Created by express grant, implication, necessity, or prescription.', domain: 4 },
+    { id: 'w10-adverse', type: 'definition', text: 'Adverse Possession (OCEAN): Open & notorious, Continuous, Exclusive, Adverse/hostile, for the statutory period (varies by state, typically 5-20 years). Must meet ALL elements.', domain: 4 },
+    { id: 'w10-monuments', type: 'procedure', text: 'Calls for Monuments: Natural monuments (rivers, trees) control over artificial (iron pins, stakes). Artificial monuments control over distances. Distances control over area.', domain: 4 },
+    { id: 'w10-legal-desc', type: 'definition', text: 'Legal Description Types: Metes & Bounds (bearings, distances, POB). Lot & Block (recorded subdivision). PLSS (Section, Township, Range). All must close and be unambiguous.', domain: 4 },
+  ],
+  11: [
+    { id: 'w11-plss-struct', type: 'definition', text: 'PLSS Structure: Initial Point → Principal Meridian (N/S) + Baseline (E/W) → Townships (6mi × 6mi) → 36 Sections per township → Aliquot parts (halves and quarters).', domain: 4 },
+    { id: 'w11-section-num', type: 'procedure', text: 'Section Numbering: Starts at NE corner (Section 1), serpentines west to Section 6, drops down, goes east (7-12), continues serpentine to Section 36 at SE corner.', domain: 4 },
+    { id: 'w11-aliquot', type: 'formula', text: 'Aliquot Parts: Read inside-out. "NW1/4 of SE1/4 of Section 12" = 40 acres. Start from section (640ac), each quarter divides by 4. 640 × 1/4 × 1/4 = 40.', domain: 4 },
+    { id: 'w11-corner-types', type: 'definition', text: 'PLSS Corner Types: Standard corners (placed during original survey), Closing corners (where lines close on prior surveys), Meander corners (at navigable water intersections), Witness corners (near true position when corner can\'t be set).', domain: 4 },
+    { id: 'w11-township-range', type: 'procedure', text: 'Township/Range: T3N R2W = 3 townships north of baseline, 2 ranges west of principal meridian. Each township contains 36 sections of approximately 640 acres each.', domain: 4 },
+    { id: 'w11-correction', type: 'definition', text: 'Correction Lines: Standard parallels every 24 miles (4 townships) N and S. Guide meridians every 24 miles E and W. Account for convergence of meridians toward poles.', domain: 4 },
+  ],
+  12: [
+    { id: 'w12-lost-obliterated', type: 'definition', text: 'Lost Corner: No evidence of original position, no reliable testimony. Must be restored by proportionate measurement. Obliterated Corner: Original position can be determined from evidence or testimony.', domain: 4 },
+    { id: 'w12-single-prop', type: 'procedure', text: 'Single Proportionate Measurement: For lost corners on a line between two known corners (e.g., lost quarter corner). Place at proportionate distance based on original measurements.', domain: 4 },
+    { id: 'w12-double-prop', type: 'procedure', text: 'Double Proportionate Measurement: For lost interior section corners. Proportion N-S first (between section corners on same range line), then E-W. Intersection = restored position.', domain: 4 },
+    { id: 'w12-original-survey', type: 'definition', text: 'Original Survey Principle: The original survey controls. If an original corner exists (even if position seems wrong), it stands. Corners are only "lost" when all evidence of position is gone.', domain: 4 },
+    { id: 'w12-meander', type: 'definition', text: 'Meander Lines: Not boundaries - they approximate water\'s edge for area calculation. The actual boundary is the water body. Meander corners set where section/township lines meet navigable water.', domain: 4 },
+    { id: 'w12-witness', type: 'definition', text: 'Witness Corner (WC): Set on a survey line near a true corner position when the corner itself cannot be set (e.g., in water, on cliff). Referenced to true corner by bearing and distance.', domain: 4 },
+  ],
+  13: [
+    { id: 'w13-riparian', type: 'definition', text: 'Riparian Rights: Ownership rights along a river or stream. Littoral Rights: Along a lake, sea, or ocean. Both give right of access to water, but boundary location rules differ.', domain: 4 },
+    { id: 'w13-accretion', type: 'definition', text: 'Water Boundary Changes: Accretion = gradual addition of land by water (boundary moves). Reliction = water gradually recedes (boundary moves). Avulsion = sudden change (boundary stays).', domain: 4 },
+    { id: 'w13-navigable', type: 'definition', text: 'Navigable Waters: Federal test = "navigable in fact" (usable for commerce). State-owned bed below ordinary high water mark. Non-navigable = private ownership to thread/center of stream.', domain: 4 },
+    { id: 'w13-gradient', type: 'procedure', text: 'Gradient Boundary (Texas): Where land between river and upland has a steep gradient, the boundary is found by applying the gradient method rather than the thread of the stream.', domain: 4 },
+    { id: 'w13-high-water', type: 'definition', text: 'Ordinary High Water Mark (OHWM): The line on the bank established by water fluctuations and indicated by physical characteristics - changes in vegetation, soil, or debris deposits.', domain: 4 },
+    { id: 'w13-tidal', type: 'definition', text: 'Tidal Boundaries: In tidal waters, the boundary is typically mean high water (MHW) for private/public divide. Mean lower low water (MLLW) often used for navigational charts.', domain: 4 },
+  ],
+  14: [
+    { id: 'w14-ethics', type: 'definition', text: 'Paramount Duty: A surveyor\'s primary obligation is to public health, safety, and welfare - above obligations to clients or employers. This is the #1 NCEES ethics principle.', domain: 7 },
+    { id: 'w14-conduct', type: 'definition', text: 'Professional Conduct Rules: Only practice in areas of competence. Do not sign/seal work not performed under your supervision. Disclose conflicts of interest. Reject bribery.', domain: 7 },
+    { id: 'w14-alta', type: 'definition', text: 'ALTA/NSPS Survey: Required for title insurance on commercial property. Must show boundaries, improvements, easements, encroachments, and comply with Table A optional items if selected.', domain: 7 },
+    { id: 'w14-contracts', type: 'definition', text: 'Survey Contracts: Should specify scope, deliverables, timeline, fees, and standards. Change orders needed for scope changes. Standard of care = what a reasonably prudent surveyor would do.', domain: 7 },
+    { id: 'w14-liability', type: 'definition', text: 'Professional Liability: Surveyors can be liable for negligence (breach of standard of care), errors in boundary location, and incorrect certifications. Carry E&O insurance.', domain: 7 },
+    { id: 'w14-seal', type: 'procedure', text: 'Seal & Certification: Survey documents must bear the seal and signature of the responsible surveyor. Sealing work certifies it meets applicable standards and was done under your responsible charge.', domain: 7 },
+  ],
+  15: [
+    { id: 'w15-error-types', type: 'definition', text: 'Error Classification: Systematic (consistent pattern, can be corrected). Random (follows normal distribution, reduced by redundancy). Blunder/Gross (mistakes, detected by checks and redundancy).', domain: 1 },
+    { id: 'w15-closure-std', type: 'definition', text: 'Closure Standards: First order traverse: 1:100,000. Second order: 1:50,000. Third order: 1:10,000. Level loop: First order = 3mm × sqrt(K), Second = 6mm × sqrt(K). K in km.', domain: 5 },
+    { id: 'w15-geoid-review', type: 'formula', text: 'Height Relationships: h = H + N. Ellipsoid height (h) = Orthometric height (H) + Geoid undulation (N). In the US, N is typically negative (-20 to -50m in CONUS).', domain: 8 },
+    { id: 'w15-plss-review', type: 'procedure', text: 'PLSS Corner Restoration: First determine if corner is lost or obliterated. Obliterated = restore from evidence. Lost on line = single proportion. Lost interior = double proportion.', domain: 4 },
+    { id: 'w15-traverse-review', type: 'procedure', text: 'Traverse Workflow: Measure angles and distances → Compute azimuths → Calculate lat/dep → Check closure → Adjust (Compass Rule) → Compute coordinates → Calculate area.', domain: 5 },
+    { id: 'w15-exam-strategy', type: 'procedure', text: 'Exam Triage: First pass = answer questions you know (30 sec each). Second pass = work solvable problems (2-3 min each). Third pass = educated guesses on remaining. No penalty for guessing.', domain: 7 },
+  ],
+  16: [
+    { id: 'w16-time-mgmt', type: 'procedure', text: 'FS Exam Structure: 110 questions, 6 hours. That is ~3.3 minutes per question. Budget 2 minutes for quick recall, 4 minutes for calculations. Flag and return to difficult ones.', domain: 7 },
+    { id: 'w16-calc-check', type: 'procedure', text: 'Calculator Strategy: Only NCEES-approved models allowed. Practice all key calculations on YOUR calculator. Know how to convert DMS to decimal degrees and back quickly.', domain: 1 },
+    { id: 'w16-formula-ref', type: 'procedure', text: 'NCEES Reference Handbook: Know where formulas are located BEFORE exam day. Practice using ONLY the handbook for 2+ practice exams. Tab or bookmark key pages mentally.', domain: 1 },
+    { id: 'w16-domain-weight', type: 'definition', text: 'FS Exam Domain Weights (approximate): Surveying/Computations ~25%, Boundary/PLSS ~20%, Math/Science ~15%, Field Data ~15%, Mapping/GIS ~10%, Professional Practice ~10%, Geodesy ~5%.', domain: 7 },
+    { id: 'w16-sense-check', type: 'procedure', text: 'Sense-Check Answers: Does the area of a residential lot = 500 acres? (No, probably 0.5.) Does a bearing of N 400 E exist? (No, max 90.) Always verify your answer is reasonable.', domain: 1 },
+    { id: 'w16-key-formulas', type: 'formula', text: 'Must-Know Formulas: Lat = D×cos(Az), Dep = D×sin(Az). Area = Σ(X×Y_next - X_next×Y)/2. T = R×tan(Δ/2). Scale = f/(H-h). σ_mean = σ/sqrt(n).', domain: 5 },
+  ],
+};
+
+function getWeekConcepts(week: number): ConceptEntry[] {
+  return WEEK_CONCEPTS[week] || WEEK_CONCEPTS[1];
+}
 
 export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
@@ -133,7 +243,8 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   const createFreshReviews = useCallback(async () => {
     setIsCreatingReviews(true);
     try {
-      for (const concept of SAMPLE_CONCEPTS) {
+      const concepts = getWeekConcepts(week);
+      for (const concept of concepts) {
         await createReviewMutation.mutateAsync({
           week,
           conceptId: concept.id,
@@ -142,7 +253,6 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
           domain: concept.domain,
         });
       }
-      // Invalidate and refetch all retention queries
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
@@ -156,7 +266,8 @@ export function ReinforceRetentionBooster({ week }: ReinforceRetentionBoosterPro
   }, [week, createReviewMutation, queryClient]);
 
   const initializeReviews = useCallback(async () => {
-    for (const concept of SAMPLE_CONCEPTS) {
+    const concepts = getWeekConcepts(week);
+    for (const concept of concepts) {
       const exists = weekReviews.some(r => r.conceptId === concept.id);
       if (!exists) {
         await createReviewMutation.mutateAsync({
