@@ -217,14 +217,40 @@ function getConceptsForDomains(domainNames: string[]): ConceptEntry[] {
   return selected.slice(0, 6);
 }
 
+function getSessionCompletedKey(userId: string | undefined, week: number): string {
+  return `retention-booster-completed:${userId || 'anon'}:w${week}`;
+}
+
+function isSessionCompletedToday(userId: string | undefined, week: number): boolean {
+  try {
+    const key = getSessionCompletedKey(userId, week);
+    const stored = localStorage.getItem(key);
+    if (!stored) return false;
+    const { date } = JSON.parse(stored);
+    const today = new Date().toDateString();
+    return date === today;
+  } catch {
+    return false;
+  }
+}
+
+function markSessionCompletedToday(userId: string | undefined, week: number): void {
+  try {
+    const key = getSessionCompletedKey(userId, week);
+    localStorage.setItem(key, JSON.stringify({ date: new Date().toDateString() }));
+  } catch {
+  }
+}
+
 export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
+  const userId = (user as { id?: string } | null)?.id;
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
-  const [sessionCompleted, setSessionCompleted] = useState(false);
+  const [sessionCompleted, setSessionCompleted] = useState(() => isSessionCompletedToday(userId, week));
   const [reviewedCardIds, setReviewedCardIds] = useState<Set<string>>(new Set());
   const [sessionCards, setSessionCards] = useState<RetentionReview[]>([]);
   const [activeRating, setActiveRating] = useState<number | null>(null);
@@ -345,16 +371,14 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
     const { data: freshReviews } = await refetchDue();
     let reviewsToUse = freshReviews || dueReviews;
     
-    // Check if reviews belong to current user (detect stale cached data from other users)
-    const currentUserId = (user as { id?: string } | null)?.id;
-    if (reviewsToUse && reviewsToUse.length > 0 && currentUserId) {
-      const foreignReviews = reviewsToUse.filter(r => r.userId !== currentUserId);
+    if (reviewsToUse && reviewsToUse.length > 0 && userId) {
+      const foreignReviews = reviewsToUse.filter(r => r.userId !== userId);
       if (foreignReviews.length > 0) {
         console.warn('[Retention] Detected reviews from different user:', 
           foreignReviews.map(r => ({ id: r.id, userId: r.userId })));
         
         // Filter out foreign reviews - only use current user's reviews
-        const ownReviews = reviewsToUse.filter(r => r.userId === currentUserId);
+        const ownReviews = reviewsToUse.filter(r => r.userId === userId);
         
         if (ownReviews.length === 0) {
           // No reviews for current user - create fresh ones
@@ -399,7 +423,7 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
     setIsFlipped(false);
     setSessionCompleted(false);
     setSessionActive(true);
-  }, [dueReviews, refetchDue, toast, user, createFreshReviews]);
+  }, [dueReviews, refetchDue, toast, userId, createFreshReviews]);
 
   const awardXpMutation = useMutation({
     mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
@@ -456,6 +480,7 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
           });
           setSessionActive(false);
           setSessionCompleted(true);
+          markSessionCompletedToday(userId, week);
           setSessionCards([]);
           setReviewedCardIds(new Set());
           setCurrentCardIndex(0);
