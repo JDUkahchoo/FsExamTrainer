@@ -18,6 +18,7 @@ import { FlashcardModeSelector, type FlashcardMode } from '@/components/flashcar
 import { TriadDrillCard } from '@/components/triad-drill-card';
 import { FeynmanModeCard } from '@/components/feynman-mode-card';
 import { MnemonicBuilderCard } from '@/components/mnemonic-builder-card';
+import { FlashcardChallengeMode } from '@/components/flashcard-challenge-mode';
 import { useToast } from '@/hooks/use-toast';
 import { useExamTrack } from '@/contexts/exam-track-context';
 
@@ -123,9 +124,9 @@ export default function FlashcardsPage() {
     }
   });
 
-  // Persist session state helper
+  // Persist session state helper (skip for challenge mode - it manages its own state)
   const persistSessionState = useCallback(() => {
-    if (!currentSessionId || isResumingSession) return;
+    if (!currentSessionId || isResumingSession || studyMode === 'challenge') return;
     
     const state: FlashcardSessionState = {
       deck: selectedDeck,
@@ -182,9 +183,9 @@ export default function FlashcardsPage() {
     }
   });
 
-  // Start session when entering Quick Review mode
+  // Start session when entering Quick Review or Challenge mode
   useEffect(() => {
-    if (studyMode === 'quick' && !currentSessionId && !startSessionMutation.isPending) {
+    if ((studyMode === 'quick' || studyMode === 'challenge') && !currentSessionId && !startSessionMutation.isPending) {
       startSessionMutation.mutate();
     }
   }, [studyMode]);
@@ -197,8 +198,8 @@ export default function FlashcardsPage() {
   }, [currentSessionId]);
 
   useEffect(() => {
-    // Handle mode change - complete session when leaving quick review
-    if (studyMode !== 'quick' && currentSessionId) {
+    // Handle mode change - complete session when leaving quick/challenge
+    if (studyMode !== 'quick' && studyMode !== 'challenge' && currentSessionId) {
       completeCurrentSession();
     }
   }, [studyMode, currentSessionId, completeCurrentSession]);
@@ -225,21 +226,23 @@ export default function FlashcardsPage() {
           : 0;
         const timeSpent = Math.floor((Date.now() - stats.startTime) / 1000);
         
-        // First persist current state for potential resume
-        const stateBlob = new Blob([JSON.stringify({
-          deck: selectedDeck,
-          domains: selectedDomains,
-          shuffledIndices,
-          currentIndex,
-          studyMode,
-          masteryRatings: stats.masteryRatings,
-          startTime: stats.startTime
-        })], { type: 'application/json' });
-        
-        navigator.sendBeacon(
-          `/api/flashcards/sessions/${currentSessionId}/state`,
-          stateBlob
-        );
+        // First persist current state for potential resume (skip for challenge mode)
+        if (studyMode !== 'challenge') {
+          const stateBlob = new Blob([JSON.stringify({
+            deck: selectedDeck,
+            domains: selectedDomains,
+            shuffledIndices,
+            currentIndex,
+            studyMode,
+            masteryRatings: stats.masteryRatings,
+            startTime: stats.startTime
+          })], { type: 'application/json' });
+          
+          navigator.sendBeacon(
+            `/api/flashcards/sessions/${currentSessionId}/state`,
+            stateBlob
+          );
+        }
         
         // Only complete if we have reviews
         if (stats.cardsReviewed > 0) {
@@ -377,7 +380,7 @@ export default function FlashcardsPage() {
     return masteredCards.has(cardId);
   }).length;
 
-  if (!currentCard) {
+  if (!currentCard && studyMode !== 'challenge') {
     return (
       <div className="p-8 max-w-4xl mx-auto">
         <Card className="p-12 text-center">
@@ -713,10 +716,12 @@ export default function FlashcardsPage() {
             </SelectContent>
           </Select>
 
-          <div className="flex gap-4 text-sm text-muted-foreground">
-            <span>Card {currentIndex + 1} of {totalCards}</span>
-            <span>Mastered: {masteredCount}/{totalCards}</span>
-          </div>
+          {studyMode !== 'challenge' && (
+            <div className="flex gap-4 text-sm text-muted-foreground">
+              <span>Card {currentIndex + 1} of {totalCards}</span>
+              <span>Mastered: {masteredCount}/{totalCards}</span>
+            </div>
+          )}
 
           {selectedDomains.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
@@ -745,32 +750,63 @@ export default function FlashcardsPage() {
             </div>
           )}
 
-          <div className="ml-auto flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShuffle}
-              data-testid="button-shuffle"
-            >
-              <Shuffle className="w-4 h-4 mr-2" />
-              Shuffle
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReset}
-              data-testid="button-reset"
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Reset
-            </Button>
-          </div>
+          {studyMode !== 'challenge' && (
+            <div className="ml-auto flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShuffle}
+                data-testid="button-shuffle"
+              >
+                <Shuffle className="w-4 h-4 mr-2" />
+                Shuffle
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                data-testid="button-reset"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </div>
+          )}
         </div>
         
-        <Progress value={progress} className="h-2" />
+        {studyMode !== 'challenge' && <Progress value={progress} className="h-2" />}
       </div>
 
-      {studyMode === 'quick' ? renderQuickReviewMode() : renderEnhancedMode()}
+      {studyMode === 'challenge' ? (
+        <FlashcardChallengeMode
+          cards={filteredCards}
+          activeFlashcards={activeFlashcards}
+          selectedDeck={selectedDeck}
+          onCardMatched={(cardId) => {
+            recordProgressMutation.mutate({ cardId, mode: 'challenge' });
+            if (currentSessionId) {
+              sessionStatsRef.current.cardsReviewed += 1;
+              sessionStatsRef.current.masteryRatings.push(4);
+              logReviewEventMutation.mutate({
+                sessionId: currentSessionId,
+                cardId,
+                deck: selectedDeck,
+                mode: 'challenge',
+                rating: 4
+              });
+            }
+          }}
+          onSessionComplete={(stats) => {
+            if (currentSessionId && sessionStatsRef.current.cardsReviewed > 0) {
+              completeSessionMutation.mutate(currentSessionId);
+            }
+            toast({
+              title: "Challenge Complete!",
+              description: `Matched ${stats.correct} terms with ${stats.incorrect} miss${stats.incorrect !== 1 ? 'es' : ''}.`,
+            });
+          }}
+        />
+      ) : studyMode === 'quick' ? renderQuickReviewMode() : renderEnhancedMode()}
     </div>
   );
 }

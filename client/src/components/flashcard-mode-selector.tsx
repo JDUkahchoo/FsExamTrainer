@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Brain, Lightbulb, Zap } from 'lucide-react';
+import { BookOpen, Brain, Lightbulb, Zap, Swords } from 'lucide-react';
 
-export type FlashcardMode = 'quick' | 'triad' | 'feynman' | 'mnemonic';
+export type FlashcardMode = 'quick' | 'triad' | 'feynman' | 'mnemonic' | 'challenge';
 
 interface FlashcardModeSelectorProps {
   mode: FlashcardMode;
@@ -11,7 +11,7 @@ interface FlashcardModeSelectorProps {
 export function FlashcardModeSelector({ mode, onModeChange }: FlashcardModeSelectorProps) {
   return (
     <Tabs value={mode} onValueChange={(v) => onModeChange(v as FlashcardMode)} className="w-full">
-      <TabsList className="grid w-full grid-cols-4 h-auto">
+      <TabsList className="grid w-full grid-cols-5 h-auto">
         <TabsTrigger 
           value="quick" 
           className="flex flex-col items-center gap-1 py-2 px-1 text-xs"
@@ -19,6 +19,14 @@ export function FlashcardModeSelector({ mode, onModeChange }: FlashcardModeSelec
         >
           <Zap className="w-4 h-4" />
           <span>Quick Review</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="challenge" 
+          className="flex flex-col items-center gap-1 py-2 px-1 text-xs"
+          data-testid="tab-challenge-mode"
+        >
+          <Swords className="w-4 h-4" />
+          <span>Challenge</span>
         </TabsTrigger>
         <TabsTrigger 
           value="triad" 

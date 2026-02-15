@@ -495,7 +495,7 @@ export function getReviewPeriod(date: Date = new Date()): ReviewPeriod {
 
 // --- Daily Flashcard Progress (for quest tracking) ---
 
-export const FLASHCARD_MODES = ['quick', 'triad', 'feynman', 'mnemonic'] as const;
+export const FLASHCARD_MODES = ['quick', 'triad', 'feynman', 'mnemonic', 'challenge'] as const;
 export type FlashcardMode = typeof FLASHCARD_MODES[number];
 
 export const dailyFlashcardProgress = pgTable("daily_flashcard_progress", {
