@@ -26,6 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 interface ApplyScenarioLabProps {
   week: number;
   colorClass?: string;
+  examTrack?: string;
 }
 
 interface FieldProblem {
@@ -87,7 +88,7 @@ const SAMPLE_PROBLEMS: FieldProblem[] = [
   }
 ];
 
-export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplyScenarioLabProps) {
+export function ApplyScenarioLab({ week, colorClass = "text-primary", examTrack = "fs" }: ApplyScenarioLabProps) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [activeChallenge, setActiveChallenge] = useState<FieldProblem | null>(null);
@@ -100,16 +101,21 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplySce
   const [startTime, setStartTime] = useState<Date | null>(null);
 
   const { data: attempts = [], isLoading } = useQuery<ApplyChallengeAttempt[]>({
-    queryKey: [`/api/apply/attempts?week=${week}`],
+    queryKey: ['/api/apply/attempts', week, examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/apply/attempts?week=${week}&examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch attempts");
+      return res.json();
+    },
   });
 
   const createAttemptMutation = useMutation({
-    mutationFn: async (data: { week: number; challengeId: string; challengeType: string }) => {
+    mutationFn: async (data: { week: number; challengeId: string; challengeType: string; examTrack: string }) => {
       const response = await apiRequest('POST', '/api/apply/attempts', data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/apply/attempts?week=${week}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', week, examTrack] });
     },
   });
 
@@ -119,7 +125,7 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplySce
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/apply/attempts?week=${week}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', week, examTrack] });
     },
   });
 
@@ -153,6 +159,7 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary" }: ApplySce
         week,
         challengeId: problem.id,
         challengeType: 'field_problem',
+        examTrack,
       });
       setActiveAttemptId(data.id);
     } catch (error) {

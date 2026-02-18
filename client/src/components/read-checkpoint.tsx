@@ -72,7 +72,12 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
   const hasInitialized = useRef(false);
 
   const { data: readingProgress = [], isLoading } = useQuery<ReadingProgress[]>({
-    queryKey: [`/api/reading-progress/${week}`],
+    queryKey: ['/api/reading-progress', week, examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/reading-progress/${week}?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch reading progress");
+      return res.json();
+    },
   });
 
   // Reset local state when week changes
@@ -115,8 +120,7 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
       return res.json() as Promise<{ isNewCompletion: boolean }>;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [`/api/reading-progress/${week}`] });
-      queryClient.invalidateQueries({ queryKey: ['/api/reading-progress'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/reading-progress', week, examTrack] });
       // Show XP toast only for NEW completions (backend handles the actual XP award)
       if (data.isNewCompletion) {
         queryClient.invalidateQueries({ queryKey: ['/api/xp'] });

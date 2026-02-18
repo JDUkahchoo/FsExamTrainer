@@ -897,14 +897,17 @@ export default function StudyPlan() {
                   <FocusWeaknessScanner
                     week={plan.week}
                     colorClass="text-domain-computations-fg"
+                    examTrack={examTrack}
                   />
                   <ApplyScenarioLab
                     week={plan.week}
                     colorClass="text-domain-boundary-fg"
+                    examTrack={examTrack}
                   />
                   <ReinforceRetentionBooster
                     week={plan.week}
                     domains={plan.domains as string[]}
+                    examTrack={examTrack}
                   />
 
                   {/* Interactive Lessons Section */}

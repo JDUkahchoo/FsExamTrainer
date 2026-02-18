@@ -724,6 +724,7 @@ export const readingProgress = pgTable("reading_progress", {
   takeawayNote: text("takeaway_note"),
   completedAt: timestamp("completed_at"),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  examTrack: varchar("exam_track").notNull().default('fs'),
 });
 
 export const readingProgressRelations = relations(readingProgress, ({ one }) => ({
@@ -1258,6 +1259,7 @@ export const applyChallengeAttempts = pgTable("apply_challenge_attempts", {
   maxGrade: integer("max_grade"), // Total rubric items available
   userAnswer: text("user_answer"),
   notes: text("notes"),
+  examTrack: varchar("exam_track").notNull().default('fs'),
 });
 
 export const applyChallengeAttemptsRelations = relations(applyChallengeAttempts, ({ one }) => ({
@@ -1281,7 +1283,7 @@ export const retentionReviews = pgTable("retention_reviews", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   week: integer("week").notNull(),
-  conceptId: varchar("concept_id").notNull(), // Unique identifier for the concept
+  conceptId: varchar("concept_id").notNull(),
   conceptType: varchar("concept_type").notNull(), // 'formula', 'definition', 'procedure'
   conceptText: text("concept_text").notNull(),
   domain: integer("domain").notNull(),
@@ -1292,6 +1294,7 @@ export const retentionReviews = pgTable("retention_reviews", {
   nextReviewAt: timestamp("next_review_at"),
   reviewCount: integer("review_count").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  examTrack: varchar("exam_track").notNull().default('fs'),
 });
 
 export const retentionReviewsRelations = relations(retentionReviews, ({ one }) => ({

@@ -272,7 +272,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/reading-progress", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const progress = await storage.getAllReadingProgress(userId);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const progress = await storage.getAllReadingProgress(userId, examTrack);
       res.json(progress);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch reading progress" });
@@ -283,7 +284,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const week = parseInt(req.params.week);
-      const progress = await storage.getReadingProgress(userId, week);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const progress = await storage.getReadingProgress(userId, week, examTrack);
       res.json(progress);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch reading progress" });
@@ -346,7 +348,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const limit = parseInt(req.query.limit as string) || 20;
-      const misses = await storage.getRecentMisses(userId, limit);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const misses = await storage.getRecentMisses(userId, limit, examTrack);
       res.json(misses);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch recent misses" });
@@ -356,7 +359,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/focus/domain-stats", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const stats = await storage.getDomainStats(userId);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const stats = await storage.getDomainStats(userId, examTrack);
       res.json(stats);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch domain stats" });
@@ -366,7 +370,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/focus/streak", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const streak = await storage.getCorrectStreak(userId);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const streak = await storage.getCorrectStreak(userId, examTrack);
       res.json(streak);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch streak" });
@@ -378,7 +383,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const week = req.query.week ? parseInt(req.query.week as string) : undefined;
-      const attempts = await storage.getApplyChallengeAttempts(userId, week);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const attempts = await storage.getApplyChallengeAttempts(userId, week, examTrack);
       res.json(attempts);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch apply attempts" });
@@ -428,7 +434,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const week = req.query.week ? parseInt(req.query.week as string) : undefined;
-      const reviews = await storage.getRetentionReviews(userId, week);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const reviews = await storage.getRetentionReviews(userId, week, examTrack);
       res.json(reviews);
     } catch (error) {
       console.error("Error fetching retention reviews:", error);
@@ -440,11 +447,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const week = req.query.week ? parseInt(req.query.week as string) : undefined;
-      const dueReviews = await storage.getDueRetentionReviews(userId, week);
-      // Debug: log userId and what reviews are returned
-      const reviewUserIds = Array.from(new Set(dueReviews.map(r => r.userId)));
-      console.log('[RETENTION DUE] userId:', userId, 'week:', week, 'reviewCount:', dueReviews.length, 
-        'reviewUserIds:', reviewUserIds);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const dueReviews = await storage.getDueRetentionReviews(userId, week, examTrack);
       res.json(dueReviews);
     } catch (error) {
       console.error("Error fetching due reviews:", error);
@@ -456,7 +460,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const week = req.query.week ? parseInt(req.query.week as string) : undefined;
-      const stats = await storage.getRetentionStats(userId, week);
+      const examTrack = (req.query.examTrack as string) || undefined;
+      const stats = await storage.getRetentionStats(userId, week, examTrack);
       res.json(stats);
     } catch (error) {
       console.error("Error fetching retention stats:", error);

@@ -194,9 +194,9 @@ export interface IStorage {
   deleteAllQuizResults(userId: string): Promise<void>;
   
   // FOCUS Weakness Scanner methods
-  getRecentMisses(userId: string, limit?: number): Promise<QuizResult[]>;
-  getDomainStats(userId: string): Promise<{ domain: string; total: number; correct: number; accuracy: number }[]>;
-  getCorrectStreak(userId: string): Promise<{ current: number; best: number }>;
+  getRecentMisses(userId: string, limit?: number, examTrack?: string): Promise<QuizResult[]>;
+  getDomainStats(userId: string, examTrack?: string): Promise<{ domain: string; total: number; correct: number; accuracy: number }[]>;
+  getCorrectStreak(userId: string, examTrack?: string): Promise<{ current: number; best: number }>;
 
   // Quiz Session methods
   getQuizSessions(userId: string, examTrack?: string): Promise<QuizSession[]>;
@@ -272,22 +272,22 @@ export interface IStorage {
   deleteStudyNote(userId: string, noteId: string): Promise<void>;
 
   // Reading Progress methods (Comprehension Checkpoint)
-  getReadingProgress(userId: string, week: number): Promise<ReadingProgress[]>;
-  getAllReadingProgress(userId: string): Promise<ReadingProgress[]>;
+  getReadingProgress(userId: string, week: number, examTrack?: string): Promise<ReadingProgress[]>;
+  getAllReadingProgress(userId: string, examTrack?: string): Promise<ReadingProgress[]>;
   upsertReadingProgress(progress: InsertReadingProgress): Promise<ReadingProgress>;
 
   // APPLY Challenge Attempts methods (Scenario Lab)
-  getApplyChallengeAttempts(userId: string, week?: number): Promise<ApplyChallengeAttempt[]>;
+  getApplyChallengeAttempts(userId: string, week?: number, examTrack?: string): Promise<ApplyChallengeAttempt[]>;
   createApplyChallengeAttempt(attempt: InsertApplyChallengeAttempt): Promise<ApplyChallengeAttempt>;
   updateApplyChallengeAttempt(userId: string, attemptId: string, updates: Partial<InsertApplyChallengeAttempt>): Promise<ApplyChallengeAttempt>;
 
   // REINFORCE Retention Reviews methods (Spaced Repetition)
-  getRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]>;
+  getRetentionReviews(userId: string, week?: number, examTrack?: string): Promise<RetentionReview[]>;
   getRetentionReviewById(reviewId: string): Promise<RetentionReview | null>;
-  getDueRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]>;
+  getDueRetentionReviews(userId: string, week?: number, examTrack?: string): Promise<RetentionReview[]>;
   createRetentionReview(review: InsertRetentionReview): Promise<RetentionReview>;
   updateRetentionReview(userId: string, reviewId: string, updates: Partial<InsertRetentionReview>): Promise<RetentionReview>;
-  getRetentionStats(userId: string, week?: number): Promise<{ totalReviews: number; dueToday: number; averageMastery: number; retentionScore: number }>;
+  getRetentionStats(userId: string, week?: number, examTrack?: string): Promise<{ totalReviews: number; dueToday: number; averageMastery: number; retentionScore: number }>;
 
   // Daily Activity methods
   getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
@@ -486,20 +486,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   // FOCUS Weakness Scanner methods
-  async getRecentMisses(userId: string, limit: number = 20): Promise<QuizResult[]> {
+  async getRecentMisses(userId: string, limit: number = 20, examTrack?: string): Promise<QuizResult[]> {
+    const validDomains = examTrack === 'ps' 
+      ? ['Legal Principles', 'Professional Survey Practices', 'Standards and Specifications', 'Business Practices', 'Areas of Practice']
+      : ['Math & Basic Science', 'Field Data Acquisition', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Surveying Principles', 'Survey Computations & Applications', 'Professional Practice', 'Applied Mathematics & Statistics'];
+    
+    const conditions = [eq(quizResults.userId, userId), eq(quizResults.isCorrect, false)];
+    if (examTrack) {
+      conditions.push(sql`${quizResults.domain} = ANY(${validDomains})`);
+    }
     return await db
       .select()
       .from(quizResults)
-      .where(and(eq(quizResults.userId, userId), eq(quizResults.isCorrect, false)))
+      .where(and(...conditions))
       .orderBy(desc(quizResults.completedAt))
       .limit(limit);
   }
 
-  async getDomainStats(userId: string): Promise<{ domain: string; total: number; correct: number; accuracy: number }[]> {
+  async getDomainStats(userId: string, examTrack?: string): Promise<{ domain: string; total: number; correct: number; accuracy: number }[]> {
+    const validDomains = examTrack === 'ps' 
+      ? ['Legal Principles', 'Professional Survey Practices', 'Standards and Specifications', 'Business Practices', 'Areas of Practice']
+      : ['Math & Basic Science', 'Field Data Acquisition', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Surveying Principles', 'Survey Computations & Applications', 'Professional Practice', 'Applied Mathematics & Statistics'];
+    
+    const conditions = [eq(quizResults.userId, userId)];
+    if (examTrack) {
+      conditions.push(sql`${quizResults.domain} = ANY(${validDomains})`);
+    }
     const results = await db
       .select()
       .from(quizResults)
-      .where(eq(quizResults.userId, userId));
+      .where(and(...conditions));
     
     const domainMap = new Map<string, { total: number; correct: number }>();
     
@@ -518,11 +534,19 @@ export class DatabaseStorage implements IStorage {
     }));
   }
 
-  async getCorrectStreak(userId: string): Promise<{ current: number; best: number }> {
+  async getCorrectStreak(userId: string, examTrack?: string): Promise<{ current: number; best: number }> {
+    const validDomains = examTrack === 'ps' 
+      ? ['Legal Principles', 'Professional Survey Practices', 'Standards and Specifications', 'Business Practices', 'Areas of Practice']
+      : ['Math & Basic Science', 'Field Data Acquisition', 'Mapping, GIS, and CAD', 'Boundary Law & PLSS', 'Surveying Principles', 'Survey Computations & Applications', 'Professional Practice', 'Applied Mathematics & Statistics'];
+    
+    const conditions = [eq(quizResults.userId, userId)];
+    if (examTrack) {
+      conditions.push(sql`${quizResults.domain} = ANY(${validDomains})`);
+    }
     const results = await db
       .select()
       .from(quizResults)
-      .where(eq(quizResults.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(quizResults.completedAt));
     
     let current = 0;
@@ -912,21 +936,30 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Reading Progress methods (Comprehension Checkpoint)
-  async getReadingProgress(userId: string, week: number): Promise<ReadingProgress[]> {
+  async getReadingProgress(userId: string, week: number, examTrack?: string): Promise<ReadingProgress[]> {
+    const conditions = [eq(readingProgress.userId, userId), eq(readingProgress.week, week)];
+    if (examTrack) {
+      conditions.push(eq(readingProgress.examTrack, examTrack));
+    }
     return await db
       .select()
       .from(readingProgress)
-      .where(and(eq(readingProgress.userId, userId), eq(readingProgress.week, week)));
+      .where(and(...conditions));
   }
 
-  async getAllReadingProgress(userId: string): Promise<ReadingProgress[]> {
+  async getAllReadingProgress(userId: string, examTrack?: string): Promise<ReadingProgress[]> {
+    const conditions = [eq(readingProgress.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(readingProgress.examTrack, examTrack));
+    }
     return await db
       .select()
       .from(readingProgress)
-      .where(eq(readingProgress.userId, userId));
+      .where(and(...conditions));
   }
 
   async upsertReadingProgress(progress: InsertReadingProgress): Promise<ReadingProgress> {
+    const trackFilter = progress.examTrack || 'fs';
     const existing = await db
       .select()
       .from(readingProgress)
@@ -934,7 +967,8 @@ export class DatabaseStorage implements IStorage {
         and(
           eq(readingProgress.userId, progress.userId),
           eq(readingProgress.week, progress.week),
-          eq(readingProgress.chapterIndex, progress.chapterIndex)
+          eq(readingProgress.chapterIndex, progress.chapterIndex),
+          eq(readingProgress.examTrack, trackFilter)
         )
       )
       .limit(1);
@@ -970,18 +1004,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   // APPLY Challenge Attempts methods (Scenario Lab)
-  async getApplyChallengeAttempts(userId: string, week?: number): Promise<ApplyChallengeAttempt[]> {
+  async getApplyChallengeAttempts(userId: string, week?: number, examTrack?: string): Promise<ApplyChallengeAttempt[]> {
+    const conditions: any[] = [eq(applyChallengeAttempts.userId, userId)];
     if (week !== undefined) {
-      return await db
-        .select()
-        .from(applyChallengeAttempts)
-        .where(and(eq(applyChallengeAttempts.userId, userId), eq(applyChallengeAttempts.week, week)))
-        .orderBy(desc(applyChallengeAttempts.startedAt));
+      conditions.push(eq(applyChallengeAttempts.week, week));
+    }
+    if (examTrack) {
+      conditions.push(eq(applyChallengeAttempts.examTrack, examTrack));
     }
     return await db
       .select()
       .from(applyChallengeAttempts)
-      .where(eq(applyChallengeAttempts.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(applyChallengeAttempts.startedAt));
   }
 
@@ -1003,18 +1037,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   // REINFORCE Retention Reviews methods (Spaced Repetition)
-  async getRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]> {
+  async getRetentionReviews(userId: string, week?: number, examTrack?: string): Promise<RetentionReview[]> {
+    const conditions: any[] = [eq(retentionReviews.userId, userId)];
     if (week !== undefined) {
-      return await db
-        .select()
-        .from(retentionReviews)
-        .where(and(eq(retentionReviews.userId, userId), eq(retentionReviews.week, week)))
-        .orderBy(desc(retentionReviews.createdAt));
+      conditions.push(eq(retentionReviews.week, week));
+    }
+    if (examTrack) {
+      conditions.push(eq(retentionReviews.examTrack, examTrack));
     }
     return await db
       .select()
       .from(retentionReviews)
-      .where(eq(retentionReviews.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(retentionReviews.createdAt));
   }
 
@@ -1027,26 +1061,22 @@ export class DatabaseStorage implements IStorage {
     return review || null;
   }
 
-  async getDueRetentionReviews(userId: string, week?: number): Promise<RetentionReview[]> {
+  async getDueRetentionReviews(userId: string, week?: number, examTrack?: string): Promise<RetentionReview[]> {
     const now = new Date();
+    const conditions: any[] = [
+      eq(retentionReviews.userId, userId),
+      sql`${retentionReviews.nextReviewAt} IS NULL OR ${retentionReviews.nextReviewAt} <= ${now}`
+    ];
     if (week !== undefined) {
-      return await db
-        .select()
-        .from(retentionReviews)
-        .where(and(
-          eq(retentionReviews.userId, userId),
-          eq(retentionReviews.week, week),
-          sql`${retentionReviews.nextReviewAt} IS NULL OR ${retentionReviews.nextReviewAt} <= ${now}`
-        ))
-        .orderBy(retentionReviews.nextReviewAt);
+      conditions.push(eq(retentionReviews.week, week));
+    }
+    if (examTrack) {
+      conditions.push(eq(retentionReviews.examTrack, examTrack));
     }
     return await db
       .select()
       .from(retentionReviews)
-      .where(and(
-        eq(retentionReviews.userId, userId),
-        sql`${retentionReviews.nextReviewAt} IS NULL OR ${retentionReviews.nextReviewAt} <= ${now}`
-      ))
+      .where(and(...conditions))
       .orderBy(retentionReviews.nextReviewAt);
   }
 
@@ -1067,9 +1097,9 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async getRetentionStats(userId: string, week?: number): Promise<{ totalReviews: number; dueToday: number; averageMastery: number; retentionScore: number }> {
-    const allReviews = await this.getRetentionReviews(userId, week);
-    const dueReviews = await this.getDueRetentionReviews(userId, week);
+  async getRetentionStats(userId: string, week?: number, examTrack?: string): Promise<{ totalReviews: number; dueToday: number; averageMastery: number; retentionScore: number }> {
+    const allReviews = await this.getRetentionReviews(userId, week, examTrack);
+    const dueReviews = await this.getDueRetentionReviews(userId, week, examTrack);
     
     if (allReviews.length === 0) {
       return { totalReviews: 0, dueToday: 0, averageMastery: 0, retentionScore: 100 };

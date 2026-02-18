@@ -21,6 +21,7 @@ interface RetentionStats {
 interface ReinforceRetentionBoosterProps {
   week: number;
   domains?: string[];
+  examTrack?: string;
 }
 
 type ConceptEntry = { id: string; type: 'formula' | 'procedure' | 'definition'; text: string; domain: number };
@@ -242,7 +243,7 @@ function markSessionCompletedToday(userId: string | undefined, week: number): vo
   }
 }
 
-export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceRetentionBoosterProps) {
+export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs" }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -257,41 +258,41 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
   const [isCreatingReviews, setIsCreatingReviews] = useState(false);
 
   const { data: stats, isLoading: statsLoading } = useQuery<RetentionStats>({
-    queryKey: ['/api/retention/stats', week],
+    queryKey: ['/api/retention/stats', week, examTrack],
     queryFn: async () => {
-      const res = await fetch(`/api/retention/stats?week=${week}`, { credentials: 'include' });
+      const res = await fetch(`/api/retention/stats?week=${week}&examTrack=${examTrack}`, { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to fetch stats');
       return res.json();
     },
   });
 
   const { data: dueReviews = [], isLoading: reviewsLoading, refetch: refetchDue } = useQuery<RetentionReview[]>({
-    queryKey: ['/api/retention/due', week],
+    queryKey: ['/api/retention/due', week, examTrack],
     queryFn: async () => {
-      const res = await fetch(`/api/retention/due?week=${week}`, { credentials: 'include' });
+      const res = await fetch(`/api/retention/due?week=${week}&examTrack=${examTrack}`, { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to fetch due reviews');
       return res.json();
     },
   });
 
   const { data: weekReviews = [] } = useQuery<RetentionReview[]>({
-    queryKey: ['/api/retention/reviews', week],
+    queryKey: ['/api/retention/reviews', week, examTrack],
     queryFn: async () => {
-      const res = await fetch(`/api/retention/reviews?week=${week}`, { credentials: 'include' });
+      const res = await fetch(`/api/retention/reviews?week=${week}&examTrack=${examTrack}`, { credentials: 'include' });
       if (!res.ok) throw new Error('Failed to fetch reviews');
       return res.json();
     },
   });
 
   const createReviewMutation = useMutation({
-    mutationFn: async (data: { week: number; conceptId: string; conceptType: string; conceptText: string; domain: number }) => {
+    mutationFn: async (data: { week: number; conceptId: string; conceptType: string; conceptText: string; domain: number; examTrack: string }) => {
       const response = await apiRequest('POST', '/api/retention/reviews', data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
-      queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
-      queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
+      queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week, examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week, examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week, examTrack] });
     },
   });
 
@@ -305,11 +306,10 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
       return response.json();
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week, examTrack] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week, examTrack] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week, examTrack] });
       await queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
-      // Invalidate daily quests (use predicate for partial matching with examTrack)
       await queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });
@@ -335,11 +335,12 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
           conceptType: concept.type,
           conceptText: concept.text,
           domain: concept.domain,
+          examTrack,
         });
       }
-      await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week, examTrack] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week, examTrack] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week, examTrack] });
       return true;
     } catch (error) {
       console.error('[Retention] Error creating fresh reviews:', error);
@@ -347,7 +348,7 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
     } finally {
       setIsCreatingReviews(false);
     }
-  }, [week, domains, createReviewMutation, queryClient]);
+  }, [week, domains, examTrack, createReviewMutation, queryClient]);
 
   const initializeReviews = useCallback(async () => {
     const concepts = getConceptsForDomains(domains);
@@ -360,11 +361,12 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
           conceptType: concept.type,
           conceptText: concept.text,
           domain: concept.domain,
+          examTrack,
         });
       }
     }
     await refetchDue();
-  }, [week, domains, weekReviews, createReviewMutation, refetchDue]);
+  }, [week, domains, examTrack, weekReviews, createReviewMutation, refetchDue]);
 
   const startSession = useCallback(async () => {
     // Refetch to ensure we have fresh data
@@ -484,9 +486,9 @@ export function ReinforceRetentionBooster({ week, domains = [] }: ReinforceReten
           setSessionCards([]);
           setReviewedCardIds(new Set());
           setCurrentCardIndex(0);
-          await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week] });
-          await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week] });
-          await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week] });
+          await queryClient.invalidateQueries({ queryKey: ['/api/retention/stats', week, examTrack] });
+          await queryClient.invalidateQueries({ queryKey: ['/api/retention/due', week, examTrack] });
+          await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week, examTrack] });
         }
       } catch (error: any) {
         console.error('Rating submission failed:', error);

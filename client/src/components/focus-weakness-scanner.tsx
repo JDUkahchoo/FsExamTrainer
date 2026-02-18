@@ -16,6 +16,7 @@ import type { QuizResult, Domain, DOMAINS } from '@shared/schema';
 interface FocusWeaknessScannerProps {
   week: number;
   colorClass?: string;
+  examTrack?: string;
 }
 
 const DOMAIN_COLORS: Record<string, string> = {
@@ -29,20 +30,35 @@ const DOMAIN_COLORS: Record<string, string> = {
   'Applied Mathematics & Statistics': 'bg-indigo-500',
 };
 
-export function FocusWeaknessScanner({ week, colorClass = "text-primary" }: FocusWeaknessScannerProps) {
+export function FocusWeaknessScanner({ week, colorClass = "text-primary", examTrack = "fs" }: FocusWeaknessScannerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showDrillModal, setShowDrillModal] = useState(false);
 
   const { data: recentMisses = [], isLoading: missesLoading } = useQuery<QuizResult[]>({
-    queryKey: ['/api/focus/recent-misses?limit=10'],
+    queryKey: ['/api/focus/recent-misses', examTrack, { limit: 10 }],
+    queryFn: async () => {
+      const res = await fetch(`/api/focus/recent-misses?limit=10&examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch recent misses");
+      return res.json();
+    },
   });
 
   const { data: domainStats = [], isLoading: statsLoading } = useQuery<{ domain: string; total: number; correct: number; accuracy: number }[]>({
-    queryKey: ['/api/focus/domain-stats'],
+    queryKey: ['/api/focus/domain-stats', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/focus/domain-stats?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch domain stats");
+      return res.json();
+    },
   });
 
   const { data: streak = { current: 0, best: 0 }, isLoading: streakLoading } = useQuery<{ current: number; best: number }>({
-    queryKey: ['/api/focus/streak'],
+    queryKey: ['/api/focus/streak', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/focus/streak?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch streak");
+      return res.json();
+    },
   });
 
   const isLoading = missesLoading || statsLoading || streakLoading;
