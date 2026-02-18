@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { getDomainConfig } from '@/lib/domains';
-import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowRight, ChevronRight, Target } from 'lucide-react';
+import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowRight, ChevronRight, Target, Play } from 'lucide-react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import type { Flashcard, Domain } from '@shared/schema';
 
@@ -22,6 +22,61 @@ interface FlashcardChallengeModeProps {
   examTrack?: string;
   onCardMatched: (cardId: string) => void;
   onSessionComplete: (stats: { correct: number; incorrect: number; total: number }) => void;
+}
+
+interface SavedChallengeState {
+  currentRound: number;
+  cumulative: { correctFirstTry: number; totalAttempts: number; incorrect: number; cardsMatched: number };
+  cardOrder: Array<{ front: string; domain: string }>;
+  deck: string;
+  domain: string | undefined;
+  examTrack: string;
+  savedAt: number;
+  totalCards: number;
+  inRound?: {
+    matchedCardIds: string[];
+    incorrectCount: number;
+    totalAttempts: number;
+    correctFirstTryRound: number;
+    attemptedCardIds: string[];
+  };
+}
+
+const CHALLENGE_STORAGE_KEY = 'challenge-session-progress';
+const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
+function getSavedChallenge(examTrack: string, deck: string, domain: string | undefined): SavedChallengeState | null {
+  try {
+    const raw = localStorage.getItem(CHALLENGE_STORAGE_KEY);
+    if (!raw) return null;
+    const saved: SavedChallengeState = JSON.parse(raw);
+    if (saved.examTrack !== examTrack || saved.deck !== deck) return null;
+    if (saved.domain !== domain) return null;
+    if (Date.now() - saved.savedAt > SESSION_EXPIRY_MS) {
+      localStorage.removeItem(CHALLENGE_STORAGE_KEY);
+      return null;
+    }
+    const hasRoundProgress = saved.inRound && saved.inRound.matchedCardIds.length > 0;
+    const hasCompletedRounds = saved.currentRound > 0 || saved.cumulative.cardsMatched > 0;
+    if (!hasRoundProgress && !hasCompletedRounds) return null;
+    return saved;
+  } catch {
+    return null;
+  }
+}
+
+function saveChallengeState(state: SavedChallengeState) {
+  try {
+    localStorage.setItem(CHALLENGE_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+  }
+}
+
+function clearChallengeState() {
+  try {
+    localStorage.removeItem(CHALLENGE_STORAGE_KEY);
+  } catch {
+  }
 }
 
 function extractTerm(card: Flashcard): string {
@@ -46,6 +101,40 @@ function shuffleArray<T>(arr: T[]): T[] {
   return shuffled;
 }
 
+function orderCardsByKeys(
+  eligible: Flashcard[],
+  savedOrder: Array<{ front: string; domain: string }>,
+  activeFlashcards: Flashcard[],
+  deckPrefix: string
+): ChallengeCard[] {
+  const result: ChallengeCard[] = [];
+  const used = new Set<number>();
+
+  for (const key of savedOrder) {
+    const idx = eligible.findIndex((c, i) => !used.has(i) && c.front === key.front && c.domain === key.domain);
+    if (idx >= 0) {
+      used.add(idx);
+      const card = eligible[idx];
+      const stableIndex = activeFlashcards.findIndex(af => af.front === card.front && af.domain === card.domain);
+      if (stableIndex >= 0) {
+        result.push({ index: stableIndex, card, cardId: `${deckPrefix}${stableIndex}` });
+      }
+    }
+  }
+
+  for (let i = 0; i < eligible.length; i++) {
+    if (!used.has(i)) {
+      const card = eligible[i];
+      const stableIndex = activeFlashcards.findIndex(af => af.front === card.front && af.domain === card.domain);
+      if (stableIndex >= 0) {
+        result.push({ index: stableIndex, card, cardId: `${deckPrefix}${stableIndex}` });
+      }
+    }
+  }
+
+  return result;
+}
+
 export function FlashcardChallengeMode({
   cards,
   activeFlashcards,
@@ -57,10 +146,30 @@ export function FlashcardChallengeMode({
 }: FlashcardChallengeModeProps) {
   const BATCH_SIZE = 8;
 
+  const savedSession = useMemo(() => {
+    const saved = getSavedChallenge(examTrack, selectedDeck, selectedDomain);
+    if (!saved) return null;
+    const eligible = cards.filter(c => c.front.length <= 80);
+    const eligibleSet = new Set(eligible.map(c => `${c.front}::${c.domain}`));
+    const matchCount = saved.cardOrder.filter(k => eligibleSet.has(`${k.front}::${k.domain}`)).length;
+    if (matchCount < saved.cardOrder.length * 0.8) {
+      clearChallengeState();
+      return null;
+    }
+    return saved;
+  }, [examTrack, selectedDeck, selectedDomain, cards]);
+  const [showResumePrompt, setShowResumePrompt] = useState(!!savedSession);
+  const [resumeData, setResumeData] = useState<SavedChallengeState | null>(savedSession);
+
   const allChallengeCards = useMemo(() => {
     const eligible = cards.filter(c => c.front.length <= 80);
-    const shuffled = shuffleArray(eligible);
     const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
+
+    if (resumeData && !showResumePrompt) {
+      return orderCardsByKeys(eligible, resumeData.cardOrder, activeFlashcards, deckPrefix);
+    }
+
+    const shuffled = shuffleArray(eligible);
     return shuffled.map(card => {
       const stableIndex = activeFlashcards.findIndex(
         af => af.front === card.front && af.domain === card.domain
@@ -71,13 +180,18 @@ export function FlashcardChallengeMode({
         cardId: `${deckPrefix}${stableIndex}`,
       } as ChallengeCard;
     }).filter(cc => cc.index >= 0);
-  }, [cards, activeFlashcards, selectedDeck]);
+  }, [cards, activeFlashcards, selectedDeck, resumeData, showResumePrompt]);
 
   const totalRounds = Math.ceil(allChallengeCards.length / BATCH_SIZE);
 
-  const [currentRound, setCurrentRound] = useState(0);
-  const cumulativeRef = useRef({ correctFirstTry: 0, totalAttempts: 0, incorrect: 0, cardsMatched: 0 });
-  const [roundCardsMatched, setRoundCardsMatched] = useState(0);
+  const initialRound = resumeData && !showResumePrompt ? resumeData.currentRound : 0;
+  const initialCumulative = resumeData && !showResumePrompt
+    ? { ...resumeData.cumulative }
+    : { correctFirstTry: 0, totalAttempts: 0, incorrect: 0, cardsMatched: 0 };
+
+  const [currentRound, setCurrentRound] = useState(initialRound);
+  const cumulativeRef = useRef(initialCumulative);
+  const [roundCardsMatched, setRoundCardsMatched] = useState(initialCumulative.cardsMatched);
   const [sessionSaved, setSessionSaved] = useState(false);
 
   const roundCards = useMemo(() => {
@@ -85,16 +199,22 @@ export function FlashcardChallengeMode({
     return allChallengeCards.slice(start, start + BATCH_SIZE);
   }, [allChallengeCards, currentRound]);
 
+  const savedInRound = resumeData && !showResumePrompt ? resumeData.inRound : null;
+
   const [currentDefIndex, setCurrentDefIndex] = useState(0);
-  const [matchedIds, setMatchedIds] = useState<Set<string>>(new Set());
-  const [incorrectCount, setIncorrectCount] = useState(0);
+  const [matchedIds, setMatchedIds] = useState<Set<string>>(() => 
+    savedInRound ? new Set(savedInRound.matchedCardIds) : new Set()
+  );
+  const [incorrectCount, setIncorrectCount] = useState(savedInRound?.incorrectCount ?? 0);
   const [feedbackState, setFeedbackState] = useState<{ termId: string; correct: boolean } | null>(null);
   const [roundComplete, setRoundComplete] = useState(false);
   const [allComplete, setAllComplete] = useState(false);
-  const [totalAttempts, setTotalAttempts] = useState(0);
+  const [totalAttempts, setTotalAttempts] = useState(savedInRound?.totalAttempts ?? 0);
   const [wrongTermId, setWrongTermId] = useState<string | null>(null);
-  const [correctFirstTryRound, setCorrectFirstTryRound] = useState(0);
-  const [attemptedCards, setAttemptedCards] = useState<Set<string>>(new Set());
+  const [correctFirstTryRound, setCorrectFirstTryRound] = useState(savedInRound?.correctFirstTryRound ?? 0);
+  const [attemptedCards, setAttemptedCards] = useState<Set<string>>(() => 
+    savedInRound ? new Set(savedInRound.attemptedCardIds) : new Set()
+  );
 
   const shuffledTermOrder = useMemo(() => {
     return shuffleArray(roundCards.map(c => c.cardId));
@@ -118,6 +238,31 @@ export function FlashcardChallengeMode({
     return roundCards.find(c => c.cardId === cardId);
   }, [roundCards]);
 
+  const persistProgress = useCallback((
+    roundNum: number,
+    cumStats: typeof initialCumulative,
+    inRoundState?: {
+      matchedCardIds: string[];
+      incorrectCount: number;
+      totalAttempts: number;
+      correctFirstTryRound: number;
+      attemptedCardIds: string[];
+    }
+  ) => {
+    if (allChallengeCards.length === 0) return;
+    saveChallengeState({
+      currentRound: roundNum,
+      cumulative: { ...cumStats },
+      cardOrder: allChallengeCards.map(cc => ({ front: cc.card.front, domain: cc.card.domain })),
+      deck: selectedDeck,
+      domain: selectedDomain,
+      examTrack,
+      savedAt: Date.now(),
+      totalCards: allChallengeCards.length,
+      inRound: inRoundState,
+    });
+  }, [allChallengeCards, selectedDeck, selectedDomain, examTrack]);
+
   useEffect(() => {
     if (matchedIds.size === roundCards.length && roundCards.length > 0 && !roundComplete) {
       setRoundComplete(true);
@@ -130,6 +275,7 @@ export function FlashcardChallengeMode({
 
       if (currentRound >= totalRounds - 1) {
         setAllComplete(true);
+        clearChallengeState();
         const finals = { ...cumulativeRef.current };
         onSessionComplete({
           correct: finals.correctFirstTry,
@@ -160,53 +306,80 @@ export function FlashcardChallengeMode({
             console.error('Failed to save challenge session:', err);
           });
         }
+      } else {
+        persistProgress(currentRound + 1, cumulativeRef.current);
       }
     }
-  }, [matchedIds.size, roundCards.length, roundComplete, currentRound, totalRounds, correctFirstTryRound, totalAttempts, incorrectCount, onSessionComplete, sessionSaved, examTrack, selectedDeck, selectedDomain, allChallengeCards.length]);
+  }, [matchedIds.size, roundCards.length, roundComplete, currentRound, totalRounds, correctFirstTryRound, totalAttempts, incorrectCount, onSessionComplete, sessionSaved, examTrack, selectedDeck, selectedDomain, allChallengeCards.length, persistProgress]);
+
+  const pendingSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const saveInRoundProgress = useCallback((
+    newMatchedIds: Set<string>,
+    newIncorrectCount: number,
+    newTotalAttempts: number, 
+    newCorrectFirstTry: number,
+    newAttemptedCards: Set<string>
+  ) => {
+    if (pendingSaveRef.current) clearTimeout(pendingSaveRef.current);
+    pendingSaveRef.current = setTimeout(() => {
+      if (newMatchedIds.size > 0 && newMatchedIds.size < roundCards.length) {
+        persistProgress(currentRound, cumulativeRef.current, {
+          matchedCardIds: Array.from(newMatchedIds),
+          incorrectCount: newIncorrectCount,
+          totalAttempts: newTotalAttempts,
+          correctFirstTryRound: newCorrectFirstTry,
+          attemptedCardIds: Array.from(newAttemptedCards),
+        });
+      }
+    }, 100);
+  }, [persistProgress, currentRound, roundCards.length]);
 
   const handleTermClick = useCallback((termId: string) => {
     if (feedbackState || !currentDef || matchedIds.has(termId)) return;
 
-    setTotalAttempts(prev => prev + 1);
+    const newTotalAttempts = totalAttempts + 1;
+    setTotalAttempts(newTotalAttempts);
 
     if (termId === currentDef.cardId) {
       setFeedbackState({ termId, correct: true });
       onCardMatched(termId);
 
-      if (!attemptedCards.has(currentDef.cardId)) {
-        setCorrectFirstTryRound(prev => prev + 1);
+      const isFirstTry = !attemptedCards.has(currentDef.cardId);
+      const newCorrectFirstTry = isFirstTry ? correctFirstTryRound + 1 : correctFirstTryRound;
+      if (isFirstTry) {
+        setCorrectFirstTryRound(newCorrectFirstTry);
       }
 
       setTimeout(() => {
-        setMatchedIds(prev => {
-          const next = new Set(prev);
-          next.add(termId);
-          return next;
-        });
+        const newMatchedIds = new Set(matchedIds);
+        newMatchedIds.add(termId);
+        setMatchedIds(newMatchedIds);
         setFeedbackState(null);
         setCurrentDefIndex(0);
-        setAttemptedCards(prev => {
-          const next = new Set(prev);
-          next.add(termId);
-          return next;
-        });
+        const newAttemptedCards = new Set(attemptedCards);
+        newAttemptedCards.add(termId);
+        setAttemptedCards(newAttemptedCards);
+
+        saveInRoundProgress(newMatchedIds, incorrectCount, newTotalAttempts, newCorrectFirstTry, newAttemptedCards);
       }, 600);
     } else {
-      setIncorrectCount(prev => prev + 1);
+      const newIncorrectCount = incorrectCount + 1;
+      setIncorrectCount(newIncorrectCount);
       setFeedbackState({ termId, correct: false });
       setWrongTermId(termId);
-      setAttemptedCards(prev => {
-        const next = new Set(prev);
-        next.add(currentDef.cardId);
-        return next;
-      });
+      const newAttemptedCards = new Set(attemptedCards);
+      newAttemptedCards.add(currentDef.cardId);
+      setAttemptedCards(newAttemptedCards);
+
+      saveInRoundProgress(matchedIds, newIncorrectCount, newTotalAttempts, correctFirstTryRound, newAttemptedCards);
 
       setTimeout(() => {
         setFeedbackState(null);
         setWrongTermId(null);
       }, 800);
     }
-  }, [feedbackState, currentDef, matchedIds, onCardMatched, attemptedCards]);
+  }, [feedbackState, currentDef, matchedIds, onCardMatched, attemptedCards, totalAttempts, incorrectCount, correctFirstTryRound, saveInRoundProgress]);
 
   const handleNextRound = useCallback(() => {
     setCurrentRound(prev => prev + 1);
@@ -236,7 +409,76 @@ export function FlashcardChallengeMode({
     cumulativeRef.current = { correctFirstTry: 0, totalAttempts: 0, incorrect: 0, cardsMatched: 0 };
     setRoundCardsMatched(0);
     setSessionSaved(false);
+    setResumeData(null);
+    clearChallengeState();
   }, []);
+
+  const handleResume = useCallback(() => {
+    setShowResumePrompt(false);
+  }, []);
+
+  const handleStartFresh = useCallback(() => {
+    setShowResumePrompt(false);
+    setResumeData(null);
+    clearChallengeState();
+  }, []);
+
+  if (showResumePrompt && resumeData) {
+    const inRoundMatched = resumeData.inRound?.matchedCardIds.length ?? 0;
+    const completedCards = resumeData.cumulative.cardsMatched + inRoundMatched;
+    const totalCards = resumeData.totalCards;
+    const roundsCompleted = resumeData.currentRound;
+    const totalRoundsEstimate = Math.ceil(totalCards / BATCH_SIZE);
+    const totalAtt = resumeData.cumulative.totalAttempts + (resumeData.inRound?.totalAttempts ?? 0);
+    const totalCorrect = resumeData.cumulative.correctFirstTry + (resumeData.inRound?.correctFirstTryRound ?? 0);
+    const accuracy = totalAtt > 0
+      ? Math.round((totalCorrect / totalAtt) * 100)
+      : 0;
+
+    return (
+      <Card className="p-8 text-center" data-testid="card-challenge-resume">
+        <Play className="w-10 h-10 mx-auto mb-4 text-primary" />
+        <h3 className="text-xl font-bold mb-2">Resume Challenge?</h3>
+        <p className="text-muted-foreground mb-4">
+          You have an unfinished challenge session.
+        </p>
+        <div className="flex justify-center gap-6 mb-6 flex-wrap">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-foreground">{roundsCompleted}</p>
+            <p className="text-sm text-muted-foreground">Rounds Done</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-foreground">{completedCards} / {totalCards}</p>
+            <p className="text-sm text-muted-foreground">Cards Matched</p>
+          </div>
+          {accuracy > 0 && (
+            <div className="text-center">
+              <p className={`text-2xl font-bold ${accuracy >= 80 ? 'text-green-600 dark:text-green-400' : accuracy >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500'}`}>
+                {accuracy}%
+              </p>
+              <p className="text-sm text-muted-foreground">Accuracy</p>
+            </div>
+          )}
+        </div>
+        <div className="w-full max-w-xs mx-auto mb-6">
+          <Progress value={(completedCards / totalCards) * 100} className="h-2" />
+          <p className="text-xs text-muted-foreground mt-1">
+            Round {roundsCompleted} of {totalRoundsEstimate}
+          </p>
+        </div>
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          <Button onClick={handleResume} data-testid="button-resume-challenge">
+            <Play className="w-4 h-4 mr-2" />
+            Resume
+          </Button>
+          <Button variant="outline" onClick={handleStartFresh} data-testid="button-start-fresh-challenge">
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Start Fresh
+          </Button>
+        </div>
+      </Card>
+    );
+  }
 
   if (allChallengeCards.length < 3) {
     return (
