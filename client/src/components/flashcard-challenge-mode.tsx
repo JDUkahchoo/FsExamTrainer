@@ -146,6 +146,10 @@ export function FlashcardChallengeMode({
 }: FlashcardChallengeModeProps) {
   const BATCH_SIZE = 8;
 
+  const cardsIdentityKey = useMemo(() => {
+    return `${selectedDeck}:${selectedDomain || ''}:${examTrack}:${cards.length}`;
+  }, [selectedDeck, selectedDomain, examTrack, cards.length]);
+
   const savedSession = useMemo(() => {
     const saved = getSavedChallenge(examTrack, selectedDeck, selectedDomain);
     if (!saved) return null;
@@ -161,26 +165,40 @@ export function FlashcardChallengeMode({
   const [showResumePrompt, setShowResumePrompt] = useState(!!savedSession);
   const [resumeData, setResumeData] = useState<SavedChallengeState | null>(savedSession);
 
+  const allChallengeCardsRef = useRef<ChallengeCard[] | null>(null);
+  const lastCardsKeyRef = useRef<string>('');
+
   const allChallengeCards = useMemo(() => {
+    if (allChallengeCardsRef.current && lastCardsKeyRef.current === cardsIdentityKey) {
+      return allChallengeCardsRef.current;
+    }
+
+    lastCardsKeyRef.current = cardsIdentityKey;
+
     const eligible = cards.filter(c => c.front.length <= 80);
     const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
 
+    let result: ChallengeCard[];
     if (resumeData && !showResumePrompt) {
-      return orderCardsByKeys(eligible, resumeData.cardOrder, activeFlashcards, deckPrefix);
+      result = orderCardsByKeys(eligible, resumeData.cardOrder, activeFlashcards, deckPrefix);
+    } else {
+      const shuffled = shuffleArray(eligible);
+      result = shuffled.map(card => {
+        const stableIndex = activeFlashcards.findIndex(
+          af => af.front === card.front && af.domain === card.domain
+        );
+        return {
+          index: stableIndex,
+          card,
+          cardId: `${deckPrefix}${stableIndex}`,
+        } as ChallengeCard;
+      }).filter(cc => cc.index >= 0);
     }
 
-    const shuffled = shuffleArray(eligible);
-    return shuffled.map(card => {
-      const stableIndex = activeFlashcards.findIndex(
-        af => af.front === card.front && af.domain === card.domain
-      );
-      return {
-        index: stableIndex,
-        card,
-        cardId: `${deckPrefix}${stableIndex}`,
-      } as ChallengeCard;
-    }).filter(cc => cc.index >= 0);
-  }, [cards, activeFlashcards, selectedDeck, resumeData, showResumePrompt]);
+    allChallengeCardsRef.current = result;
+    return result;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cardsIdentityKey]);
 
   const totalRounds = Math.ceil(allChallengeCards.length / BATCH_SIZE);
 
@@ -216,9 +234,17 @@ export function FlashcardChallengeMode({
     savedInRound ? new Set(savedInRound.attemptedCardIds) : new Set()
   );
 
+  const shuffledTermOrderRef = useRef<Map<number, string[]>>(new Map());
   const shuffledTermOrder = useMemo(() => {
-    return shuffleArray(roundCards.map(c => c.cardId));
-  }, [roundCards]);
+    const cached = shuffledTermOrderRef.current.get(currentRound);
+    if (cached && cached.length === roundCards.length) {
+      return cached;
+    }
+    const order = shuffleArray(roundCards.map(c => c.cardId));
+    shuffledTermOrderRef.current.set(currentRound, order);
+    return order;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRound, roundCards.length]);
 
   const unmatchedTerms = useMemo(() => {
     return shuffledTermOrder.filter(id => !matchedIds.has(id));
@@ -395,6 +421,9 @@ export function FlashcardChallengeMode({
   }, []);
 
   const handleRestart = useCallback(() => {
+    allChallengeCardsRef.current = null;
+    lastCardsKeyRef.current = '';
+    shuffledTermOrderRef.current = new Map();
     setCurrentRound(0);
     setCurrentDefIndex(0);
     setMatchedIds(new Set());
@@ -418,6 +447,9 @@ export function FlashcardChallengeMode({
   }, []);
 
   const handleStartFresh = useCallback(() => {
+    allChallengeCardsRef.current = null;
+    lastCardsKeyRef.current = '';
+    shuffledTermOrderRef.current = new Map();
     setShowResumePrompt(false);
     setResumeData(null);
     clearChallengeState();
