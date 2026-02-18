@@ -22,20 +22,23 @@ interface ExamLayoutProps {
   children: ReactNode;
 }
 
-const getMenuItems = (examTrack: string) => [
-  { id: `/app/${examTrack}/dashboard`, icon: GraduationCap, label: 'Dashboard', testId: 'nav-dashboard' },
-  { id: `/app/${examTrack}/study-plan`, icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan' },
-  { id: `/app/${examTrack}/lessons`, icon: BookOpen, label: 'Lessons', testId: 'nav-lessons' },
-  { id: `/app/${examTrack}/quiz`, icon: Brain, label: 'Practice Quiz', testId: 'nav-quiz' },
-  { id: `/app/${examTrack}/flashcards`, icon: ClipboardCheck, label: 'Flashcards', testId: 'nav-flashcards' },
-  { id: `/app/${examTrack}/exam`, icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam' },
-  { id: `/app/${examTrack}/notes`, icon: FileText, label: 'Study Notes', testId: 'nav-notes' },
-  { id: `/app/${examTrack}/progress`, icon: BarChart3, label: 'Progress', testId: 'nav-progress' },
-  { id: `/app/${examTrack}/resources`, icon: BookMarked, label: 'Resources', testId: 'nav-resources' },
-  { id: `/app/${examTrack}/reference-companion`, icon: Library, label: 'Reference Companion', testId: 'nav-reference-companion' },
-  { id: `/app/${examTrack}/procedures`, icon: ClipboardList, label: 'Procedures & Standards', testId: 'nav-procedures' },
-  { id: `/app/${examTrack}/settings`, icon: Settings, label: 'Settings', testId: 'nav-settings' },
-];
+const getMenuItems = (examTrack: string) => {
+  const allItems = [
+    { id: `/app/${examTrack}/dashboard`, icon: GraduationCap, label: 'Dashboard', testId: 'nav-dashboard', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/study-plan`, icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/lessons`, icon: BookOpen, label: 'Lessons', testId: 'nav-lessons', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/quiz`, icon: Brain, label: 'Practice Quiz', testId: 'nav-quiz', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/flashcards`, icon: ClipboardCheck, label: 'Flashcards', testId: 'nav-flashcards', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/exam`, icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/notes`, icon: FileText, label: 'Study Notes', testId: 'nav-notes', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/progress`, icon: BarChart3, label: 'Progress', testId: 'nav-progress', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/resources`, icon: BookMarked, label: 'Resources', testId: 'nav-resources', tracks: ['fs'] },
+    { id: `/app/${examTrack}/reference-companion`, icon: Library, label: 'Reference Companion', testId: 'nav-reference-companion', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/procedures`, icon: ClipboardList, label: 'Procedures & Standards', testId: 'nav-procedures', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/settings`, icon: Settings, label: 'Settings', testId: 'nav-settings', tracks: ['fs', 'ps'] },
+  ];
+  return allItems.filter(item => item.tracks.includes(examTrack));
+};
 
 function ExamSidebar({ examTrack }: { examTrack: string }) {
   const [location] = useLocation();

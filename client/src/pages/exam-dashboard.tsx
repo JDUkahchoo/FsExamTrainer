@@ -200,12 +200,12 @@ export default function ExamDashboard() {
       description: 'Track improvement with visual analytics and domain mastery insights.',
       link: `/app/${examTrack}/progress`
     },
-    {
+    ...(examTrack === 'fs' ? [{
       icon: BookMarked,
       name: 'Resources',
       description: 'Access formula sheets, memory techniques, and professional references.',
       link: `/app/${examTrack}/resources`
-    }
+    }] : [])
   ];
 
   const quickTips = [
@@ -373,11 +373,13 @@ export default function ExamDashboard() {
                     <span className="text-sm text-muted-foreground">Knowledge Domains</span>
                     <span className="font-medium">{domainCount}</span>
                   </div>
-                  <Link href={`/app/${examTrack}/resources`}>
-                    <Button variant="outline" className="w-full mt-4" data-testid="button-view-resources">
-                      View Study Resources
-                    </Button>
-                  </Link>
+                  {examTrack === 'fs' && (
+                    <Link href={`/app/${examTrack}/resources`}>
+                      <Button variant="outline" className="w-full mt-4" data-testid="button-view-resources">
+                        View Study Resources
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </CardContent>
             </Card>

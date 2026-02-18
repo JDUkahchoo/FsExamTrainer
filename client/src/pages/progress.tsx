@@ -348,12 +348,14 @@ export default function ProgressPage() {
             )}
             {isInMaintenanceMode && (
               <>
-                <Link href={`/app/${examTrack}/resources`}>
-                  <Button variant="outline" size="sm" className="w-full" data-testid="button-review-materials">
-                    <Brain className="h-4 w-4 mr-2" />
-                    Review Materials
-                  </Button>
-                </Link>
+                {examTrack === 'fs' && (
+                  <Link href={`/app/${examTrack}/resources`}>
+                    <Button variant="outline" size="sm" className="w-full" data-testid="button-review-materials">
+                      <Brain className="h-4 w-4 mr-2" />
+                      Review Materials
+                    </Button>
+                  </Link>
+                )}
                 <Button 
                   variant="default" 
                   size="sm" 
