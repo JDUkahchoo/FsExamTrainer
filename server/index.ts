@@ -4,7 +4,8 @@ import { setupVite, serveStatic, log } from "./vite";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
-import { count } from "drizzle-orm";
+import { seedPSLessons } from "./seed-ps-lessons";
+import { count, eq } from "drizzle-orm";
 
 const app = express();
 
@@ -58,18 +59,26 @@ async function autoSeedIfNeeded() {
     const questionResult = await db.select({ count: count() }).from(lessonQuestions);
     const questionCount = questionResult[0]?.count || 0;
     
-    const needsSeeding = lessonCount === 0 || questionCount < 1000;
+    const needsFSSeeding = lessonCount === 0 || questionCount < 1000;
     
-    if (needsSeeding) {
-      log(`Database needs seeding (lessons: ${lessonCount}, questions: ${questionCount}). Auto-seeding in background...`);
+    if (needsFSSeeding) {
+      log(`Database needs FS seeding (lessons: ${lessonCount}, questions: ${questionCount}). Auto-seeding...`);
       await seedLessons();
-      
-      const newLessonResult = await db.select({ count: count() }).from(lessons);
-      const newQuestionResult = await db.select({ count: count() }).from(lessonQuestions);
-      log(`Auto-seeding completed! ${newLessonResult[0]?.count} lessons, ${newQuestionResult[0]?.count} questions loaded.`);
-    } else {
-      log(`Database ready with ${lessonCount} lessons and ${questionCount} questions`);
+      log(`FS seeding completed.`);
     }
+
+    const psLessonResult = await db.select({ count: count() }).from(lessons).where(eq(lessons.examTrack, 'ps'));
+    const psLessonCount = psLessonResult[0]?.count || 0;
+
+    if (psLessonCount < 50) {
+      log(`Database needs PS seeding (PS lessons: ${psLessonCount}). Auto-seeding PS lessons...`);
+      await seedPSLessons();
+      log(`PS seeding completed.`);
+    }
+
+    const finalLessonResult = await db.select({ count: count() }).from(lessons);
+    const finalQuestionResult = await db.select({ count: count() }).from(lessonQuestions);
+    log(`Database ready with ${finalLessonResult[0]?.count} lessons and ${finalQuestionResult[0]?.count} questions`);
   } catch (error) {
     console.error("Error checking/seeding lessons:", error);
   }

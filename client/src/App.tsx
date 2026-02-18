@@ -100,6 +100,10 @@ function Router() {
       <Route path="/app/fs/pretest" component={withExamTrack(PretestPage, 'fs')} />
       <Route path="/app/fs/pretest/results" component={withExamTrack(PretestResultsPage, 'fs')} />
       <Route path="/app/fs/settings" component={withExamTrack(SettingsPage, 'fs')} />
+      <Route path="/app/fs/testimonials" component={withExamTrack(TestimonialsPage, 'fs')} />
+      <Route path="/app/fs/feedback" component={withExamTrack(FeedbackPage, 'fs')} />
+      <Route path="/app/fs/privacy" component={withExamTrack(PrivacyPolicyPage, 'fs')} />
+      <Route path="/app/fs/disclaimer" component={withExamTrack(DisclaimerPage, 'fs')} />
       
       <Route path="/app/ps/dashboard" component={withExamTrack(ExamDashboard, 'ps')} />
       <Route path="/app/ps/study-plan" component={withExamTrack(StudyPlan, 'ps')} />
@@ -118,6 +122,10 @@ function Router() {
       <Route path="/app/ps/pretest" component={withExamTrack(PretestPage, 'ps')} />
       <Route path="/app/ps/pretest/results" component={withExamTrack(PretestResultsPage, 'ps')} />
       <Route path="/app/ps/settings" component={withExamTrack(SettingsPage, 'ps')} />
+      <Route path="/app/ps/testimonials" component={withExamTrack(TestimonialsPage, 'ps')} />
+      <Route path="/app/ps/feedback" component={withExamTrack(FeedbackPage, 'ps')} />
+      <Route path="/app/ps/privacy" component={withExamTrack(PrivacyPolicyPage, 'ps')} />
+      <Route path="/app/ps/disclaimer" component={withExamTrack(DisclaimerPage, 'ps')} />
       
       <Route component={NotFound} />
     </Switch>

@@ -92,16 +92,19 @@ export function AppSidebar() {
           <SidebarGroupLabel>Community</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {communityItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton asChild isActive={location === item.id} data-testid={item.testId}>
-                    <Link href={item.id}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {communityItems.map((item) => {
+                const fullPath = `/app/${currentExam}${item.id}`;
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton asChild isActive={location === fullPath || location.endsWith(item.id)} data-testid={item.testId}>
+                      <Link href={fullPath}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -110,16 +113,19 @@ export function AppSidebar() {
           <SidebarGroupLabel>Legal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {policyItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton asChild isActive={location === item.id} data-testid={item.testId}>
-                    <Link href={item.id}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {policyItems.map((item) => {
+                const fullPath = `/app/${currentExam}${item.id}`;
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton asChild isActive={location === fullPath || location.endsWith(item.id)} data-testid={item.testId}>
+                      <Link href={fullPath}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

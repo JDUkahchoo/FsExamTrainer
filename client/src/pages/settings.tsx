@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Settings, Palette, User, Bell, HelpCircle, Trash2, ExternalLink, Loader2, Sun, Moon, Monitor } from 'lucide-react';
+import { Settings, Palette, User, Bell, HelpCircle, Trash2, ExternalLink, Loader2, Sun, Moon, Monitor, Star, MessageSquare } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -476,23 +476,44 @@ export default function SettingsPage() {
         <TabsContent value="help" className="space-y-4">
           <Card>
             <CardHeader>
+              <CardTitle>Community</CardTitle>
+              <CardDescription>Share your experience and read what others say</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Link href={`/app/${examTrack}/testimonials`}>
+                <Button variant="outline" className="w-full justify-between" data-testid="link-testimonials">
+                  <span className="flex items-center gap-2">
+                    <Star className="h-4 w-4" />
+                    Testimonials
+                  </span>
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href={`/app/${examTrack}/feedback`}>
+                <Button variant="outline" className="w-full justify-between" data-testid="link-feedback">
+                  <span className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Send Feedback
+                  </span>
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Help & Support</CardTitle>
               <CardDescription>Get help and learn more about the app</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Link href="/feedback">
-                <Button variant="outline" className="w-full justify-between" data-testid="link-feedback">
-                  Send Feedback
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/privacy">
+              <Link href={`/app/${examTrack}/privacy`}>
                 <Button variant="outline" className="w-full justify-between" data-testid="link-privacy">
                   Privacy Policy
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/disclaimer">
+              <Link href={`/app/${examTrack}/disclaimer`}>
                 <Button variant="outline" className="w-full justify-between" data-testid="link-disclaimer">
                   Disclaimer
                   <ExternalLink className="h-4 w-4" />
