@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod, FS_DOMAINS, PS_DOMAINS } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
 import { db } from "./db";
@@ -604,7 +604,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/quiz/stats", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const results = await storage.getQuizResults(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const trackDomains: string[] = examTrack === 'ps' ? [...PS_DOMAINS] : [...FS_DOMAINS];
+      const allResults = await storage.getQuizResults(userId);
+      const results = allResults.filter(r => trackDomains.includes(r.domain));
       const totalAnswered = results.length;
       const totalCorrect = results.filter(r => r.isCorrect).length;
       const accuracy = totalAnswered > 0 ? (totalCorrect / totalAnswered) * 100 : 0;
@@ -790,7 +794,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/quiz/sessions", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const sessions = await storage.getQuizSessions(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const sessions = await storage.getQuizSessions(userId, examTrack);
       res.json(sessions);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch quiz sessions" });
@@ -1363,8 +1369,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/exams", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const exams = await storage.getPracticeExams(userId);
-      res.json(exams);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const trackDomains = examTrack === 'ps' ? PS_DOMAINS : FS_DOMAINS;
+      const allExams = await storage.getPracticeExams(userId);
+      const filteredExams = allExams.filter(exam => {
+        if (!exam.domainScores || typeof exam.domainScores !== 'object') return examTrack === 'fs';
+        const domainKeys = Object.keys(exam.domainScores as Record<string, unknown>);
+        return domainKeys.some(d => (trackDomains as readonly string[]).includes(d));
+      });
+      res.json(filteredExams);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch practice exams" });
     }
@@ -1540,8 +1554,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/progress/stats", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const weekProgress = await storage.getAllWeekProgress(userId);
-      const quizResults = await storage.getQuizResults(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const trackDomains: string[] = examTrack === 'ps' ? [...PS_DOMAINS] : [...FS_DOMAINS];
+      const weekProgress = await storage.getAllWeekProgress(userId, examTrack);
+      const allQuizResults = await storage.getQuizResults(userId);
+      const quizResults = allQuizResults.filter(r => trackDomains.includes(r.domain));
       const flashcardMastery = await storage.getAllFlashcardMastery(userId);
       const practiceExams = await storage.getPracticeExams(userId);
 
@@ -1691,18 +1709,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/progress/overall", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       
-      // Get all data
-      const [weekProgress, quizSessions, flashcardMastery, customWeeks, streak] = await Promise.all([
-        storage.getAllWeekProgress(userId),
-        storage.getQuizSessions(userId),
+      const coreWeekCount = examTrack === 'ps' ? 12 : 16;
+      
+      const [weekProgressData, quizSessionsData, flashcardMastery, customWeeks, streak] = await Promise.all([
+        storage.getAllWeekProgress(userId, examTrack),
+        storage.getQuizSessions(userId, examTrack),
         storage.getAllFlashcardMastery(userId),
         storage.getCustomWeeks(userId),
         storage.calculateStreak(userId)
       ]);
 
-      // Calculate weeks completed (core 16 weeks)
-      const coreWeeksCompleted = weekProgress.filter(w => {
+      const coreWeeksCompleted = weekProgressData.filter(w => {
         const allItems = [
           ...w.readCompleted,
           ...w.focusCompleted,
@@ -1712,11 +1732,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return allItems.length > 0;
       }).length;
 
-      // Total weeks including custom
-      const totalWeeks = 16 + customWeeks.length;
+      const totalWeeks = coreWeekCount + customWeeks.length;
       const totalWeeksCompleted = coreWeeksCompleted + customWeeks.filter(cw => {
-        // Check if there's progress for this custom week
-        const progress = weekProgress.find(wp => wp.week === cw.weekNumber);
+        const progress = weekProgressData.find(wp => wp.week === cw.weekNumber);
         return progress && (
           progress.readCompleted.length > 0 ||
           progress.focusCompleted.length > 0 ||
@@ -1725,18 +1743,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
       }).length;
 
-      // Quiz accuracy - only count completed quiz sessions
-      const totalQuestionsFromSessions = quizSessions.reduce((sum, session) => sum + session.totalQuestions, 0);
-      const correctQuestionsFromSessions = quizSessions.reduce((sum, session) => sum + session.correctAnswers, 0);
+      const totalQuestionsFromSessions = quizSessionsData.reduce((sum, session) => sum + session.totalQuestions, 0);
+      const correctQuestionsFromSessions = quizSessionsData.reduce((sum, session) => sum + session.correctAnswers, 0);
       const quizAccuracy = totalQuestionsFromSessions > 0 ? (correctQuestionsFromSessions / totalQuestionsFromSessions) * 100 : 0;
 
-      // Flashcard mastery
       const totalFlashcards = flashcardMastery.length;
       const masteredFlashcards = flashcardMastery.filter(f => f.masteryLevel >= 4).length;
       const flashcardMasteryPercent = totalFlashcards > 0 ? (masteredFlashcards / totalFlashcards) * 100 : 0;
 
-      // Overall progress calculation
-      // 40% weeks, 30% quiz accuracy, 30% flashcard mastery
       const weekProgress_percent = (totalWeeksCompleted / totalWeeks) * 100;
       const overallProgress = (weekProgress_percent * 0.4) + (quizAccuracy * 0.3) + (flashcardMasteryPercent * 0.3);
 

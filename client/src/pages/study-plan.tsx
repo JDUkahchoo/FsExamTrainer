@@ -133,7 +133,12 @@ export default function StudyPlan() {
     flashcardsMastered: number;
     currentStreak: number;
   }>({
-    queryKey: ['/api/progress/overall']
+    queryKey: ['/api/progress/overall', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/progress/overall?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch progress");
+      return res.json();
+    },
   });
 
   // Identify weak domains from pretest results (accuracy < 60%)
@@ -275,6 +280,7 @@ export default function StudyPlan() {
       
       return apiRequest('POST', '/api/progress/weeks', {
         week,
+        examTrack,
         readCompleted,
         focusCompleted,
         applyCompleted,
@@ -284,7 +290,7 @@ export default function StudyPlan() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
     }
   });
 
@@ -303,7 +309,7 @@ export default function StudyPlan() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/custom-weeks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
       setIsDialogOpen(false);
       resetForm();
       toast({

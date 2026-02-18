@@ -182,8 +182,8 @@ export interface IStorage {
   updateUserName(id: string, firstName?: string, lastName?: string): Promise<User>;
 
   // Week Progress methods
-  getWeekProgress(userId: string, week: number): Promise<WeekProgress | undefined>;
-  getAllWeekProgress(userId: string): Promise<WeekProgress[]>;
+  getWeekProgress(userId: string, week: number, examTrack?: string): Promise<WeekProgress | undefined>;
+  getAllWeekProgress(userId: string, examTrack?: string): Promise<WeekProgress[]>;
   upsertWeekProgress(progress: InsertWeekProgress): Promise<WeekProgress>;
 
   // Quiz Results methods
@@ -199,7 +199,7 @@ export interface IStorage {
   getCorrectStreak(userId: string): Promise<{ current: number; best: number }>;
 
   // Quiz Session methods
-  getQuizSessions(userId: string): Promise<QuizSession[]>;
+  getQuizSessions(userId: string, examTrack?: string): Promise<QuizSession[]>;
   getQuizSessionsByDomain(userId: string, domain: string): Promise<QuizSession[]>;
   getQuizSessionWithResults(sessionId: string): Promise<{ session: QuizSession; results: QuizResult[] } | undefined>;
   createQuizSession(session: InsertQuizSession): Promise<QuizSession>;
@@ -404,23 +404,32 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Week Progress methods
-  async getWeekProgress(userId: string, week: number): Promise<WeekProgress | undefined> {
+  async getWeekProgress(userId: string, week: number, examTrack?: string): Promise<WeekProgress | undefined> {
+    const conditions = [eq(weekProgress.userId, userId), eq(weekProgress.week, week)];
+    if (examTrack) {
+      conditions.push(eq(weekProgress.examTrack, examTrack));
+    }
     const [progress] = await db
       .select()
       .from(weekProgress)
-      .where(and(eq(weekProgress.userId, userId), eq(weekProgress.week, week)));
+      .where(and(...conditions));
     return progress || undefined;
   }
 
-  async getAllWeekProgress(userId: string): Promise<WeekProgress[]> {
+  async getAllWeekProgress(userId: string, examTrack?: string): Promise<WeekProgress[]> {
+    const conditions = [eq(weekProgress.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(weekProgress.examTrack, examTrack));
+    }
     return await db
       .select()
       .from(weekProgress)
-      .where(eq(weekProgress.userId, userId));
+      .where(and(...conditions));
   }
 
   async upsertWeekProgress(progress: InsertWeekProgress): Promise<WeekProgress> {
-    const existing = await this.getWeekProgress(progress.userId, progress.week);
+    const trackFilter = progress.examTrack || 'fs';
+    const existing = await this.getWeekProgress(progress.userId, progress.week, trackFilter);
     
     if (existing) {
       const [updated] = await db
@@ -428,14 +437,15 @@ export class DatabaseStorage implements IStorage {
         .set({ ...progress, updatedAt: new Date() })
         .where(and(
           eq(weekProgress.userId, progress.userId),
-          eq(weekProgress.week, progress.week)
+          eq(weekProgress.week, progress.week),
+          eq(weekProgress.examTrack, trackFilter)
         ))
         .returning();
       return updated;
     } else {
       const [created] = await db
         .insert(weekProgress)
-        .values({ ...progress, updatedAt: new Date() })
+        .values({ ...progress, examTrack: trackFilter, updatedAt: new Date() })
         .returning();
       return created;
     }
@@ -540,11 +550,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Quiz Session methods
-  async getQuizSessions(userId: string): Promise<QuizSession[]> {
+  async getQuizSessions(userId: string, examTrack?: string): Promise<QuizSession[]> {
+    const conditions = [eq(quizSessions.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(quizSessions.examTrack, examTrack));
+    }
     return await db
       .select()
       .from(quizSessions)
-      .where(eq(quizSessions.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(quizSessions.completedAt));
   }
 

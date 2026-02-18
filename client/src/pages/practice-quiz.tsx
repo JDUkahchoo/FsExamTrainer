@@ -150,7 +150,7 @@ export default function PracticeQuizPage() {
 
   // Mutation to save quiz session
   const saveSessionMutation = useMutation({
-    mutationFn: (session: { domain: string; totalQuestions: number; correctAnswers: number; timeSpentSeconds: number }) =>
+    mutationFn: (session: { domain: string; examTrack: string; totalQuestions: number; correctAnswers: number; timeSpentSeconds: number }) =>
       apiRequest('POST', '/api/quiz/sessions', session),
     onSuccess: () => {
       logActivity('quiz_completion');
@@ -386,6 +386,7 @@ export default function PracticeQuizPage() {
     // Save the complete quiz session
     saveSessionMutation.mutate({
       domain: selectedDomain,
+      examTrack,
       totalQuestions: quizQuestions.length,
       correctAnswers: finalCorrectCount,
       timeSpentSeconds: elapsedSeconds

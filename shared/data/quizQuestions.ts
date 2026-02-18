@@ -7,7 +7,9 @@ export interface QuizQuestion {
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
-export const QUIZ_QUESTIONS: QuizQuestion[] = [
+import { PS_QUIZ_QUESTIONS } from './psQuizQuestions';
+
+const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   // Math & Basic Science
   {
     domain: 'Math & Basic Science',
@@ -2309,3 +2311,5 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'easy'
   }
 ];
+
+export const QUIZ_QUESTIONS: QuizQuestion[] = [...FS_QUIZ_QUESTIONS, ...PS_QUIZ_QUESTIONS];

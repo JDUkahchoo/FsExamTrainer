@@ -59,7 +59,12 @@ export default function ProgressPage() {
     practiceExamsTaken: number;
     lastExamScore: number;
   }>({ 
-    queryKey: ['/api/progress/stats'],
+    queryKey: ['/api/progress/stats', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/progress/stats?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch stats');
+      return res.json();
+    },
     refetchOnMount: 'always'
   });
 
@@ -69,17 +74,32 @@ export default function ProgressPage() {
     accuracy: number;
     domainStats: Record<string, { answered: number; correct: number; accuracy: number }>;
   }>({ 
-    queryKey: ['/api/quiz/stats'],
+    queryKey: ['/api/quiz/stats', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/quiz/stats?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to fetch quiz stats');
+      return res.json();
+    },
     refetchOnMount: 'always'
   });
 
   const { data: quizSessions } = useQuery<QuizSession[]>({
-    queryKey: ['/api/quiz/sessions'],
+    queryKey: ['/api/quiz/sessions', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/quiz/sessions?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch quiz sessions");
+      return res.json();
+    },
     refetchOnMount: 'always'
   });
 
   const { data: examHistory } = useQuery<PracticeExam[]>({
-    queryKey: ['/api/exams'],
+    queryKey: ['/api/exams', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/exams?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch exams");
+      return res.json();
+    },
     refetchOnMount: 'always'
   });
 

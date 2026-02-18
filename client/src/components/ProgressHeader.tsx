@@ -18,6 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getSurveyorRank } from "@shared/schema";
+import { useExamTrack } from "@/contexts/exam-track-context";
 
 interface ProgressData {
   overallProgress: number;
@@ -91,9 +92,15 @@ const ACHIEVEMENT_INFO: Record<string, { icon: any; label: string; description: 
 export default function ProgressHeader() {
   const { toast } = useToast();
   const [previousAchievementCount, setPreviousAchievementCount] = useState<number | null>(null);
+  const { examTrack } = useExamTrack();
 
   const { data: progressData } = useQuery<ProgressData>({
-    queryKey: ["/api/progress/overall"],
+    queryKey: ["/api/progress/overall", examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/progress/overall?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch progress");
+      return res.json();
+    },
   });
 
   const { data: achievements = [] } = useQuery<Achievement[]>({

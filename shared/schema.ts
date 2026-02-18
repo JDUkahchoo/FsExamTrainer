@@ -216,6 +216,7 @@ export const weekProgress = pgTable("week_progress", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   week: integer("week").notNull(),
+  examTrack: varchar("exam_track").notNull().default('fs'),
   readCompleted: text("read_completed").array().notNull().default(sql`'{}'::text[]`),
   focusCompleted: text("focus_completed").array().notNull().default(sql`'{}'::text[]`),
   applyCompleted: text("apply_completed").array().notNull().default(sql`'{}'::text[]`),
@@ -275,7 +276,8 @@ export type QuizResult = typeof quizResults.$inferSelect;
 export const quizSessions = pgTable("quiz_sessions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  domain: text("domain").notNull(), // Domain filter used, or "all" for mixed
+  domain: text("domain").notNull(),
+  examTrack: varchar("exam_track").notNull().default('fs'),
   totalQuestions: integer("total_questions").notNull(),
   correctAnswers: integer("correct_answers").notNull(),
   timeSpentSeconds: integer("time_spent_seconds").notNull(),
