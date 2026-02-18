@@ -1,5 +1,5 @@
 import { type ReactNode, type CSSProperties } from 'react';
-import { useParams, useLocation, Redirect } from 'wouter';
+import { useLocation } from 'wouter';
 import { BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, Library, ArrowLeft, Settings } from 'lucide-react';
 import { Link } from 'wouter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -20,6 +20,7 @@ import { EXAM_TRACKS } from '@shared/schema';
 
 interface ExamLayoutProps {
   children: ReactNode;
+  examTrack?: 'fs' | 'ps';
 }
 
 const getMenuItems = (examTrack: string) => {
@@ -90,14 +91,10 @@ function ExamSidebar({ examTrack }: { examTrack: string }) {
   );
 }
 
-export function ExamLayout({ children }: ExamLayoutProps) {
-  const params = useParams<{ examTrack: string }>();
-  const examTrack = params.examTrack || 'fs';
-
-  const validExamTracks = ['fs', 'ps'];
-  if (!validExamTracks.includes(examTrack)) {
-    return <Redirect to="/getting-started" />;
-  }
+export function ExamLayout({ children, examTrack: examTrackProp }: ExamLayoutProps) {
+  const [location] = useLocation();
+  
+  const examTrack = examTrackProp || (location.startsWith('/app/ps/') ? 'ps' : 'fs');
 
   const style = {
     "--sidebar-width": "16rem",

@@ -36,7 +36,7 @@ import StudyReadingPage from "@/pages/study-reading";
 
 function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' }) {
   return (
-    <ExamLayout>
+    <ExamLayout examTrack={examTrack}>
       <ExamTrackProvider examTrackOverride={examTrack}>
         {children}
       </ExamTrackProvider>
