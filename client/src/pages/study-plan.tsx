@@ -77,7 +77,12 @@ export default function StudyPlan() {
 
   // Fetch all week progress from database
   const { data: weekProgressData, isLoading } = useQuery<WeekProgress[]>({
-    queryKey: ['/api/progress/weeks']
+    queryKey: ['/api/progress/weeks', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/progress/weeks?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch week progress");
+      return res.json();
+    },
   });
 
   // Fetch custom weeks
@@ -288,7 +293,7 @@ export default function StudyPlan() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks', examTrack] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
     }
@@ -370,7 +375,7 @@ export default function StudyPlan() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/daily-logs'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks', examTrack] });
       setNewDailyActivity('');
       setNewTimeSpent('');
       setNewDomain('');
@@ -405,7 +410,7 @@ export default function StudyPlan() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/daily-logs'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks', examTrack] });
       toast({
         title: "Daily log deleted",
         description: "Your daily activity has been removed.",

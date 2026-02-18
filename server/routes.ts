@@ -219,7 +219,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/progress/weeks", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const progress = await storage.getAllWeekProgress(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const progress = await storage.getAllWeekProgress(userId, examTrack);
       res.json(progress);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch week progress" });

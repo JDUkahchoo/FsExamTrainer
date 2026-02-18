@@ -166,7 +166,7 @@ export default function ProgressPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/study-cycles/current'] });
       queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks', examTrack] });
       toast({
         title: "New cycle started!",
         description: "Your weekly progress has been reset. All quiz/exam history has been preserved.",
