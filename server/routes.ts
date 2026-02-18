@@ -1005,6 +1005,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Flashcard Challenge Mode routes
+  app.post("/api/flashcards/challenge/complete", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { examTrack, deck, domain, totalCards, correctFirstTry, totalAttempts, incorrectAttempts, accuracy, roundsCompleted, totalRounds, domainBreakdown } = req.body;
+      
+      const session = await storage.createFlashcardChallengeSession({
+        userId,
+        examTrack: examTrack || 'fs',
+        deck: deck || 'comprehensive',
+        domain: domain || null,
+        totalCards,
+        correctFirstTry,
+        totalAttempts,
+        incorrectAttempts,
+        accuracy,
+        roundsCompleted: roundsCompleted || 1,
+        totalRounds: totalRounds || 1,
+        domainBreakdown: domainBreakdown || null,
+      });
+
+      // Award XP for challenge completion (10 XP base + bonus for accuracy)
+      const xpAmount = accuracy >= 90 ? 25 : accuracy >= 70 ? 15 : 10;
+      const activityKey = `challenge:flashcard:${session.id}`;
+      await storage.awardXP(userId, xpAmount, 'flashcard_challenge', activityKey);
+
+      await storage.logDailyActivity(userId, 'flashcard_challenge');
+
+      res.json({ ...session, xpAwarded: true, xpAmount });
+    } catch (error) {
+      console.error("Error completing challenge session:", error);
+      res.status(500).json({ error: "Failed to complete challenge session" });
+    }
+  });
+
+  app.get("/api/flashcards/challenge/sessions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const examTrack = req.query.examTrack as string;
+      const sessions = await storage.getFlashcardChallengeSessions(userId, examTrack);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch challenge sessions" });
+    }
+  });
+
+  app.get("/api/flashcards/challenge/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const examTrack = req.query.examTrack as string;
+      const stats = await storage.getFlashcardChallengeStats(userId, examTrack);
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch challenge stats" });
+    }
+  });
+
   // Flashcard Feynman Mode routes
   app.get("/api/flashcards/feynman", isAuthenticated, async (req: any, res) => {
     try {

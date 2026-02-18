@@ -69,6 +69,8 @@ import type {
   FlashcardReviewEvent,
   InsertFlashcardReviewEvent,
   FlashcardSessionState,
+  FlashcardChallengeSession,
+  InsertFlashcardChallengeSession,
   DailyQuest,
   InsertDailyQuest,
   ReviewSchedule,
@@ -116,6 +118,7 @@ import {
   flashcardReviewSessions,
   flashcardReviewEvents,
   dailyFlashcardProgress,
+  flashcardChallengeSessions,
   dailyQuests,
   reviewSchedule,
   userDifficultySettings,
@@ -241,6 +244,16 @@ export interface IStorage {
   // Daily Flashcard Progress (for quest tracking - idempotent per card per day)
   recordFlashcardProgress(userId: string, cardId: string, mode: string, examTrack?: string, timezone?: string): Promise<{ isNew: boolean; todayCount: number }>;
   getTodayFlashcardProgressCount(userId: string, timezone?: string): Promise<number>;
+
+  // Flashcard Challenge Sessions (proficiency tracking)
+  createFlashcardChallengeSession(session: InsertFlashcardChallengeSession): Promise<FlashcardChallengeSession>;
+  getFlashcardChallengeSessions(userId: string, examTrack?: string): Promise<FlashcardChallengeSession[]>;
+  getFlashcardChallengeStats(userId: string, examTrack?: string): Promise<{
+    totalSessions: number;
+    totalCards: number;
+    overallAccuracy: number;
+    domainStats: Record<string, { sessions: number; accuracy: number; totalCards: number }>;
+  }>;
 
   // Practice Exam methods
   getPracticeExams(userId: string): Promise<PracticeExam[]>;
@@ -3542,6 +3555,74 @@ export class DatabaseStorage implements IStorage {
       ));
 
     return Number(result[0]?.count || 0);
+  }
+
+  async createFlashcardChallengeSession(session: InsertFlashcardChallengeSession): Promise<FlashcardChallengeSession> {
+    const [result] = await db.insert(flashcardChallengeSessions).values(session).returning();
+    return result;
+  }
+
+  async getFlashcardChallengeSessions(userId: string, examTrack?: string): Promise<FlashcardChallengeSession[]> {
+    const conditions = [eq(flashcardChallengeSessions.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(flashcardChallengeSessions.examTrack, examTrack));
+    }
+    return db
+      .select()
+      .from(flashcardChallengeSessions)
+      .where(and(...conditions))
+      .orderBy(desc(flashcardChallengeSessions.completedAt));
+  }
+
+  async getFlashcardChallengeStats(userId: string, examTrack?: string): Promise<{
+    totalSessions: number;
+    totalCards: number;
+    overallAccuracy: number;
+    domainStats: Record<string, { sessions: number; accuracy: number; totalCards: number }>;
+  }> {
+    const sessions = await this.getFlashcardChallengeSessions(userId, examTrack);
+    
+    if (sessions.length === 0) {
+      return { totalSessions: 0, totalCards: 0, overallAccuracy: 0, domainStats: {} };
+    }
+
+    let totalCards = 0;
+    let totalCorrectFirstTry = 0;
+    let totalAttempts = 0;
+    const domainMap: Record<string, { sessions: number; totalCards: number; totalCorrectFirstTry: number; totalAttempts: number }> = {};
+
+    for (const session of sessions) {
+      totalCards += session.totalCards;
+      totalCorrectFirstTry += session.correctFirstTry;
+      totalAttempts += session.totalAttempts;
+
+      const domain = session.domain || 'All Domains';
+      if (!domainMap[domain]) {
+        domainMap[domain] = { sessions: 0, totalCards: 0, totalCorrectFirstTry: 0, totalAttempts: 0 };
+      }
+      domainMap[domain].sessions += 1;
+      domainMap[domain].totalCards += session.totalCards;
+      domainMap[domain].totalCorrectFirstTry += session.correctFirstTry;
+      domainMap[domain].totalAttempts += session.totalAttempts;
+    }
+
+    const overallAccuracy = totalAttempts > 0 ? Math.round((totalCorrectFirstTry / totalAttempts) * 100) : 0;
+
+    const domainStats: Record<string, { sessions: number; accuracy: number; totalCards: number }> = {};
+    for (const [domain, data] of Object.entries(domainMap)) {
+      domainStats[domain] = {
+        sessions: data.sessions,
+        accuracy: data.totalAttempts > 0 ? Math.round((data.totalCorrectFirstTry / data.totalAttempts) * 100) : 0,
+        totalCards: data.totalCards,
+      };
+    }
+
+    return {
+      totalSessions: sessions.length,
+      totalCards,
+      overallAccuracy,
+      domainStats,
+    };
   }
 
   async resetUserStudyData(userId: string): Promise<{ success: boolean; tablesCleared: string[] }> {

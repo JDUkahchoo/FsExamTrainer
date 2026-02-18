@@ -782,6 +782,8 @@ export default function FlashcardsPage() {
           cards={filteredCards}
           activeFlashcards={activeFlashcards}
           selectedDeck={selectedDeck}
+          selectedDomain={selectedDomains.length > 0 ? selectedDomains[0] : (selectedDomain !== 'all' ? selectedDomain : undefined)}
+          examTrack={examTrack}
           onCardMatched={(cardId) => {
             recordProgressMutation.mutate({ cardId, mode: 'challenge' });
             if (currentSessionId) {

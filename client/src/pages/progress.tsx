@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book, RefreshCw, Play, Activity } from 'lucide-react';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book, RefreshCw, Play, Activity, Swords } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
@@ -90,6 +90,16 @@ export default function ProgressPage() {
 
   const { data: currentCycle } = useQuery<StudyCycle | null>({
     queryKey: ['/api/study-cycles/current'],
+    refetchOnMount: 'always'
+  });
+
+  const { data: challengeStats } = useQuery<{
+    totalSessions: number;
+    totalCards: number;
+    overallAccuracy: number;
+    domainStats: Record<string, { sessions: number; accuracy: number; totalCards: number }>;
+  }>({
+    queryKey: ['/api/flashcards/challenge/stats', examTrack],
     refetchOnMount: 'always'
   });
 
@@ -434,6 +444,10 @@ export default function ProgressPage() {
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">Domain Mastery</span>
           </TabsTrigger>
+          <TabsTrigger value="challenge" className="flex items-center gap-2" data-testid="tab-challenge-proficiency">
+            <Swords className="h-4 w-4" />
+            <span className="hidden sm:inline">Challenge</span>
+          </TabsTrigger>
         </TabsList>
 
         {/* Personal Analytics Tab */}
@@ -664,6 +678,69 @@ export default function ProgressPage() {
             <Card className="p-6">
               <p className="text-center text-muted-foreground py-8">
                 Complete lessons and quizzes to track domain progress.
+              </p>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Challenge Proficiency Tab */}
+        <TabsContent value="challenge" className="space-y-4">
+          {challengeStats && challengeStats.totalSessions > 0 ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Card className="p-4">
+                  <div className="text-center">
+                    <p className="text-3xl font-bold text-foreground">{challengeStats.totalSessions}</p>
+                    <p className="text-sm text-muted-foreground">Sessions Played</p>
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-center">
+                    <p className="text-3xl font-bold text-foreground">{challengeStats.totalCards}</p>
+                    <p className="text-sm text-muted-foreground">Cards Attempted</p>
+                  </div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-center">
+                    <p className={`text-3xl font-bold ${challengeStats.overallAccuracy >= 80 ? 'text-green-600 dark:text-green-400' : challengeStats.overallAccuracy >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500'}`}>
+                      {challengeStats.overallAccuracy}%
+                    </p>
+                    <p className="text-sm text-muted-foreground">Overall Accuracy</p>
+                  </div>
+                </Card>
+              </div>
+
+              {Object.keys(challengeStats.domainStats).length > 0 && (
+                <Card className="p-4">
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Swords className="h-4 w-4" />
+                    Domain Proficiency
+                  </h3>
+                  <div className="space-y-3">
+                    {Object.entries(challengeStats.domainStats).map(([domain, data]) => {
+                      return (
+                        <div key={domain} className="space-y-1">
+                          <div className="flex items-center justify-between gap-4">
+                            <span className="text-sm font-medium text-foreground truncate flex-1">{domain}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-muted-foreground">{data.sessions} session{data.sessions !== 1 ? 's' : ''}</span>
+                              <span className={`text-sm font-bold ${data.accuracy >= 80 ? 'text-green-600 dark:text-green-400' : data.accuracy >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500'}`}>
+                                {data.accuracy}%
+                              </span>
+                            </div>
+                          </div>
+                          <Progress value={data.accuracy} className="h-1.5" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Card>
+              )}
+            </div>
+          ) : (
+            <Card className="p-6">
+              <p className="text-center text-muted-foreground py-8">
+                No challenge sessions completed yet. Try Challenge Mode in Flashcards to test your term-matching skills!
               </p>
             </Card>
           )}

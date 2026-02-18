@@ -522,6 +522,40 @@ export const insertDailyFlashcardProgressSchema = createInsertSchema(dailyFlashc
 export type InsertDailyFlashcardProgress = z.infer<typeof insertDailyFlashcardProgressSchema>;
 export type DailyFlashcardProgress = typeof dailyFlashcardProgress.$inferSelect;
 
+// --- Flashcard Challenge Sessions (proficiency tracking) ---
+
+export const flashcardChallengeSessions = pgTable("flashcard_challenge_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  examTrack: varchar("exam_track").notNull().default('fs'),
+  deck: varchar("deck").notNull().default('comprehensive'),
+  domain: varchar("domain"),
+  totalCards: integer("total_cards").notNull(),
+  correctFirstTry: integer("correct_first_try").notNull(),
+  totalAttempts: integer("total_attempts").notNull(),
+  incorrectAttempts: integer("incorrect_attempts").notNull(),
+  accuracy: integer("accuracy").notNull(),
+  roundsCompleted: integer("rounds_completed").notNull().default(1),
+  totalRounds: integer("total_rounds").notNull().default(1),
+  domainBreakdown: jsonb("domain_breakdown"),
+  completedAt: timestamp("completed_at").notNull().defaultNow(),
+});
+
+export const flashcardChallengeSessionsRelations = relations(flashcardChallengeSessions, ({ one }) => ({
+  user: one(users, {
+    fields: [flashcardChallengeSessions.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertFlashcardChallengeSessionSchema = createInsertSchema(flashcardChallengeSessions).omit({
+  id: true,
+  completedAt: true,
+});
+
+export type InsertFlashcardChallengeSession = z.infer<typeof insertFlashcardChallengeSessionSchema>;
+export type FlashcardChallengeSession = typeof flashcardChallengeSessions.$inferSelect;
+
 // --- Practice Exam Results ---
 
 export const practiceExams = pgTable("practice_exams", {

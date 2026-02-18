@@ -1,10 +1,11 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { getDomainConfig } from '@/lib/domains';
-import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowRight } from 'lucide-react';
+import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowRight, ChevronRight, Target } from 'lucide-react';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import type { Flashcard, Domain } from '@shared/schema';
 
 interface ChallengeCard {
@@ -17,6 +18,8 @@ interface FlashcardChallengeModeProps {
   cards: Flashcard[];
   activeFlashcards: Flashcard[];
   selectedDeck: 'original' | 'comprehensive';
+  selectedDomain?: string;
+  examTrack?: string;
   onCardMatched: (cardId: string) => void;
   onSessionComplete: (stats: { correct: number; incorrect: number; total: number }) => void;
 }
@@ -47,16 +50,18 @@ export function FlashcardChallengeMode({
   cards,
   activeFlashcards,
   selectedDeck,
+  selectedDomain,
+  examTrack = 'fs',
   onCardMatched,
   onSessionComplete,
 }: FlashcardChallengeModeProps) {
   const BATCH_SIZE = 8;
 
-  const challengeCards = useMemo(() => {
+  const allChallengeCards = useMemo(() => {
     const eligible = cards.filter(c => c.front.length <= 80);
-    const selected = shuffleArray(eligible).slice(0, Math.min(eligible.length, BATCH_SIZE));
+    const shuffled = shuffleArray(eligible);
     const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
-    return selected.map(card => {
+    return shuffled.map(card => {
       const stableIndex = activeFlashcards.findIndex(
         af => af.front === card.front && af.domain === card.domain
       );
@@ -68,17 +73,32 @@ export function FlashcardChallengeMode({
     }).filter(cc => cc.index >= 0);
   }, [cards, activeFlashcards, selectedDeck]);
 
+  const totalRounds = Math.ceil(allChallengeCards.length / BATCH_SIZE);
+
+  const [currentRound, setCurrentRound] = useState(0);
+  const cumulativeRef = useRef({ correctFirstTry: 0, totalAttempts: 0, incorrect: 0, cardsMatched: 0 });
+  const [roundCardsMatched, setRoundCardsMatched] = useState(0);
+  const [sessionSaved, setSessionSaved] = useState(false);
+
+  const roundCards = useMemo(() => {
+    const start = currentRound * BATCH_SIZE;
+    return allChallengeCards.slice(start, start + BATCH_SIZE);
+  }, [allChallengeCards, currentRound]);
+
   const [currentDefIndex, setCurrentDefIndex] = useState(0);
   const [matchedIds, setMatchedIds] = useState<Set<string>>(new Set());
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [feedbackState, setFeedbackState] = useState<{ termId: string; correct: boolean } | null>(null);
-  const [isComplete, setIsComplete] = useState(false);
+  const [roundComplete, setRoundComplete] = useState(false);
+  const [allComplete, setAllComplete] = useState(false);
   const [totalAttempts, setTotalAttempts] = useState(0);
   const [wrongTermId, setWrongTermId] = useState<string | null>(null);
+  const [correctFirstTryRound, setCorrectFirstTryRound] = useState(0);
+  const [attemptedCards, setAttemptedCards] = useState<Set<string>>(new Set());
 
   const shuffledTermOrder = useMemo(() => {
-    return shuffleArray(challengeCards.map(c => c.cardId));
-  }, [challengeCards]);
+    return shuffleArray(roundCards.map(c => c.cardId));
+  }, [roundCards]);
 
   const unmatchedTerms = useMemo(() => {
     return shuffledTermOrder.filter(id => !matchedIds.has(id));
@@ -89,25 +109,60 @@ export function FlashcardChallengeMode({
   }, [shuffledTermOrder, matchedIds]);
 
   const currentDef = useMemo(() => {
-    const unmatched = challengeCards.filter(c => !matchedIds.has(c.cardId));
+    const unmatched = roundCards.filter(c => !matchedIds.has(c.cardId));
     if (unmatched.length === 0) return null;
     return unmatched[currentDefIndex % unmatched.length];
-  }, [challengeCards, matchedIds, currentDefIndex]);
+  }, [roundCards, matchedIds, currentDefIndex]);
 
   const getCardById = useCallback((cardId: string) => {
-    return challengeCards.find(c => c.cardId === cardId);
-  }, [challengeCards]);
+    return roundCards.find(c => c.cardId === cardId);
+  }, [roundCards]);
 
   useEffect(() => {
-    if (matchedIds.size === challengeCards.length && challengeCards.length > 0 && !isComplete) {
-      setIsComplete(true);
-      onSessionComplete({
-        correct: matchedIds.size,
-        incorrect: incorrectCount,
-        total: totalAttempts,
-      });
+    if (matchedIds.size === roundCards.length && roundCards.length > 0 && !roundComplete) {
+      setRoundComplete(true);
+
+      cumulativeRef.current.correctFirstTry += correctFirstTryRound;
+      cumulativeRef.current.totalAttempts += totalAttempts;
+      cumulativeRef.current.incorrect += incorrectCount;
+      cumulativeRef.current.cardsMatched += matchedIds.size;
+      setRoundCardsMatched(cumulativeRef.current.cardsMatched);
+
+      if (currentRound >= totalRounds - 1) {
+        setAllComplete(true);
+        const finals = { ...cumulativeRef.current };
+        onSessionComplete({
+          correct: finals.correctFirstTry,
+          incorrect: finals.incorrect,
+          total: finals.totalAttempts,
+        });
+
+        if (!sessionSaved) {
+          setSessionSaved(true);
+          const finalAccuracy = finals.totalAttempts > 0 ? Math.round((finals.correctFirstTry / finals.totalAttempts) * 100) : 100;
+
+          apiRequest('POST', '/api/flashcards/challenge/complete', {
+            examTrack,
+            deck: selectedDeck,
+            domain: selectedDomain || null,
+            totalCards: allChallengeCards.length,
+            correctFirstTry: finals.correctFirstTry,
+            totalAttempts: finals.totalAttempts,
+            incorrectAttempts: finals.incorrect,
+            accuracy: finalAccuracy,
+            roundsCompleted: totalRounds,
+            totalRounds,
+          }).then(() => {
+            queryClient.invalidateQueries({ queryKey: ['/api/flashcards/challenge/stats', examTrack] });
+            queryClient.invalidateQueries({ queryKey: ['/api/flashcards/challenge/sessions'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
+          }).catch(err => {
+            console.error('Failed to save challenge session:', err);
+          });
+        }
+      }
     }
-  }, [matchedIds.size, challengeCards.length, incorrectCount, totalAttempts, isComplete, onSessionComplete]);
+  }, [matchedIds.size, roundCards.length, roundComplete, currentRound, totalRounds, correctFirstTryRound, totalAttempts, incorrectCount, onSessionComplete, sessionSaved, examTrack, selectedDeck, selectedDomain, allChallengeCards.length]);
 
   const handleTermClick = useCallback((termId: string) => {
     if (feedbackState || !currentDef || matchedIds.has(termId)) return;
@@ -118,6 +173,10 @@ export function FlashcardChallengeMode({
       setFeedbackState({ termId, correct: true });
       onCardMatched(termId);
 
+      if (!attemptedCards.has(currentDef.cardId)) {
+        setCorrectFirstTryRound(prev => prev + 1);
+      }
+
       setTimeout(() => {
         setMatchedIds(prev => {
           const next = new Set(prev);
@@ -126,30 +185,60 @@ export function FlashcardChallengeMode({
         });
         setFeedbackState(null);
         setCurrentDefIndex(0);
+        setAttemptedCards(prev => {
+          const next = new Set(prev);
+          next.add(termId);
+          return next;
+        });
       }, 600);
     } else {
       setIncorrectCount(prev => prev + 1);
       setFeedbackState({ termId, correct: false });
       setWrongTermId(termId);
+      setAttemptedCards(prev => {
+        const next = new Set(prev);
+        next.add(currentDef.cardId);
+        return next;
+      });
 
       setTimeout(() => {
         setFeedbackState(null);
         setWrongTermId(null);
       }, 800);
     }
-  }, [feedbackState, currentDef, matchedIds, onCardMatched]);
+  }, [feedbackState, currentDef, matchedIds, onCardMatched, attemptedCards]);
 
-  const handleRestart = useCallback(() => {
+  const handleNextRound = useCallback(() => {
+    setCurrentRound(prev => prev + 1);
     setCurrentDefIndex(0);
     setMatchedIds(new Set());
     setIncorrectCount(0);
     setFeedbackState(null);
-    setIsComplete(false);
+    setRoundComplete(false);
     setTotalAttempts(0);
     setWrongTermId(null);
+    setCorrectFirstTryRound(0);
+    setAttemptedCards(new Set());
   }, []);
 
-  if (challengeCards.length < 3) {
+  const handleRestart = useCallback(() => {
+    setCurrentRound(0);
+    setCurrentDefIndex(0);
+    setMatchedIds(new Set());
+    setIncorrectCount(0);
+    setFeedbackState(null);
+    setRoundComplete(false);
+    setAllComplete(false);
+    setTotalAttempts(0);
+    setWrongTermId(null);
+    setCorrectFirstTryRound(0);
+    setAttemptedCards(new Set());
+    cumulativeRef.current = { correctFirstTry: 0, totalAttempts: 0, incorrect: 0, cardsMatched: 0 };
+    setRoundCardsMatched(0);
+    setSessionSaved(false);
+  }, []);
+
+  if (allChallengeCards.length < 3) {
     return (
       <Card className="p-8 text-center">
         <h3 className="text-lg font-semibold mb-2">Not Enough Cards</h3>
@@ -160,25 +249,45 @@ export function FlashcardChallengeMode({
     );
   }
 
-  if (isComplete) {
-    const accuracy = totalAttempts > 0 ? Math.round((challengeCards.length / totalAttempts) * 100) : 100;
+  if (allComplete) {
+    const finals = cumulativeRef.current;
+    const overallAccuracy = finals.totalAttempts > 0
+      ? Math.round((finals.correctFirstTry / finals.totalAttempts) * 100)
+      : 100;
+
     return (
       <Card className="p-8 text-center">
         <Trophy className="w-12 h-12 mx-auto mb-4 text-yellow-500" />
         <h3 className="text-2xl font-bold mb-2">Challenge Complete!</h3>
-        <div className="flex justify-center gap-6 mb-6">
+        <p className="text-muted-foreground mb-4">
+          {totalRounds > 1 ? `All ${totalRounds} rounds completed` : 'Round completed'}
+          {' '} - {allChallengeCards.length} cards total
+        </p>
+        <div className="flex justify-center gap-6 mb-6 flex-wrap">
           <div className="text-center">
-            <p className="text-3xl font-bold text-green-600 dark:text-green-400">{challengeCards.length}</p>
-            <p className="text-sm text-muted-foreground">Matched</p>
+            <p className="text-3xl font-bold text-green-600 dark:text-green-400">{finals.correctFirstTry}</p>
+            <p className="text-sm text-muted-foreground">First Try</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-red-500">{incorrectCount}</p>
+            <p className="text-3xl font-bold text-red-500">{finals.incorrect}</p>
             <p className="text-sm text-muted-foreground">Wrong Attempts</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-foreground">{accuracy}%</p>
+            <p className={`text-3xl font-bold ${overallAccuracy >= 80 ? 'text-green-600 dark:text-green-400' : overallAccuracy >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500'}`}>
+              {overallAccuracy}%
+            </p>
             <p className="text-sm text-muted-foreground">Accuracy</p>
           </div>
+        </div>
+        <div className="flex items-center justify-center gap-2 mb-4 text-sm text-muted-foreground">
+          <Target className="w-4 h-4" />
+          <span>
+            {overallAccuracy >= 90
+              ? 'Outstanding! You know these terms inside and out.'
+              : overallAccuracy >= 70
+              ? 'Great work! A few more rounds and you will have full mastery.'
+              : 'Keep practicing - repetition builds mastery!'}
+          </span>
         </div>
         <Button onClick={handleRestart} data-testid="button-restart-challenge">
           <RotateCcw className="w-4 h-4 mr-2" />
@@ -188,15 +297,59 @@ export function FlashcardChallengeMode({
     );
   }
 
-  const progressPercent = (matchedIds.size / challengeCards.length) * 100;
+  if (roundComplete && currentRound < totalRounds - 1) {
+    const roundAccuracy = totalAttempts > 0
+      ? Math.round((correctFirstTryRound / totalAttempts) * 100)
+      : 100;
+
+    return (
+      <Card className="p-8 text-center">
+        <CheckCircle2 className="w-10 h-10 mx-auto mb-4 text-green-500" />
+        <h3 className="text-xl font-bold mb-2">Round {currentRound + 1} of {totalRounds} Complete</h3>
+        <div className="flex justify-center gap-6 mb-6 flex-wrap">
+          <div className="text-center">
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{correctFirstTryRound}</p>
+            <p className="text-sm text-muted-foreground">First Try</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-red-500">{incorrectCount}</p>
+            <p className="text-sm text-muted-foreground">Wrong</p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-foreground">{roundAccuracy}%</p>
+            <p className="text-sm text-muted-foreground">Accuracy</p>
+          </div>
+        </div>
+        <div className="w-full max-w-xs mx-auto mb-4">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <span>Overall Progress</span>
+            <span>{roundCardsMatched} / {allChallengeCards.length} cards</span>
+          </div>
+          <Progress value={(roundCardsMatched / allChallengeCards.length) * 100} className="h-2" />
+        </div>
+        <Button onClick={handleNextRound} data-testid="button-next-round">
+          <ChevronRight className="w-4 h-4 mr-2" />
+          Next Round ({roundCards.length <= BATCH_SIZE ? allChallengeCards.slice((currentRound + 1) * BATCH_SIZE, (currentRound + 2) * BATCH_SIZE).length : BATCH_SIZE} cards)
+        </Button>
+      </Card>
+    );
+  }
+
+  const progressPercent = (matchedIds.size / roundCards.length) * 100;
+  const overallProgress = ((currentRound * BATCH_SIZE + matchedIds.size) / allChallengeCards.length) * 100;
   const domainConfig = currentDef ? getDomainConfig(currentDef.card.domain) : null;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          {totalRounds > 1 && (
+            <Badge variant="secondary" className="text-xs">
+              Round {currentRound + 1} / {totalRounds}
+            </Badge>
+          )}
           <Badge variant="secondary" className="text-xs">
-            {matchedIds.size} / {challengeCards.length} matched
+            {matchedIds.size} / {roundCards.length} matched
           </Badge>
           {incorrectCount > 0 && (
             <Badge variant="outline" className="text-xs text-red-500 border-red-200 dark:border-red-800">
@@ -210,7 +363,12 @@ export function FlashcardChallengeMode({
         </Button>
       </div>
 
-      <Progress value={progressPercent} className="h-2" />
+      <div className="space-y-1">
+        <Progress value={progressPercent} className="h-2" />
+        {totalRounds > 1 && (
+          <Progress value={overallProgress} className="h-1 opacity-50" />
+        )}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="space-y-3">
