@@ -161,7 +161,8 @@ export function FlashcardChallengeMode({
       return null;
     }
     return saved;
-  }, [examTrack, selectedDeck, selectedDomain, cards]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examTrack, selectedDeck, selectedDomain]);
   const [showResumePrompt, setShowResumePrompt] = useState(!!savedSession);
   const [resumeData, setResumeData] = useState<SavedChallengeState | null>(savedSession);
 
@@ -234,17 +235,9 @@ export function FlashcardChallengeMode({
     savedInRound ? new Set(savedInRound.attemptedCardIds) : new Set()
   );
 
-  const shuffledTermOrderRef = useRef<Map<number, string[]>>(new Map());
   const shuffledTermOrder = useMemo(() => {
-    const cached = shuffledTermOrderRef.current.get(currentRound);
-    if (cached && cached.length === roundCards.length) {
-      return cached;
-    }
-    const order = shuffleArray(roundCards.map(c => c.cardId));
-    shuffledTermOrderRef.current.set(currentRound, order);
-    return order;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRound, roundCards.length]);
+    return shuffleArray(roundCards.map(c => c.cardId));
+  }, [roundCards]);
 
   const unmatchedTerms = useMemo(() => {
     return shuffledTermOrder.filter(id => !matchedIds.has(id));
@@ -423,7 +416,6 @@ export function FlashcardChallengeMode({
   const handleRestart = useCallback(() => {
     allChallengeCardsRef.current = null;
     lastCardsKeyRef.current = '';
-    shuffledTermOrderRef.current = new Map();
     setCurrentRound(0);
     setCurrentDefIndex(0);
     setMatchedIds(new Set());
@@ -449,7 +441,6 @@ export function FlashcardChallengeMode({
   const handleStartFresh = useCallback(() => {
     allChallengeCardsRef.current = null;
     lastCardsKeyRef.current = '';
-    shuffledTermOrderRef.current = new Map();
     setShowResumePrompt(false);
     setResumeData(null);
     clearChallengeState();
