@@ -232,7 +232,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const week = parseInt(req.params.week);
-      const progress = await storage.getWeekProgress(userId, week);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const progress = await storage.getWeekProgress(userId, week, examTrack);
       res.json(progress || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch week progress" });
