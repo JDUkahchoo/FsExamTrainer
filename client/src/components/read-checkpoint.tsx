@@ -121,9 +121,10 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/reading-progress', week, examTrack] });
-      // Show XP toast only for NEW completions (backend handles the actual XP award)
+      queryClient.invalidateQueries({ queryKey: ['/api/reading-progress', examTrack] });
       if (data.isNewCompletion) {
         queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
         toast({ 
           title: `+${XP_AWARDS.READ_CHECKPOINT} XP`, 
           description: "Chapter checkpoint completed!" 

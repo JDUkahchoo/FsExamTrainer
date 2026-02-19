@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { getDomainConfig } from '@/lib/domains';
 import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowRight, ChevronRight, Target, Play } from 'lucide-react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 import type { Flashcard, Domain } from '@shared/schema';
 
 interface ChallengeCard {
@@ -144,6 +145,7 @@ export function FlashcardChallengeMode({
   onCardMatched,
   onSessionComplete,
 }: FlashcardChallengeModeProps) {
+  const { toast } = useToast();
   const BATCH_SIZE = 8;
 
   const cardsIdentityKey = useMemo(() => {
@@ -321,8 +323,19 @@ export function FlashcardChallengeMode({
             queryClient.invalidateQueries({ queryKey: ['/api/flashcards/challenge/stats', examTrack] });
             queryClient.invalidateQueries({ queryKey: ['/api/flashcards/challenge/sessions'] });
             queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+            queryClient.invalidateQueries({ predicate: (query) => 
+              Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+            });
           }).catch(err => {
             console.error('Failed to save challenge session:', err);
+            setSessionSaved(false);
+            toast({
+              title: "Save Error",
+              description: "Challenge results couldn't be saved. Try completing another round.",
+              variant: "destructive",
+            });
           });
         }
       } else {

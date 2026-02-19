@@ -116,6 +116,8 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary", examTrack 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', week, examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
     },
   });
 
@@ -126,6 +128,7 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary", examTrack 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', week, examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', examTrack] });
     },
   });
 

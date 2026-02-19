@@ -29,6 +29,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { getDomainConfig } from '@/lib/domains';
 import { STUDY_PLAN, PS_STUDY_PLAN } from '@shared/data/studyPlan';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -37,7 +42,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
-import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog } from '@shared/schema';
+import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog, ReadingProgress, ApplyChallengeAttempt } from '@shared/schema';
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
@@ -127,6 +132,26 @@ export default function StudyPlan() {
       if (!res.ok) throw new Error('Failed to fetch lessons');
       return res.json();
     }
+  });
+
+  // Fetch all reading progress for auto-marking
+  const { data: allReadingProgress = [] } = useQuery<ReadingProgress[]>({
+    queryKey: ['/api/reading-progress', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/reading-progress?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch reading progress");
+      return res.json();
+    },
+  });
+
+  // Fetch all apply attempts for auto-marking
+  const { data: allApplyAttempts = [] } = useQuery<ApplyChallengeAttempt[]>({
+    queryKey: ['/api/apply/attempts', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/apply/attempts?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch apply attempts");
+      return res.json();
+    },
   });
 
   // Fetch overall progress for the progress indicator
@@ -261,6 +286,42 @@ export default function StudyPlan() {
     
     return result;
   }, [weekProgressData]);
+
+  // Auto-detect completed items from activity data (reading progress, apply attempts, etc.)
+  const autoCompletedItems = useMemo(() => {
+    const result: Record<string, Set<string>> = {};
+
+    // Auto-mark READ items from reading progress (chapterIndex maps to plan.read index)
+    allReadingProgress.forEach(rp => {
+      if (rp.completed) {
+        const weekKey = `week-${rp.week}`;
+        if (!result[weekKey]) result[weekKey] = new Set();
+        result[weekKey].add(`read-${rp.chapterIndex}`);
+      }
+    });
+
+    // Auto-mark APPLY items when completed apply attempts exist for a week
+    const applyByWeek = new Map<number, number>();
+    allApplyAttempts.forEach(attempt => {
+      if (attempt.week && attempt.completedAt) {
+        applyByWeek.set(attempt.week, (applyByWeek.get(attempt.week) || 0) + 1);
+      }
+    });
+    applyByWeek.forEach((count, week) => {
+      const weekKey = `week-${week}`;
+      if (!result[weekKey]) result[weekKey] = new Set();
+      const plan = baseStudyPlan.find(p => p.week === week);
+      if (plan) {
+        const applyItemCount = plan.apply.length;
+        const itemsToMark = Math.min(count, applyItemCount);
+        for (let i = 0; i < itemsToMark; i++) {
+          result[weekKey].add(`apply-${i}`);
+        }
+      }
+    });
+
+    return result;
+  }, [allReadingProgress, allApplyAttempts, baseStudyPlan]);
 
   // Mutation to save week progress
   const saveProgressMutation = useMutation({
@@ -494,13 +555,33 @@ export default function StudyPlan() {
 
   const calculateWeekProgress = (week: number, plan: WeekPlan) => {
     const weekKey = `week-${week}`;
-    const completed = completedItems[weekKey] || new Set();
+    const manualCompleted = completedItems[weekKey] || new Set();
+    const autoCompleted = autoCompletedItems[weekKey] || new Set();
     const dailyLogsForWeek = dailyLogsByWeek[week] || [];
+
+    // Merge manual and auto-detected completions (union)
+    const merged = new Set([...manualCompleted, ...autoCompleted]);
+
+    // Count lessons for this week
+    const weekLessons = weeklyLessonsMap.get(week) || [];
+    const completedLessons = weekLessons.filter((lesson: any) => 
+      lessonProgressData.some((p: any) => p.lessonId === lesson.id && p.completed)
+    );
+
     const checklistTotal = plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length;
+    const lessonTotal = weekLessons.length;
     
-    // Each daily log counts as 1 unit, add to completed count
-    const totalCompleted = completed.size + dailyLogsForWeek.length;
-    const total = checklistTotal + dailyLogsForWeek.length;
+    // Count merged completed items (only checklist categories: read, focus, apply, reinforce)
+    let checklistCompleted = 0;
+    merged.forEach(item => {
+      if (item.startsWith('read-') || item.startsWith('focus-') || item.startsWith('apply-') || item.startsWith('reinforce-')) {
+        checklistCompleted++;
+      }
+    });
+
+    // Total progress = checklist + lessons + daily logs
+    const totalCompleted = checklistCompleted + completedLessons.length + dailyLogsForWeek.length;
+    const total = checklistTotal + lessonTotal + dailyLogsForWeek.length;
     
     return total > 0 ? Math.round((totalCompleted / total) * 100) : 0;
   };
@@ -909,6 +990,70 @@ export default function StudyPlan() {
                     domains={plan.domains as string[]}
                     examTrack={examTrack}
                   />
+
+                  {/* Study Checklist Section - shows items with auto/manual completion */}
+                  {(() => {
+                    const weekKey = `week-${plan.week}`;
+                    const manualItems = completedItems[weekKey] || new Set();
+                    const autoItems = autoCompletedItems[weekKey] || new Set();
+                    const mergedItems = new Set([...manualItems, ...autoItems]);
+                    const handleToggle = (prefix: string) => (index: number) => {
+                      toggleItem(plan.week, `${prefix}-${index}`);
+                    };
+                    return (
+                      <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
+                        <Collapsible>
+                          <CollapsibleTrigger className="w-full flex items-center justify-between p-3 rounded-lg hover-elevate active-elevate-2" data-testid={`button-checklist-${plan.week}`}>
+                            <div className="flex items-center gap-2 text-foreground font-semibold uppercase text-sm tracking-wider">
+                              <CheckCircle2 className="w-4 h-4" />
+                              Study Checklist ({mergedItems.size}/{plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length})
+                            </div>
+                            <ChevronDown className="h-4 w-4" />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="mt-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <ChecklistSection
+                                title="Read"
+                                icon={BookOpen}
+                                items={plan.read}
+                                completed={mergedItems}
+                                onToggle={handleToggle('read')}
+                                prefix="read"
+                                colorClass="text-foreground"
+                              />
+                              <ChecklistSection
+                                title="Focus"
+                                icon={Target}
+                                items={plan.focus}
+                                completed={mergedItems}
+                                onToggle={handleToggle('focus')}
+                                prefix="focus"
+                                colorClass="text-domain-computations-fg"
+                              />
+                              <ChecklistSection
+                                title="Apply"
+                                icon={Dumbbell}
+                                items={plan.apply}
+                                completed={mergedItems}
+                                onToggle={handleToggle('apply')}
+                                prefix="apply"
+                                colorClass="text-domain-boundary-fg"
+                              />
+                              <ChecklistSection
+                                title="Reinforce"
+                                icon={BrainCircuit}
+                                items={plan.reinforce}
+                                completed={mergedItems}
+                                onToggle={handleToggle('reinforce')}
+                                prefix="reinforce"
+                                colorClass="text-primary"
+                              />
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </div>
+                    );
+                  })()}
 
                   {/* Interactive Lessons Section */}
                   {(() => {
