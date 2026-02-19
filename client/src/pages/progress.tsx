@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book, RefreshCw, Play, Activity, Swords } from 'lucide-react';
+import { BarChart3, Target, Brain, Calendar, TrendingUp, Award, Loader2, Clock, CheckCircle, FileText, GraduationCap, BookOpen, Settings, Book, RefreshCw, Play, Activity, Swords, Layers, FlaskConical, RotateCcw, BookMarked } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { DOMAINS } from '@shared/schema';
@@ -648,107 +648,86 @@ export default function ProgressPage() {
         <TabsContent value="domain" className="space-y-4">
           {domainMastery && domainMastery.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {domainMastery.map((item) => (
-                <Card key={item.domainNumber} className="p-4 hover-elevate" data-testid={`domain-card-${item.domainNumber}`}>
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground text-sm line-clamp-2">{item.domain}</h3>
-                    </div>
-                    {item.alert && (
-                      <Badge 
-                        variant={
-                          item.alert === 'Mastered!' ? 'default' :
-                          item.alert === 'Good progress' ? 'secondary' :
-                          item.alert === 'Needs focus' ? 'destructive' :
-                          'secondary'
-                        }
-                        className="whitespace-nowrap text-xs"
-                        data-testid={`badge-alert-${item.domainNumber}`}
-                      >
-                        {item.alert}
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  <div className="mb-3">
-                    <div className="flex items-end gap-2 mb-2">
-                      <span className="text-2xl font-bold text-foreground">{item.overallProgress}%</span>
-                      <span className="text-xs text-muted-foreground mb-1">Overall Progress</span>
-                    </div>
-                    <Progress value={item.overallProgress} className="h-2" />
-                  </div>
+              {domainMastery.map((item) => {
+                const allSources = [
+                  { key: 'Lessons', label: 'Lessons', value: item.lessonProgress, detail: `${item.lessonsCompleted}/${item.lessonsTotal}`, icon: GraduationCap, weight: '20%' },
+                  { key: 'Quizzes', label: 'Quiz Accuracy', value: item.quizAccuracy, detail: `${item.questionsAnswered} Q`, icon: Brain, weight: '30%' },
+                  { key: 'Flashcards', label: 'Flashcard Mastery', value: item.flashcardMasteryPct, detail: null, icon: Layers, weight: '15%' },
+                  { key: 'Practice Exams', label: 'Practice Exams', value: item.examAccuracy, detail: null, icon: FileText, weight: '15%' },
+                  { key: 'Challenge Mode', label: 'Challenge Mode', value: item.challengeAccuracy, detail: null, icon: Swords, weight: '10%' },
+                  { key: 'Retention Booster', label: 'Retention', value: item.retentionScore, detail: null, icon: RotateCcw, weight: '10%' },
+                  { key: 'Readings', label: 'Readings', value: item.readingProgress, detail: null, icon: BookMarked, weight: '5%' },
+                  { key: 'Apply Scenarios', label: 'Apply Scenarios', value: item.applyScore, detail: null, icon: FlaskConical, weight: '5%' },
+                ];
+                const sourcesArr = item.sources || [];
+                const activeCount = allSources.filter(s => sourcesArr.includes(s.key)).length;
 
-                  <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-border/50">
-                    <div>
-                      <div className="flex items-center gap-1 mb-1">
-                        <BookOpen className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">Lessons</span>
+                return (
+                  <Card key={item.domainNumber} className="p-4 hover-elevate" data-testid={`domain-card-${item.domainNumber}`}>
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground text-sm line-clamp-2">{item.domain}</h3>
+                        <span className="text-[11px] text-muted-foreground">{activeCount}/8 sources active</span>
                       </div>
-                      <div className="text-sm font-medium">
-                        {item.lessonsCompleted}/{item.lessonsTotal}
-                        <span className="text-xs text-muted-foreground ml-1">({item.lessonProgress}%)</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1 mb-1">
-                        <Brain className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">Quiz Accuracy</span>
-                      </div>
-                      <div className="text-sm font-medium">
-                        {item.quizAccuracy}%
-                        <span className="text-xs text-muted-foreground ml-1">({item.questionsAnswered} Q)</span>
-                      </div>
-                    </div>
-                    {item.flashcardMasteryPct > 0 && (
-                      <div>
-                        <span className="text-xs text-muted-foreground">Flashcards</span>
-                        <div className="text-sm font-medium">{item.flashcardMasteryPct}%</div>
-                      </div>
-                    )}
-                    {item.challengeAccuracy > 0 && (
-                      <div>
-                        <span className="text-xs text-muted-foreground">Challenge</span>
-                        <div className="text-sm font-medium">{item.challengeAccuracy}%</div>
-                      </div>
-                    )}
-                    {item.examAccuracy > 0 && (
-                      <div>
-                        <span className="text-xs text-muted-foreground">Exams</span>
-                        <div className="text-sm font-medium">{item.examAccuracy}%</div>
-                      </div>
-                    )}
-                    {item.retentionScore > 0 && (
-                      <div>
-                        <span className="text-xs text-muted-foreground">Retention</span>
-                        <div className="text-sm font-medium">{item.retentionScore}%</div>
-                      </div>
-                    )}
-                    {item.applyScore > 0 && (
-                      <div>
-                        <span className="text-xs text-muted-foreground">Apply</span>
-                        <div className="text-sm font-medium">{item.applyScore}%</div>
-                      </div>
-                    )}
-                  </div>
-
-                  {item.sources && item.sources.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-3 pt-2 border-t border-border/50">
-                      {item.sources.map((source) => (
-                        <Badge key={source} variant="secondary" className="text-[10px]" data-testid={`badge-source-${item.domainNumber}-${source}`}>
-                          {source}
+                      {item.alert && (
+                        <Badge 
+                          variant={
+                            item.alert === 'Mastered!' ? 'default' :
+                            item.alert === 'Good progress' ? 'secondary' :
+                            item.alert === 'Needs focus' ? 'destructive' :
+                            'secondary'
+                          }
+                          className="whitespace-nowrap text-xs"
+                          data-testid={`badge-alert-${item.domainNumber}`}
+                        >
+                          {item.alert}
                         </Badge>
-                      ))}
+                      )}
                     </div>
-                  )}
+                    
+                    <div className="mb-3">
+                      <div className="flex items-end gap-2 mb-2">
+                        <span className="text-2xl font-bold text-foreground">{item.overallProgress}%</span>
+                        <span className="text-xs text-muted-foreground mb-1">Weighted Mastery</span>
+                      </div>
+                      <Progress value={item.overallProgress} className="h-2" />
+                    </div>
 
-                  {item.isStagnant && (
-                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-3 flex items-center gap-1">
-                      <Target className="h-3 w-3" />
-                      Focus needed for improvement
-                    </p>
-                  )}
-                </Card>
-              ))}
+                    <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border/50">
+                      {allSources.map((source) => {
+                        const isActive = sourcesArr.includes(source.key);
+                        const Icon = source.icon;
+                        return (
+                          <div key={source.key} className={`flex items-center gap-2 py-1.5 px-2 rounded-md ${isActive ? 'bg-muted/50' : ''}`} data-testid={`source-${item.domainNumber}-${source.key}`}>
+                            <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? 'text-foreground' : 'text-muted-foreground/40'}`} />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className={`text-[11px] truncate ${isActive ? 'text-muted-foreground' : 'text-muted-foreground/40'}`}>{source.label}</span>
+                                <span className={`text-[10px] ${isActive ? 'text-muted-foreground/70' : 'text-muted-foreground/30'}`}>{source.weight}</span>
+                              </div>
+                              {isActive ? (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-sm font-semibold text-foreground">{source.value}%</span>
+                                  {source.detail && <span className="text-[10px] text-muted-foreground">({source.detail})</span>}
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-muted-foreground/40 italic">Not started</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {item.isStagnant && (
+                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-3 pt-2 border-t border-border/50 flex items-center gap-1">
+                        <Target className="h-3 w-3" />
+                        Focus needed for improvement
+                      </p>
+                    )}
+                  </Card>
+                );
+              })}
             </div>
           ) : (
             <Card className="p-6">
