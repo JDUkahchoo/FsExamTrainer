@@ -144,6 +144,13 @@ export default function ProgressPage() {
     sources: string[];
   }>>({
     queryKey: ['/api/progress/domain-mastery', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/progress/domain-mastery?examTrack=${examTrack}`, {
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error("Failed to fetch domain mastery");
+      return res.json();
+    },
     refetchOnMount: 'always'
   });
 
