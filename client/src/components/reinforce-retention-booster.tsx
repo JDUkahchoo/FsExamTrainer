@@ -312,6 +312,7 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
       await queryClient.invalidateQueries({ queryKey: ['/api/retention/reviews', week, examTrack] });
       await queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
       await queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
       await queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });

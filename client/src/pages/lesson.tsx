@@ -132,7 +132,7 @@ export default function LessonPage() {
       setShowResults(true);
       queryClient.invalidateQueries({ queryKey: ["/api/lessons/progress"] });
       queryClient.invalidateQueries({ queryKey: ["/api/progress/stats"] });
-      // Invalidate daily quests (use predicate for partial matching with examTrack)
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
       queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });

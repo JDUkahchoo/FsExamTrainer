@@ -166,7 +166,7 @@ export default function FlashcardsPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions/today'] });
       queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
       queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
-      // Use predicate for partial matching on daily-quests (query key includes examTrack)
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
       queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });
@@ -311,6 +311,7 @@ export default function FlashcardsPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
     }
   });
 
@@ -479,6 +480,7 @@ export default function FlashcardsPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
       setCurrentIndex(0);
       setIsFlipped(false);
     } catch (error) {

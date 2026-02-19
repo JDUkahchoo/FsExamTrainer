@@ -122,6 +122,7 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/reading-progress', week, examTrack] });
       queryClient.invalidateQueries({ queryKey: ['/api/reading-progress', examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
       if (data.isNewCompletion) {
         queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
         queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });

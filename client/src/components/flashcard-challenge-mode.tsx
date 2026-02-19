@@ -325,6 +325,7 @@ export function FlashcardChallengeMode({
             queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
             queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
             queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
             queryClient.invalidateQueries({ predicate: (query) => 
               Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
             });

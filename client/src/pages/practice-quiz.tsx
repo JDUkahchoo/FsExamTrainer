@@ -81,6 +81,7 @@ export default function PracticeQuizPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/results'] });
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
     }
   });
 
@@ -164,6 +165,7 @@ export default function PracticeQuizPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
       queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });

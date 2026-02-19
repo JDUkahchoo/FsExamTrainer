@@ -105,6 +105,7 @@ export default function PracticeExamPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/exams/latest'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
     }
   });
 

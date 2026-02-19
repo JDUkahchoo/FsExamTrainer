@@ -404,6 +404,7 @@ export default function StudyReadingPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/study-reading-progress', readingId] });
       queryClient.invalidateQueries({ queryKey: ['/api/study-reading-progress'] });
       queryClient.invalidateQueries({ queryKey: ['/api/user/xp'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
     },
   });
 

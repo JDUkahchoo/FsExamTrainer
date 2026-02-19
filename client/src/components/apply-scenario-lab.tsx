@@ -118,6 +118,7 @@ export function ApplyScenarioLab({ week, colorClass = "text-primary", examTrack 
       queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', week, examTrack] });
       queryClient.invalidateQueries({ queryKey: ['/api/apply/attempts', examTrack] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
     },
   });
 
