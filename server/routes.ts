@@ -250,6 +250,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log daily activity for streak tracking based on which pillars have items
       if (data.readCompleted && data.readCompleted.length > 0) {
         await storage.logDailyActivity(userId, 'read');
+        const prefs = await storage.getUserPreferences(userId);
+        const examTrack = data.examTrack || prefs?.preferredExamTrack || 'fs';
+        const timezone = prefs?.timezone || 'America/Chicago';
+        await storage.updatePillarQuestProgress(userId, 'read', examTrack, timezone);
       }
       if (data.focusCompleted && data.focusCompleted.length > 0) {
         await storage.logDailyActivity(userId, 'focus');
@@ -333,6 +337,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         const timezone = prefs?.timezone || 'America/Chicago';
         await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack, timezone);
+        await storage.updatePillarQuestProgress(userId, 'read', examTrack, timezone);
       }
       
       // Return isFirstCompletion flag so client knows whether to show XP toast
@@ -421,6 +426,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Log daily activity for streak tracking
       await storage.logDailyActivity(userId, 'apply_challenge');
+      
+      // Update Daily Discipline quest - APPLY pillar
+      const applyPrefs = await storage.getUserPreferences(userId);
+      const applyExamTrack = req.body.examTrack || applyPrefs?.preferredExamTrack || 'fs';
+      const applyTimezone = applyPrefs?.timezone || 'America/Chicago';
+      await storage.updatePillarQuestProgress(userId, 'apply', applyExamTrack, applyTimezone);
       
       res.json(attempt);
     } catch (error) {
@@ -843,6 +854,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         const timezone = prefs?.timezone || 'America/Chicago';
         await storage.updateQuestProgress(userId, 'complete_quiz', 1, examTrack, timezone);
+        await storage.updatePillarQuestProgress(userId, 'focus', examTrack, timezone);
         
         // Update weak domain quest progress if quiz domain matches user's weak area
         // Require minimum 50% accuracy to count toward quest (prevents low-effort farming)
@@ -2363,6 +2375,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const examTrack = lesson.examTrack || 'fs';
         const timezone = prefs?.timezone || 'America/Chicago';
         await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack, timezone);
+        await storage.updatePillarQuestProgress(userId, 'reinforce', examTrack, timezone);
         
         // Update weak domain quest progress if lesson domain matches user's weak area
         // Quest tracks "questions practiced" - use total questions in the lesson

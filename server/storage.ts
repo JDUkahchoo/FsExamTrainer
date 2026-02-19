@@ -1980,7 +1980,7 @@ export class DatabaseStorage implements IStorage {
     return question;
   }
 
-  // Domain mastery tracking with comprehensive progress
+  // Domain mastery tracking with comprehensive progress from all activity sources
   async getDomainMastery(userId: string, examTrack: string = 'fs'): Promise<Array<{
     domainNumber: number;
     domain: string;
@@ -1990,18 +1990,23 @@ export class DatabaseStorage implements IStorage {
     lessonProgress: number;
     quizAccuracy: number;
     questionsAnswered: number;
+    flashcardMasteryPct: number;
+    challengeAccuracy: number;
+    examAccuracy: number;
+    retentionScore: number;
+    readingProgress: number;
+    applyScore: number;
     overallProgress: number;
     isStagnant: boolean;
     alert?: string;
+    sources: string[];
   }>> {
     const result: Array<any> = [];
     
-    // Get all lessons for this exam track
     const allLessons = await db.select()
       .from(lessons)
       .where(eq(lessons.examTrack, examTrack));
     
-    // Get unique domains from actual lesson data (instead of hardcoded list)
     const domainMap = new Map<number, string>();
     allLessons.forEach(l => {
       if (!domainMap.has(l.domainNumber)) {
@@ -2009,11 +2014,9 @@ export class DatabaseStorage implements IStorage {
       }
     });
     
-    // Sort domain numbers for consistent ordering
     const domainNumbers = Array.from(domainMap.keys()).sort((a, b) => a - b);
     
-    // Get user's lesson progress for this exam track
-    const userLessonProgress = await db.select()
+    const userLessonProg = await db.select()
       .from(lessonProgress)
       .innerJoin(lessons, eq(lessonProgress.lessonId, lessons.id))
       .where(and(
@@ -2021,61 +2024,215 @@ export class DatabaseStorage implements IStorage {
         eq(lessons.examTrack, examTrack)
       ));
     
-    // Get all quiz results for this user to match against domains
     const allQuizResults = await db.select()
       .from(quizResults)
       .where(eq(quizResults.userId, userId));
+
+    const allFlashcardMastery = await db.select()
+      .from(flashcardMastery)
+      .where(eq(flashcardMastery.userId, userId));
+
+    const { FLASHCARDS } = await import('@shared/data/flashcards');
+    const trackFlashcards = FLASHCARDS.filter(f => f.examTrack === examTrack);
+    const flashcardIdToDomain = new Map<string, string>();
+    trackFlashcards.forEach((f, i) => {
+      flashcardIdToDomain.set(`comp-card-${i}`, f.domain);
+      flashcardIdToDomain.set(`card-${i}`, f.domain);
+    });
+
+    const allChallengeSessions = await db.select()
+      .from(flashcardChallengeSessions)
+      .where(and(
+        eq(flashcardChallengeSessions.userId, userId),
+        eq(flashcardChallengeSessions.examTrack, examTrack)
+      ));
+
+    const allExams = await db.select()
+      .from(practiceExams)
+      .where(eq(practiceExams.userId, userId));
+
+    const allRetention = await db.select()
+      .from(retentionReviews)
+      .where(and(
+        eq(retentionReviews.userId, userId),
+        eq(retentionReviews.examTrack, examTrack)
+      ));
+
+    const allApply = await db.select()
+      .from(applyChallengeAttempts)
+      .where(and(
+        eq(applyChallengeAttempts.userId, userId),
+        eq(applyChallengeAttempts.examTrack, examTrack)
+      ));
+
+    const allReadingProg = await db.select()
+      .from(studyReadingProgress)
+      .where(eq(studyReadingProgress.userId, userId));
+
+    const { STUDY_PLAN, PS_STUDY_PLAN } = await import('@shared/data/studyPlan');
+    const studyPlan = examTrack === 'ps' ? PS_STUDY_PLAN : STUDY_PLAN;
+    const weekToDomains = new Map<number, string[]>();
+    studyPlan.forEach(w => {
+      weekToDomains.set(w.week, w.domains as string[]);
+    });
+
+    const stopWords = ['and', 'the', 'for', 'with', 'from'];
+    const matchDomain = (testName: string, domainName: string): boolean => {
+      const norm = domainName.toLowerCase();
+      const test = testName.toLowerCase();
+      if (test === norm) return true;
+      if (test.includes(norm) || norm.includes(test)) return true;
+      const dWords = norm.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
+      const tWords = test.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
+      const matching = dWords.filter(w => tWords.includes(w));
+      const minReq = Math.min(dWords.length, Math.max(1, Math.floor(dWords.length / 2)));
+      return matching.length >= minReq;
+    };
     
     for (const domainNumber of domainNumbers) {
       const domainName = domainMap.get(domainNumber) || `Domain ${domainNumber}`;
+      const sources: string[] = [];
       
-      // Count lessons in this domain
+      // 1. Lesson progress
       const domainLessons = allLessons.filter(l => l.domainNumber === domainNumber);
       const lessonsTotal = domainLessons.length;
-      
-      // Count completed lessons in this domain (Drizzle joins use table names as keys)
-      const completedLessons = userLessonProgress.filter(
+      const completedLessons = userLessonProg.filter(
         p => p.lessons.domainNumber === domainNumber && p.lesson_progress?.completed
       );
       const lessonsCompleted = completedLessons.length;
-      const lessonProgress = lessonsTotal > 0 ? Math.round((lessonsCompleted / lessonsTotal) * 100) : 0;
+      const lessonProg = lessonsTotal > 0 ? Math.round((lessonsCompleted / lessonsTotal) * 100) : 0;
+      if (lessonsCompleted > 0) sources.push('Lessons');
       
-      // Match quiz results to this domain using flexible matching (handles name variations)
-      // e.g., "Survey Computations & Applications" should match "Survey Computations and Computer Applications"
-      const stopWords = ['and', 'the', 'for', 'with', 'from'];
-      const normalizedDomainName = domainName.toLowerCase();
-      const domainWords = normalizedDomainName.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
-      
-      const domainResults = allQuizResults.filter(r => {
-        if (!r.domain) return false;
-        const quizDomain = r.domain.toLowerCase();
-        // Exact match
-        if (quizDomain === normalizedDomainName) return true;
-        // Containment match (one contains the other)
-        if (quizDomain.includes(normalizedDomainName) || normalizedDomainName.includes(quizDomain)) return true;
-        // Word overlap matching - require at least 1 significant word, or 2 if we have 3+ words
-        const quizWords = quizDomain.split(/[\s,&]+/).filter(w => w.length > 2 && !stopWords.includes(w));
-        const matchingWords = domainWords.filter(w => quizWords.includes(w));
-        const minRequired = Math.min(domainWords.length, Math.max(1, Math.floor(domainWords.length / 2)));
-        return matchingWords.length >= minRequired;
-      });
-      
-      let quizAccuracy = 0;
+      // 2. Quiz accuracy
+      const domainResults = allQuizResults.filter(r => r.domain && matchDomain(r.domain, domainName));
       const questionsAnswered = domainResults.length;
+      let quizAccuracy = 0;
       if (questionsAnswered > 0) {
         const correct = domainResults.filter((r: any) => r.isCorrect).length;
         quizAccuracy = Math.round((correct / questionsAnswered) * 100);
+        sources.push('Quizzes');
       }
       
-      // Calculate overall progress: weighted average of lessons (60%) and quiz accuracy (40%)
-      let overallProgress = 0;
-      if (questionsAnswered > 0) {
-        overallProgress = Math.round(lessonProgress * 0.6 + quizAccuracy * 0.4);
-      } else {
-        overallProgress = lessonProgress;
+      // 3. Flashcard mastery (Quick Review) - % of cards at mastery level 4+
+      const domainFlashcardIds = new Set<string>();
+      flashcardIdToDomain.forEach((dom, id) => {
+        if (matchDomain(dom, domainName)) domainFlashcardIds.add(id);
+      });
+      const domainFcMastery = allFlashcardMastery.filter(m => {
+        const fcDomain = flashcardIdToDomain.get(m.flashcardId);
+        return fcDomain && matchDomain(fcDomain, domainName);
+      });
+      let flashcardMasteryPct = 0;
+      if (domainFlashcardIds.size > 0 && domainFcMastery.length > 0) {
+        const mastered = domainFcMastery.filter(m => m.masteryLevel >= 4).length;
+        flashcardMasteryPct = Math.round((mastered / domainFlashcardIds.size) * 100);
+        sources.push('Flashcards');
       }
       
-      const currentScore = quizAccuracy;
+      // 4. Challenge Mode accuracy per domain
+      let challengeAccuracy = 0;
+      const domainChallenges = allChallengeSessions.filter(s => {
+        if (s.domain && matchDomain(s.domain, domainName)) return true;
+        if (s.domainBreakdown && typeof s.domainBreakdown === 'object') {
+          const breakdown = s.domainBreakdown as Record<string, any>;
+          return Object.keys(breakdown).some(k => matchDomain(k, domainName));
+        }
+        return false;
+      });
+      if (domainChallenges.length > 0) {
+        let totalCorrect = 0;
+        let totalAttempted = 0;
+        domainChallenges.forEach(s => {
+          if (s.domainBreakdown && typeof s.domainBreakdown === 'object') {
+            const breakdown = s.domainBreakdown as Record<string, any>;
+            Object.entries(breakdown).forEach(([k, v]) => {
+              if (matchDomain(k, domainName) && v && typeof v === 'object') {
+                totalCorrect += (v as any).correct || (v as any).correctFirstTry || 0;
+                totalAttempted += (v as any).total || (v as any).totalCards || 0;
+              }
+            });
+          } else {
+            totalCorrect += s.correctFirstTry;
+            totalAttempted += s.totalCards;
+          }
+        });
+        if (totalAttempted > 0) {
+          challengeAccuracy = Math.round((totalCorrect / totalAttempted) * 100);
+          sources.push('Challenge Mode');
+        }
+      }
+      
+      // 5. Practice exam domain scores
+      let examAccuracy = 0;
+      let examCount = 0;
+      allExams.forEach(ex => {
+        if (ex.domainScores && typeof ex.domainScores === 'object') {
+          const scores = ex.domainScores as Record<string, any>;
+          Object.entries(scores).forEach(([k, v]) => {
+            if (matchDomain(k, domainName) && v && typeof v === 'object') {
+              const correct = (v as any).correct || 0;
+              const total = (v as any).total || 0;
+              if (total > 0) {
+                examAccuracy += Math.round((correct / total) * 100);
+                examCount++;
+              }
+            }
+          });
+        }
+      });
+      if (examCount > 0) {
+        examAccuracy = Math.round(examAccuracy / examCount);
+        sources.push('Practice Exams');
+      }
+      
+      // 6. Retention booster - average mastery level (0-5 scale -> 0-100%)
+      const domainRetention = allRetention.filter(r => r.domain === domainNumber && r.reviewCount > 0);
+      let retentionScore = 0;
+      if (domainRetention.length > 0) {
+        const avgMastery = domainRetention.reduce((sum, r) => sum + r.masteryLevel, 0) / domainRetention.length;
+        retentionScore = Math.round((avgMastery / 5) * 100);
+        sources.push('Retention Booster');
+      }
+      
+      // 7. Reading progress - % of completed sections for this domain
+      const domainPrefix = `${examTrack}-d${domainNumber}-`;
+      const domainReadings = allReadingProg.filter(r => r.readingId.startsWith(domainPrefix));
+      let readingProg = 0;
+      if (domainReadings.length > 0) {
+        const completedSections = domainReadings.filter(r => r.completed).length;
+        readingProg = Math.round((completedSections / domainReadings.length) * 100);
+        if (completedSections > 0) sources.push('Readings');
+      }
+      
+      // 8. Apply scenario completion per domain (via week-to-domain mapping)
+      let applyScore = 0;
+      const domainApply = allApply.filter(a => {
+        if (!a.week) return false;
+        const weekDomains = weekToDomains.get(a.week) || [];
+        return weekDomains.some(wd => matchDomain(wd, domainName));
+      });
+      const completedApply = domainApply.filter(a => a.completedAt);
+      if (domainApply.length > 0 && completedApply.length > 0) {
+        applyScore = Math.round((completedApply.length / domainApply.length) * 100);
+        sources.push('Apply Scenarios');
+      }
+
+      // Weighted composite score - performance metrics weighted higher
+      // Quiz/Exam: 30%, Lessons: 20%, Flashcards: 15%, Challenge: 10%, Retention: 10%, Reading: 10%, Apply: 5%
+      let totalWeight = 0;
+      let weightedSum = 0;
+
+      if (questionsAnswered > 0) { weightedSum += quizAccuracy * 30; totalWeight += 30; }
+      if (lessonsCompleted > 0) { weightedSum += lessonProg * 20; totalWeight += 20; }
+      if (domainFcMastery.length > 0) { weightedSum += flashcardMasteryPct * 15; totalWeight += 15; }
+      if (challengeAccuracy > 0) { weightedSum += challengeAccuracy * 10; totalWeight += 10; }
+      if (examCount > 0) { weightedSum += examAccuracy * 15; totalWeight += 15; }
+      if (domainRetention.length > 0) { weightedSum += retentionScore * 10; totalWeight += 10; }
+      if (domainReadings.length > 0) { weightedSum += readingProg * 5; totalWeight += 5; }
+      if (completedApply.length > 0) { weightedSum += applyScore * 5; totalWeight += 5; }
+
+      const overallProgress = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
+      const currentScore = questionsAnswered > 0 ? quizAccuracy : overallProgress;
       
       let isStagnant = false;
       let alert: string | undefined;
@@ -2096,12 +2253,19 @@ export class DatabaseStorage implements IStorage {
         currentScore,
         lessonsCompleted,
         lessonsTotal,
-        lessonProgress,
+        lessonProgress: lessonProg,
         quizAccuracy,
         questionsAnswered,
+        flashcardMasteryPct,
+        challengeAccuracy,
+        examAccuracy,
+        retentionScore,
+        readingProgress: readingProg,
+        applyScore,
         overallProgress,
         isStagnant,
-        alert
+        alert,
+        sources
       });
     }
     
@@ -2605,7 +2769,7 @@ export class DatabaseStorage implements IStorage {
       {
         questType: 'complete_all_pillars',
         title: 'Daily Discipline',
-        description: 'Complete all 4 study pillars (READ, FOCUS, APPLY, REINFORCE)',
+        description: 'Complete a Reading, Quiz, Apply Scenario, and Lesson today',
         targetCount: 4,
         xpReward: 100
       }
@@ -2694,6 +2858,30 @@ export class DatabaseStorage implements IStorage {
     }
 
     return updated;
+  }
+
+  async updatePillarQuestProgress(userId: string, pillar: 'read' | 'focus' | 'apply' | 'reinforce', examTrack: string = 'fs', timezone: string = 'America/Chicago'): Promise<DailyQuest | null> {
+    const { today, tomorrow } = getLocalMidnight(timezone);
+    const pillarKey = `pillar_quest:${examTrack}:${today.toISOString().split('T')[0]}:${pillar}`;
+
+    const [existing] = await db
+      .select()
+      .from(xpGrants)
+      .where(and(
+        eq(xpGrants.userId, userId),
+        eq(xpGrants.activityKey, pillarKey)
+      ))
+      .limit(1);
+
+    if (existing) return null;
+
+    await db.insert(xpGrants).values({
+      userId,
+      amount: 0,
+      activityKey: pillarKey,
+    });
+
+    return this.updateQuestProgress(userId, 'complete_all_pillars', 1, examTrack, timezone);
   }
 
   async updateWeakDomainQuestProgress(userId: string, quizDomain: string, correctAnswerCount: number, examTrack: string = 'fs', sessionId?: string, timezone: string = 'America/Chicago'): Promise<DailyQuest | null> {

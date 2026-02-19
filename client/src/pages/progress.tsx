@@ -132,9 +132,16 @@ export default function ProgressPage() {
     lessonProgress: number;
     quizAccuracy: number;
     questionsAnswered: number;
+    flashcardMasteryPct: number;
+    challengeAccuracy: number;
+    examAccuracy: number;
+    retentionScore: number;
+    readingProgress: number;
+    applyScore: number;
     overallProgress: number;
     isStagnant: boolean;
     alert?: string;
+    sources: string[];
   }>>({
     queryKey: ['/api/progress/domain-mastery', examTrack],
     refetchOnMount: 'always'
@@ -685,7 +692,47 @@ export default function ProgressPage() {
                         <span className="text-xs text-muted-foreground ml-1">({item.questionsAnswered} Q)</span>
                       </div>
                     </div>
+                    {item.flashcardMasteryPct > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Flashcards</span>
+                        <div className="text-sm font-medium">{item.flashcardMasteryPct}%</div>
+                      </div>
+                    )}
+                    {item.challengeAccuracy > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Challenge</span>
+                        <div className="text-sm font-medium">{item.challengeAccuracy}%</div>
+                      </div>
+                    )}
+                    {item.examAccuracy > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Exams</span>
+                        <div className="text-sm font-medium">{item.examAccuracy}%</div>
+                      </div>
+                    )}
+                    {item.retentionScore > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Retention</span>
+                        <div className="text-sm font-medium">{item.retentionScore}%</div>
+                      </div>
+                    )}
+                    {item.applyScore > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Apply</span>
+                        <div className="text-sm font-medium">{item.applyScore}%</div>
+                      </div>
+                    )}
                   </div>
+
+                  {item.sources && item.sources.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-3 pt-2 border-t border-border/50">
+                      {item.sources.map((source) => (
+                        <Badge key={source} variant="secondary" className="text-[10px]" data-testid={`badge-source-${item.domainNumber}-${source}`}>
+                          {source}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
 
                   {item.isStagnant && (
                     <p className="text-xs text-amber-600 dark:text-amber-400 mt-3 flex items-center gap-1">
