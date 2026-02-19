@@ -1578,18 +1578,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const prefs = await storage.getUserPreferences(userId);
       const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       const trackDomains: string[] = examTrack === 'ps' ? [...PS_DOMAINS] : [...FS_DOMAINS];
-      const weekProgress = await storage.getAllWeekProgress(userId, examTrack);
-      const allQuizResults = await storage.getQuizResults(userId);
+      const [weekProgress, allQuizResults, flashcardMastery, practiceExams, customWeeks] = await Promise.all([
+        storage.getAllWeekProgress(userId, examTrack),
+        storage.getQuizResults(userId),
+        storage.getAllFlashcardMastery(userId),
+        storage.getPracticeExams(userId),
+        storage.getCustomWeeks(userId)
+      ]);
       const quizResults = allQuizResults.filter(r => trackDomains.includes(r.domain));
-      const flashcardMastery = await storage.getAllFlashcardMastery(userId);
-      const practiceExams = await storage.getPracticeExams(userId);
 
-      // Calculate weeks completed
-      const weeksCompleted = weekProgress.filter(wp => {
-        const totalItems = wp.readCompleted.length + wp.focusCompleted.length + 
-                          wp.applyCompleted.length + wp.reinforceCompleted.length;
-        return totalItems > 0;
+      // Determine total weeks based on study mode (same logic as /api/progress/overall)
+      let coreWeekCount = examTrack === 'ps' ? 12 : 16;
+      if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
+        coreWeekCount = prefs.customTimeline;
+      }
+      const totalWeeks = coreWeekCount + customWeeks.length;
+
+      // Calculate weeks completed using same approach as /api/progress/overall
+      const hasActivity = (wp: any) =>
+        wp.readCompleted.length > 0 || wp.focusCompleted.length > 0 ||
+        wp.applyCompleted.length > 0 || wp.reinforceCompleted.length > 0;
+
+      const coreWeeksCompleted = weekProgress.filter(w => hasActivity(w)).length;
+      const customWeeksCompleted = customWeeks.filter(cw => {
+        const progress = weekProgress.find(wp => wp.week === cw.weekNumber);
+        return progress && hasActivity(progress);
       }).length;
+      const weeksCompleted = coreWeeksCompleted + customWeeksCompleted;
 
       // Calculate study days (based on unique dates from quiz results and week progress)
       const uniqueDates = new Set<string>();
@@ -1622,6 +1637,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentStreak,
         longestStreak,
         weeksCompleted,
+        totalWeeks,
         questionsAnswered,
         questionsCorrect,
         flashcardsReviewed,
@@ -1733,7 +1749,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const prefs = await storage.getUserPreferences(userId);
       const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       
-      const coreWeekCount = examTrack === 'ps' ? 12 : 16;
+      let coreWeekCount = examTrack === 'ps' ? 12 : 16;
+      if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
+        coreWeekCount = prefs.customTimeline;
+      }
       
       const [weekProgressData, quizSessionsData, flashcardMastery, customWeeks, streak] = await Promise.all([
         storage.getAllWeekProgress(userId, examTrack),

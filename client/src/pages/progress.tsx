@@ -52,6 +52,7 @@ export default function ProgressPage() {
     currentStreak: number;
     longestStreak: number;
     weeksCompleted: number;
+    totalWeeks: number;
     questionsAnswered: number;
     questionsCorrect: number;
     flashcardsReviewed: number;
@@ -450,7 +451,7 @@ export default function ProgressPage() {
               <Award className="h-6 w-6 text-domain-boundary-fg" />
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground" data-testid="stat-weeks">{stats?.weeksCompleted || 0}</p>
+              <p className="text-3xl font-bold text-foreground" data-testid="stat-weeks">{stats?.weeksCompleted || 0}<span className="text-lg font-normal text-muted-foreground"> / {stats?.totalWeeks || (examTrack === 'ps' ? 12 : 16)}</span></p>
               <p className="text-sm text-muted-foreground">Weeks Completed</p>
             </div>
           </div>
