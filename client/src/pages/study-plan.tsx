@@ -557,33 +557,25 @@ export default function StudyPlan() {
     const weekKey = `week-${week}`;
     const manualCompleted = completedItems[weekKey] || new Set();
     const autoCompleted = autoCompletedItems[weekKey] || new Set();
-    const dailyLogsForWeek = dailyLogsByWeek[week] || [];
 
-    // Merge manual and auto-detected completions (union)
     const merged = new Set([...manualCompleted, ...autoCompleted]);
 
-    // Count lessons for this week
     const weekLessons = weeklyLessonsMap.get(week) || [];
     const completedLessons = weekLessons.filter((lesson: any) => 
       lessonProgressData.some((p: any) => p.lessonId === lesson.id && p.completed)
     );
 
-    const checklistTotal = plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length;
-    const lessonTotal = weekLessons.length;
-    
-    // Count merged completed items (only checklist categories: read, focus, apply, reinforce)
-    let checklistCompleted = 0;
+    let readApplyCompleted = 0;
     merged.forEach(item => {
-      if (item.startsWith('read-') || item.startsWith('focus-') || item.startsWith('apply-') || item.startsWith('reinforce-')) {
-        checklistCompleted++;
+      if (item.startsWith('read-') || item.startsWith('apply-')) {
+        readApplyCompleted++;
       }
     });
 
-    // Total progress = checklist + lessons + daily logs
-    const totalCompleted = checklistCompleted + completedLessons.length + dailyLogsForWeek.length;
-    const total = checklistTotal + lessonTotal + dailyLogsForWeek.length;
+    const trackableTotal = plan.read.length + plan.apply.length + weekLessons.length;
+    const totalCompleted = readApplyCompleted + completedLessons.length;
     
-    return total > 0 ? Math.round((totalCompleted / total) * 100) : 0;
+    return trackableTotal > 0 ? Math.round((totalCompleted / trackableTotal) * 100) : 0;
   };
 
   const handleAddDailyLog = (weekNumber: number) => {
