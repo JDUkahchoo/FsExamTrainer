@@ -53,10 +53,12 @@ export default function PracticeQuizPage() {
     }
   });
 
-  // Mutation to save draft
+  // Mutation to save draft with retry
   const saveDraftMutation = useMutation({
     mutationFn: (draft: { domain: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number }) =>
       apiRequest('POST', '/api/quiz/draft', draft),
+    retry: 1,
+    retryDelay: 1000,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft'] });
     }
@@ -70,10 +72,12 @@ export default function PracticeQuizPage() {
     }
   });
 
-  // Mutation to save individual quiz result (for stats/analytics)
+  // Mutation to save individual quiz result (for stats/analytics) with retry
   const saveResultMutation = useMutation({
     mutationFn: (result: { questionId: string; domain: string; selectedAnswer: number; isCorrect: boolean }) =>
       apiRequest('POST', '/api/quiz/results', result),
+    retry: 2,
+    retryDelay: 1000,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/results'] });
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
@@ -148,17 +152,18 @@ export default function PracticeQuizPage() {
   const answeredCount = Object.keys(answeredQuestions).length;
   const correctCount = Object.values(answeredQuestions).filter(a => a.correct).length;
 
-  // Mutation to save quiz session
+  // Mutation to save quiz session with retry on auth failure
   const saveSessionMutation = useMutation({
     mutationFn: (session: { domain: string; examTrack: string; totalQuestions: number; correctAnswers: number; timeSpentSeconds: number }) =>
       apiRequest('POST', '/api/quiz/sessions', session),
+    retry: 2,
+    retryDelay: 1000,
     onSuccess: () => {
       logActivity('quiz_completion');
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/sessions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall'] });
-      // Invalidate daily quests (use predicate for partial matching with examTrack)
       queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });

@@ -17,13 +17,17 @@ const questIcons: Record<string, any> = {
 
 export function DailyQuestsPanel() {
   const { examTrack } = useExamTrack();
-  const { data: quests = [], isLoading } = useQuery<DailyQuest[]>({
+  const { data: quests = [], isLoading, isError } = useQuery<DailyQuest[]>({
     queryKey: ['/api/daily-quests', examTrack],
     queryFn: async () => {
-      const res = await fetch(`/api/daily-quests?examTrack=${examTrack}`);
-      if (!res.ok) throw new Error('Failed to fetch quests');
+      const res = await fetch(`/api/daily-quests?examTrack=${examTrack}`, {
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error(`${res.status}: Failed to fetch quests`);
       return res.json();
-    }
+    },
+    retry: 1,
+    retryDelay: 2000,
   });
 
   if (isLoading) {
@@ -32,6 +36,20 @@ export function DailyQuestsPanel() {
         <div className="flex items-center justify-center py-6">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Target className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold">Daily Quests</h3>
+        </div>
+        <p className="text-sm text-muted-foreground text-center py-4">
+          Could not load quests. Please refresh the page or log in again.
+        </p>
       </Card>
     );
   }

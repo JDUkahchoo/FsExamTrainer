@@ -1,7 +1,25 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+let sessionExpiredCallback: (() => void) | null = null;
+let sessionExpiredTriggered = false;
+
+export function setSessionExpiredCallback(cb: () => void) {
+  sessionExpiredCallback = cb;
+}
+
+function handle401() {
+  if (!sessionExpiredTriggered && sessionExpiredCallback) {
+    sessionExpiredTriggered = true;
+    sessionExpiredCallback();
+    setTimeout(() => { sessionExpiredTriggered = false; }, 5000);
+  }
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
+    if (res.status === 401) {
+      handle401();
+    }
     const text = (await res.text()) || res.statusText;
     throw new Error(`${res.status}: ${text}`);
   }
@@ -35,6 +53,10 @@ export const getQueryFn: <T>(options: {
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       return null;
+    }
+
+    if (res.status === 401) {
+      handle401();
     }
 
     await throwIfResNotOk(res);

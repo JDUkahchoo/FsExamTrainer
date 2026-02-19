@@ -1,9 +1,10 @@
-import { ReactNode, ComponentType } from "react";
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
+import { ReactNode, ComponentType, useEffect, useCallback } from "react";
+import { Switch, Route, useLocation } from "wouter";
+import { queryClient, setSessionExpiredCallback } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { ExamTrackProvider } from "@/contexts/exam-track-context";
 import { ExamLayout } from "@/components/exam-layout";
@@ -145,6 +146,25 @@ export default function App() {
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  const handleSessionExpired = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    toast({
+      title: "Session expired",
+      description: "Your login session has expired. Please log in again to continue.",
+      variant: "destructive",
+      duration: 8000,
+    });
+    setTimeout(() => {
+      setLocation("/api/login");
+    }, 2000);
+  }, [toast, setLocation]);
+
+  useEffect(() => {
+    setSessionExpiredCallback(handleSessionExpired);
+  }, [handleSessionExpired]);
 
   if (isLoading) {
     return (
