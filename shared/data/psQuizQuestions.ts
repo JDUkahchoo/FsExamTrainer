@@ -1699,5 +1699,1463 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
     explanation: 'Ground-penetrating radar transmits electromagnetic pulses into the ground and records reflections from subsurface features. It is used to locate utilities, detect voids, find buried objects, estimate pavement thickness, and identify geological layers. Effectiveness varies with soil conditions.',
     difficulty: 'medium'
   },
+
+  // ===== ADDITIONAL LEGAL PRINCIPLES (~30 questions) =====
+  {
+    domain: 'Legal Principles',
+    question: 'When conflicting calls exist in a deed between a call for a natural monument and a call for an artificial monument, which generally controls?',
+    options: ['The artificial monument', 'The natural monument', 'Whichever was established most recently', 'Neither; the area stated in the deed controls'],
+    correctAnswer: 1,
+    explanation: 'In the hierarchy of deed calls, natural monuments (rivers, ridges, trees referenced at the time of the original conveyance) rank higher than artificial monuments (iron pins, stakes, fences). Natural monuments are considered more reliable indicators of the original grantor\'s intent because they are less susceptible to displacement or error.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A deed that calls for "the center of the road" as a boundary locates the boundary at:',
+    options: ['The edge of the paved surface', 'The center line of the road right-of-way', 'The nearest fence line', 'The center of the traveled surface at the time of conveyance'],
+    correctAnswer: 1,
+    explanation: 'A call for "the center of the road" is generally interpreted as the center line of the road right-of-way, not just the center of the pavement. This follows the legal principle that a conveyance bounded by a road typically conveys title to the center of the right-of-way (ad medium filum viae) unless a contrary intent is clearly expressed.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The doctrine of "ad medium filum aquae" means that a riparian owner on a non-navigable stream owns:',
+    options: ['The entire streambed', 'To the thread (center) of the stream', 'Only to the water\'s edge', 'No portion of the streambed'],
+    correctAnswer: 1,
+    explanation: 'Ad medium filum aquae ("to the middle thread of the water") grants the riparian owner title to the center of a non-navigable stream. Each landowner on opposite sides of the stream owns to the center line. This doctrine does not apply to navigable waters, where the state typically holds title to the streambed.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Under a pure "race" recording statute, which party prevails?',
+    options: ['The party who purchased first', 'The party who records first, regardless of notice', 'The party who paid the highest price', 'The party with the oldest deed'],
+    correctAnswer: 1,
+    explanation: 'Under a pure race statute, the first party to record prevails, regardless of whether they had knowledge (notice) of a prior unrecorded interest. Only a few states use pure race statutes. The recording race encourages prompt recording of instruments and provides certainty in the public records.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Under a pure "notice" recording statute, a subsequent bona fide purchaser prevails over a prior grantee if:',
+    options: ['The subsequent purchaser records first', 'The subsequent purchaser had no notice of the prior conveyance at the time of purchase', 'The subsequent purchaser paid a higher price', 'The prior conveyance was by quitclaim deed'],
+    correctAnswer: 1,
+    explanation: 'Under a pure notice statute, a subsequent bona fide purchaser (one who pays value without notice of the prior interest) prevails over the prior grantee, even if the subsequent purchaser does not record first. The focus is entirely on the buyer\'s lack of notice at the time of the transaction.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Inquiry notice arises when:',
+    options: ['A document is properly recorded', 'Circumstances exist that would prompt a reasonable person to investigate further', 'A buyer personally knows of a prior claim', 'A title search reveals a recorded lien'],
+    correctAnswer: 1,
+    explanation: 'Inquiry notice is imputed to a buyer when facts or circumstances exist (such as a third party in possession of the property) that would cause a reasonable, prudent person to make further inquiry. If such inquiry would have revealed the prior interest, the buyer is charged with notice of it even if no inquiry was made.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A "wild deed" in a chain of title is one that:',
+    options: ['Conveys property in a wildlife preserve', 'Is recorded but not connected to any recorded chain of title', 'Contains legal descriptions using only metes and bounds', 'Was executed outdoors'],
+    correctAnswer: 1,
+    explanation: 'A wild deed is a recorded instrument that falls outside the chain of title because a prior instrument in the chain was never recorded. Since a title searcher following the grantor-grantee index would not discover it, a wild deed generally does not provide constructive notice to subsequent purchasers.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The "shelter rule" in recording acts provides that:',
+    options: ['All deeds must be recorded within 30 days', 'A person who acquires property from a bona fide purchaser is sheltered by the BFP\'s protection', 'Only recorded deeds are valid', 'Quitclaim deeds are not protected by recording acts'],
+    correctAnswer: 1,
+    explanation: 'The shelter rule extends the protection of a bona fide purchaser (BFP) to subsequent transferees from the BFP, even if the subsequent transferee had notice of the prior interest. This prevents a prior claimant from defeating the BFP\'s title by waiting and purchasing from the BFP\'s grantees.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Boundary by agreement requires:',
+    options: ['A court decree', 'An uncertain or disputed boundary, an agreement between the owners, and subsequent acceptance', 'A formal survey by a licensed surveyor', 'Filing with the county recorder'],
+    correctAnswer: 1,
+    explanation: 'Boundary by agreement requires: (1) an uncertain or disputed boundary, (2) an express or implied agreement between the adjoining owners establishing a boundary line, and (3) subsequent acceptance and acquiescence in the agreed line. The agreement may be oral in many jurisdictions despite the Statute of Frauds.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The "footsteps doctrine" requires a retracing surveyor to:',
+    options: ['Physically walk the entire property boundary', 'Follow the methods and evidence of the original surveyor', 'Use only the same equipment as the original surveyor', 'Survey only during the same season as the original survey'],
+    correctAnswer: 1,
+    explanation: 'The footsteps doctrine requires a retracing surveyor to follow in the footsteps of the original surveyor by locating original monuments, interpreting the original evidence, and re-establishing the boundaries as originally set. The retracing surveyor has no authority to establish new boundaries or "correct" the original survey.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'An easement created by express grant is:',
+    options: ['Always limited to 20 years', 'Created by a written instrument and typically recorded', 'Only valid between family members', 'Created automatically when a parcel is subdivided'],
+    correctAnswer: 1,
+    explanation: 'An easement by express grant is created by a written deed or other instrument signed by the grantor and typically recorded in the public records. It explicitly identifies the easement\'s location, dimensions, and permitted use. Express grants satisfy the Statute of Frauds requirement for conveyances of interests in real property.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The legal principle of "stare decisis" in boundary law means:',
+    options: ['The survey must be performed while standing still', 'Courts will follow precedent established in prior similar cases', 'Only state courts can decide boundary disputes', 'The boundary is determined by the stars'],
+    correctAnswer: 1,
+    explanation: 'Stare decisis ("to stand by things decided") means that courts will follow the legal principles established in prior appellate court decisions when deciding similar cases. This provides predictability in boundary law and ensures consistent application of legal principles across similar boundary disputes.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'When a deed describes a parcel as bounded by a non-navigable lake, the boundary typically extends to:',
+    options: ['The ordinary high water mark only', 'The center of the lake', 'The low water mark', 'The nearest shoreline feature'],
+    correctAnswer: 1,
+    explanation: 'For non-navigable lakes, the boundary of abutting parcels typically extends to the center of the lake, following principles similar to non-navigable streams (ad medium filum aquae). For navigable lakes, the boundary usually extends only to the ordinary high water mark, with the state owning the bed below.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The "public trust doctrine" holds that:',
+    options: ['All survey records must be kept by the government', 'The state holds navigable waters and submerged lands in trust for public use', 'All surveys must be reviewed by a public official', 'Only government surveyors can survey public lands'],
+    correctAnswer: 1,
+    explanation: 'The public trust doctrine holds that the state holds title to the beds of navigable waters in trust for the public for purposes of navigation, fishing, and commerce. This doctrine affects boundary determinations along navigable waters because the state\'s ownership extends to the ordinary high water mark.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A "tacking" of successive periods of adverse possession means:',
+    options: ['Adding physical attachments to a fence line', 'Combining consecutive periods of possession by successive occupants to meet the statutory period', 'The surveyor tacks survey monuments to trees', 'Stapling documents to a deed'],
+    correctAnswer: 1,
+    explanation: 'Tacking allows successive adverse possessors who are in privity (a transfer of possession) to combine their periods of possession to satisfy the statutory period. For example, if the statute requires 10 years and A adversely possesses for 6 years then conveys to B who possesses for 4 years, B may tack A\'s period.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A deed that conveys property "to the grantor\'s heirs" creates:',
+    options: ['A fee simple absolute', 'A life estate', 'A fee tail', 'An estate at will'],
+    correctAnswer: 0,
+    explanation: 'Under the modern interpretation (and the Rule in Shelley\'s Case in many jurisdictions), a conveyance "to A and the heirs of A" or "to A\'s heirs" creates a fee simple absolute, granting the fullest possible estate in the land with no conditions or limitations on duration or inheritance.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'When a surveyor discovers evidence suggesting adverse possession has affected a boundary, the surveyor should:',
+    options: ['Ignore it and follow only the record description', 'Note the evidence in the survey and advise the client to seek legal counsel', 'Move the boundary to match the adverse possession claim', 'File a quiet title action on behalf of the client'],
+    correctAnswer: 1,
+    explanation: 'A surveyor cannot make legal determinations about adverse possession claims—that is the role of the courts. However, the surveyor has a duty to observe and report evidence of potential adverse possession (such as long-standing fences, improvements, or occupation beyond record lines) and advise the client to consult an attorney.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The "shelter rule" in recording law provides that:',
+    options: ['All recorded documents are presumed valid', 'A person who acquires property from a bona fide purchaser receives the same protection, even with notice of a prior unrecorded interest', 'Sheltered properties are exempt from property taxes', 'Only sheltered deeds are valid against creditors'],
+    correctAnswer: 1,
+    explanation: 'The shelter rule (also called the umbrella doctrine) protects transferees of bona fide purchasers. If B is a BFP who takes free of an unrecorded interest, B can transfer to C, and C receives the same protection even if C has actual knowledge of the prior unrecorded interest. This prevents the prior interest holder from simply waiting to assert rights against downstream purchasers.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'An "encroachment" in boundary law is:',
+    options: ['A legal description error', 'An unauthorized physical intrusion of a structure or improvement onto adjacent property', 'A type of easement', 'A method of adverse possession'],
+    correctAnswer: 1,
+    explanation: 'An encroachment occurs when a building, fence, driveway, or other improvement extends beyond the owner\'s property line onto adjacent land without authorization. Encroachments can lead to disputes, cloud title, and may become the basis for adverse possession or prescriptive easement claims if left unaddressed.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The legal concept of "laches" may bar a boundary claim when:',
+    options: ['The claim is filed within the statute of limitations', 'The claimant unreasonably delayed asserting the claim, causing prejudice to the other party', 'The claim involves government land', 'The claim is supported by a current survey'],
+    correctAnswer: 1,
+    explanation: 'Laches is an equitable defense that bars a claim when the claimant unreasonably and inexcusably delayed asserting their rights, and the delay caused prejudice (harm) to the opposing party. Even if the statute of limitations has not expired, a court may deny relief based on laches.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A "color of title" claim in adverse possession means the claimant:',
+    options: ['Has painted the property boundary markers', 'Possesses a document that appears to convey title but is defective', 'Holds a valid, recorded deed', 'Has permission from the true owner'],
+    correctAnswer: 1,
+    explanation: 'Color of title refers to a document (such as a deed) that appears to convey title but is defective in some way (e.g., executed by someone who did not own the property). In many states, a claim of adverse possession under color of title has advantages, such as a shorter statutory period or constructive possession of the entire parcel described.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'When two deeds from a common grantor describe overlapping areas, the senior deed:',
+    options: ['Is automatically voided', 'Takes priority for the area of overlap', 'Must be re-recorded', 'Shares the overlap equally with the junior deed'],
+    correctAnswer: 1,
+    explanation: 'Under the senior/junior rights principle, the first (senior) conveyance takes priority. Where two deeds from a common grantor describe overlapping areas, the senior grantee holds title to the overlap area. The junior grantee receives only the portion of the described parcel not already conveyed to the senior grantee.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A "dedication" of land for public use requires:',
+    options: ['Only a verbal statement by the owner', 'An offer by the owner and acceptance by the public entity', 'Automatic transfer after 5 years of public use', 'A court order'],
+    correctAnswer: 1,
+    explanation: 'Dedication requires an intent by the owner to dedicate (offer) and acceptance by the public entity. Statutory dedication is accomplished by recording a plat showing streets and public areas. Common law dedication may be implied from the owner\'s acts. Acceptance may be express or implied by public use and maintenance.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The "proportionate measurement" method for restoring lost PLSS corners is based on the principle that:',
+    options: ['All sections are exactly 640 acres', 'The original survey errors should be distributed proportionally among all the affected intervals', 'The newest survey controls', 'GPS coordinates always supersede original monuments'],
+    correctAnswer: 1,
+    explanation: 'Proportionate measurement distributes the difference between the record (original survey) distances and the measured distances among all the intervals in the line, proportional to the record distance of each interval. This method assumes the original surveyor\'s errors were systematic and evenly distributed.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A "life estate" in real property:',
+    options: ['Lasts forever', 'Terminates upon the death of the life tenant', 'Can only be created by a court', 'Is the same as fee simple'],
+    correctAnswer: 1,
+    explanation: 'A life estate is an interest in real property that lasts for the lifetime of a specified person (the life tenant). Upon the life tenant\'s death, the property either reverts to the grantor (reversion) or passes to a designated remainder person (remainder). The life tenant cannot convey an interest greater than their own.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'When the calls in a metes and bounds description do not mathematically close, but all monuments called for are found in place, the surveyor should:',
+    options: ['Reject the description as invalid', 'Hold the monuments and adjust the courses to close', 'Ignore the monuments and use only the mathematical data', 'Resurvey using only GPS'],
+    correctAnswer: 1,
+    explanation: 'When found monuments conflict with mathematical closure, the monuments control because they represent the actual physical locations established by the original surveyor. The mathematical description (bearings and distances) is adjusted to fit the monuments, not the other way around. Monuments on the ground represent the best evidence of intent.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'An "appurtenance" in real property law refers to:',
+    options: ['A type of deed', 'A right or privilege that passes with the land to which it is attached', 'A defect in the chain of title', 'A court order regarding property boundaries'],
+    correctAnswer: 1,
+    explanation: 'An appurtenance is a right, privilege, or improvement that belongs to and passes with the transfer of land. Examples include easements appurtenant, water rights, and air rights. Appurtenances are transferred automatically with the conveyance of the dominant estate, even if not specifically mentioned in the deed.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'The "extrinsic evidence" rule in deed interpretation allows:',
+    options: ['Only the deed itself to be considered', 'Evidence outside the deed (such as surveys, plats, and testimony) to explain ambiguities', 'Any party to rewrite the deed', 'Courts to ignore the deed entirely'],
+    correctAnswer: 1,
+    explanation: 'When a deed description contains a latent ambiguity (one not apparent on the face of the instrument but discovered when applying the description to the ground), extrinsic evidence such as surveys, plats, testimony, and surrounding circumstances may be admitted to determine the grantor\'s intent.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'A "patent ambiguity" in a deed is one that:',
+    options: ['Is hidden and can only be discovered by a surveyor', 'Is apparent on the face of the instrument itself', 'Only exists in government patents', 'Requires DNA evidence to resolve'],
+    correctAnswer: 1,
+    explanation: 'A patent ambiguity is one that is apparent from reading the deed itself, such as a description that is internally inconsistent or contradictory. Courts generally do not admit extrinsic (parol) evidence to resolve patent ambiguities, unlike latent ambiguities which are discovered only when the description is applied to the ground.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Legal Principles',
+    question: 'Under the doctrine of "agreed boundaries," once neighbors agree to a boundary line:',
+    options: ['Either party may unilaterally change the line at any time', 'The line becomes binding after the agreed-upon conditions are met', 'The agreement is only valid for 5 years', 'A new survey automatically overrides the agreement'],
+    correctAnswer: 1,
+    explanation: 'Under the agreed boundary doctrine, when adjoining owners agree upon a boundary line (typically where the true line is uncertain or disputed), that agreement becomes binding upon both parties and their successors, provided the required conditions (which vary by jurisdiction) are satisfied, such as acceptance over time.',
+    difficulty: 'hard'
+  },
+
+  // ===== ADDITIONAL PROFESSIONAL SURVEY PRACTICES (~36 questions) =====
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The legal doctrine of "privity" in surveyor liability means:',
+    options: ['Only the client can sue the surveyor', 'Third parties who foreseeably rely on the survey may also have a cause of action against the surveyor', 'The surveyor is immune from all lawsuits', 'Only government agencies can bring claims'],
+    correctAnswer: 1,
+    explanation: 'While traditional privity required a direct contractual relationship to sue, many jurisdictions have expanded liability so that foreseeable third-party users of the survey (such as subsequent purchasers or lenders) may bring claims against the surveyor. This expansion reflects the reality that surveys are often relied upon by parties beyond the original client.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Professional liability (malpractice) for a surveyor requires proof of:',
+    options: ['Intent to cause harm', 'A duty of care, breach of that duty, causation, and damages', 'Only that an error was made', 'Criminal conduct'],
+    correctAnswer: 1,
+    explanation: 'Professional negligence requires the plaintiff to prove four elements: (1) the surveyor owed a duty of care, (2) the surveyor breached that duty by failing to meet the standard of care, (3) the breach caused the harm (proximate cause), and (4) the plaintiff suffered actual damages as a result.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When serving as an expert witness, a surveyor\'s primary duty is to:',
+    options: ['Advocate for the party that retained them', 'Provide objective, truthful testimony based on professional analysis', 'Maximize the retaining attorney\'s case', 'Agree with the opposing surveyor to avoid conflict'],
+    correctAnswer: 1,
+    explanation: 'An expert witness surveyor\'s primary duty is to the court and to the truth. The surveyor must provide impartial, objective professional opinions based on their independent analysis. The surveyor should not act as an advocate for either party but rather as an independent expert assisting the court.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A Daubert challenge to a surveyor\'s expert testimony evaluates whether:',
+    options: ['The surveyor holds a valid license', 'The surveyor\'s methodology is scientifically valid and reliable', 'The surveyor\'s fees are reasonable', 'The surveyor has published peer-reviewed articles'],
+    correctAnswer: 1,
+    explanation: 'Under the Daubert standard (and its state equivalents), the court acts as a "gatekeeper" to ensure expert testimony is based on reliable methodology and relevant to the case. The court evaluates whether the expert\'s methods are testable, peer-reviewed, have known error rates, and are generally accepted.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A survey plat should contain all of the following EXCEPT:',
+    options: ['Surveyor\'s seal and signature', 'North arrow and scale', 'The surveyor\'s opinion of property value', 'Legal description and monuments found or set'],
+    correctAnswer: 2,
+    explanation: 'A survey plat must include the surveyor\'s seal and signature, north arrow, scale, legal description, monuments found and set, bearings and distances, adjoining property information, and other required elements. Property valuation is the domain of appraisers, not surveyors, and should not appear on a survey plat.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When preparing a survey report, the surveyor should include:',
+    options: ['Only the final coordinates', 'The purpose, methodology, findings, evidence evaluated, and professional opinions with supporting rationale', 'Only a CAD drawing', 'Only a list of equipment used'],
+    correctAnswer: 1,
+    explanation: 'A comprehensive survey report should describe the project purpose, scope, research performed, methodology, instruments used, control established, evidence found and evaluated, analysis performed, conclusions reached, and the basis for professional opinions. It serves as a permanent record of the surveyor\'s work.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor who discovers a significant boundary discrepancy affecting a neighbor who is not the client should:',
+    options: ['Ignore it since the neighbor is not the client', 'Move the boundary to favor the client', 'Inform the client of the discrepancy and recommend they consult with legal counsel before proceeding', 'Secretly notify the neighbor'],
+    correctAnswer: 2,
+    explanation: 'When a surveyor discovers a boundary discrepancy that affects adjacent property, the ethical obligation is to inform the client of the findings and recommend legal consultation. The surveyor should not suppress evidence, alter results, or independently contact third parties about the client\'s survey. The surveyor\'s role is to report objective findings and let the parties resolve disputes through proper legal channels.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'License reciprocity (comity) between states allows a surveyor to:',
+    options: ['Practice in any state without restriction', 'Obtain a license in another state based on substantially equivalent qualifications', 'Ignore the other state\'s practice standards', 'Charge higher fees in the reciprocal state'],
+    correctAnswer: 1,
+    explanation: 'Reciprocity (comity) allows a surveyor licensed in one state to obtain a license in another state by demonstrating substantially equivalent education, experience, and examination requirements. Each state retains the right to set its own standards, and the applicant must meet the reciprocal state\'s requirements.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Quality assurance (QA) in a survey firm refers to:',
+    options: ['Checking only the final product', 'Systematic processes and policies to prevent errors and ensure consistent quality throughout all operations', 'Buying the most expensive equipment', 'Having all work reviewed by a single person'],
+    correctAnswer: 1,
+    explanation: 'Quality assurance encompasses the systematic processes, procedures, and policies that a firm implements to prevent errors and maintain consistent quality. QA is proactive and organization-wide, covering staff training, standard operating procedures, equipment calibration, and documentation requirements.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Quality control (QC) in a survey project involves:',
+    options: ['Only calibrating instruments', 'Specific checks, reviews, and verifications applied to project deliverables to identify and correct errors', 'Only reviewing the final plat', 'Delegating all checking to the field crew'],
+    correctAnswer: 1,
+    explanation: 'Quality control involves the specific checks and reviews performed on project work products (field data, calculations, drawings, reports) to verify accuracy and compliance with standards. QC is reactive—it detects and corrects errors. It includes independent checks, redundant measurements, and peer reviews.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When a client requests a surveyor to move a boundary marker to a desired location, the surveyor should:',
+    options: ['Move the marker as requested since the client is paying', 'Refuse the request and explain that boundary markers must be placed based on evidence and professional judgment', 'Move the marker if the neighbor agrees', 'Ask the client to sign a waiver'],
+    correctAnswer: 1,
+    explanation: 'A surveyor must never place boundary markers at locations that do not reflect the true boundary as determined by evidence and professional analysis. Moving a marker to a client\'s desired location constitutes fraud and is a violation of professional ethics and law. The surveyor must explain why the request cannot be honored.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The surveyor\'s ethical obligation of "due diligence" requires:',
+    options: ['Only performing field work quickly', 'Thorough research, careful field work, and competent analysis before rendering professional opinions', 'Only using the latest technology', 'Charging the highest possible fees'],
+    correctAnswer: 1,
+    explanation: 'Due diligence requires the surveyor to perform thorough research (deed records, plats, prior surveys), careful field observations (locating monuments and evidence), accurate measurements, competent analysis, and sound professional judgment before rendering opinions about boundary locations or other survey matters.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor discovers that a prior survey by another licensed surveyor contains a significant error that affects the current project. The surveyor should:',
+    options: ['Ignore it because correcting another surveyor\'s work is unprofessional', 'Document the discrepancy, perform independent analysis, and notify the client and potentially the licensing board', 'Automatically defer to the prior survey', 'Secretly correct the error without telling anyone'],
+    correctAnswer: 1,
+    explanation: 'When a surveyor discovers a significant error in a prior survey, they have a professional and ethical obligation to document the discrepancy, perform their own independent analysis, inform the client, and in cases involving public safety or welfare, potentially notify the state licensing board. Professional courtesy does not override the duty to the public.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The concept of "privity" in surveyor liability refers to:',
+    options: ['The right to privacy of survey data', 'A direct contractual relationship between parties', 'The requirement to keep field notes confidential', 'The surveyor\'s right to refuse work'],
+    correctAnswer: 1,
+    explanation: 'Privity of contract exists between parties who have a direct contractual relationship. Traditionally, only parties in privity could sue for professional negligence. However, many jurisdictions now extend surveyor liability to foreseeable third parties who rely on the survey, even without a direct contract with the surveyor.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The "responsible charge" requirement for professional surveyors means:',
+    options: ['The surveyor must personally perform every measurement', 'The licensed surveyor must exercise direct supervisory control over the survey work and accept professional responsibility for its accuracy', 'The surveyor is financially responsible for all project costs', 'Only the surveyor in charge can sign contracts'],
+    correctAnswer: 1,
+    explanation: 'Responsible charge requires that a licensed professional surveyor exercise direct supervisory control over survey work performed under their license. This does not mean the PLS must personally perform every task, but they must be sufficiently involved to understand the methods used, verify the accuracy of results, and accept professional responsibility for the final product.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor\'s field notes serve as:',
+    options: ['Informal personal reminders only', 'Official, contemporaneous records of observations and measurements that may serve as legal evidence', 'Temporary records to be discarded after the plat is drawn', 'Marketing materials for the firm'],
+    correctAnswer: 1,
+    explanation: 'Field notes are the official contemporaneous record of the surveyor\'s observations, measurements, and decisions in the field. They are permanent records that may be used as evidence in court proceedings, for future retracement surveys, and for defense against professional liability claims. They must be clear, complete, and accurate.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The statute of limitations for a surveying malpractice claim:',
+    options: ['Is always 1 year from the date of the survey', 'Varies by state and may begin when the error is discovered or should have been discovered', 'Does not exist for surveyors', 'Is always 20 years'],
+    correctAnswer: 1,
+    explanation: 'The statute of limitations for professional negligence varies by state, typically ranging from 2 to 10 years. Many states use a "discovery rule" where the limitations period begins when the error is discovered or reasonably should have been discovered, rather than when the survey was performed.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor who signs and seals a plat prepared by an unlicensed person:',
+    options: ['Is common and acceptable practice', 'Is ethically and legally responsible for the work product and may face disciplinary action if proper oversight was not provided', 'Is only a problem if the plat contains errors', 'Has no liability since they did not perform the work'],
+    correctAnswer: 1,
+    explanation: 'A licensed surveyor who signs and seals a plat takes full professional and legal responsibility for that work. If the surveyor did not exercise adequate supervision and responsible charge over the work, they may face disciplinary action, license revocation, and liability. "Plan stamping" without proper oversight is a serious ethical violation.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The concept of "responsible charge" in professional surveying means:',
+    options: ['Charging reasonable fees for services', 'Direct control and personal supervision of the work, including the ability to review and approve all work products', 'Only being present in the office while work is performed', 'Delegating all work to field technicians'],
+    correctAnswer: 1,
+    explanation: 'Responsible charge means the licensed surveyor exercises direct control and supervision over the surveying work, including independent knowledge, judgment, and the ability to review, correct, and approve all work products. Physical presence at the work site may not always be required, but the surveyor must have meaningful oversight.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When a surveyor is asked to provide services in a specialized area outside their competence, they should:',
+    options: ['Accept the work and learn as they go', 'Decline or associate with a qualified professional, disclosing the arrangement to the client', 'Accept the work and charge a lower fee', 'Subcontract without informing the client'],
+    correctAnswer: 1,
+    explanation: 'Professional ethics require that a surveyor only accept engagements for which they are qualified by education, training, and experience. If the work requires specialized expertise, the surveyor should either decline the engagement or associate with a qualified professional, with full disclosure to the client.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A conflict of interest for a surveyor performing a boundary survey would include:',
+    options: ['Using GPS equipment on the project', 'Having a personal financial interest in the outcome of the boundary determination', 'Performing research at the county courthouse', 'Using previously established control points'],
+    correctAnswer: 1,
+    explanation: 'A conflict of interest exists when the surveyor has a personal, financial, or other interest that could compromise or appear to compromise professional objectivity. Examples include the surveyor being a party to the transaction, having a financial interest in the property, or being related to one of the parties in a boundary dispute.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'An error of closure in a boundary survey that exceeds acceptable standards indicates:',
+    options: ['The property does not exist', 'A blunder or systematic error exists in the measurements that must be identified and corrected', 'The survey is still acceptable', 'The boundary has changed since the original survey'],
+    correctAnswer: 1,
+    explanation: 'An error of closure exceeding acceptable standards suggests a blunder (gross error) or uncorrected systematic error in the measurements. The surveyor must identify and correct the source of the error before accepting the survey results. Simply distributing the error without investigation would not meet the standard of care.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Peer review of survey work products is important because it:',
+    options: ['Is required by federal law on all projects', 'Provides an independent check that helps identify errors and improve quality', 'Slows down project completion without benefit', 'Is only needed for government contracts'],
+    correctAnswer: 1,
+    explanation: 'Peer review provides an independent verification of survey work by a qualified professional. It helps identify computational errors, inconsistencies, omissions, and improper interpretations that the original surveyor may have missed. Peer review is a critical component of quality control and risk management.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When a boundary dispute arises between adjacent landowners, the surveyor\'s role is to:',
+    options: ['Decide who owns the disputed area', 'Provide objective professional analysis and evidence; leave legal determinations to the courts', 'Mediate the dispute and render a binding decision', 'Always side with the client who hired them'],
+    correctAnswer: 1,
+    explanation: 'The surveyor\'s role in boundary disputes is to provide objective, professional analysis based on evidence, monuments, deed records, and applicable legal principles. The surveyor renders professional opinions about boundary locations but cannot make binding legal determinations—that authority belongs to the courts.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The minimum elements of a professional survey contract should include:',
+    options: ['Only the total fee', 'Scope of services, deliverables, timeline, fee, terms, limitations, and the parties\' responsibilities', 'Only the client\'s name and address', 'Only a verbal agreement'],
+    correctAnswer: 1,
+    explanation: 'A professional survey contract should clearly define the scope, deliverables, schedule, fee structure, payment terms, parties\' responsibilities, limitations of liability, ownership of documents, dispute resolution, and termination provisions. Clear contracts reduce misunderstandings and protect both the surveyor and client.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor\'s professional seal on a document certifies that:',
+    options: ['The document was prepared under their supervision', 'The document has been reviewed by the state licensing board', 'The property boundaries are guaranteed to be accurate within 0.01 feet', 'The document is approved for recording by the county'],
+    correctAnswer: 0,
+    explanation: 'A surveyor\'s professional seal and signature certify that the work was performed under their responsible charge and supervision, and that the work meets applicable standards. It does not guarantee absolute accuracy or constitute approval by the licensing board or recording authority.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When performing a survey that reveals a potential title defect, the surveyor should:',
+    options: ['Fix the title defect themselves', 'Report the finding to the client and recommend consultation with a title professional or attorney', 'Ignore it since title work is outside their scope', 'Record a corrective document at the courthouse'],
+    correctAnswer: 1,
+    explanation: 'While surveyors are not title examiners, they have a duty to report findings that may affect title or boundary rights. The surveyor should document the potential issue, inform the client, and recommend that the client consult a title company or attorney for resolution. The surveyor should not attempt to resolve title defects.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The term "professional negligence" in surveying refers to:',
+    options: ['Any error in measurement, no matter how small', 'Failure to exercise the degree of care that a reasonably competent surveyor would under similar circumstances', 'Intentional misconduct', 'Working without the most advanced equipment'],
+    correctAnswer: 1,
+    explanation: 'Professional negligence is the failure to meet the standard of care—the degree of skill, diligence, and judgment that a reasonably competent surveyor would exercise under similar circumstances. Not all errors constitute negligence; some errors are within the expected range of measurement uncertainty.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor who discovers they have made an error on a completed project should:',
+    options: ['Ignore it and hope no one notices', 'Promptly notify the client, take corrective action, and document the error and correction', 'Wait until the client complains', 'Blame the field crew'],
+    correctAnswer: 1,
+    explanation: 'Professional ethics require prompt self-disclosure of errors. The surveyor should immediately notify the client, take appropriate corrective action (resurvey, revised plat, etc.), document the error and correction, notify their E&O insurance carrier, and take steps to prevent similar errors in the future.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'The practice of "plan stamping" refers to:',
+    options: ['Using rubber stamps for efficiency', 'Applying a professional seal to work not performed under the surveyor\'s responsible charge', 'Placing a date stamp on survey documents', 'Creating a standard template for survey plats'],
+    correctAnswer: 1,
+    explanation: 'Plan stamping is the unethical and illegal practice of a licensed surveyor affixing their seal and signature to documents that were not prepared under their direct supervision and responsible charge. This practice violates licensing laws, professional ethics, and exposes the sealing surveyor to significant liability.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor\'s duty to the public differs from their duty to the client because:',
+    options: ['There is no duty to the public', 'The surveyor must protect public health, safety, and welfare, which may sometimes conflict with the client\'s wishes', 'The duty to the client always supersedes public duty', 'Public duty only applies to government projects'],
+    correctAnswer: 1,
+    explanation: 'Licensed professionals have a paramount duty to protect the public health, safety, and welfare. This duty may supersede the client\'s interests—for example, if a client asks the surveyor to conceal evidence or misrepresent boundary locations. The surveyor must maintain professional integrity even at the cost of client satisfaction.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Independent redundant measurements in a survey serve to:',
+    options: ['Slow down the project', 'Detect blunders and provide a check on the accuracy of observations', 'Increase the project cost unnecessarily', 'Satisfy only government contract requirements'],
+    correctAnswer: 1,
+    explanation: 'Redundant measurements (such as double rodding, closing the level loop, or measuring in both directions) provide a check against blunders and allow the surveyor to assess the precision and reliability of the observations. Without redundancy, there is no way to detect errors or assess measurement quality.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'When two licensed surveyors reach different opinions about a boundary location using the same evidence, this most likely reflects:',
+    options: ['That one surveyor is negligent', 'Legitimate differences in professional judgment and interpretation of evidence', 'That the boundary does not exist', 'That both surveyors are incompetent'],
+    correctAnswer: 1,
+    explanation: 'Boundary determination often involves weighing conflicting evidence and exercising professional judgment. Two competent surveyors may reasonably reach different conclusions about the same boundary based on the weight they assign to different types of evidence. A difference in opinion does not necessarily indicate negligence by either party.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor\'s continuing obligation to maintain records after completing a project is important because:',
+    options: ['Records have no value after project completion', 'Future surveyors, courts, and clients may need the records for retracement, litigation, or reference', 'Records are only needed for one year', 'Only government projects require record retention'],
+    correctAnswer: 1,
+    explanation: 'Survey records are a critical resource for future boundary retracements, dispute resolution, title examination, and professional liability defense. Most states mandate minimum retention periods, and many surveyors maintain records permanently. Records include field notes, calculations, research materials, correspondence, and all work products.',
+    difficulty: 'easy'
+  },
+
+  // ===== ADDITIONAL STANDARDS AND SPECIFICATIONS (~40 questions) =====
+  {
+    domain: 'Standards and Specifications',
+    question: 'The 2021 ALTA/NSPS Minimum Standard Detail Requirements specify a maximum allowable Relative Positional Precision of:',
+    options: ['0.50 feet', '0.07 feet (2 cm)', '0.20 feet', '1.00 feet'],
+    correctAnswer: 1,
+    explanation: 'The 2021 ALTA/NSPS standards require that the Relative Positional Precision (RPP) of the survey shall not exceed 2 cm (0.07 feet) plus 50 parts per million (based on the distance between points). This is a very high standard of accuracy reflective of the survey\'s use in major real estate transactions.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Table A of the ALTA/NSPS standards lists:',
+    options: ['Mandatory requirements for all surveys', 'Optional items that may be negotiated between the surveyor and client', 'State-specific licensing requirements', 'Fee schedules for survey services'],
+    correctAnswer: 1,
+    explanation: 'Table A contains optional survey responsibilities and specifications that may be negotiated between the surveyor, lender, title company, and client. Examples include flood zone determination, zoning information, wetlands location, underground utilities, and offsite easements. These items are in addition to the mandatory minimum standards.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'ALTA/NSPS Table A Item 1 relates to:',
+    options: ['Flood zone determination', 'Monuments placed at all property corners found or established', 'Zoning classification', 'Underground utility location'],
+    correctAnswer: 1,
+    explanation: 'Table A Item 1 requires that monuments be placed (if not already in place) at all property corners that are part of the survey. This optional item ensures that the client has physical markers at all boundary corners, facilitating future identification of the property limits.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'ALTA/NSPS Table A Item 8 relates to:',
+    options: ['Setting monuments', 'Wetlands location', 'Underground utility location', 'Flood zone determination'],
+    correctAnswer: 2,
+    explanation: 'Table A Item 8 addresses the location of underground utilities. Depending on which sub-option is selected, this may include locating utilities based on plans, observed evidence, or a private utility locator. The surveyor is typically not responsible for locating utilities that are not visible or marked.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'A FEMA Elevation Certificate is used to:',
+    options: ['Certify the elevation of a property for property tax purposes', 'Document building and ground elevations relative to the Base Flood Elevation (BFE) for flood insurance rating', 'Certify the elevation of survey monuments', 'Establish geodetic control for a project'],
+    correctAnswer: 1,
+    explanation: 'A FEMA Elevation Certificate documents the lowest adjacent grade, lowest floor elevation, and other critical elevations of a building in relation to the Base Flood Elevation. It is used by insurance companies to determine flood insurance premiums and by communities to verify compliance with floodplain management ordinances.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The Base Flood Elevation (BFE) on a FIRM map represents:',
+    options: ['The lowest ground elevation in the area', 'The elevation of the 1% annual chance flood (100-year flood)', 'The elevation of the highest recorded flood', 'The average annual river stage'],
+    correctAnswer: 1,
+    explanation: 'The Base Flood Elevation is the computed elevation to which floodwater is anticipated to rise during the base flood (1% annual chance flood, commonly called the 100-year flood). It is the regulatory standard used by FEMA and local communities for floodplain management and insurance rating purposes.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The difference between LOMA and LOMR-F applications to FEMA is:',
+    options: ['LOMA is for residential properties and LOMR-F is for commercial', 'LOMA is for properties on natural high ground above BFE; LOMR-F is for properties elevated by fill above BFE', 'LOMA requires a surveyor and LOMR-F does not', 'There is no difference; they are interchangeable'],
+    correctAnswer: 1,
+    explanation: 'A LOMA (Letter of Map Amendment) removes a property from the SFHA when it sits on natural ground above the Base Flood Elevation. A LOMR-F (Letter of Map Revision Based on Fill) removes a property when it has been elevated above the BFE by the placement of engineered fill. Both require an Elevation Certificate from a licensed surveyor, but the LOMR-F also requires certification that the fill was properly placed and compacted.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The State Plane Coordinate System (SPCS) uses which projection(s)?',
+    options: ['Only Mercator projections', 'Lambert Conformal Conic and/or Transverse Mercator projections', 'Only polyconic projections', 'No projections; it uses a flat plane'],
+    correctAnswer: 1,
+    explanation: 'The SPCS uses Lambert Conformal Conic projections for states that are wider east-west and Transverse Mercator projections for states that are longer north-south. Some states use both projections for different zones. These projections minimize distortion within each zone.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The purpose of a combined scale factor in State Plane Coordinates is to:',
+    options: ['Convert between English and metric units', 'Account for both the grid-to-ground scale factor and the elevation factor', 'Convert between NAD 27 and NAD 83', 'Adjust for magnetic declination'],
+    correctAnswer: 1,
+    explanation: 'The combined scale factor is the product of the grid scale factor (which accounts for map projection distortion) and the elevation factor (which accounts for the difference between the ellipsoid surface and the ground surface). It converts between ground distances and grid (State Plane) distances.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'NGS standards define a First Order geodetic control survey as having a minimum accuracy of:',
+    options: ['1:10,000', '1:50,000', '1:100,000', '1:1,000,000'],
+    correctAnswer: 2,
+    explanation: 'First Order geodetic control surveys require a minimum accuracy of 1:100,000 (10 ppm). This is the highest standard of accuracy for geodetic surveys and is typically required for statewide geodetic networks, dam monitoring, and crustal motion studies. Second Order surveys require 1:50,000, and Third Order requires 1:10,000.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The National Spatial Reference System (NSRS) maintained by NGS provides:',
+    options: ['Only property boundary data', 'A consistent coordinate system, including horizontal and vertical control networks', 'Only GPS satellite orbit information', 'Only tidal data for coastal areas'],
+    correctAnswer: 1,
+    explanation: 'The NSRS is the framework of positions, elevations, and gravity values that define how latitude, longitude, height, and other geodetic properties are established throughout the United States. It consists of the horizontal datum (NAD 83), the vertical datum (NAVD 88), and the supporting network of control points.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The North American Vertical Datum of 1988 (NAVD 88) is referenced to:',
+    options: ['Mean sea level at multiple tide stations', 'A single tidal benchmark at Father Point/Rimouski, Quebec', 'The WGS 84 ellipsoid', 'The center of the Earth'],
+    correctAnswer: 1,
+    explanation: 'NAVD 88 is a fixed datum referenced to a single tidal benchmark at Father Point/Rimouski, Quebec, Canada. Unlike NGVD 29, which was referenced to mean sea level at 26 tide stations, NAVD 88 uses a single datum point and a minimum-constraint adjustment of the leveling network.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Construction staking tolerances for building layout are typically:',
+    options: ['The same as geodetic survey standards', 'Specified in the project plans and specifications, commonly ±0.01 to ±0.10 feet depending on the element', 'Always ±1.0 feet', 'Not specified for construction projects'],
+    correctAnswer: 1,
+    explanation: 'Construction staking tolerances vary depending on the type of construction element. Building corners and structural elements may require ±0.01 to ±0.02 feet. Grading may allow ±0.10 feet. Rough earthwork may allow ±0.50 feet. Specific tolerances should be stated in the project specifications.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The precision of a closed traverse is evaluated by computing the:',
+    options: ['Maximum single measurement error', 'Ratio of the linear error of closure to the total traverse length', 'Number of angles measured', 'Cost per station'],
+    correctAnswer: 1,
+    explanation: 'Traverse precision is expressed as the ratio of the linear error of closure to the total traverse perimeter (e.g., 1:10,000). The linear error of closure is the distance between the known and computed positions of the closing point. This ratio indicates the consistency of the distance and angle measurements.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'FEMA Special Flood Hazard Areas (SFHAs) are designated as:',
+    options: ['Zone C and Zone X', 'Zone A and Zone V', 'Zone B only', 'Zone D only'],
+    correctAnswer: 1,
+    explanation: 'Special Flood Hazard Areas are designated as Zone A (riverine flooding) and Zone V (coastal flooding with wave action). Zone A has various sub-designations (AE, AH, AO, AR, A99). Zone V areas include VE and V zones. Areas outside the SFHA are designated Zone B, C, X, or D.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'A FEMA Letter of Map Revision (LOMR) differs from a LOMA because a LOMR:',
+    options: ['Is easier to obtain', 'Reflects changes to the FIRM based on physical changes to the floodplain (fill, channel modifications, etc.)', 'Only applies to residential properties', 'Does not require engineering analysis'],
+    correctAnswer: 1,
+    explanation: 'A LOMR officially revises the FIRM based on physical changes (such as fill, levees, channel improvements, or bridge construction) or updated hydraulic/hydrologic analysis. A LOMA, by contrast, corrects map errors by showing that a naturally elevated property was incorrectly included in the SFHA. LOMRs typically require more extensive engineering analysis.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The Geoid model published by NGS is used to:',
+    options: ['Calculate magnetic declination', 'Convert between ellipsoidal heights (from GPS) and orthometric heights (elevations above sea level)', 'Determine the speed of radio waves', 'Calculate atmospheric refraction'],
+    correctAnswer: 1,
+    explanation: 'The geoid model defines the separation between the ellipsoid (the mathematical reference surface used by GPS) and the geoid (the equipotential gravity surface that best approximates mean sea level). Adding the geoid height (N) to the orthometric height (H) gives the ellipsoidal height (h): h = H + N.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'For an ALTA/NSPS survey, the surveyor is required to show:',
+    options: ['Only the boundary lines', 'All improvements, visible encroachments, easements of record, and other items specified in the standards', 'Only the building footprint', 'Only the zoning designation'],
+    correctAnswer: 1,
+    explanation: 'ALTA/NSPS surveys must show boundary lines, improvements, rights-of-way, easements of record, visible encroachments, evidence of utilities, access, names of adjoining owners, flood zone designation, and other items as specified in the minimum standards and any negotiated Table A items.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The accuracy standard for OPUS (Online Positioning User Service) solutions from NGS is approximately:',
+    options: ['10 meters horizontal', '2 cm horizontal and 4 cm vertical for properly conducted sessions', '1 meter horizontal', '0.001 mm'],
+    correctAnswer: 1,
+    explanation: 'OPUS provides coordinates with a typical accuracy of approximately 2 cm horizontal and 4 cm vertical when proper observation procedures are followed (minimum 2-hour static observation for OPUS-S, or 15 minutes for OPUS-RS). Accuracy depends on observation duration, number of available CORS stations, and multipath conditions.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'In the ALTA/NSPS standards, "Relative Positional Precision" (RPP) is defined as:',
+    options: ['The accuracy of the survey relative to the national geodetic datum', 'The estimated uncertainty in the distance between any two points on the survey at the 95% confidence level', 'The precision of the GPS receiver used', 'The ratio of misclosure to perimeter'],
+    correctAnswer: 1,
+    explanation: 'RPP is an estimate of the uncertainty of the position of any surveyed point relative to any other surveyed point on the same survey, at the 95% confidence level. It replaces the older concept of "accuracy" based on traverse closure ratios and provides a more meaningful assessment of survey quality.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Minimum standards for property surveys are typically established by:',
+    options: ['The federal government for all states', 'Individual state licensing boards or state statutes', 'The United Nations', 'The surveyor on a project-by-project basis'],
+    correctAnswer: 1,
+    explanation: 'Each state establishes its own minimum technical standards for surveys through the state board of licensure, state statutes, or administrative rules. These standards address accuracy requirements, monumentation, plat format, certifications, and other aspects of survey practice. Some states adopt or reference national standards like ALTA/NSPS.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The NAD 83 (2011) epoch 2010.00 adjustment refers to:',
+    options: ['A 1983 adjustment of the horizontal datum', 'The most recent national adjustment of the NAD 83 horizontal datum, constrained to positions at the epoch of 2010.00', 'The first GPS-based adjustment', 'A local coordinate system used only in California'],
+    correctAnswer: 1,
+    explanation: 'NAD 83 (2011) is the most recent realization (adjustment) of the NAD 83 datum, constrained to 2010.0 epoch positions of the CORS network. It replaced NAD 83 (NSRS2007) and provides the most current reference frame for positioning in the United States. Coordinates may differ slightly between adjustments.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Contour lines on a topographic survey map:',
+    options: ['Connect points of equal distance from a boundary', 'Connect points of equal elevation above a reference datum', 'Show the direction of magnetic north', 'Indicate property boundaries'],
+    correctAnswer: 1,
+    explanation: 'Contour lines connect points of equal elevation above a vertical datum (such as NAVD 88). The spacing of contour lines indicates the steepness of terrain: closely spaced contours indicate steep slopes, while widely spaced contours indicate gentle terrain. The vertical distance between contour lines is the contour interval.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The minimum number of CORS stations used by OPUS for a position solution is:',
+    options: ['1', '2', '3', '5'],
+    correctAnswer: 2,
+    explanation: 'OPUS requires a minimum of 3 CORS (Continuously Operating Reference Stations) to compute a position solution. The software processes the submitted GPS data against three CORS stations and provides the averaged solution with quality indicators. Using more distant or poorly distributed CORS may affect accuracy.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'When performing a level loop closure, an acceptable misclosure for Third Order leveling is:',
+    options: ['0.001 feet per station', '12mm × √K (where K is the distance in km)', '1 foot per mile', '0.1 feet regardless of distance'],
+    correctAnswer: 1,
+    explanation: 'Third Order leveling has a maximum allowable misclosure of 12mm × √K, where K is the one-way leveling distance in kilometers. Second Order Class II allows 8mm × √K, Second Order Class I allows 6mm × √K, and First Order allows 4mm × √K (Class II) or 3mm × √K (Class I).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'An ALTA/NSPS survey must be certified to:',
+    options: ['Only the property owner', 'The parties specified in the certification, typically including the lender, title company, buyer, and/or their successors', 'The general public', 'Only the county recorder'],
+    correctAnswer: 1,
+    explanation: 'The ALTA/NSPS survey certification must be addressed to the parties specified by the client, typically including the lender, title insurance company, current owner, and prospective buyer. The certification identifies who may rely on the survey and is a critical component of the survey deliverable.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The horizontal datum shift from NAD 27 to NAD 83 in the continental U.S. results in coordinate differences of approximately:',
+    options: ['Less than 1 foot', '10 to 100+ meters depending on location', 'Exactly 0 meters', 'More than 1 kilometer'],
+    correctAnswer: 1,
+    explanation: 'The shift from NAD 27 to NAD 83 results in coordinate differences ranging from approximately 10 to over 100 meters depending on geographic location. These shifts vary across the country because NAD 27 was based on the Clarke 1866 ellipsoid with its origin at Meades Ranch, Kansas, while NAD 83 uses the GRS 80 ellipsoid.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The grid factor for State Plane Coordinates accounts for:',
+    options: ['The difference between magnetic and true north', 'The distortion introduced by projecting the curved earth surface onto a flat plane', 'The difference between English and metric units', 'The earth\'s rotation'],
+    correctAnswer: 1,
+    explanation: 'The grid scale factor accounts for the linear distortion that occurs when projecting the curved earth surface onto the flat map plane of the State Plane Coordinate System. Distances measured on the ground must be multiplied by the combined factor (grid factor × elevation factor) to convert to grid distances.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'For ALTA/NSPS surveys, Table A Item 11 relates to:',
+    options: ['Monuments', 'Zoning information', 'Flood zone classification', 'Underground utilities'],
+    correctAnswer: 1,
+    explanation: 'Table A Item 11 covers zoning information. When selected, the surveyor provides zoning classification, setback requirements, height restrictions, floor area ratios, parking requirements, and other applicable zoning regulations. This information is critical for lenders and title companies to assess the property\'s compliance with local regulations.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'A benchmark used for vertical control should be:',
+    options: ['A temporary wooden stake', 'A stable, permanent point with a known elevation referenced to an established datum', 'Any point selected by the surveyor without verification', 'Located only on federal land'],
+    correctAnswer: 1,
+    explanation: 'A benchmark must be a stable, permanent monument (such as a brass disk set in concrete, a chiseled mark on a structure, or an NGS control point) with a known elevation referenced to an established vertical datum (e.g., NAVD 88). It should be located where it is unlikely to be disturbed by construction or natural processes.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The convergence angle in State Plane Coordinates is the angle between:',
+    options: ['Magnetic north and true north', 'Grid north and geodetic (true) north', 'The sun\'s azimuth and true north', 'Two adjacent zone boundaries'],
+    correctAnswer: 1,
+    explanation: 'The convergence angle (mapping angle or grid convergence) is the difference between grid north (the direction of increasing northing on the State Plane grid) and geodetic north (true north). The convergence angle varies with position and is zero along the central meridian of a Transverse Mercator zone.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'GNSS observations for control surveys should include a minimum occupation time that depends on:',
+    options: ['The time of day only', 'Baseline length, number of satellites, constellation geometry, and desired accuracy', 'The type of tripod used', 'The surveyor\'s preference only'],
+    correctAnswer: 1,
+    explanation: 'Minimum GNSS occupation time depends on baseline length, the number of available satellites, satellite geometry (PDOP/GDOP), the type of receiver and antenna, multipath conditions, and the desired accuracy. Longer occupations and more satellites generally improve the position solution.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The Flood Insurance Rate Map (FIRM) is published by:',
+    options: ['The U.S. Army Corps of Engineers', 'The Federal Emergency Management Agency (FEMA)', 'The National Geodetic Survey (NGS)', 'The U.S. Geological Survey (USGS)'],
+    correctAnswer: 1,
+    explanation: 'FIRMs are published by FEMA as part of the National Flood Insurance Program (NFIP). They delineate Special Flood Hazard Areas, Base Flood Elevations, and flood risk zones. FIRMs are the official maps used by communities, lenders, and insurance companies for floodplain management and insurance rating.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The elevation factor used in State Plane Coordinate calculations adjusts for:',
+    options: ['The difference between magnetic and true north', 'The height of the survey point above the ellipsoid', 'The curvature of contour lines', 'Temperature effects on steel tapes'],
+    correctAnswer: 1,
+    explanation: 'The elevation factor adjusts for the difference in distance between a measurement taken at ground level (above the ellipsoid) and the corresponding distance on the ellipsoid surface. It is calculated as R/(R+h), where R is the earth\'s mean radius and h is the height above the ellipsoid. Points at higher elevations have smaller elevation factors.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Static GNSS surveys require simultaneous observations at:',
+    options: ['Only the base station', 'Both the base station and rover station(s) for the same time period', 'Any station at any time', 'Only during daylight hours'],
+    correctAnswer: 1,
+    explanation: 'Static GNSS surveying requires simultaneous satellite observations at two or more stations (base and rover) during the same time period. The data from all stations is then post-processed together to determine the baseline vector(s) between stations. This method provides the highest accuracy for control surveys.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The horizontal accuracy standard for a topographic survey used for engineering design is typically:',
+    options: ['1 meter', 'One-tenth of the contour interval plotted at map scale', 'One foot regardless of scale', '10 meters'],
+    correctAnswer: 1,
+    explanation: 'The traditional standard for horizontal accuracy of a topographic map is that 90% of well-defined points shall be within a distance equal to 1/30 inch at map scale (for maps at scales larger than 1:20,000). For engineering design, horizontal positions of features should typically be accurate to within one-tenth of the contour interval or better.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'RTK (Real-Time Kinematic) GNSS surveying achieves typical accuracies of:',
+    options: ['10 meters', '1-3 cm horizontal and 2-5 cm vertical', '1 meter', '1 mm'],
+    correctAnswer: 1,
+    explanation: 'RTK GNSS typically achieves 1-3 cm horizontal and 2-5 cm vertical accuracy under good conditions. Accuracy depends on baseline length (should generally be less than 10-20 km), satellite geometry, multipath, atmospheric conditions, and proper field procedures. RTK is widely used for boundary, topographic, and construction surveys.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The ALTA/NSPS standards require that the survey plat show:',
+    options: ['Only the property boundaries', 'The relationship of the property to its adjoiners, including the names of adjoiners from record title', 'Only GPS coordinates', 'Only building footprints'],
+    correctAnswer: 1,
+    explanation: 'The ALTA/NSPS standards require the plat to show the names of adjoining owners or lot designations from record title. This information helps title companies and lenders identify potential boundary issues, encroachments, or conflicts with neighboring properties.',
+    difficulty: 'medium'
+  },
+
+  // ===== ADDITIONAL AREAS OF PRACTICE (~40 questions) =====
+  {
+    domain: 'Areas of Practice',
+    question: 'When retracing a boundary originally surveyed 100 years ago, the surveyor should prioritize:',
+    options: ['Using only modern GPS measurements', 'Finding and evaluating original monuments and physical evidence on the ground', 'Relying solely on the recorded plat dimensions', 'Ignoring any original monuments found in different positions than expected'],
+    correctAnswer: 1,
+    explanation: 'In a retracement survey, finding original monuments and evidence on the ground is the highest priority. Original monuments control over record dimensions because they represent where the original surveyor actually established the boundary. The retracing surveyor must "follow in the footsteps" of the original surveyor.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'In PLSS surveys, a "closing corner" is set:',
+    options: ['At every section corner', 'Where a survey line intersects a previously established line', 'Only at township corners', 'At the center of each section'],
+    correctAnswer: 1,
+    explanation: 'A closing corner is set at the point where a survey line (such as a range line or township line) intersects a previously surveyed line. The closing corner is typically not at the same location as the standard corner on the previously established line, and the gap between them records the accumulated survey error.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Single proportionate measurement is used to restore lost corners on:',
+    options: ['Interior section lines', 'Township and range lines (exteriors)', 'Meandered water boundaries', 'All PLSS corners without exception'],
+    correctAnswer: 1,
+    explanation: 'Single proportionate measurement is used to restore lost corners on established lines (township and range lines) where the line has been previously surveyed and controlling corners exist on that line. The position is interpolated proportionally between the nearest controlling corners on the same line.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'The center of a section in the PLSS is determined by:',
+    options: ['GPS coordinates from the BLM website', 'The intersection of straight lines connecting opposite quarter corners', 'Measuring exactly 40 chains from any section corner', 'A random point within the section'],
+    correctAnswer: 1,
+    explanation: 'The center of a section is located at the intersection of straight lines connecting the opposite quarter corners (the quarter corner on the north line with the quarter corner on the south line, and the quarter corner on the east line with the quarter corner on the west line). These lines may not be perpendicular.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Subdivision plat preparation must comply with:',
+    options: ['Only the surveyor\'s personal preferences', 'Local subdivision ordinances, state platting laws, and recording requirements', 'Only federal regulations', 'No specific requirements'],
+    correctAnswer: 1,
+    explanation: 'Subdivision plats must comply with local subdivision ordinances (lot size, setbacks, access, utilities), state platting statutes (format, certifications, monumentation), and county recording requirements. The surveyor must coordinate with local planning departments, engineers, and other professionals throughout the process.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A cul-de-sac in a subdivision is:',
+    options: ['A type of easement', 'A dead-end street with a circular turnaround', 'A stormwater detention facility', 'A type of property covenant'],
+    correctAnswer: 1,
+    explanation: 'A cul-de-sac is a dead-end street with a circular turnaround at the end, commonly used in residential subdivision design. The lots fronting a cul-de-sac are typically pie-shaped (narrow at the street and wider at the rear). Design standards specify minimum radius, right-of-way width, and pavement dimensions.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A metes and bounds retracement survey typically begins with:',
+    options: ['Setting new monuments at estimated locations', 'Research of deeds, prior surveys, and title records before going to the field', 'Taking GPS readings at random points', 'Asking neighbors where they think the boundaries are'],
+    correctAnswer: 1,
+    explanation: 'A proper retracement survey begins with thorough office research: reviewing deeds, prior surveys, plats, court records, and title documents. This research guides the field investigation and helps the surveyor understand the history of the property, identify potential conflicts, and know what evidence to look for on the ground.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'An easement survey locates:',
+    options: ['Only the property boundary', 'The location, width, and extent of an easement as described in the easement instrument', 'Only underground utilities', 'Only the centerline of a road'],
+    correctAnswer: 1,
+    explanation: 'An easement survey establishes the physical location of an easement based on its legal description, including its width, length, and position relative to the property boundaries. The survey may also identify improvements, encroachments, or activities within the easement area and their compliance with the easement terms.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Slope staking in construction surveys establishes:',
+    options: ['Only the center line of a road', 'The intersection points of cut or fill slopes with the existing ground surface', 'Only the finished grade elevation', 'Only the horizontal alignment'],
+    correctAnswer: 1,
+    explanation: 'Slope staking marks the points where the proposed cut or fill slopes intersect the existing ground surface (the "catch points" or "daylight lines"). These marks define the limits of earthwork and are essential for equipment operators to know where to begin and end grading operations.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'An as-built survey is performed:',
+    options: ['Before construction begins', 'After construction is completed to verify that improvements were built according to the plans', 'Only for residential buildings', 'Only when required by a court order'],
+    correctAnswer: 1,
+    explanation: 'An as-built survey documents the actual location, dimensions, and elevations of constructed improvements as they were built. It verifies compliance with design plans, setback requirements, and easement restrictions. As-built surveys are commonly required by municipalities, lenders, and title companies before certificates of occupancy are issued.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'When performing a topographic survey for site design, the surveyor should collect data on:',
+    options: ['Only the property boundaries', 'Existing ground elevations, natural features, man-made features, utilities, and drainage patterns', 'Only building locations', 'Only trees over 12 inches in diameter'],
+    correctAnswer: 1,
+    explanation: 'A topographic survey for engineering design must capture comprehensive site information including ground elevations (for contour mapping), natural features (trees, water features), man-made features (buildings, pavement, fences), visible utilities, drainage patterns, and any other features that may affect site design.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Hydrographic survey data is typically referenced to:',
+    options: ['An arbitrary datum', 'A tidal datum such as Mean Lower Low Water (MLLW) for coastal surveys', 'The top of the nearest bridge', 'Atmospheric pressure'],
+    correctAnswer: 1,
+    explanation: 'Hydrographic survey depths are typically referenced to a tidal datum. For nautical charting in the U.S., Mean Lower Low Water (MLLW) is the standard datum. For inland waterways, a local pool elevation or low water reference plane may be used. The vertical datum used must be clearly stated on all deliverables.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Multibeam sonar in hydrographic surveying provides:',
+    options: ['Only a single depth reading along a track line', 'A swath of depth measurements across a wide area of the bottom', 'Only surface water velocity measurements', 'Only water temperature data'],
+    correctAnswer: 1,
+    explanation: 'Multibeam sonar systems emit a fan of acoustic beams that provide simultaneous depth measurements across a wide swath perpendicular to the vessel\'s track. This allows efficient, high-resolution mapping of the bottom topography, unlike single-beam systems that provide only a single depth along the track line.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A monumented right-of-way survey requires the surveyor to:',
+    options: ['Only locate the centerline of the road', 'Establish and monument the right-of-way boundaries based on recorded documents and field evidence', 'Only measure the road width', 'Only locate utility poles'],
+    correctAnswer: 1,
+    explanation: 'A monumented right-of-way survey requires thorough research of deeds, plats, highway plans, and other records to determine the right-of-way limits, followed by field work to locate existing evidence and set monuments at the right-of-way boundaries. The survey should show the relationship to adjoining properties.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'When subdividing a parcel, the surveyor must consider:',
+    options: ['Only the lot dimensions', 'Zoning requirements, minimum lot size, frontage, setbacks, access, utilities, drainage, and environmental constraints', 'Only the property owner\'s wishes', 'Only the cost of survey monuments'],
+    correctAnswer: 1,
+    explanation: 'Subdivision design requires consideration of numerous factors including zoning regulations, minimum lot size and frontage requirements, building setbacks, street access and width, utility availability, stormwater drainage, floodplain constraints, environmental regulations, and recording requirements.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'PLSS meander lines were originally established to:',
+    options: ['Define the property boundary at a water body', 'Approximate the shoreline of navigable water bodies for the purpose of calculating acreage, not to establish a boundary', 'Mark the high water line precisely', 'Serve as easement boundaries'],
+    correctAnswer: 1,
+    explanation: 'Meander lines in the PLSS were run to approximate the shoreline of navigable water bodies for area computation purposes, not to establish the boundary. The actual boundary is the water\'s edge (at the ordinary high water mark for navigable waters), which may differ significantly from the meander line.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A condominium survey typically includes:',
+    options: ['Only the exterior building dimensions', 'Both the horizontal and vertical limits of each unit, common elements, and limited common elements', 'Only the lot boundary', 'Only parking space dimensions'],
+    correctAnswer: 1,
+    explanation: 'Condominium surveys define the three-dimensional limits of each unit (horizontal and vertical boundaries), common elements (shared spaces like lobbies, pools), limited common elements (balconies, parking spaces assigned to specific units), and the overall building footprint in relation to the parcel boundaries.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'LiDAR technology in surveying is used to:',
+    options: ['Only measure distances between two known points', 'Rapidly collect millions of 3D surface points from an airborne or terrestrial platform', 'Only locate underground utilities', 'Only measure water depths'],
+    correctAnswer: 1,
+    explanation: 'LiDAR (Light Detection and Ranging) uses laser pulses to collect millions of 3D point measurements (point cloud) of the ground surface and above-ground features. It is used for topographic mapping, floodplain studies, corridor surveys, forestry, and creating digital elevation models over large areas.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'When a PLSS section has a water body on one side, the lots bordering the water are typically:',
+    options: ['Exactly 40 acres each', 'Fractional lots (government lots) with areas computed from the meander line', 'Always 160 acres', 'Not surveyed'],
+    correctAnswer: 1,
+    explanation: 'Lots bordering navigable water bodies within PLSS sections are designated as "government lots" or fractional lots. Their areas are computed using the meander line as one boundary and are typically not standard aliquot parts. The actual boundary remains the water line, not the meander line.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A pipeline survey typically involves:',
+    options: ['Only the boundary of the property', 'Route selection, alignment staking, easement surveys, and as-built location of the installed pipeline', 'Only environmental studies', 'Only water flow measurements'],
+    correctAnswer: 1,
+    explanation: 'Pipeline surveys encompass multiple phases: route selection surveys (topographic and environmental), centerline alignment staking, easement and right-of-way surveys, construction staking (trench grade, offset stakes), and as-built surveys documenting the installed pipeline\'s horizontal and vertical position.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A wetland delineation survey establishes:',
+    options: ['Only the property boundary', 'The boundaries of wetland areas as identified by a qualified wetland scientist or biologist', 'Only water depth', 'Only soil types'],
+    correctAnswer: 1,
+    explanation: 'A wetland delineation survey locates and maps the boundaries of wetland areas as identified by a qualified wetland scientist using the federal (Army Corps) three-parameter approach (hydrology, hydric soils, and hydrophytic vegetation). The surveyor provides the geodetic framework and spatial mapping of the delineated boundaries.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Terrestrial laser scanning (TLS) in surveying produces:',
+    options: ['Only single point measurements', 'A dense 3D point cloud of the scanned environment', 'Only two-dimensional plans', 'Only photographic images'],
+    correctAnswer: 1,
+    explanation: 'Terrestrial laser scanning produces a dense 3D point cloud—millions of XYZ coordinate points—representing the surfaces of objects and terrain in the scanned area. The point cloud can be used for creating 3D models, measuring dimensions, detecting deformations, and producing topographic maps and as-built documents.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'An environmental site assessment may require the surveyor to:',
+    options: ['Only assess property value', 'Locate property boundaries, map features, and identify areas of potential environmental concern', 'Only test soil samples', 'Only review aerial photographs'],
+    correctAnswer: 1,
+    explanation: 'The surveyor\'s role in an environmental site assessment typically includes locating property boundaries, mapping site features, identifying structures and improvements, locating potential sources of contamination (storage tanks, disposal areas), and providing base mapping for the environmental consultant\'s investigation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A partition survey divides:',
+    options: ['Only government land', 'An existing parcel into two or more smaller parcels as directed by the owner or court order', 'Only subdivision lots', 'Only condominium units'],
+    correctAnswer: 1,
+    explanation: 'A partition survey divides an existing parcel into two or more separate parcels. It may be voluntary (requested by the owner) or involuntary (ordered by a court in a partition action). The surveyor must ensure the resulting parcels comply with zoning, subdivision regulations, and access requirements.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'In a subdivision, "building setback lines" define:',
+    options: ['The property boundary', 'The minimum distance that structures must be set back from property lines, streets, or other features', 'The location of underground utilities', 'The maximum height of buildings'],
+    correctAnswer: 1,
+    explanation: 'Building setback lines establish the minimum distance between structures and property boundaries, streets, easements, or other features as required by zoning ordinances. Front, side, and rear setbacks may differ. Setback lines are typically shown on subdivision plats and must be verified on as-built surveys.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A datum transformation is required when:',
+    options: ['Using the same datum for all measurements', 'Converting coordinates from one geodetic datum to another (e.g., NAD 27 to NAD 83)', 'Using English units instead of metric', 'Measuring angles instead of distances'],
+    correctAnswer: 1,
+    explanation: 'A datum transformation mathematically converts coordinates from one geodetic reference system to another. This is necessary when combining data collected on different datums (e.g., NAD 27 to NAD 83) or when using GPS data (referenced to WGS 84) with local coordinate systems. Incorrect transformations introduce significant position errors.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'When staking a building foundation, the surveyor typically sets:',
+    options: ['Only the center of the building', 'Offset stakes or batter boards at known distances from building corners to allow excavation and construction', 'Only the front door location', 'Only the elevation of the roof'],
+    correctAnswer: 1,
+    explanation: 'Building staking involves setting offset stakes or batter boards at known distances from the actual building corners. The offsets allow excavation and construction to proceed without disturbing the survey stakes. String lines stretched between batter boards define the exact building lines and elevations.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A volume calculation for earthwork typically uses:',
+    options: ['Only a planimeter', 'Cross-section (average end area) or surface-to-surface (grid or TIN) methods', 'Only visual estimation', 'Only property area calculations'],
+    correctAnswer: 1,
+    explanation: 'Earthwork volumes are commonly calculated using the average end area method (based on cross-sections) or surface-to-surface methods (using TIN or grid models comparing existing and proposed surfaces). The choice of method depends on project requirements, terrain complexity, and available data.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'An ALTA/NSPS survey differs from a standard boundary survey primarily in that it:',
+    options: ['Uses different measurement equipment', 'Must meet nationally uniform minimum standards and includes additional items beyond a basic boundary survey', 'Is less accurate', 'Can only be performed in urban areas'],
+    correctAnswer: 1,
+    explanation: 'ALTA/NSPS surveys must meet nationally uniform minimum standards (regardless of state minimums), achieve specified positional accuracy, show improvements, easements, encroachments, rights-of-way, and other items. They are more comprehensive than basic boundary surveys and are designed for real estate transactions involving title insurance and lending.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Solar observations for azimuth determination are used when:',
+    options: ['GPS is not available', 'An independent check on direction is needed or when high-accuracy azimuth is required without GPS', 'Only at night', 'Only during eclipses'],
+    correctAnswer: 1,
+    explanation: 'Solar observations provide an independent method of determining true (geodetic) azimuth using the sun\'s position. They are useful as independent checks on GPS-derived azimuths, in areas where GPS reception is poor, or when regulations require astronomic azimuth observations. The method requires accurate time, position, and angular measurement.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A utility survey locates:',
+    options: ['Only property boundaries', 'The horizontal and vertical positions of above-ground and underground utilities', 'Only water mains', 'Only electrical lines'],
+    correctAnswer: 1,
+    explanation: 'A utility survey locates and maps all types of utilities including water, sewer, gas, electric, telecommunications, storm drains, and other facilities. Both above-ground (poles, transformers, manholes) and underground features are located using various methods (records, One-Call marking, GPR, electromagnetic locators).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'When performing a boundary survey in a recorded subdivision, the surveyor should check:',
+    options: ['Only the lot being surveyed', 'The plat dimensions, surrounding lots, and overall plat geometry for consistency and evidence of the original survey', 'Only the county assessor\'s records', 'Only GPS coordinates'],
+    correctAnswer: 1,
+    explanation: 'A thorough subdivision boundary survey requires examining the entire plat geometry (not just the subject lot), locating monuments in surrounding lots, checking distances and angles for consistency with the plat, and resolving any discrepancies. Errors in the plat or missing monuments may affect the subject lot\'s boundaries.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Differential leveling is used primarily to:',
+    options: ['Measure horizontal distances', 'Determine differences in elevation between points', 'Measure horizontal angles', 'Locate property boundaries'],
+    correctAnswer: 1,
+    explanation: 'Differential leveling uses a level instrument and graduated rod to determine the difference in elevation between two or more points by measuring vertical distances (backsights and foresights). It is the most common and reliable method for establishing vertical control and determining elevations for construction, design, and mapping.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A sewer invert elevation refers to:',
+    options: ['The top of the sewer pipe', 'The inside bottom of the sewer pipe', 'The depth of the trench', 'The elevation of the manhole cover'],
+    correctAnswer: 1,
+    explanation: 'The invert elevation is the elevation of the inside bottom of a pipe (the lowest point of the internal cross-section). Invert elevations are critical for ensuring proper gravity flow in sewer systems. Surveyors establish invert elevations during construction staking and verify them during as-built surveys.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A PLSS "standard parallel" (correction line) was established to:',
+    options: ['Define state boundaries', 'Correct for the convergence of meridians as surveys progress north or south', 'Mark the location of mineral deposits', 'Establish elevation datums'],
+    correctAnswer: 1,
+    explanation: 'Standard parallels (correction lines) were established at intervals (typically every 24 miles) to correct for the convergence of meridians. Because meridians converge toward the poles, townships would become progressively smaller without correction. New measurements were initiated at standard parallels to maintain township sizes near the standard 36 square miles.',
+    difficulty: 'hard'
+  },
+
+  // ===== ADDITIONAL BUSINESS PRACTICES (~45 questions) =====
+  {
+    domain: 'Business Practices',
+    question: 'A fixed-fee contract for survey services is most appropriate when:',
+    options: ['The scope is uncertain and likely to change', 'The scope is well-defined and the surveyor can accurately estimate the cost', 'The project involves extensive litigation support', 'The surveyor has never performed this type of work before'],
+    correctAnswer: 1,
+    explanation: 'Fixed-fee (lump sum) contracts work best when the scope is clearly defined and predictable, allowing the surveyor to accurately estimate the required effort. The surveyor bears the risk of cost overruns but benefits from efficiency gains. For projects with uncertain scope, time-and-materials contracts may be more appropriate.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Time-and-materials billing is most appropriate when:',
+    options: ['The project scope is exactly defined', 'The scope is uncertain or likely to change during the project', 'The client has a fixed budget that cannot be exceeded', 'The surveyor wants to guarantee the lowest price'],
+    correctAnswer: 1,
+    explanation: 'Time-and-materials contracts are appropriate when the scope is uncertain, the project may evolve, or the effort required is difficult to predict. The client pays for actual time and expenses incurred. This arrangement provides flexibility but requires trust, good communication, and regular progress reports to manage the client\'s expectations.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Errors and Omissions (E&O) insurance for a survey firm:',
+    options: ['Covers theft of survey equipment', 'Covers claims of professional negligence arising from errors or omissions in professional services', 'Covers worker injuries on the job', 'Is the same as general liability insurance'],
+    correctAnswer: 1,
+    explanation: 'E&O (professional liability) insurance covers claims arising from alleged professional negligence—errors or omissions in the surveyor\'s professional services that cause financial harm to a client or third party. It is separate from general liability (which covers bodily injury and property damage) and workers\' compensation.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The "tail coverage" (extended reporting period) in an E&O policy is important because:',
+    options: ['It extends the policy to cover more employees', 'It allows claims to be reported after the policy expires for incidents that occurred during the policy period', 'It reduces the deductible amount', 'It covers claims for work done before the policy was purchased'],
+    correctAnswer: 1,
+    explanation: 'E&O insurance is typically "claims-made," meaning coverage only applies if the claim is reported during the active policy period. Tail coverage (extended reporting period) allows the insured to report claims after the policy ends for errors that occurred while the policy was active. This is critical when a surveyor retires, changes firms, or switches insurers, as boundary disputes may not surface for years after the survey was performed.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A "scope creep" in survey project management refers to:',
+    options: ['A type of surveying error', 'Uncontrolled expansion of the project scope beyond the original agreement', 'The surveyor creeping through dense vegetation', 'A method of reducing project costs'],
+    correctAnswer: 1,
+    explanation: 'Scope creep occurs when additional work is performed beyond the original scope without corresponding adjustments to the fee, schedule, and contract. It erodes profitability and can delay the project. Scope creep is prevented through clear contract terms, written change orders, and proactive client communication.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A change order in a survey contract is:',
+    options: ['A verbal request to change the work', 'A written document modifying the scope, fee, and/or schedule of the original contract', 'A request to change the surveyor assigned to the project', 'A change in the client\'s contact information'],
+    correctAnswer: 1,
+    explanation: 'A change order is a formal written amendment to the original contract that documents changes to the scope, fee, and/or schedule. Both parties must agree to and sign the change order before the additional work is performed. Change orders protect both the surveyor and the client from misunderstandings about additional services.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The "multiplier" used in fee estimation for professional services is:',
+    options: ['The number of hours estimated for the project', 'A factor applied to direct labor cost to account for overhead and profit', 'The interest rate on borrowed funds', 'The number of employees on the project'],
+    correctAnswer: 1,
+    explanation: 'The multiplier (typically 2.5 to 3.5 for survey firms) is applied to direct labor costs to cover overhead expenses (rent, insurance, administration, equipment) and profit. For example, if direct labor cost is $40/hour and the multiplier is 3.0, the billing rate would be $120/hour.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A sole proprietorship differs from an LLC in that:',
+    options: ['A sole proprietorship provides more liability protection', 'A sole proprietorship exposes the owner to unlimited personal liability for business debts', 'An LLC cannot be used for surveying firms', 'A sole proprietorship is more complex to form'],
+    correctAnswer: 1,
+    explanation: 'A sole proprietorship provides no separation between the owner\'s personal assets and business liabilities—the owner has unlimited personal liability. An LLC (Limited Liability Company) provides liability protection for the owner\'s personal assets while offering pass-through taxation and operational flexibility.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The critical path in project scheduling is:',
+    options: ['The shortest sequence of tasks', 'The longest sequence of dependent tasks that determines the minimum project duration', 'The path with the fewest workers', 'The most dangerous path through the job site'],
+    correctAnswer: 1,
+    explanation: 'The critical path is the longest chain of dependent activities in a project schedule. It determines the minimum possible project duration. Any delay in a critical path activity delays the entire project. Project managers focus on critical path activities to ensure on-time completion.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A Gantt chart in project management:',
+    options: ['Shows only project costs', 'Displays project tasks as horizontal bars on a timeline showing start and end dates', 'Shows only employee assignments', 'Is used exclusively for construction projects'],
+    correctAnswer: 1,
+    explanation: 'A Gantt chart is a visual project scheduling tool that displays tasks as horizontal bars along a timeline. It shows task durations, start and end dates, dependencies between tasks, and progress. Gantt charts are widely used for communicating project schedules to clients and team members.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The "utilization rate" for a survey firm measures:',
+    options: ['Equipment usage as a percentage of capacity', 'The percentage of available employee hours that are billable to projects', 'The percentage of proposals that result in contracts', 'The ratio of field work to office work'],
+    correctAnswer: 1,
+    explanation: 'The utilization rate measures what percentage of an employee\'s available working hours are directly billable to client projects. A typical target utilization rate for technical staff is 75-85%. Non-billable time includes training, marketing, administration, and unbillable overhead activities.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'When a survey firm is acquired by another firm, the acquiring firm:',
+    options: ['Automatically inherits all professional licenses of the acquired firm\'s employees', 'Should address record transfer, client notification, employee transition, and liability issues', 'Has no obligations to the acquired firm\'s clients', 'Automatically dissolves the acquired firm\'s liabilities'],
+    correctAnswer: 1,
+    explanation: 'An acquisition requires careful planning for record transfer and retention, client notification, employee licensing and transition, assumption or management of liabilities, contract assignments, and compliance with state licensing board requirements. Due diligence should address both assets and potential liabilities.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Business development for a survey firm should include:',
+    options: ['Only cold calling potential clients', 'Networking, referral cultivation, repeat client engagement, and demonstrating expertise through quality work', 'Only advertising in newspapers', 'Only responding to public bid invitations'],
+    correctAnswer: 1,
+    explanation: 'Effective business development combines multiple strategies: maintaining strong relationships with existing clients, networking through professional organizations, seeking referrals, participating in community events, developing expertise in niche areas, maintaining a professional web presence, and delivering consistently high-quality work.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'An accounts receivable aging report helps a survey firm:',
+    options: ['Track employee vacation time', 'Monitor outstanding invoices and identify clients with overdue payments', 'Calculate depreciation on equipment', 'Determine employee bonus amounts'],
+    correctAnswer: 1,
+    explanation: 'An aging report categorizes outstanding invoices by how long they have been unpaid (current, 30 days, 60 days, 90+ days). This allows the firm to monitor cash flow, identify collection problems early, take timely action on overdue accounts, and assess the overall health of accounts receivable.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A non-compete clause in a survey employee\'s contract:',
+    options: ['Prevents the employee from ever working as a surveyor again', 'Restricts the employee from competing with the firm for a defined period and geographic area after leaving', 'Is always unenforceable', 'Applies only to firm owners'],
+    correctAnswer: 1,
+    explanation: 'A non-compete clause restricts a departing employee from competing with the firm within a specified geographic area for a specified time period. Enforceability varies by state and depends on the reasonableness of the restrictions in terms of duration, geographic scope, and scope of restricted activities.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Professional development plans for survey employees should:',
+    options: ['Only address field skills', 'Identify career goals, training needs, licensure pathways, and growth opportunities', 'Only be created for managers', 'Only focus on billable skills'],
+    correctAnswer: 1,
+    explanation: 'Professional development plans should identify individual career goals, assess current skills and competency gaps, plan training and education activities, outline licensure preparation, and create opportunities for growth through increasingly responsible assignments. This benefits both the employee and the firm through improved retention and competency.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The "break-even analysis" for a survey firm determines:',
+    options: ['The point at which equipment should be replaced', 'The revenue level at which total costs equal total revenue (no profit or loss)', 'The number of employees needed', 'The ideal billing rate for all projects'],
+    correctAnswer: 1,
+    explanation: 'Break-even analysis identifies the revenue level at which total costs (fixed and variable) equal total revenue, resulting in zero profit or loss. Understanding the break-even point helps the firm set revenue targets, evaluate pricing strategies, and make informed decisions about overhead spending and staffing.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A "key person" insurance policy for a survey firm protects against:',
+    options: ['Employee theft', 'Financial loss resulting from the death or disability of an essential employee or owner', 'Natural disasters', 'Equipment breakdown'],
+    correctAnswer: 1,
+    explanation: 'Key person insurance compensates the firm for financial losses that would result from the death or disability of a key employee (typically the owner or principal surveyor). The policy helps the firm survive the loss by covering lost revenue, recruitment costs, and business transition expenses during a critical period.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Subcontracting survey work requires the firm to:',
+    options: ['Accept no responsibility for the subcontractor\'s work', 'Maintain quality oversight, verify insurance, and ensure the subcontractor meets professional standards', 'Avoid notifying the client', 'Pay the subcontractor in advance'],
+    correctAnswer: 1,
+    explanation: 'When subcontracting, the prime firm retains responsibility for the quality and accuracy of all deliverables. The firm should verify the subcontractor\'s licensure, insurance, and qualifications, establish clear scope and standards, maintain quality oversight, and disclose the subcontracting arrangement to the client when required.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A "proposal win rate" metric measures:',
+    options: ['The number of proposals submitted per month', 'The percentage of submitted proposals that result in awarded contracts', 'The speed at which proposals are prepared', 'The total dollar value of all proposals'],
+    correctAnswer: 1,
+    explanation: 'The win rate (proposals awarded divided by proposals submitted) helps the firm evaluate its marketing effectiveness, pricing competitiveness, and client targeting. A very low win rate may indicate pricing problems, poor targeting, or quality issues. A very high win rate may suggest the firm is not pursuing enough opportunities or pricing too low.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Equipment depreciation for a survey firm is:',
+    options: ['Not a real cost since the equipment still works', 'The systematic allocation of equipment cost over its useful life, representing a real cost of doing business', 'Only relevant for tax purposes', 'Only calculated on vehicles'],
+    correctAnswer: 1,
+    explanation: 'Depreciation represents the decline in value of equipment over time due to wear, obsolescence, and aging. It is a real cost of doing business that must be included in overhead calculations and fee estimation. Common methods include straight-line and accelerated depreciation. Depreciation also provides tax deductions.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'When establishing a new survey firm, the first priorities should include:',
+    options: ['Purchasing the most expensive equipment available', 'Obtaining proper licensure, insurance, and establishing a business entity and accounting system', 'Hiring the maximum number of employees immediately', 'Renting the largest available office space'],
+    correctAnswer: 1,
+    explanation: 'Starting a survey firm requires proper professional licensure, business entity formation (LLC, corporation, etc.), adequate insurance (E&O, general liability, workers\' comp), a reliable accounting system, initial equipment procurement, and compliance with all regulatory requirements before actively pursuing work.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A client satisfaction survey helps a survey firm:',
+    options: ['Only satisfy ISO certification requirements', 'Identify strengths, weaknesses, and areas for improvement in service delivery', 'Only generate marketing content', 'Only meet government contract requirements'],
+    correctAnswer: 1,
+    explanation: 'Client satisfaction surveys provide valuable feedback about the firm\'s performance, communication, timeliness, accuracy, and overall service quality. This information helps identify areas for improvement, demonstrates commitment to quality, and can reveal opportunities for additional services or referrals.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The concept of "value-based pricing" for survey services means:',
+    options: ['Always charging the lowest possible fee', 'Setting fees based on the value the services provide to the client, rather than solely on the cost to provide them', 'Charging whatever the surveyor wants', 'Only billing for direct labor hours'],
+    correctAnswer: 1,
+    explanation: 'Value-based pricing considers the value that the survey services deliver to the client (e.g., enabling a multi-million dollar real estate transaction) rather than pricing solely based on the surveyor\'s costs. This approach recognizes that the same amount of survey work may have significantly different value depending on the project context.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A safety program for a survey firm should address:',
+    options: ['Only office safety', 'Field hazards (traffic, terrain, weather, wildlife), equipment safety, vehicle operations, and emergency procedures', 'Only equipment maintenance', 'Only compliance with OSHA requirements'],
+    correctAnswer: 1,
+    explanation: 'A comprehensive safety program addresses all aspects of survey operations: field hazards (traffic, terrain, extreme weather, wildlife, vegetation), equipment safety (proper use and maintenance), vehicle operations, personal protective equipment, heat/cold stress, emergency procedures, and compliance with OSHA and other regulations.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The "backlog" of a survey firm refers to:',
+    options: ['Overdue projects that are behind schedule', 'The total dollar value of contracted work that has not yet been completed', 'The number of unsatisfied clients', 'Past-due accounts receivable'],
+    correctAnswer: 1,
+    explanation: 'Backlog is the total value of contracted work remaining to be performed. It is a key indicator of the firm\'s future workload and revenue. Monitoring backlog helps with staffing decisions, business development priorities, and financial planning. A healthy backlog provides stability and predictability.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A dispute resolution clause in a survey contract may specify:',
+    options: ['Only litigation in court', 'Mediation, arbitration, or litigation as methods for resolving disputes between the parties', 'That all disputes are automatically decided in favor of the surveyor', 'Only negotiation between the parties'],
+    correctAnswer: 1,
+    explanation: 'Dispute resolution clauses may specify a progression of methods: negotiation, mediation (non-binding facilitated discussion), arbitration (binding decision by a neutral arbitrator), or litigation. Many contracts require mediation before arbitration or litigation. Alternative dispute resolution methods are often faster and less expensive than litigation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Cash flow management for a survey firm involves:',
+    options: ['Only tracking the bank balance', 'Monitoring incoming revenue, managing expenses, timing of payments, and maintaining adequate working capital', 'Only billing at the end of each project', 'Only reviewing annual financial statements'],
+    correctAnswer: 1,
+    explanation: 'Effective cash flow management requires monitoring accounts receivable, controlling expenses, timing of vendor payments, progress billing on large projects, maintaining adequate working capital reserves, establishing lines of credit for seasonal fluctuations, and projecting future cash needs.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'An employee handbook for a survey firm should include:',
+    options: ['Only the firm\'s billing rates', 'Employment policies, safety procedures, code of conduct, benefits, and operational procedures', 'Only holiday schedules', 'Only the organizational chart'],
+    correctAnswer: 1,
+    explanation: 'An employee handbook communicates the firm\'s expectations and policies including employment terms, safety procedures, code of conduct and ethics, benefits information, time off policies, equipment use, field procedures, confidentiality requirements, and dispute resolution processes. It protects both the firm and employees.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Professional liability claims against surveyors most commonly arise from:',
+    options: ['Charging too much for services', 'Boundary location errors and failure to discover or report encroachments and easements', 'Having too many employees', 'Using GPS equipment'],
+    correctAnswer: 1,
+    explanation: 'The most common professional liability claims against surveyors involve boundary errors (incorrect location of property lines), failure to discover or report encroachments, failure to identify or show recorded easements, and errors in elevation determinations. These errors can result in significant financial harm to clients and third parties.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A "tail coverage" (extended reporting period) in an E&O policy:',
+    options: ['Provides coverage during an employee\'s vacation', 'Extends the period during which claims can be reported after the policy expires or is cancelled', 'Covers only equipment damage', 'Only applies to government contracts'],
+    correctAnswer: 1,
+    explanation: 'Tail coverage (also called an extended reporting period endorsement) allows claims to be reported after a claims-made E&O policy has been cancelled or not renewed. Since professional liability claims may arise years after the work was performed, tail coverage provides continued protection for past work when changing insurers or retiring.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Mentoring programs in a survey firm benefit the firm by:',
+    options: ['Only satisfying licensing board requirements', 'Developing future leaders, transferring institutional knowledge, and improving employee retention', 'Only reducing training costs', 'Only meeting government contract requirements'],
+    correctAnswer: 1,
+    explanation: 'Mentoring programs accelerate professional development, transfer critical institutional knowledge from experienced professionals to newer employees, improve employee engagement and retention, prepare future firm leaders, and help maintain consistent quality standards and professional culture across generations of practitioners.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A "not-to-exceed" (NTE) contract provides:',
+    options: ['A guaranteed minimum fee for the surveyor', 'A maximum fee cap while billing on a time-and-materials basis up to that cap', 'No fee limit', 'A fixed fee with no flexibility'],
+    correctAnswer: 1,
+    explanation: 'A not-to-exceed contract sets a maximum fee while allowing time-and-materials billing up to that cap. This provides the client with cost certainty (the fee will not exceed the NTE amount) while giving the surveyor flexibility to bill actual time. If the work is completed for less, the client pays only the actual amount.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The "direct labor ratio" for a survey firm compares:',
+    options: ['Total revenue to total expenses', 'Direct labor costs (field and technical staff) to total labor costs (including administrative and management)', 'The number of field employees to office employees', 'Revenue per employee to industry average'],
+    correctAnswer: 1,
+    explanation: 'The direct labor ratio measures the proportion of total labor costs that are directly billable to projects versus indirect (overhead) labor. A healthy ratio varies by firm size but typically ranges from 55-70%. Too low a ratio indicates excessive overhead staffing; too high may indicate insufficient management and administrative support.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'When a survey firm transitions from a sole proprietorship to an LLC, the primary benefit is:',
+    options: ['Reduced tax obligations', 'Separation of the owner\'s personal assets from business liabilities', 'Elimination of all business risks', 'Automatic licensing in additional states'],
+    correctAnswer: 1,
+    explanation: 'The primary benefit of forming an LLC is the separation of personal and business assets, providing limited liability protection. The owner\'s personal assets (home, savings) are generally protected from business creditors and lawsuits. However, the owner remains personally liable for their own professional malpractice in most states.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A SWOT analysis for a survey firm evaluates:',
+    options: ['Only employee satisfaction', 'Strengths, Weaknesses, Opportunities, and Threats to inform strategic planning', 'Only financial performance', 'Only equipment condition'],
+    correctAnswer: 1,
+    explanation: 'SWOT analysis evaluates the firm\'s internal Strengths (expertise, reputation) and Weaknesses (skill gaps, equipment age) along with external Opportunities (market growth, new services) and Threats (competition, regulatory changes). This framework guides strategic planning, business development, and investment decisions.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The statute of repose differs from the statute of limitations in that:',
+    options: ['They are the same thing', 'The statute of repose begins running from project completion regardless of when the injury is discovered', 'The statute of repose has no time limit', 'The statute of repose only applies to government projects'],
+    correctAnswer: 1,
+    explanation: 'The statute of repose sets an absolute deadline (e.g., 10 years from project completion) after which no claim can be brought, regardless of when the injury or defect is discovered. The statute of limitations, by contrast, typically begins running when the injury is discovered or should have been discovered.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A quality management system (QMS) for a survey firm:',
+    options: ['Only satisfies ISO requirements', 'Provides a systematic framework for maintaining consistent quality across all firm operations', 'Only applies to large firms', 'Only addresses equipment calibration'],
+    correctAnswer: 1,
+    explanation: 'A QMS provides a comprehensive framework of policies, procedures, and standards that govern all aspects of the firm\'s operations to ensure consistent quality. It includes document control, training requirements, calibration procedures, work processes, client communication protocols, corrective action procedures, and continuous improvement mechanisms.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Vehicle and equipment maintenance records for a survey firm are important for:',
+    options: ['Only insurance purposes', 'Equipment reliability, safety compliance, depreciation tracking, and operational cost analysis', 'Only resale value', 'Only tax deductions'],
+    correctAnswer: 1,
+    explanation: 'Maintenance records document the care and condition of firm assets, support equipment reliability and uptime, demonstrate compliance with safety requirements, support depreciation calculations, provide data for replacement planning, and serve as evidence of proper care in the event of liability claims.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A partnership agreement for a survey firm should address:',
+    options: ['Only the firm name', 'Capital contributions, profit sharing, decision-making authority, dispute resolution, and dissolution procedures', 'Only the office location', 'Only employee hiring practices'],
+    correctAnswer: 1,
+    explanation: 'A comprehensive partnership agreement addresses capital contributions, profit and loss allocation, management authority and voting rights, partner compensation, non-compete provisions, admission of new partners, withdrawal or death of a partner, dispute resolution, and dissolution procedures.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'When bidding on government survey contracts, the surveyor must comply with:',
+    options: ['Only the firm\'s internal policies', 'Procurement regulations, qualification requirements, and specific contract terms and conditions', 'Only the lowest price requirement', 'Only the client\'s verbal instructions'],
+    correctAnswer: 1,
+    explanation: 'Government contracts are subject to specific procurement regulations that govern the solicitation, evaluation, and award process. The surveyor must comply with qualification-based selection requirements (in many jurisdictions), DBE/MBE/WBE participation goals, prevailing wage requirements, insurance minimums, and specific contract terms.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'The Brooks Act requires federal agencies to select:',
+    options: ['The lowest bidder for all projects', 'Architects, engineers, and surveyors based on qualifications rather than price alone', 'Only large firms for federal projects', 'Only firms with military experience'],
+    correctAnswer: 1,
+    explanation: 'The Brooks Act (Public Law 92-582) requires federal agencies to select architects, engineers, and surveyors based on qualifications (competence, experience, and capacity) rather than price competition alone. Fee negotiation occurs only after the most qualified firm is selected. Many states have adopted similar qualification-based selection laws.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'A certificate of insurance provided by a survey firm to a client:',
+    options: ['Guarantees the work will be error-free', 'Provides evidence that the firm maintains specified types and levels of insurance coverage', 'Transfers the firm\'s insurance to the client', 'Is only required for government projects'],
+    correctAnswer: 1,
+    explanation: 'A certificate of insurance is a document issued by the firm\'s insurance carrier that verifies the types and limits of insurance coverage the firm maintains (E&O, general liability, auto, workers\' comp). Clients and project owners commonly require certificates as a condition of contract. The certificate does not transfer coverage to the client.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Business Practices',
+    question: 'Strategic planning for a survey firm should be reviewed and updated:',
+    options: ['Only when the firm is losing money', 'Regularly (at least annually) to reflect changes in the market, industry, and firm capabilities', 'Only at firm inception', 'Only when required by the licensing board'],
+    correctAnswer: 1,
+    explanation: 'Strategic planning should be an ongoing process reviewed at least annually. The plan should address the firm\'s mission, vision, goals, market analysis, competitive positioning, service offerings, staffing plan, technology investments, and financial projections. Regular updates ensure the plan remains relevant and actionable.',
+    difficulty: 'easy'
+  },
 ];
 

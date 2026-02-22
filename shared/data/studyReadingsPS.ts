@@ -1280,4 +1280,560 @@ export const STUDY_READINGS_PS: ReadingModule[] = [
       },
     ],
   },
+
+  // ============================================================
+  // ADDITIONAL READINGS - DOMAIN 1: LEGAL PRINCIPLES
+  // ============================================================
+  {
+    id: 'ps-d1-recording',
+    examTrack: 'ps',
+    domainNumber: 1,
+    domain: 'Legal Principles',
+    title: 'Recording Acts and Title Examination',
+    description: 'Understanding the three types of recording statutes, chain of title analysis, and the relationship between title examination and surveyor liability in boundary determination.',
+    estimatedMinutes: 22,
+    sections: [
+      {
+        id: 'ps-d1-recording-s1',
+        type: 'concept',
+        title: 'Race, Notice, and Race-Notice Recording Statutes',
+        content: 'Recording acts are state statutes that govern the priority of competing claims to real property. Every state has enacted some form of recording act to protect purchasers who record their interests in the public land records. Understanding these statutes is essential for the professional surveyor because they determine which documents in the chain of title are legally effective and therefore which boundaries control.\n\nThere are three types of recording statutes. Under a pure race statute, the first party to record their deed or interest prevails, regardless of whether that party had knowledge of any prior unrecorded conveyance. Only a handful of states, notably North Carolina and Louisiana, follow the pure race approach. The advantage of a race statute is simplicity and certainty: the public record is conclusive, and a title searcher need only determine who recorded first.\n\nUnder a pure notice statute, a subsequent bona fide purchaser (BFP) for value prevails over a prior unrecorded interest, regardless of whether the subsequent purchaser records first. A bona fide purchaser is one who pays valuable consideration and takes the property without actual or constructive notice of any prior unrecorded claim. Approximately half the states follow the notice approach. Notice can be actual (the purchaser literally knows about the prior claim), constructive (the prior claim is discoverable through a reasonable search of the public records), or inquiry notice (facts observable on the ground or in the records would prompt a reasonable person to investigate further).\n\nThe most common type is the race-notice statute, followed by roughly half the states. Under a race-notice statute, a subsequent bona fide purchaser prevails over a prior unrecorded interest only if the subsequent purchaser both (1) takes without notice and (2) records first. This hybrid approach combines elements of both race and notice statutes, requiring the subsequent purchaser to satisfy two conditions rather than one.\n\nFor surveyors, the practical significance of recording acts lies in determining which instruments in the chain of title are effective. A surveyor researching the title to a parcel must understand which recorded documents create valid interests and which may be superseded by prior unrecorded conveyances. The type of recording statute in the jurisdiction directly affects how the surveyor interprets conflicting deed descriptions and competing claims to the same parcel.',
+      },
+      {
+        id: 'ps-d1-recording-s2',
+        type: 'concept',
+        title: 'Chain of Title Analysis and Wild Deeds',
+        content: 'The chain of title is the sequential history of conveyances affecting a particular parcel of real property, traced from the current owner back through all prior owners to the original source of title, typically a government patent or sovereign grant. A complete chain of title shows an unbroken succession of ownership, with each grantor being the same person who was the grantee in the preceding instrument.\n\nA break in the chain of title occurs when there is a gap or defect in the recorded sequence of conveyances. A deed from a person who does not appear in the chain of title as a prior grantee is called a "wild deed." For example, if Owner A conveys to B, but B never records, and then B conveys to C, who does record, C\'s deed is a wild deed because the records show no link between A and C. A title searcher starting from A would never find C\'s deed because there is no recorded conveyance from A to B to lead the searcher to B\'s conveyance to C.\n\nWild deeds are generally treated as outside the chain of title and do not provide constructive notice to subsequent purchasers. This means that even though C\'s deed is physically recorded, it does not protect C against a subsequent purchaser from A who has no actual knowledge of C\'s claim. The recording of a wild deed is legally ineffective for notice purposes because the grantor-grantee index system used by most recording offices cannot connect the wild deed to the chain of title.\n\nSurveyors must be vigilant for breaks in the chain of title during their research. Common indicators include unexplained gaps in the chronological sequence of deeds, deeds from grantors whose names do not match any prior grantee, and references to unrecorded instruments. When a surveyor discovers a potential break in the chain of title, they should note this in their research and advise the client of the defect. While resolving title defects is ultimately a legal matter, the surveyor\'s research often reveals these issues before a title company or attorney discovers them.\n\nTitle insurance and surveyor liability intersect at the boundary between title examination and boundary determination. Title insurance protects the policyholder against losses arising from defects in title, including breaks in the chain of title, unrecorded liens, and forgeries. However, title insurance typically does not cover boundary disputes, encroachments, or survey errors unless a survey has been obtained and the surveyor\'s findings are incorporated into the policy. The surveyor\'s professional liability arises from errors in locating boundaries, misinterpreting deed descriptions, or failing to discover evidence that a competent surveyor should have found.',
+      },
+      {
+        id: 'ps-d1-recording-s3',
+        type: 'worked_example',
+        title: 'Determining Priority Under Recording Statutes',
+        workedExample: {
+          problem: 'Owner A conveys Lot 1 to B on January 15, but B does not record. On March 1, A conveys the same Lot 1 to C, who pays fair market value and has no knowledge of the prior conveyance to B. C records on March 5. B finally records on March 10. In a race-notice jurisdiction, who has superior title to Lot 1?',
+          steps: [
+            { step: 1, description: 'Identify the type of recording statute.', calculation: 'Race-notice: subsequent purchaser must (1) be a BFP without notice AND (2) record first.' },
+            { step: 2, description: 'Determine if C qualifies as a bona fide purchaser.', calculation: 'C paid fair market value (valuable consideration) and had no knowledge of the A-to-B conveyance (no actual notice). B had not recorded, so no constructive notice. C qualifies as a BFP.' },
+            { step: 3, description: 'Determine who recorded first.', calculation: 'C recorded on March 5; B recorded on March 10. C recorded first.' },
+            { step: 4, description: 'Apply the race-notice statute.', calculation: 'C satisfies both requirements: BFP status AND first to record. C prevails over B.' },
+          ],
+          answer: 'C has superior title to Lot 1. Under the race-notice statute, C prevails because C was a bona fide purchaser without notice of the prior unrecorded conveyance and C recorded before B. B\'s earlier conveyance date does not help because B failed to record promptly.',
+        },
+      },
+      {
+        id: 'ps-d1-recording-s4',
+        type: 'knowledge_check',
+        title: 'Recording Statute Types',
+        knowledgeCheck: {
+          question: 'Under a pure notice recording statute, which of the following is required for a subsequent purchaser to prevail over a prior unrecorded interest?',
+          options: [
+            'The subsequent purchaser must record before the prior interest holder',
+            'The subsequent purchaser must be a bona fide purchaser without notice',
+            'The subsequent purchaser must both record first and be without notice',
+            'The subsequent purchaser must obtain title insurance',
+          ],
+          correctIndex: 1,
+          explanation: 'Under a pure notice statute, a subsequent bona fide purchaser for value prevails over a prior unrecorded interest simply by being a BFP without notice. Unlike race-notice statutes, the notice statute does not require the subsequent purchaser to also record first.',
+        },
+      },
+      {
+        id: 'ps-d1-recording-s5',
+        type: 'knowledge_check',
+        title: 'Wild Deeds and Constructive Notice',
+        knowledgeCheck: {
+          question: 'A "wild deed" fails to provide constructive notice because:',
+          options: [
+            'It was never physically recorded in the recording office',
+            'It was recorded but cannot be found through a normal chain of title search',
+            'The deed contains a defective legal description',
+            'The grantor did not have legal capacity to convey',
+          ],
+          correctIndex: 1,
+          explanation: 'A wild deed is one that is actually recorded but falls outside the chain of title because there is a missing link in the recorded sequence of conveyances. Since the grantor-grantee index cannot connect it to the chain of title, a reasonable title search would not discover it, and it therefore fails to provide constructive notice.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'ps-d1-boundary-doctrines',
+    examTrack: 'ps',
+    domainNumber: 1,
+    domain: 'Legal Principles',
+    title: 'Boundary Agreement Doctrines',
+    description: 'Understanding the legal doctrines that can establish or modify boundary lines through the conduct and agreements of adjoining landowners, including acquiescence, agreement, estoppel, and practical location.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'ps-d1-boundary-doctrines-s1',
+        type: 'concept',
+        title: 'Boundary by Acquiescence',
+        content: 'Boundary by acquiescence is a legal doctrine under which a boundary line can be established at a location that differs from the record boundary when adjoining landowners have mutually recognized and accepted a particular line as the boundary for a sufficient period of time. The doctrine is based on the principle that long-standing recognition of a boundary line by adjoining owners creates a settled expectation that should be protected by the law.\n\nThe elements required to establish a boundary by acquiescence vary by jurisdiction but generally include: (1) a visible line of demarcation, such as a fence, hedge, wall, or other physical feature, marking the claimed boundary; (2) mutual recognition and acceptance of that line by the adjoining landowners as the boundary between their properties; (3) acquiescence by both parties for a specified period, which in many states corresponds to the statute of limitations for adverse possession (typically 10 to 21 years depending on the jurisdiction); and (4) in some jurisdictions, an initial uncertainty or dispute about the true location of the boundary.\n\nThe requirement of uncertainty or dispute varies significantly among the states. Some jurisdictions require a showing that the true boundary location was genuinely uncertain or disputed at the time the acquiesced line was established. Under this approach, if the parties simply made a mistake about the boundary location but never disputed it, acquiescence may not apply. Other jurisdictions have abandoned the uncertainty requirement and hold that long acquiescence in a particular line is sufficient regardless of whether there was ever a dispute.\n\nFor the professional surveyor, boundary by acquiescence presents both an opportunity and a challenge. During a boundary survey, the surveyor may discover evidence of long-standing occupation lines that do not correspond to the record boundary. Fences, walls, hedgerows, and other improvements that have existed for many years along a consistent line may indicate an acquiesced boundary. The surveyor should document this evidence carefully, including the type and condition of the improvements, their apparent age, and their relationship to the record boundary. While the surveyor cannot make legal determinations about whether acquiescence has been established, the surveyor must recognize this evidence and bring it to the attention of the client and their attorney.',
+      },
+      {
+        id: 'ps-d1-boundary-doctrines-s2',
+        type: 'concept',
+        title: 'Boundary by Agreement and Estoppel',
+        content: 'Boundary by agreement occurs when adjoining landowners expressly agree upon the location of a common boundary line. The agreement may be oral or written, depending on the jurisdiction. Many states enforce oral boundary agreements under the doctrine that a boundary agreement is not a conveyance of land (which would require a writing under the Statute of Frauds) but rather a mutual identification of an existing boundary whose precise location is uncertain.\n\nFor an oral boundary agreement to be enforceable, most jurisdictions require: (1) an actual agreement between the adjoining owners, either express or implied from their conduct; (2) uncertainty or a bona fide dispute about the true boundary location; and (3) subsequent conduct consistent with the agreement, such as building a fence along the agreed line, occupying up to the agreed line, or making improvements in reliance on the agreed boundary. Some jurisdictions also require that the agreement be followed by possession consistent with the agreed line for a statutory period.\n\nWritten boundary agreements, often called line agreements or boundary line agreements, are contracts between adjoining owners that fix the location of a common boundary. These agreements are generally recorded in the public land records and are binding on subsequent purchasers who take with notice. A recorded boundary line agreement becomes part of the chain of title and should be discovered by the surveyor during title research.\n\nBoundary by estoppel arises when one landowner, through words or conduct, induces the adjoining owner to believe that a particular line is the boundary, and the adjoining owner relies on that representation to their detriment by making improvements, building structures, or otherwise changing their position in reliance on the represented boundary. The essential elements of estoppel are: (1) a representation by one party concerning the boundary location; (2) reliance on that representation by the other party; (3) change of position or detriment suffered by the relying party; and (4) it would be inequitable to allow the representing party to later assert a different boundary location.\n\nUnlike acquiescence, which requires the passage of time, estoppel can arise from a single act or representation and may be established regardless of how recently the events occurred. The surveyor should be alert to evidence of estoppel when improvements appear to cross the record boundary and there is evidence that the encroaching owner relied on representations about the boundary location.',
+      },
+      {
+        id: 'ps-d1-boundary-doctrines-s3',
+        type: 'concept',
+        title: 'Practical Location Doctrine and Doctrine of Repose',
+        content: 'The practical location doctrine holds that when a boundary line has been established on the ground by the parties or their predecessors and has been recognized and treated as the true boundary for a long period, that line becomes the legal boundary regardless of where the record calls might place it. Practical location is closely related to acquiescence but emphasizes the physical establishment of the line on the ground rather than the parties\' subjective agreement.\n\nPractical location typically requires: (1) an actual survey or physical marking of the boundary on the ground; (2) acceptance of the marked line by the adjoining owners; and (3) occupation and improvement consistent with the marked line for a significant period. The doctrine reflects the practical reality that boundaries established on the ground and relied upon by generations of landowners should not be disturbed by a subsequent survey that reaches a different result based on record calls alone.\n\nThe doctrine of repose is a broader principle that encompasses several of the boundary agreement doctrines. At its core, the doctrine of repose holds that at some point, the passage of time and the settled expectations of landowners outweigh the interest in correcting old boundary errors. Boundaries that have been recognized and relied upon for generations should be left undisturbed, even if a modern survey demonstrates that the original boundary was established in the wrong location.\n\nThe doctrine of repose reflects a fundamental tension in boundary law between accuracy and stability. A surveyor armed with modern GPS equipment may be able to calculate the theoretical position of a boundary corner with millimeter precision, but that mathematical precision may be legally irrelevant if the practical boundary has been established in a different location for decades or centuries. The professional surveyor must balance the technical ability to locate the record boundary with the legal reality that other doctrines may have shifted the boundary to a different location.\n\nFor exam purposes, candidates should understand that these doctrines represent exceptions to the general rule that the record boundary controls. They should recognize the factual patterns that trigger each doctrine and understand the surveyor\'s responsibility to identify and report evidence that may support a claim under any of these doctrines. The surveyor does not decide whether a doctrine applies; that is a legal determination for the courts. But the surveyor must identify the relevant evidence and present it accurately.',
+      },
+      {
+        id: 'ps-d1-boundary-doctrines-s4',
+        type: 'worked_example',
+        title: 'Evaluating Boundary by Acquiescence Evidence',
+        workedExample: {
+          problem: 'A surveyor performing a boundary retracement discovers that a stone wall has existed between two properties for at least 75 years based on historical aerial photographs. The record boundary, as computed from deed calls, lies 8 feet east of the stone wall. Neighbors on both sides testify that their families have always treated the wall as the property line. The jurisdiction requires 20 years of acquiescence and does not require proof of initial uncertainty. How should the surveyor address this situation?',
+          steps: [
+            { step: 1, description: 'Identify the physical evidence.', calculation: 'Stone wall, at least 75 years old (confirmed by aerial photos), located 8 feet west of the computed record boundary.' },
+            { step: 2, description: 'Evaluate the elements of acquiescence.', calculation: 'Visible line of demarcation: stone wall (yes). Mutual recognition: both families treated wall as boundary (yes). Duration: 75 years exceeds 20-year requirement (yes). Uncertainty requirement: not required in this jurisdiction.' },
+            { step: 3, description: 'Determine the surveyor\'s professional obligation.', calculation: 'The surveyor should show both the record boundary and the stone wall on the survey plat, note the discrepancy, and describe the evidence of acquiescence.' },
+            { step: 4, description: 'Document recommendations.', calculation: 'Recommend that the client consult an attorney regarding the potential acquiesced boundary before taking action based solely on the record boundary location.' },
+          ],
+          answer: 'The surveyor should show both the computed record boundary and the stone wall on the survey plat with appropriate notes describing the evidence of long-standing acquiescence. The surveyor should not ignore the stone wall or unilaterally declare it the boundary but should document all evidence and recommend legal consultation. The facts strongly suggest acquiescence has been established given the 75-year duration, mutual recognition, and visible demarcation.',
+        },
+      },
+      {
+        id: 'ps-d1-boundary-doctrines-s5',
+        type: 'knowledge_check',
+        title: 'Boundary Doctrines Comparison',
+        knowledgeCheck: {
+          question: 'Which boundary doctrine can be established based on a single act or representation, without requiring the passage of a statutory period of time?',
+          options: [
+            'Boundary by acquiescence',
+            'Boundary by estoppel',
+            'Adverse possession',
+            'Practical location',
+          ],
+          correctIndex: 1,
+          explanation: 'Boundary by estoppel can arise from a single representation about the boundary location when another party relies on that representation to their detriment. Unlike acquiescence, adverse possession, and practical location, estoppel does not require the passage of a specified period of time.',
+        },
+      },
+    ],
+  },
+
+  // ============================================================
+  // ADDITIONAL READING - DOMAIN 2: PROFESSIONAL SURVEY PRACTICES
+  // ============================================================
+  {
+    id: 'ps-d2-survey-reports',
+    examTrack: 'ps',
+    domainNumber: 2,
+    domain: 'Professional Survey Practices',
+    title: 'Survey Reports and Professional Documentation',
+    description: 'Best practices for preparing survey reports, certifications, disclaimers, field note documentation, and understanding the differences between various types of survey plats and records.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'ps-d2-survey-reports-s1',
+        type: 'concept',
+        title: 'Survey Report Components and Best Practices',
+        content: 'A professional survey report is a comprehensive written document that accompanies a survey plat or map and provides the narrative explanation of the surveyor\'s research, field procedures, findings, and professional opinions. While the plat presents the graphical depiction of the survey, the report provides the context and reasoning that support the surveyor\'s conclusions. A well-prepared survey report serves multiple purposes: it communicates the surveyor\'s findings to the client, provides a permanent record of the surveyor\'s methodology and reasoning, and serves as evidence in the event of a legal dispute.\n\nThe essential components of a professional survey report typically include: a statement of purpose describing why the survey was performed and the scope of work; a description of the property surveyed, including its location, size, and relevant characteristics; a summary of the research performed, including deed research, plat research, and review of other relevant documents; a description of the field procedures used, including the equipment, methods, and accuracy standards followed; a detailed discussion of the evidence found and how it was evaluated; the surveyor\'s conclusions regarding the boundary locations; any discrepancies, conflicts, or unresolved issues discovered during the survey; and the surveyor\'s professional certification and seal.\n\nThe research summary is particularly important because it demonstrates the thoroughness of the surveyor\'s title and record research. This section should identify all deeds, plats, maps, and other documents examined, including recording references (book and page numbers or instrument numbers). It should describe the chain of title as traced by the surveyor and note any gaps, overlaps, or conflicts discovered in the deed records. The research summary should also describe any conversations with adjoining landowners, prior surveyors, or other persons with knowledge of the boundaries.\n\nThe field procedures section should describe the equipment used (total station, GPS/GNSS receiver, level, etc.), the accuracy standards followed (state standards, ALTA/NSPS standards, etc.), and the specific methods employed for monument search, traversing, and measurement. This section provides the technical foundation for the surveyor\'s work and allows subsequent surveyors or courts to evaluate the reliability of the measurements.',
+      },
+      {
+        id: 'ps-d2-survey-reports-s2',
+        type: 'concept',
+        title: 'Certifications, Disclaimers, and Survey Types',
+        content: 'Survey certifications are formal statements by the surveyor attesting to the accuracy and completeness of the survey within stated standards. The certification typically includes the surveyor\'s name, license number, seal, and signature, along with a statement that the survey was performed under the surveyor\'s direct supervision and meets applicable standards. The specific language of certifications varies by jurisdiction, and many states have statutory or regulatory requirements for certification language.\n\nAn ALTA/NSPS Land Title Survey certification follows a specific format prescribed by the current ALTA/NSPS standards. This certification is addressed to the parties who will rely on the survey, typically the buyer, lender, and title company. The ALTA certification states that the survey was performed in accordance with the ALTA/NSPS standards and meets minimum accuracy requirements. The surveyor certifies to these specific parties and assumes professional responsibility to them, even though they may not be the surveyor\'s direct client.\n\nDisclaimers serve a different purpose from certifications. While certifications affirm what the surveyor has done and stands behind, disclaimers identify limitations on the scope of the survey and the surveyor\'s responsibility. Common disclaimers address matters outside the scope of the survey (such as environmental conditions, zoning compliance, or subsurface conditions), limitations on underground utility locations, and the fact that the survey represents conditions as of a specific date. Disclaimers should be specific and factual rather than overly broad, as courts may not enforce disclaimers that attempt to eliminate all professional responsibility.\n\nA Record of Survey (ROS) is a map filed with the county surveyor or recorder that documents the results of a field survey. Many states require a Record of Survey to be filed when the surveyor establishes or reestablishes boundary corners, discovers discrepancies with the record, or sets monuments. The ROS becomes part of the public record and provides valuable information for future surveyors. A boundary survey plat, by contrast, is the detailed map prepared for the client showing the boundaries, dimensions, area, improvements, and other features of the surveyed property. While an ROS focuses on the corner positions and evidence found, a boundary survey plat provides a more comprehensive picture of the property for the client\'s use.\n\nField note documentation standards require the surveyor to maintain detailed, contemporaneous notes of all field observations and activities. Field notes should include the date, weather conditions, crew members, equipment used, monument descriptions, measurements taken, sketches, and any relevant observations about the condition of the property or evidence found. Modern digital field note systems supplement or replace traditional field books, but the requirement for thoroughness and accuracy remains the same. Digital records should be backed up regularly and maintained in a format that ensures long-term accessibility.',
+      },
+      {
+        id: 'ps-d2-survey-reports-s3',
+        type: 'worked_example',
+        title: 'Preparing a Survey Certification',
+        workedExample: {
+          problem: 'A surveyor is preparing a boundary survey plat for a residential property sale. The lender requires an ALTA/NSPS Land Title Survey. The commitment for title insurance lists the buyer as "J. Smith," the lender as "First National Bank," and the title company as "ABC Title Company." The surveyor also discovers an encroachment from an adjoining property\'s fence extending 2.3 feet onto the subject property. How should the surveyor handle the certification and reporting of the encroachment?',
+          steps: [
+            { step: 1, description: 'Identify the parties for the ALTA certification.', calculation: 'Certification must be addressed to: J. Smith (buyer), First National Bank (lender), and ABC Title Company (title insurer).' },
+            { step: 2, description: 'Draft the certification language per ALTA/NSPS standards.', calculation: '"To J. Smith, First National Bank, and ABC Title Company: This is to certify that this map or plat and the survey on which it is based were made in accordance with the 2021 Minimum Standard Detail Requirements for ALTA/NSPS Land Title Surveys..."' },
+            { step: 3, description: 'Document the encroachment on the plat.', calculation: 'Show the adjoining fence location with a measured dimension of 2.3 ft encroachment onto the subject property. Label clearly as "Fence encroachment from adjoining property (Lot X) = 2.3 ft."' },
+            { step: 4, description: 'Include encroachment note in the survey report.', calculation: 'Note on plat and in report: "A [type] fence belonging to the adjoining property encroaches 2.3 feet onto the subject property along the [direction] boundary line for a distance of approximately [XX] feet."' },
+          ],
+          answer: 'The surveyor should certify the survey to all three parties listed in the title commitment (buyer, lender, and title company) using the current ALTA/NSPS certification language. The 2.3-foot fence encroachment must be clearly shown and dimensioned on the plat with appropriate labeling, and described in any accompanying survey report. This allows the title company to address the encroachment as a title exception.',
+        },
+      },
+      {
+        id: 'ps-d2-survey-reports-s4',
+        type: 'knowledge_check',
+        title: 'Survey Documentation Requirements',
+        knowledgeCheck: {
+          question: 'A Record of Survey (ROS) is typically required to be filed when the surveyor:',
+          options: [
+            'Performs any type of topographic survey',
+            'Establishes or reestablishes boundary corners or discovers discrepancies with the record',
+            'Prepares a construction staking plan',
+            'Performs a GPS observation for horizontal control only',
+          ],
+          correctIndex: 1,
+          explanation: 'Most states require a Record of Survey to be filed when the surveyor establishes or reestablishes boundary corners, sets monuments, or discovers discrepancies between the record description and the conditions found on the ground. Topographic surveys and construction staking generally do not trigger the ROS filing requirement.',
+        },
+      },
+      {
+        id: 'ps-d2-survey-reports-s5',
+        type: 'knowledge_check',
+        title: 'Certification vs Disclaimer',
+        knowledgeCheck: {
+          question: 'The primary purpose of a survey disclaimer is to:',
+          options: [
+            'Certify that the survey meets ALTA/NSPS standards',
+            'Identify limitations on the scope of the survey and the surveyor\'s responsibility',
+            'Replace the need for professional liability insurance',
+            'Transfer the surveyor\'s liability to the client',
+          ],
+          correctIndex: 1,
+          explanation: 'Disclaimers identify the limitations on the scope of the survey and the surveyor\'s professional responsibility. They clarify what the survey does not cover, such as environmental conditions, subsurface utilities, or zoning compliance. Disclaimers do not replace insurance or eliminate all professional liability.',
+        },
+      },
+    ],
+  },
+
+  // ============================================================
+  // ADDITIONAL READINGS - DOMAIN 3: STANDARDS AND SPECIFICATIONS
+  // ============================================================
+  {
+    id: 'ps-d3-geodetic-control',
+    examTrack: 'ps',
+    domainNumber: 3,
+    domain: 'Standards and Specifications',
+    title: 'Geodetic Control Standards and NGS Guidelines',
+    description: 'Understanding NGS accuracy classifications, control survey orders, CORS and OPUS usage, geoid models for orthometric height determination, and datum transformations between NAD 27 and NAD 83.',
+    estimatedMinutes: 25,
+    sections: [
+      {
+        id: 'ps-d3-geodetic-control-s1',
+        type: 'concept',
+        title: 'NGS Accuracy Classifications and Control Survey Orders',
+        content: 'The National Geodetic Survey (NGS) establishes accuracy standards and specifications for geodetic control surveys performed in the United States. These standards provide a framework for classifying control surveys by their accuracy and ensuring that surveys connected to the National Spatial Reference System (NSRS) meet minimum quality requirements.\n\nHistorically, NGS classified horizontal control surveys into orders and classes based on the accuracy of the measurements. The traditional classification system included First Order (the highest accuracy), Second Order (Class I and Class II), and Third Order (Class I and Class II). First Order surveys, with relative accuracies of 1:100,000 or better, were used for the primary national network and metropolitan area control. Second Order surveys, with accuracies of 1:50,000 (Class I) to 1:20,000 (Class II), were used for secondary network densification and engineering projects. Third Order surveys, with accuracies of 1:10,000 (Class I) to 1:5,000 (Class II), were used for local control and mapping.\n\nWith the advent of GPS technology, NGS developed updated accuracy standards that moved away from the order/class system toward a more flexible accuracy-based classification. The current system classifies survey marks by their positional accuracy at the 95% confidence level. Marks are categorized as follows: Order A surveys achieve a network accuracy of 5 mm or better; Order B surveys achieve 8 mm or better; First Order achieves 1 cm or better; Second Order achieves 2 cm or better; and Third Order achieves 5 cm or better. These accuracy values represent the uncertainty of the adjusted coordinates relative to the NSRS datum.\n\nVertical control surveys follow a similar order-based classification. First Order (Class I and Class II) leveling achieves the highest accuracy and is used for primary vertical networks, crustal motion studies, and precise engineering projects. Second Order (Class I and Class II) leveling is used for secondary vertical networks and infrastructure projects. Third Order leveling is used for local control, topographic mapping, and construction.\n\nFor the PS exam, candidates should understand the relationship between survey order and the intended application. Higher-order surveys are more expensive and time-consuming but provide greater accuracy for applications that require it. The surveyor must select the appropriate order based on the project requirements, applicable standards, and client needs.',
+      },
+      {
+        id: 'ps-d3-geodetic-control-s2',
+        type: 'concept',
+        title: 'CORS and OPUS for Geodetic Positioning',
+        content: 'The Continuously Operating Reference Station (CORS) network is a system of permanent GNSS receivers operated by NGS and partner organizations throughout the United States. CORS stations continuously track satellite signals and make their data available for post-processing and real-time positioning. The CORS network is a fundamental component of the NSRS and provides the infrastructure for precise geodetic positioning.\n\nSurveyors use CORS data in several ways. For post-processed static surveys, the surveyor can download CORS data from nearby stations and use it as reference data for processing baselines to project points. This eliminates the need to establish a base station and reduces equipment requirements. For Real-Time Network (RTN) applications, CORS stations provide the reference data used to generate real-time corrections broadcast to rover receivers, enabling RTK-level accuracy without a dedicated base station.\n\nThe Online Positioning User Service (OPUS) is a free web-based service provided by NGS that processes GPS observation files submitted by users. The surveyor uploads a RINEX observation file collected at a project point, and OPUS processes the data using three nearby CORS stations to compute a precise position. OPUS returns coordinates in both NAD 83 and ITRF reference frames, along with an estimate of the solution quality.\n\nOPUS offers two processing options. OPUS-Static (OPUS-S) processes data from static observations of 2 hours or longer and typically achieves horizontal accuracies of 1-2 cm and vertical accuracies of 2-5 cm. OPUS-Rapid Static (OPUS-RS) processes data from observations as short as 15 minutes using a different processing strategy that uses more CORS stations and can achieve horizontal accuracies of 2-4 cm.\n\nFor boundary and control surveys, OPUS is commonly used to establish local control points tied to the NSRS. The surveyor occupies a point with a survey-grade GNSS receiver, collects data for the required duration, submits the file to OPUS, and receives adjusted coordinates. Multiple occupations on different days improve reliability. OPUS results include quality indicators such as the RMS of the solution and the peak-to-peak differences between the three CORS baselines, which help the surveyor assess whether the position meets project accuracy requirements.',
+      },
+      {
+        id: 'ps-d3-geodetic-control-s3',
+        type: 'concept',
+        title: 'Geoid Models and Datum Transformations',
+        content: 'Understanding the relationship between the ellipsoid, the geoid, and orthometric heights is essential for any surveyor performing GNSS-based surveys. The reference ellipsoid (such as GRS 80 used with NAD 83) is a smooth mathematical surface that approximates the shape of the Earth. GNSS receivers measure heights above this ellipsoid (ellipsoidal heights, h). The geoid is an equipotential gravity surface that closely approximates mean sea level and serves as the reference for orthometric heights (H), which are the heights shown on topographic maps and used in engineering design.\n\nThe relationship between these heights is expressed by the formula: h = H + N, where N is the geoid undulation (also called geoid height or geoid separation). The geoid undulation is the vertical distance between the ellipsoid and the geoid at any given location. In the continental United States, geoid undulations range from approximately -8 meters to -53 meters (the geoid is below the ellipsoid throughout CONUS).\n\nNGS develops and publishes geoid models that allow surveyors to convert between ellipsoidal heights measured by GNSS and orthometric heights. The current geoid model is GEOID18 (as of 2024), which provides geoid undulation values on a grid covering the United States. Surveyors use these models through processing software or the NGS GEOID tool to obtain the undulation value at each survey point and compute orthometric heights from GNSS-derived ellipsoidal heights.\n\nDatum transformations are necessary when converting coordinates between different reference frames, most commonly from NAD 27 to NAD 83. NAD 27 was based on the Clarke 1866 ellipsoid with an origin at Meigs Ranch in Kansas, while NAD 83 is based on the GRS 80 ellipsoid and is geocentric (origin at the Earth\'s center of mass). The shift between NAD 27 and NAD 83 coordinates varies by location but is typically on the order of 10 to 100 meters in the continental United States.\n\nNGS provides the NADCON tool for transforming coordinates between NAD 27 and NAD 83. NADCON uses a grid of transformation values that account for the local variations in the datum shift. Surveyors must be careful to identify which datum is used for existing control monuments, recorded plats, and project coordinates, and apply the appropriate transformation when combining data from different datums. Using coordinates from different datums without transformation can introduce significant errors into survey computations.',
+      },
+      {
+        id: 'ps-d3-geodetic-control-s4',
+        type: 'worked_example',
+        title: 'Converting Ellipsoidal Height to Orthometric Height',
+        workedExample: {
+          problem: 'A surveyor uses GNSS to observe a point and obtains an ellipsoidal height (h) of 285.630 meters above the GRS 80 ellipsoid. The GEOID18 model indicates a geoid undulation (N) of -28.455 meters at this location. What is the orthometric height (H) of the point?',
+          steps: [
+            { step: 1, description: 'Write the height relationship formula.', calculation: 'h = H + N, therefore H = h - N' },
+            { step: 2, description: 'Substitute the known values.', calculation: 'H = 285.630 - (-28.455)' },
+            { step: 3, description: 'Compute the orthometric height.', calculation: 'H = 285.630 + 28.455 = 314.085 meters' },
+            { step: 4, description: 'Interpret the result.', calculation: 'The point is 314.085 meters above the geoid (approximately mean sea level). The negative undulation means the geoid is below the ellipsoid at this location.' },
+          ],
+          answer: 'The orthometric height is 314.085 meters. Since the geoid undulation is negative (the geoid is below the ellipsoid), the orthometric height is greater than the ellipsoidal height. This is typical throughout the continental United States where geoid undulations are consistently negative.',
+        },
+      },
+      {
+        id: 'ps-d3-geodetic-control-s5',
+        type: 'knowledge_check',
+        title: 'CORS and OPUS Usage',
+        knowledgeCheck: {
+          question: 'OPUS-Static (OPUS-S) requires a minimum observation time of approximately:',
+          options: [
+            '5 minutes',
+            '15 minutes',
+            '2 hours',
+            '24 hours',
+          ],
+          correctIndex: 2,
+          explanation: 'OPUS-Static requires a minimum observation period of approximately 2 hours to achieve reliable results with typical horizontal accuracies of 1-2 cm. OPUS-Rapid Static (OPUS-RS) can process shorter observations of 15 minutes or more but uses a different processing strategy with more CORS stations.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'ps-d3-floodplain',
+    examTrack: 'ps',
+    domainNumber: 3,
+    domain: 'Standards and Specifications',
+    title: 'Floodplain Determination and FEMA Standards',
+    description: 'Understanding FEMA flood zone designations, elevation certificates, Letters of Map Amendment and Revision, base flood elevation determination, and flood insurance rate maps.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'ps-d3-floodplain-s1',
+        type: 'concept',
+        title: 'FEMA Flood Zones and Flood Insurance Rate Maps',
+        content: 'The Federal Emergency Management Agency (FEMA) administers the National Flood Insurance Program (NFIP), which requires communities to identify and map flood-prone areas. Flood Insurance Rate Maps (FIRMs) are the official maps produced by FEMA that delineate Special Flood Hazard Areas (SFHAs) and assign flood zone designations. Surveyors frequently work with FIRMs when performing elevation certificates, floodplain determinations, and Letters of Map Amendment.\n\nFEMA flood zones are designated by letter codes that indicate the type and severity of flood risk. Zone A is the general floodplain zone where base flood elevations (BFEs) have not been determined by detailed study. Zone AE (formerly Zones A1-A30) indicates areas where BFEs have been determined by detailed hydraulic analysis. Zone AH designates areas of shallow flooding (usually ponding) with BFEs determined, and Zone AO designates areas of shallow flooding with flood depths (rather than elevations) specified.\n\nZone V designates coastal high hazard areas subject to wave action, where BFEs have not been determined. Zone VE (formerly Zones V1-V30) indicates coastal high hazard areas where BFEs have been determined, including the effects of wave action. The V zones require more stringent construction standards than A zones due to the additional destructive force of waves.\n\nZone X (shaded) designates areas of moderate flood risk, typically between the 100-year and 500-year flood boundaries. Zone X (unshaded) designates areas of minimal flood risk, outside the 500-year floodplain. Properties in Zone X are not required to carry flood insurance, though it is available and sometimes recommended.\n\nThe base flood elevation (BFE) is the computed elevation to which floodwater is anticipated to rise during the base flood, which is the flood having a 1% chance of being equaled or exceeded in any given year (commonly called the "100-year flood"). BFEs are critical for regulatory purposes because building codes and floodplain management regulations typically require the lowest floor of new construction to be at or above the BFE. Surveyors determine the relationship between a structure\'s lowest floor elevation and the BFE through the preparation of FEMA Elevation Certificates.',
+      },
+      {
+        id: 'ps-d3-floodplain-s2',
+        type: 'concept',
+        title: 'Elevation Certificates and LOMA/LOMR',
+        content: 'The FEMA Elevation Certificate is a standardized form (currently FEMA Form 086-0-33) that documents the elevation of a building relative to the base flood elevation. The form is completed by a licensed surveyor, engineer, or architect and is used for flood insurance rating, floodplain management, and compliance verification. The Elevation Certificate requires the surveyor to determine the elevation of several critical building features, including the top of the lowest floor, the top of the lowest basement floor, the lowest adjacent grade, and the lowest elevation of machinery or equipment servicing the building.\n\nThe surveyor completing an Elevation Certificate must establish the vertical datum used for the BFE shown on the applicable FIRM. Most modern FIRMs reference NAVD 88 (North American Vertical Datum of 1988), but older maps may reference NGVD 29 (National Geodetic Vertical Datum of 1929). The surveyor must use the same vertical datum as the FIRM or apply an appropriate datum conversion. The difference between NGVD 29 and NAVD 88 varies by location and can be significant (up to several feet in some areas), making datum identification critical.\n\nA Letter of Map Amendment (LOMA) is a letter from FEMA officially removing a property or structure from the SFHA. A LOMA is appropriate when the property or structure is shown in the SFHA on the FIRM but is actually on natural high ground above the BFE. The LOMA does not change the FIRM itself but provides documentation that the specific property or structure is not subject to SFHA regulations. Obtaining a LOMA requires submitting an application to FEMA with supporting documentation, typically including an Elevation Certificate or survey showing that the lowest adjacent grade or lowest floor elevation is at or above the BFE.\n\nA Letter of Map Revision (LOMR) is a more comprehensive process that actually revises the FIRM to reflect changed conditions. A LOMR may be requested when physical changes to the floodplain (such as fill, channel improvements, or levee construction) have altered the flood risk. A Conditional Letter of Map Revision (CLOMR) may be obtained before construction to confirm that proposed changes will result in a map revision upon completion.\n\nFor the PS exam, surveyors should understand the difference between a LOMA (removes a property from the SFHA based on existing conditions) and a LOMR (revises the FIRM based on changed conditions). They should also understand the surveyor\'s role in preparing Elevation Certificates and the importance of using the correct vertical datum.',
+      },
+      {
+        id: 'ps-d3-floodplain-s3',
+        type: 'worked_example',
+        title: 'Evaluating LOMA Eligibility',
+        workedExample: {
+          problem: 'A property is shown within Zone AE on the current FIRM with a BFE of 452.8 feet NAVD 88. The surveyor determines that the lowest adjacent grade (LAG) around the building is 453.6 feet NAVD 88 and the lowest floor elevation is 454.2 feet NAVD 88. The property has not been filled; it sits on natural high ground. Does this property qualify for a LOMA?',
+          steps: [
+            { step: 1, description: 'Identify the BFE and datum.', calculation: 'BFE = 452.8 ft NAVD 88 (from FIRM, Zone AE).' },
+            { step: 2, description: 'Compare the lowest adjacent grade to the BFE.', calculation: 'LAG = 453.6 ft; BFE = 452.8 ft; LAG - BFE = +0.8 ft. LAG is above the BFE.' },
+            { step: 3, description: 'Compare the lowest floor elevation to the BFE.', calculation: 'Lowest floor = 454.2 ft; BFE = 452.8 ft; Floor - BFE = +1.4 ft. Lowest floor is above BFE.' },
+            { step: 4, description: 'Evaluate LOMA eligibility criteria.', calculation: 'Property is on natural high ground (not fill). LAG is at or above BFE. Structure and property qualify for a LOMA to remove from SFHA.' },
+          ],
+          answer: 'Yes, the property qualifies for a LOMA. Both the lowest adjacent grade (453.6 ft) and the lowest floor elevation (454.2 ft) are above the BFE (452.8 ft), and the property is on natural high ground rather than fill. The surveyor should prepare the supporting Elevation Certificate and LOMA application for submission to FEMA.',
+        },
+      },
+      {
+        id: 'ps-d3-floodplain-s4',
+        type: 'knowledge_check',
+        title: 'FEMA Flood Zone Identification',
+        knowledgeCheck: {
+          question: 'Which FEMA flood zone designation indicates a coastal high hazard area with base flood elevations determined, including the effects of wave action?',
+          options: [
+            'Zone AE',
+            'Zone X (shaded)',
+            'Zone VE',
+            'Zone AH',
+          ],
+          correctIndex: 2,
+          explanation: 'Zone VE designates coastal high hazard areas where base flood elevations have been determined through detailed analysis, including the effects of wave action. Zone V is similar but without determined BFEs. Zone AE designates riverine or non-coastal flood areas with determined BFEs.',
+        },
+      },
+      {
+        id: 'ps-d3-floodplain-s5',
+        type: 'knowledge_check',
+        title: 'LOMA vs LOMR',
+        knowledgeCheck: {
+          question: 'What is the primary difference between a Letter of Map Amendment (LOMA) and a Letter of Map Revision (LOMR)?',
+          options: [
+            'A LOMA is issued by the state; a LOMR is issued by FEMA',
+            'A LOMA removes a property based on natural high ground; a LOMR revises the FIRM based on changed conditions',
+            'A LOMA applies to commercial properties; a LOMR applies to residential properties',
+            'A LOMA is temporary; a LOMR is permanent',
+          ],
+          correctIndex: 1,
+          explanation: 'A LOMA removes a specific property from the Special Flood Hazard Area based on the determination that it sits on natural high ground above the BFE. A LOMR actually revises the Flood Insurance Rate Map to reflect physical changes to the floodplain, such as fill placement, channel improvements, or levee construction. Both are issued by FEMA.',
+        },
+      },
+    ],
+  },
+
+  // ============================================================
+  // ADDITIONAL READINGS - DOMAIN 4: AREAS OF PRACTICE
+  // ============================================================
+  {
+    id: 'ps-d4-row',
+    examTrack: 'ps',
+    domainNumber: 4,
+    domain: 'Areas of Practice',
+    title: 'Right-of-Way and Easement Surveys',
+    description: 'Understanding the right-of-way acquisition process, centerline and right-of-way monumentation, various easement types and their survey requirements, and the distinction between temporary and permanent easements.',
+    estimatedMinutes: 22,
+    sections: [
+      {
+        id: 'ps-d4-row-s1',
+        type: 'concept',
+        title: 'Right-of-Way Acquisition Process and Monumentation',
+        content: 'Right-of-way (ROW) surveys are among the most common and important types of surveys performed by professional surveyors. A right-of-way is a strip of land acquired for the construction and maintenance of a transportation facility (road, highway, railroad, pipeline, or utility line) or other public use. The ROW acquisition process typically involves several phases in which the surveyor plays a critical role.\n\nThe preliminary survey phase involves gathering existing data, performing topographic surveys, and establishing horizontal and vertical control for the project. During this phase, the surveyor provides the mapping and data needed by designers and engineers to plan the alignment and design the facility. The route survey establishes the centerline of the proposed facility, typically defined by a series of tangent lines connected by horizontal curves. The centerline is the geometric reference line from which the right-of-way limits and all other project features are measured.\n\nDuring the ROW plan phase, the surveyor prepares detailed plans showing the proposed right-of-way boundaries overlaid on existing property lines. These plans, often called ROW maps or parcel plats, show each affected property, the existing boundaries, the proposed ROW limits, and the area to be acquired. Each acquisition parcel is assigned a unique identification number and described with a legal description suitable for use in conveyance documents.\n\nCenterline monumentation establishes physical markers along the project centerline at regular intervals and at critical points such as the point of curvature (PC), point of tangency (PT), and point of intersection (PI) of horizontal curves. Right-of-way monumentation marks the boundaries of the ROW at property line intersections and at other required points. State departments of transportation (DOTs) typically have detailed monumentation standards specifying the type, size, and placement of monuments.\n\nThe distinction between centerline and ROW monuments is important. Centerline monuments define the geometric reference line of the facility and are used primarily for construction and maintenance purposes. ROW monuments mark the boundary between public ROW and private property and serve the same legal function as any other boundary monument. ROW monuments must be set with the same care and accuracy as boundary monuments because they define the limit of property rights acquired by the public entity.',
+      },
+      {
+        id: 'ps-d4-row-s2',
+        type: 'concept',
+        title: 'Easement Types and Survey Requirements',
+        content: 'An easement is a nonpossessory interest in land that grants the easement holder the right to use another person\'s property for a specific purpose. Easements are less than full ownership (fee simple) and allow the underlying property owner to continue using the land in ways that do not interfere with the easement purpose. The surveyor must understand the various types of easements and their specific survey requirements.\n\nUtility easements are among the most common and are granted to utility companies for the installation, operation, and maintenance of utility infrastructure including electric power lines, natural gas pipelines, water mains, sewer lines, telecommunications cables, and fiber optic lines. Utility easements may be above ground (overhead power lines), on the surface, or underground (buried cables and pipes). The survey of a utility easement must accurately locate the easement boundaries and depict existing utility infrastructure within and adjacent to the easement.\n\nAccess easements provide the right to cross another\'s property to reach a landlocked parcel or to access a public road. The surveyor must locate the access easement with precision, showing its width, length, and relationship to the dominant and servient parcels. Ingress and egress easements are a specific type of access easement that grants the right to enter and leave a property.\n\nConservation easements restrict development and land use to protect natural resources, scenic views, agricultural lands, or historic features. Conservation easement surveys require careful delineation of the protected area and may involve wetland boundaries, timber lines, or other natural features.\n\nTemporary easements grant rights for a limited duration, typically during construction. A temporary construction easement (TCE) allows the construction contractor to use a portion of private property adjacent to the right-of-way for equipment staging, material storage, or grading during construction. Temporary easements expire upon completion of construction or at a specified date. Permanent easements, by contrast, continue indefinitely and are typically acquired for ongoing purposes such as utility maintenance, drainage, or slope support.\n\nThe surveyor must clearly distinguish between temporary and permanent easements on survey plats and in legal descriptions. Temporary easements should be shown with distinct hatching or shading patterns and labeled with their expiration conditions. The legal description of each easement must accurately describe its location, dimensions, area, and purpose.',
+      },
+      {
+        id: 'ps-d4-row-s3',
+        type: 'worked_example',
+        title: 'Computing Right-of-Way Area Acquisition',
+        workedExample: {
+          problem: 'A proposed highway widening requires acquiring a strip of land from a rectangular parcel. The existing ROW line runs parallel to the parcel\'s front boundary, 50 feet from the centerline. The proposed new ROW line will be 65 feet from the centerline. The parcel frontage along the ROW is 200 feet. Additionally, a temporary construction easement 15 feet wide is needed beyond the new ROW line. Calculate the permanent acquisition area and the temporary easement area.',
+          steps: [
+            { step: 1, description: 'Determine the width of the permanent acquisition strip.', calculation: 'New ROW offset - Existing ROW offset = 65 - 50 = 15 feet wide acquisition strip.' },
+            { step: 2, description: 'Calculate the permanent acquisition area.', calculation: 'Area = width x frontage = 15 ft x 200 ft = 3,000 sq ft.' },
+            { step: 3, description: 'Determine the temporary construction easement dimensions.', calculation: 'TCE width = 15 ft, starting at the new ROW line (65 ft from centerline) and extending to 80 ft from centerline. Frontage = 200 ft.' },
+            { step: 4, description: 'Calculate the temporary easement area.', calculation: 'TCE area = 15 ft x 200 ft = 3,000 sq ft.' },
+          ],
+          answer: 'The permanent ROW acquisition area is 3,000 square feet (0.069 acres). The temporary construction easement area is also 3,000 square feet (0.069 acres). The surveyor would prepare a ROW parcel plat showing both areas with distinct labeling and hatching, along with separate legal descriptions for the permanent acquisition and the temporary easement.',
+        },
+      },
+      {
+        id: 'ps-d4-row-s4',
+        type: 'knowledge_check',
+        title: 'Right-of-Way Monumentation',
+        knowledgeCheck: {
+          question: 'Right-of-way monuments differ from centerline monuments in that ROW monuments:',
+          options: [
+            'Are set only for highway projects, not utility projects',
+            'Define the boundary between public right-of-way and private property',
+            'Are temporary and removed after construction',
+            'Are referenced to the project vertical datum rather than horizontal',
+          ],
+          correctIndex: 1,
+          explanation: 'Right-of-way monuments mark the boundary between the publicly acquired right-of-way and the remaining private property. They serve the same legal function as boundary monuments because they define the limit of property rights. Centerline monuments, by contrast, define the geometric reference line of the facility and are used primarily for construction and maintenance.',
+        },
+      },
+      {
+        id: 'ps-d4-row-s5',
+        type: 'knowledge_check',
+        title: 'Temporary vs Permanent Easements',
+        knowledgeCheck: {
+          question: 'A temporary construction easement (TCE) differs from a permanent easement in that a TCE:',
+          options: [
+            'Does not require a legal description or survey plat',
+            'Can only be used for utility installation',
+            'Expires upon completion of construction or at a specified date',
+            'Does not require compensation to the property owner',
+          ],
+          correctIndex: 2,
+          explanation: 'A temporary construction easement expires upon completion of construction or at a date specified in the easement document. Permanent easements continue indefinitely. Both temporary and permanent easements require legal descriptions, survey plats, and fair compensation to the property owner under eminent domain or negotiated acquisition.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'ps-d4-hydrographic',
+    examTrack: 'ps',
+    domainNumber: 4,
+    domain: 'Areas of Practice',
+    title: 'Hydrographic and Bathymetric Surveys',
+    description: 'Understanding hydrographic survey methods, tidal datums, sonar technology, IHO standards, and the surveyor\'s role in determining navigable waterway boundaries.',
+    estimatedMinutes: 22,
+    sections: [
+      {
+        id: 'ps-d4-hydrographic-s1',
+        type: 'concept',
+        title: 'Hydrographic Survey Methods and Equipment',
+        content: 'Hydrographic surveying is the branch of surveying that deals with the measurement and description of features that affect maritime navigation, marine construction, and the management of water resources. A hydrographic survey measures the depth and configuration of the bottom of a water body (bathymetry) as well as the location of features such as channels, shoals, reefs, wrecks, obstructions, and aids to navigation.\n\nThe primary instrument for measuring water depth is the echo sounder, or sonar (Sound Navigation and Ranging). Echo sounders work by transmitting a pulse of acoustic energy downward from a transducer mounted on the hull of a survey vessel. The sound pulse travels through the water, reflects off the bottom, and returns to the transducer. The depth is calculated from the two-way travel time and the speed of sound in water. The speed of sound in water varies with temperature, salinity, and pressure and must be measured or estimated for accurate depth determination. A typical speed of sound in seawater is approximately 1,500 meters per second.\n\nSingle-beam echo sounders (SBES) measure depth along a single line beneath the survey vessel, producing a profile of the bottom along the vessel\'s track. Single-beam surveys are conducted by running a series of parallel survey lines (called lines of sounding) at a specified spacing. The spacing between lines determines the resolution of the survey and the likelihood of detecting features between the lines. Single-beam surveys are adequate for many applications but leave gaps between survey lines where features may be missed.\n\nMultibeam echo sounders (MBES) transmit a fan-shaped array of acoustic beams that cover a swath of the bottom on either side of the survey vessel. A multibeam system can measure hundreds of depth points per ping across a swath width of 2 to 7 times the water depth, providing virtually complete coverage of the bottom surface. Multibeam surveys produce detailed bathymetric surfaces (digital terrain models of the bottom) and are the standard for modern nautical charting, harbor surveys, and critical navigation channel surveys.\n\nOther hydrographic survey technologies include side-scan sonar, which produces acoustic images of the bottom surface and is used to detect objects and characterize bottom texture; LiDAR bathymetry (airborne laser scanning), which uses blue-green laser pulses to measure depths in clear, shallow water; and sub-bottom profilers, which penetrate the bottom surface to reveal the stratigraphy of underlying sediments.',
+      },
+      {
+        id: 'ps-d4-hydrographic-s2',
+        type: 'concept',
+        title: 'Tidal Datums and Water Level Corrections',
+        content: 'Tidal datums are reference surfaces derived from tidal observations that serve as the vertical reference for hydrographic surveys and nautical charts. Unlike land surveys, which typically reference orthometric heights above the geoid (mean sea level), hydrographic surveys reference depths to tidal datums that are defined by specific tidal parameters.\n\nMean Lower Low Water (MLLW) is the primary tidal datum for nautical charts in the United States. MLLW is the average of the lower low water heights observed over a 19-year tidal epoch (the National Tidal Datum Epoch, currently 1983-2001). Charted depths on NOAA nautical charts are referenced to MLLW, meaning they represent the depth of water that can be expected at the lowest normal tide. This convention ensures that charted depths are generally conservative for navigation safety.\n\nMean High Water (MHW) is the average of all high water heights observed over the tidal epoch. MHW is legally significant because it defines the boundary between state-owned submerged lands and privately owned uplands in most coastal states. The surveyor who must locate the MHW line needs to understand tidal observations and the methods for transferring the MHW elevation from a tide gauge to the survey site.\n\nMean Higher High Water (MHHW) is the average of the higher high water heights and is used in some jurisdictions and applications. Mean Tide Level (MTL) is the average of MHW and Mean Low Water (MLW). Mean Sea Level (MSL) is the average of all hourly water level observations over the tidal epoch and is approximately equal to MTL.\n\nDuring a hydrographic survey, the measured depths must be corrected for the actual water level at the time of the survey to reduce them to the chart datum (MLLW). This process, called tidal reduction or water level correction, requires either real-time water level observations from a nearby tide gauge or predicted tides from NOAA tide tables. For precise surveys, real-time gauge observations are preferred because actual water levels can deviate significantly from predictions due to wind, barometric pressure, and river discharge. In areas far from tide gauges, GPS tides (using RTK GPS to measure the water surface elevation in real time) provide an alternative method for water level correction.',
+      },
+      {
+        id: 'ps-d4-hydrographic-s3',
+        type: 'concept',
+        title: 'IHO Standards and Navigable Waterway Boundaries',
+        content: 'The International Hydrographic Organization (IHO) publishes standards for hydrographic surveys that are recognized worldwide. IHO Publication S-44 (Standards for Hydrographic Surveys) establishes minimum standards for hydrographic surveys classified by their intended use and required accuracy.\n\nIHO defines several orders of survey accuracy. Exclusive Order is the most stringent and is required for harbors, berthing areas, and critical navigation channels where underkeel clearance is minimal. Special Order requires full bottom search capability (100% coverage, typically achieved with multibeam sonar) and maximum allowable depth uncertainty of the lesser of 0.25 meters or 0.5% of depth. Order 1a requires full bottom search and maximum depth uncertainty of the lesser of 0.5 meters or 1% of depth. Order 1b allows less complete coverage and is appropriate for areas where underkeel clearance is not critical. Order 2 is the least stringent and is appropriate for offshore areas where water depth is generally greater than 100 meters.\n\nThe depth uncertainty formulas in S-44 include both a constant component (representing fixed instrument errors) and a depth-dependent component (representing errors that increase with depth). For example, the total vertical uncertainty (TVU) for Special Order at the 95% confidence level is computed as: TVU = sqrt(a^2 + (b*d)^2), where a = 0.25 m (constant), b = 0.0075 (depth-dependent coefficient), and d = depth.\n\nNavigable waterway boundaries are of particular importance to the professional surveyor because they can define jurisdictional boundaries, property ownership limits, and the extent of regulatory authority. Under federal law, navigable waters of the United States are subject to federal jurisdiction under the Commerce Clause and the Rivers and Harbors Act. The ordinary high water mark (OHWM) is the boundary between navigable waters and adjacent uplands on non-tidal waterways. On tidal waters, the MHW line typically defines this boundary.\n\nSurveyors involved in hydrographic projects must understand both the technical requirements for depth measurement and the legal framework for waterway boundaries. The determination of navigability is ultimately a legal question, but the surveyor provides the technical data (water depths, channel dimensions, water levels, and boundary locations) that inform the legal determination.',
+      },
+      {
+        id: 'ps-d4-hydrographic-s4',
+        type: 'worked_example',
+        title: 'Applying Tidal Corrections to Soundings',
+        workedExample: {
+          problem: 'A hydrographic surveyor records a depth of 18.5 feet using a single-beam echo sounder at 10:30 AM. The tide gauge reading at 10:30 AM shows a water level of +3.2 feet above MLLW. The transducer draft (depth of the transducer below the water surface) is 1.5 feet. What is the corrected depth referenced to MLLW?',
+          steps: [
+            { step: 1, description: 'Identify the measured (raw) depth.', calculation: 'Raw depth from echo sounder = 18.5 feet (measured from transducer to bottom).' },
+            { step: 2, description: 'Add the transducer draft to get the depth below water surface.', calculation: 'Depth below water surface = 18.5 + 1.5 = 20.0 feet.' },
+            { step: 3, description: 'Apply the tidal correction to reduce to MLLW.', calculation: 'Water level = +3.2 ft above MLLW. Corrected depth = depth below surface - tide height = 20.0 - 3.2 = 16.8 feet below MLLW.' },
+            { step: 4, description: 'State the charted depth.', calculation: 'Corrected (charted) depth = 16.8 feet referenced to MLLW.' },
+          ],
+          answer: 'The corrected depth referenced to MLLW is 16.8 feet. The tide was 3.2 feet above MLLW at the time of the sounding, so the actual bottom is 16.8 feet below the MLLW datum. This corrected depth is what would appear on a nautical chart.',
+        },
+      },
+      {
+        id: 'ps-d4-hydrographic-s5',
+        type: 'knowledge_check',
+        title: 'Hydrographic Survey Standards',
+        knowledgeCheck: {
+          question: 'According to IHO S-44 standards, which order of hydrographic survey requires the most stringent accuracy and is intended for harbors and critical navigation channels?',
+          options: [
+            'Order 1a',
+            'Order 2',
+            'Special Order',
+            'Exclusive Order',
+          ],
+          correctIndex: 3,
+          explanation: 'Exclusive Order is the most stringent IHO survey classification, required for harbors, berthing areas, and critical navigation channels where underkeel clearance is minimal. Special Order is the next most stringent. Order 1a, 1b, and 2 follow in decreasing order of accuracy requirements.',
+        },
+      },
+    ],
+  },
+
+  // ============================================================
+  // ADDITIONAL READING - DOMAIN 5: BUSINESS PRACTICES
+  // ============================================================
+  {
+    id: 'ps-d5-contracts',
+    examTrack: 'ps',
+    domainNumber: 5,
+    domain: 'Business Practices',
+    title: 'Contracts and Risk Management for Surveyors',
+    description: 'Understanding the elements of valid contracts, scope of work definition, limitation of liability clauses, errors and omissions insurance, and indemnification provisions in surveying practice.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'ps-d5-contracts-s1',
+        type: 'concept',
+        title: 'Elements of a Valid Contract',
+        content: 'A contract is a legally enforceable agreement between two or more parties that creates mutual obligations. For the professional surveyor, contracts govern the relationship between the surveyor and the client and define the rights, obligations, and expectations of both parties. Understanding contract law is essential for managing risk and running a successful surveying practice.\n\nEvery valid contract requires four essential elements: offer, acceptance, consideration, and legal capacity. An offer is a clear expression of willingness to enter into an agreement on specified terms. In the surveying context, the offer is typically the surveyor\'s proposal or engagement letter that describes the services to be performed, the fee, and the terms and conditions. Acceptance is the unqualified agreement to the terms of the offer. Acceptance may be express (a signed contract or written confirmation) or implied by conduct (such as the client authorizing the surveyor to begin work).\n\nConsideration is the exchange of value between the parties. The surveyor\'s consideration is the promise to perform professional services; the client\'s consideration is the promise to pay the agreed fee. Consideration must be bargained for and cannot be illusory (a promise that does not actually commit the promisor to do anything). Legal capacity means that both parties must have the legal ability to enter into a contract, which requires that they be of legal age, of sound mind, and not under duress or undue influence.\n\nIn addition to these four elements, a valid contract must involve a lawful purpose and must not violate public policy. A contract to perform surveying services without proper licensure, for example, may be void or unenforceable because the unauthorized practice of surveying is prohibited by law.\n\nSurveyors should use written contracts for all professional engagements, no matter how small. Oral contracts for surveying services are generally enforceable but are difficult to prove and often lead to disputes about the scope of work, fee, and expectations. A well-drafted written contract protects both the surveyor and the client by clearly defining the scope of work, fee structure, timeline, deliverables, and the respective obligations of each party. Professional organizations such as NSPS and state surveying societies publish sample contract forms and engagement letters that surveyors can adapt for their practice.',
+      },
+      {
+        id: 'ps-d5-contracts-s2',
+        type: 'concept',
+        title: 'Scope of Work and Limitation of Liability',
+        content: 'The scope of work is the most critical section of any surveying contract because it defines exactly what services the surveyor will perform. A clearly defined scope of work prevents misunderstandings, limits the surveyor\'s exposure to claims for services that were never intended to be part of the engagement, and provides a basis for additional compensation if the client requests work beyond the original scope.\n\nA well-defined scope of work for a boundary survey might include: the purpose of the survey (sale, mortgage, fence construction, etc.); the property to be surveyed (identified by legal description, address, or parcel number); the type of survey (boundary, ALTA/NSPS, topographic, etc.); the standards to be followed (state minimum standards, ALTA/NSPS standards, etc.); the research to be performed (deed research, plat research, adjacent property research); the field work to be performed (monument search, traversing, boundary establishment); the deliverables (survey plat, legal description, survey report, digital files); the monuments to be set; and any exclusions or limitations.\n\nLimitation of liability clauses restrict the maximum amount of damages the surveyor may be required to pay in the event of a claim. These clauses are an important risk management tool because professional liability claims can potentially exceed the surveyor\'s fee by orders of magnitude. A typical limitation clause might state: "The surveyor\'s total liability to the client for any claims arising from this engagement shall not exceed the fee paid for services, or $[amount], whichever is greater."\n\nThe enforceability of limitation of liability clauses varies by jurisdiction. Some states enforce them as valid expressions of the parties\' agreement to allocate risk. Other states may decline to enforce them if they are found to be unconscionable, against public policy, or if the surveyor acted with gross negligence or willful misconduct. To maximize enforceability, limitation clauses should be conspicuous in the contract (not buried in fine print), negotiated between parties of relatively equal bargaining power, and reasonable in the context of the services provided.\n\nMutual limitation of liability clauses, in which both parties agree to limit their liability to each other, are generally viewed more favorably by courts than one-sided limitations. Some surveyors also include consequential damages waivers, in which both parties agree to waive claims for indirect, special, or consequential damages (such as lost profits or loss of use) and limit recovery to direct damages only.',
+      },
+      {
+        id: 'ps-d5-contracts-s3',
+        type: 'concept',
+        title: 'Insurance and Indemnification',
+        content: 'Professional liability insurance, commonly called errors and omissions (E&O) insurance, is essential for surveying firms. E&O insurance provides coverage for claims alleging that the surveyor committed a negligent act, error, or omission in the performance of professional services that resulted in financial loss to the client or a third party. Unlike general liability insurance, which covers bodily injury and property damage from accidents, E&O insurance specifically covers claims arising from professional mistakes.\n\nE&O policies are typically written on a "claims-made" basis, meaning the policy responds to claims that are first made during the policy period, regardless of when the alleged error occurred. This differs from "occurrence" policies (such as general liability) that cover incidents that occur during the policy period regardless of when the claim is made. The claims-made structure means that continuous, uninterrupted coverage is essential. If a surveyor allows E&O coverage to lapse, claims arising from work performed during the covered period may not be covered if the claim is made after the policy expires.\n\nKey E&O policy terms include the policy limit (the maximum amount the insurer will pay for a single claim or in the aggregate during the policy period), the deductible or self-insured retention (the amount the surveyor must pay before insurance coverage kicks in), and the retroactive date (claims arising from work performed before this date are not covered). Surveyors should carefully review their policies and understand the coverage limits, exclusions, and conditions.\n\nIndemnification clauses (also called hold harmless provisions) are contractual provisions in which one party agrees to compensate the other for losses arising from specified circumstances. In surveying contracts, indemnification clauses may require the surveyor to indemnify the client against losses caused by the surveyor\'s negligence, or they may require the client to indemnify the surveyor against losses caused by the client\'s actions or by third-party claims not related to the surveyor\'s work.\n\nSurveyors should be cautious about broad indemnification clauses that require the surveyor to indemnify the client for losses not caused by the surveyor\'s negligence. "Broad form" indemnification provisions that require one party to indemnify the other even for the other party\'s own negligence are unenforceable in many states by statute. A fair indemnification provision limits each party\'s obligation to indemnify to losses caused by that party\'s own negligent acts or omissions. The surveyor should have all indemnification provisions reviewed by their attorney and their E&O insurance carrier before signing, as some indemnification provisions may not be covered by the E&O policy.',
+      },
+      {
+        id: 'ps-d5-contracts-s4',
+        type: 'worked_example',
+        title: 'Evaluating Contract Risk Provisions',
+        workedExample: {
+          problem: 'A client presents a surveyor with a contract containing the following clause: "Surveyor shall indemnify and hold harmless Client from any and all claims, damages, losses, and expenses, including attorney\'s fees, arising out of or resulting from the performance of services under this agreement, regardless of whether such claims are caused in whole or in part by the negligence of Client." The surveyor\'s E&O policy has a $1,000,000 per-claim limit and excludes coverage for contractually assumed liability beyond that arising from the insured\'s own negligence. Should the surveyor sign this contract as written?',
+          steps: [
+            { step: 1, description: 'Identify the type of indemnification clause.', calculation: 'This is a "broad form" indemnification that requires the surveyor to indemnify the client even for the client\'s own negligence ("regardless of whether caused in whole or in part by negligence of Client").' },
+            { step: 2, description: 'Check enforceability.', calculation: 'Many states have anti-indemnity statutes that void broad form indemnification provisions in construction and professional services contracts. This clause may be unenforceable.' },
+            { step: 3, description: 'Evaluate insurance coverage.', calculation: 'The E&O policy excludes contractually assumed liability beyond the surveyor\'s own negligence. This indemnification clause would create uninsured liability exposure.' },
+            { step: 4, description: 'Recommend modifications.', calculation: 'Propose changing to "intermediate form" or "limited form" indemnification that limits the surveyor\'s obligation to claims caused by the surveyor\'s own negligent acts or omissions.' },
+          ],
+          answer: 'The surveyor should NOT sign this contract as written. The broad form indemnification clause would require the surveyor to pay for claims caused by the client\'s own negligence, which is uninsured under the E&O policy and may be unenforceable under state anti-indemnity statutes. The surveyor should negotiate a limited form indemnification provision that limits liability to claims arising from the surveyor\'s own negligent acts, errors, or omissions.',
+        },
+      },
+      {
+        id: 'ps-d5-contracts-s5',
+        type: 'knowledge_check',
+        title: 'Contract Elements',
+        knowledgeCheck: {
+          question: 'Which of the following is NOT one of the four essential elements required for a valid contract?',
+          options: [
+            'Offer',
+            'Consideration',
+            'Notarization',
+            'Legal capacity',
+          ],
+          correctIndex: 2,
+          explanation: 'The four essential elements of a valid contract are offer, acceptance, consideration, and legal capacity. Notarization is not required for a contract to be valid and enforceable, although it may be required for certain types of documents such as deeds or for recording purposes.',
+        },
+      },
+      {
+        id: 'ps-d5-contracts-s6',
+        type: 'knowledge_check',
+        title: 'E&O Insurance Coverage',
+        knowledgeCheck: {
+          question: 'Professional liability (errors and omissions) insurance for surveyors is typically written on what basis?',
+          options: [
+            'Occurrence basis - covers incidents during the policy period',
+            'Claims-made basis - covers claims first made during the policy period',
+            'Project-specific basis - covers only named projects',
+            'Retroactive basis - covers all past work regardless of coverage dates',
+          ],
+          correctIndex: 1,
+          explanation: 'E&O insurance is typically written on a claims-made basis, meaning it covers claims that are first made (reported) during the policy period, regardless of when the alleged error occurred, subject to the retroactive date. This differs from occurrence-based policies and makes continuous, uninterrupted coverage essential for protection.',
+        },
+      },
+    ],
+  },
 ];

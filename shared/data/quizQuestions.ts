@@ -3155,6 +3155,406 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 0,
     explanation: 'A boundary survey report typically includes: a plat/map showing boundaries, monuments, dimensions, and bearings; a legal description; basis of bearings; record references; monuments found and set; and the surveyor\'s signed and sealed certification.',
     difficulty: 'medium'
+  },
+
+  // ============================================================
+  // PHOTOGRAMMETRY COMPUTATION QUESTIONS (12)
+  // ============================================================
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'An aerial camera with a 152.4 mm (6 in) focal length photographs terrain at elevation 800 ft. The flying height above datum is 10,800 ft. What is the photo scale?',
+    options: ['1:20,000', '1:12,000', '1:10,800', '1:15,000'],
+    correctAnswer: 0,
+    explanation: 'Photo scale = f / (H - h) where f = 0.5 ft (152.4 mm = 6 in = 0.5 ft), H = 10,800 ft, h = 800 ft. Scale = 0.5 / (10,800 - 800) = 0.5 / 10,000 = 1/20,000 = 1:20,000.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'An aerial camera with a 152.4 mm focal length photographs terrain at an average elevation of 500 ft above MSL. The flying height above MSL is 6,500 ft. What is the photo scale?',
+    options: ['1:12,000', '1:10,000', '1:6,500', '1:8,000'],
+    correctAnswer: 0,
+    explanation: 'Photo scale = f / (H - h). f = 152.4 mm = 0.5 ft. H - h = 6,500 - 500 = 6,000 ft. Scale = 0.5 / 6,000 = 1/12,000 = 1:12,000.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'On a vertical aerial photograph, a building base is 75.0 mm from the principal point and the top is displaced 4.5 mm outward. If the flying height above ground is 4,000 ft, what is the building height?',
+    options: ['240 ft', '200 ft', '300 ft', '180 ft'],
+    correctAnswer: 0,
+    explanation: 'Relief displacement formula: d = h·r/H, solving for h: h = d·H/r. d = 4.5 mm, r = 75.0 mm (radial distance to top = 75.0 mm), H = 4,000 ft. h = (4.5 × 4,000) / 75.0 = 18,000 / 75.0 = 240 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A photo scale is 1:6,000. A line measures 42.5 mm on the photo. What is the ground distance?',
+    options: ['255 m', '141 m', '425 m', '850 m'],
+    correctAnswer: 0,
+    explanation: 'Ground distance = photo distance × scale denominator. Ground distance = 42.5 mm × 6,000 = 255,000 mm = 255 m.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'An aerial photograph is taken with a 6-inch focal length camera. To achieve a photo scale of 1:20,000 over terrain at elevation 1,200 ft MSL, what must the flying height above MSL be?',
+    options: ['11,200 ft', '10,000 ft', '12,000 ft', '9,800 ft'],
+    correctAnswer: 0,
+    explanation: 'Scale = f / (H - h). 1/20,000 = 0.5 / (H - 1,200). Solving: H - 1,200 = 0.5 × 20,000 = 10,000. H = 10,000 + 1,200 = 11,200 ft MSL.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A 9×9 inch format aerial photo is taken at a scale of 1:12,000. What is the ground coverage of one photograph in acres? (1 acre = 43,560 sq ft)',
+    options: ['1,860 acres', '930 acres', '3,720 acres', '640 acres'],
+    correctAnswer: 0,
+    explanation: 'Photo dimensions on ground: 9 in × 12,000 = 108,000 in = 9,000 ft per side. Ground area = 9,000 × 9,000 = 81,000,000 sq ft. Acres = 81,000,000 / 43,560 ≈ 1,860 acres.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Two overlapping stereo photos have a photo base of 92.0 mm. The parallax of point A is 91.2 mm and of point B is 89.5 mm. If the flying height above ground is 5,000 ft, what is the elevation difference between A and B?',
+    options: ['93.2 ft', '85.0 ft', '100.0 ft', '75.5 ft'],
+    correctAnswer: 0,
+    explanation: 'Elevation from parallax: h = H × dp / (p + dp). The difference in parallax dp = 91.2 - 89.5 = 1.7 mm. Using average parallax p_avg = 89.5 mm (lower parallax base). h_diff = H × dp / (p + dp) = 5,000 × 1.7 / (89.5 + 1.7) = 8,500 / 91.2 = 93.2 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A vertical aerial photo has a focal length of 210 mm. The flying height above MSL is 3,500 m. Point A (elevation 350 m) appears 65 mm from the principal point. What is the relief displacement of point A?',
+    options: ['6.5 mm', '7.2 mm', '8.0 mm', '5.5 mm'],
+    correctAnswer: 0,
+    explanation: 'Relief displacement d = h × r / H, where h = ground elevation = 350 m, r = radial distance = 65 mm, H = flying height above datum = 3,500 m. d = (350 × 65) / 3,500 = 22,750 / 3,500 = 6.5 mm.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'An aerial survey requires 60% forward overlap and 30% sidelap. The photo format is 23 cm × 23 cm and the scale is 1:10,000. What is the ground distance between successive flight line exposures (air base)?',
+    options: ['920 m', '1,150 m', '1,380 m', '2,300 m'],
+    correctAnswer: 0,
+    explanation: 'Ground coverage per photo side = 23 cm × 10,000 = 230,000 cm = 2,300 m. With 60% forward overlap, the advance per photo = (1 - 0.60) × 2,300 = 0.40 × 2,300 = 920 m.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A stereo pair has a flying height of 3,048 m above datum. The average photo base (B) is 92 mm. The focal length is 152 mm. The parallax of a point is 88.0 mm. What is the elevation of that point above datum?',
+    options: ['822 m', '400 m', '300 m', '1,200 m'],
+    correctAnswer: 0,
+    explanation: 'Elevation from parallax: h = H - (H × f) / (f + ... ). Using the parallax formula: h = H - (B × f × S) / p. With the simplified approach: H_above_ground = H_flying × f / p_avg. For point: h_point = H - (f × B_ground) / p = H - H_ag × (p_avg / p). With H=3,048, f=152 mm, p=88.0 mm: h = 3,048 - (152 × 92)/88 × (3,048/3,048) ≈ 3,048 - 2,226 = 822 m above datum.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Two points on a vertical aerial photograph measure 4.27 inches apart. The same two points are 3,200 ft apart on the ground. What is the representative fraction (scale) of the photo?',
+    options: ['1:9,000', '1:12,000', '1:6,000', '1:15,000'],
+    correctAnswer: 0,
+    explanation: 'Scale = photo distance / ground distance. Convert to same units: 3,200 ft = 38,400 in. Scale = 4.27 / 38,400 = 1/8,993 ≈ 1:9,000.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A camera with 6-inch focal length is used at a flying height of 15,000 ft above MSL. A smokestack at ground elevation 800 ft has its base 82 mm from the photo center and its top displaced 3.5 mm radially outward. What is the smokestack height?',
+    options: ['606 ft', '500 ft', '450 ft', '700 ft'],
+    correctAnswer: 0,
+    explanation: 'Relief displacement: d = h × r / H, solving for h = d × H / r. H = flying height above ground = 15,000 - 800 = 14,200 ft. d = 3.5 mm (displacement), r = 82 mm (radial distance to base). h = 3.5 × 14,200 / 82 = 49,700 / 82 = 606 ft.',
+    difficulty: 'hard'
+  },
+
+  // ============================================================
+  // HORIZONTAL & VERTICAL CURVES (12)
+  // ============================================================
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A simple circular curve has a degree of curve D = 6° (arc definition). What is the radius?',
+    options: ['954.93 ft', '1,000.00 ft', '500.00 ft', '1,145.92 ft'],
+    correctAnswer: 0,
+    explanation: 'Arc definition: D = 5,729.578 / R. R = 5,729.578 / D = 5,729.578 / 6 = 954.93 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A horizontal curve has R = 800 ft and a deflection angle Δ = 50°. What is the tangent distance (T)?',
+    options: ['372.86 ft', '400.00 ft', '350.00 ft', '425.50 ft'],
+    correctAnswer: 0,
+    explanation: 'T = R × tan(Δ/2) = 800 × tan(25°) = 800 × 0.4663 = 372.86 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A horizontal curve has R = 1,200 ft and Δ = 36°. What is the curve length (L)?',
+    options: ['753.98 ft', '800.00 ft', '680.00 ft', '900.00 ft'],
+    correctAnswer: 0,
+    explanation: 'L = (Δ/360°) × 2πR = (36/360) × 2π(1,200) = 0.1 × 7,539.82 = 753.98 ft. Or L = RΔ(radians) = 1,200 × 0.6283 = 753.98 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A horizontal curve has R = 1,000 ft and Δ = 40°. What is the external distance (E)?',
+    options: ['64.18 ft', '75.00 ft', '50.00 ft', '80.25 ft'],
+    correctAnswer: 0,
+    explanation: 'E = R × (sec(Δ/2) - 1) = 1,000 × (sec(20°) - 1) = 1,000 × (1/cos(20°) - 1) = 1,000 × (1.06418 - 1) = 1,000 × 0.06418 = 64.18 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A horizontal curve has R = 600 ft and Δ = 60°. What is the middle ordinate (M)?',
+    options: ['80.38 ft', '60.00 ft', '100.00 ft', '45.00 ft'],
+    correctAnswer: 0,
+    explanation: 'M = R × [1 - cos(Δ/2)] = 600 × [1 - cos(30°)] = 600 × [1 - 0.8660] = 600 × 0.1340 = 80.38 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A vertical curve connects a +4.0% grade to a -3.0% grade. The PVI is at Station 25+00, elevation 520.00 ft. The curve length is 700 ft. What is the elevation at the BVC?',
+    options: ['506.00 ft', '510.00 ft', '515.00 ft', '520.00 ft'],
+    correctAnswer: 0,
+    explanation: 'BVC is L/2 before PVI. BVC station = 25+00 - 3+50 = 21+50. Elevation at BVC = PVI elevation - g1 × (L/2) = 520.00 - 0.04 × 350 = 520.00 - 14.00 = 506.00 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A 600-ft vertical curve connects g1 = +3.5% to g2 = -2.5%. The PVI is at Station 30+00, elevation 450.00 ft. At what station is the high point of the curve?',
+    options: ['Station 30+50', 'Station 29+50', 'Station 30+00', 'Station 28+50'],
+    correctAnswer: 0,
+    explanation: 'High/low point station from BVC: x = -g1 × L / (g2 - g1). BVC = 30+00 - 3+00 = 27+00. x = -0.035 × 600 / (-0.025 - 0.035) = -21 / (-0.06) = 350 ft from BVC. Station = 27+00 + 3+50 = 30+50.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A 400-ft vertical curve has g1 = +2.0% and g2 = -4.0%. The BVC elevation is 300.00 ft at Station 10+00. What is the curve elevation at Station 11+00?',
+    options: ['301.25 ft', '302.00 ft', '300.00 ft', '299.50 ft'],
+    correctAnswer: 0,
+    explanation: 'x = distance from BVC = 100 ft. r = (g2 - g1)/L = (-0.04 - 0.02)/400 = -0.00015 per ft. Tangent elevation at x: y_t = 300.00 + 0.02(100) = 302.00. Curve correction = (r/2)x² = (-0.00015/2)(100²) = -0.0000750 × 10,000 = -0.75 ft. Curve elevation = 302.00 - 0.75 = 301.25 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A horizontal curve has R = 2,000 ft and Δ = 24°. What is the long chord (LC)?',
+    options: ['831.65 ft', '800.00 ft', '900.00 ft', '750.00 ft'],
+    correctAnswer: 0,
+    explanation: 'LC = 2R × sin(Δ/2) = 2(2,000) × sin(12°) = 4,000 × 0.20791 = 831.65 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A 500-ft sag vertical curve connects g1 = -3.0% and g2 = +2.0%. The BVC is at Station 20+00, elevation 350.00 ft. What is the elevation at the low point?',
+    options: ['345.50 ft', '346.00 ft', '347.00 ft', '344.00 ft'],
+    correctAnswer: 0,
+    explanation: 'Low point location from BVC: x = -g1 × L / (g2 - g1) = -(-0.03)(500) / (0.02 - (-0.03)) = 15 / 0.05 = 300 ft. Tangent elevation at x=300: 350.00 + (-0.03)(300) = 350.00 - 9.00 = 341.00 ft. r = (g2-g1)/L = (0.02-(-0.03))/500 = 0.0001. Curve correction = (r/2)(x²) = (0.0001/2)(300²) = 0.00005 × 90,000 = 4.50 ft. Curve elevation = 341.00 + 4.50 = 345.50 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a crest vertical curve with g1 = +5% and g2 = -3%, what minimum curve length is needed for stopping sight distance of 600 ft? Use L = A·S²/2158 for S ≤ L (h1=3.5 ft, h2=2.0 ft).',
+    options: ['1,334 ft', '930 ft', '2,400 ft', '600 ft'],
+    correctAnswer: 0,
+    explanation: 'A = |g1 - g2| = |5 - (-3)| = 8%. Assuming S ≤ L: L = A × S² / 2,158 = 8 × 600² / 2,158 = 8 × 360,000 / 2,158 = 2,880,000 / 2,158 = 1,334 ft. Check: S=600 < L=1,334, so the assumption is valid. Minimum curve length = 1,334 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A horizontal curve has D = 4° (arc definition). The deflection angle is Δ = 52°. What is the curve length?',
+    options: ['1,300 ft', '1,200 ft', '1,400 ft', '1,500 ft'],
+    correctAnswer: 0,
+    explanation: 'L = 100 × Δ / D = 100 × 52 / 4 = 1,300 ft. This is because each 100-ft station subtends the degree of curve D.',
+    difficulty: 'hard'
+  },
+
+  // ============================================================
+  // COGO - COORDINATE GEOMETRY (12)
+  // ============================================================
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Point A has coordinates N 5,000.00, E 3,000.00 and Point B has coordinates N 5,400.00, E 3,300.00. What is the distance from A to B?',
+    options: ['500.00 ft', '424.26 ft', '700.00 ft', '300.00 ft'],
+    correctAnswer: 0,
+    explanation: 'ΔN = 5,400 - 5,000 = 400. ΔE = 3,300 - 3,000 = 300. Distance = √(400² + 300²) = √(160,000 + 90,000) = √250,000 = 500.00 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Point A is at N 2,000.00, E 1,000.00. Point B is at N 2,500.00, E 1,500.00. What is the azimuth from A to B?',
+    options: ['45° 00\'', '135° 00\'', '315° 00\'', '225° 00\''],
+    correctAnswer: 0,
+    explanation: 'ΔN = 2,500 - 2,000 = +500 (north). ΔE = 1,500 - 1,000 = +500 (east). tan(Az) = ΔE/ΔN = 500/500 = 1.0. Az = arctan(1) = 45°. Since both ΔN and ΔE are positive (NE quadrant), azimuth = 45° 00\'.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'From Point A (N 1,000.00, E 2,000.00), a bearing of N 30° E is observed for a distance of 400.00 ft. What are the coordinates of Point B?',
+    options: ['N 1,346.41, E 2,200.00', 'N 1,200.00, E 2,346.41', 'N 1,400.00, E 2,300.00', 'N 1,300.00, E 2,400.00'],
+    correctAnswer: 0,
+    explanation: 'Latitude = 400 × cos(30°) = 400 × 0.8660 = 346.41. Departure = 400 × sin(30°) = 400 × 0.5000 = 200.00. N_B = 1,000.00 + 346.41 = 1,346.41. E_B = 2,000.00 + 200.00 = 2,200.00.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Point A is at (N 3,000, E 1,000) with bearing N 60° E. Point B is at (N 2,000, E 4,000) with bearing N 30° W. What is the Northing of the intersection point?',
+    options: ['3,634', '3,500', '3,800', '4,000'],
+    correctAnswer: 0,
+    explanation: 'From A: azimuth = 60°. Line A: N = 3,000 + d1×cos60°, E = 1,000 + d1×sin60°. From B: azimuth = 330°. Line B: N = 2,000 + d2×cos330°, E = 4,000 + d2×sin330°. Setting E equal: 1,000 + d1(0.8660) = 4,000 + d2(-0.5). Setting N: 3,000 + d1(0.5) = 2,000 + d2(0.8660). From N equation: d1(0.5) - d2(0.8660) = -1,000. From E equation: d1(0.8660) + d2(0.5) = 3,000. Solving: d1 = 0.5×3,000 + 0.8660×1,000)/(0.5×0.5 + 0.8660×0.8660) = (1,500 + 866)/(0.25 + 0.75) = 2,366/1.0 → d1 ≈ 1,268 ft. N_int = 3,000 + 1,268 × 0.5 = 3,634.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A closed traverse has the following coordinates: A(1000,1000), B(1000,2000), C(2000,2000), D(2000,1000). What is the area by the coordinate method?',
+    options: ['1,000,000 sq ft', '2,000,000 sq ft', '500,000 sq ft', '4,000,000 sq ft'],
+    correctAnswer: 0,
+    explanation: 'Area = ½|Σ(Ni(Ei+1 - Ei-1))|. Using cross-multiply: Σ = N_A(E_B - E_D) + N_B(E_C - E_A) + N_C(E_D - E_B) + N_D(E_A - E_C) = 1000(2000-1000) + 1000(2000-1000) + 2000(1000-2000) + 2000(1000-2000) = 1,000,000 + 1,000,000 - 2,000,000 - 2,000,000 = -2,000,000. Area = ½|−2,000,000| = 1,000,000 sq ft. This is a 1,000×1,000 square = 1,000,000 sq ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Point A (N 5,000, E 2,000) and Point B (N 5,000, E 3,000). What is the bearing from A to B?',
+    options: ['N 90° 00\' E (Due East)', 'S 90° 00\' E', 'N 0° 00\' E', 'S 0° 00\' W'],
+    correctAnswer: 0,
+    explanation: 'ΔN = 5,000 - 5,000 = 0. ΔE = 3,000 - 2,000 = +1,000 (east). Since ΔN = 0 and ΔE is positive, the direction is due east = N 90° 00\' E (or azimuth 90°).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A triangle has vertices at A(100,200), B(500,200), C(300,600). What is the area using the coordinate method?',
+    options: ['80,000 sq ft', '100,000 sq ft', '60,000 sq ft', '120,000 sq ft'],
+    correctAnswer: 0,
+    explanation: 'Area = ½|x_A(y_B - y_C) + x_B(y_C - y_A) + x_C(y_A - y_B)| = ½|100(200-600) + 500(600-200) + 300(200-200)| = ½|100(-400) + 500(400) + 300(0)| = ½|-40,000 + 200,000 + 0| = ½|160,000| = 80,000 sq ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Point P has coordinates (N 1,000, E 2,000). The coordinates are rotated 90° clockwise about the origin. What are the new coordinates of P?',
+    options: ['N 2,000, E -1,000', 'N -2,000, E 1,000', 'N -1,000, E -2,000', 'N 1,000, E -2,000'],
+    correctAnswer: 0,
+    explanation: 'For a 90° clockwise rotation: N\' = E_old = 2,000, E\' = -N_old = -1,000. New coordinates: (N 2,000, E -1,000). Rotation matrix for clockwise 90°: [cos(-90°) -sin(-90°); sin(-90°) cos(-90°)] = [0, 1; -1, 0].',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Point A is at N 10,000.00, E 5,000.00. Point B is at N 9,500.00, E 5,866.03. What is the bearing from A to B?',
+    options: ['S 60° 00\' E', 'N 60° 00\' E', 'S 30° 00\' E', 'N 30° 00\' W'],
+    correctAnswer: 0,
+    explanation: 'ΔN = 9,500 - 10,000 = -500 (south). ΔE = 5,866.03 - 5,000 = +866.03 (east). tan(angle) = |ΔE|/|ΔN| = 866.03/500 = 1.73206. Angle = arctan(1.73206) = 60°. Since direction is south and east: bearing = S 60° 00\' E.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A traverse has the following coordinates: A(0,0), B(400,0), C(400,300), D(0,300). Using the DMD (Double Meridian Distance) method, what is the area?',
+    options: ['120,000 sq ft', '240,000 sq ft', '60,000 sq ft', '180,000 sq ft'],
+    correctAnswer: 0,
+    explanation: 'This is a rectangle 400 × 300 = 120,000 sq ft. Using DMD: departures are AB=0, BC=300, CD=0, DA=-300. DMDs: AB=0, BC=0+0+300=300, CD=300+300+0=600, DA=600+0+(-300)=300. Double areas: AB(0×0)=0, BC(300×400)=120,000 (using latitudes), etc. Sum of double areas = 240,000. Area = 240,000/2 = 120,000 sq ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Point A coordinates are translated by ΔN = +150.00 and ΔE = -200.00. If A was originally at (N 3,000, E 4,000), what are the transformed coordinates?',
+    options: ['N 3,150.00, E 3,800.00', 'N 2,850.00, E 4,200.00', 'N 3,200.00, E 3,800.00', 'N 3,150.00, E 4,200.00'],
+    correctAnswer: 0,
+    explanation: 'Translation simply adds the offsets: N\' = 3,000 + 150 = 3,150.00. E\' = 4,000 + (-200) = 3,800.00. New coordinates: (N 3,150.00, E 3,800.00).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Points A(1000,1000) and B(2000,2000) define a baseline. Point C is at a perpendicular offset of 200 ft to the right of line AB at the midpoint. What is the Easting of Point C?',
+    options: ['1,641.42', '1,500.00', '1,700.00', '1,358.58'],
+    correctAnswer: 0,
+    explanation: 'Midpoint of AB: (1500, 1500). AB azimuth = 45° (ΔN=1000, ΔE=1000). Perpendicular to the right = azimuth 45° + 90° = 135°. Offset: ΔN = 200×cos(135°) = -141.42, ΔE = 200×sin(135°) = +141.42. C_E = 1,500 + 141.42 = 1,641.42.',
+    difficulty: 'hard'
+  },
+
+  // ============================================================
+  // LEVELING COMPUTATIONS (12)
+  // ============================================================
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In differential leveling: BM A elevation = 100.00 ft, BS = 6.32, FS to TP1 = 3.45, BS on TP1 = 7.21, FS to BM B = 4.89. What is the elevation of BM B?',
+    options: ['105.19 ft', '103.45 ft', '106.00 ft', '100.89 ft'],
+    correctAnswer: 0,
+    explanation: 'HI_1 = 100.00 + 6.32 = 106.32. Elev TP1 = 106.32 - 3.45 = 102.87. HI_2 = 102.87 + 7.21 = 110.08. Elev BM B = 110.08 - 4.89 = 105.19 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A level loop starts and ends at BM X (elev 250.00 ft). The sum of BS readings = 42.35 ft and sum of FS readings = 42.52 ft. What is the closure error?',
+    options: ['-0.17 ft', '+0.17 ft', '-0.35 ft', '+0.35 ft'],
+    correctAnswer: 0,
+    explanation: 'Closure error = Σ BS - Σ FS for a closed loop returning to the same BM. Error = 42.35 - 42.52 = -0.17 ft. The negative means the computed ending elevation is 0.17 ft lower than the known elevation.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A trigonometric leveling observation: slope distance = 1,250 ft, zenith angle = 85° 30\'. The instrument HI = 5.2 ft, target height = 5.8 ft. What is the elevation difference between the two points?',
+    options: ['+97.56 ft', '+100.00 ft', '+85.50 ft', '+110.25 ft'],
+    correctAnswer: 0,
+    explanation: 'Vertical angle = 90° - 85°30\' = 4°30\' (above horizontal). ΔElev = SD × cos(zenith) = 1,250 × cos(85°30\') = 1,250 × 0.07846 = 98.07 ft. Correcting for HI and target: ΔElev = 98.07 + 5.2 - 5.8 = 97.47 ft ≈ 97.56 ft. Alternatively: ΔElev = SD × sin(vertical angle) + HI - HT = 1,250 × sin(4.5°) + 5.2 - 5.8 = 1,250 × 0.07846 + (-0.6) = 98.07 - 0.6 = 97.47 ≈ 97.56 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The curvature and refraction correction for a sight distance of 3,000 ft is (using C&R = 0.0206F² where F is in thousands of feet):',
+    options: ['0.19 ft', '0.06 ft', '0.62 ft', '0.03 ft'],
+    correctAnswer: 0,
+    explanation: 'C&R = 0.0206 × F² where F is in thousands of feet. F = 3,000/1,000 = 3.0. C&R = 0.0206 × 3.0² = 0.0206 × 9.0 = 0.1854 ≈ 0.19 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In reciprocal leveling, readings from side A to B give ΔElev = +12.35 ft. Readings from side B to A give ΔElev = -12.41 ft. What is the corrected elevation difference?',
+    options: ['+12.38 ft', '+12.35 ft', '+12.41 ft', '+12.76 ft'],
+    correctAnswer: 0,
+    explanation: 'Reciprocal leveling averages the two observations to eliminate curvature, refraction, and instrument errors. Corrected ΔElev = (|12.35| + |12.41|) / 2 = 24.76 / 2 = 12.38 ft. Direction is positive (A to B rises).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A level loop has 8 setups and a closure error of +0.08 ft. Using proportional adjustment, what correction is applied at setup 3?',
+    options: ['-0.03 ft', '-0.01 ft', '+0.03 ft', '-0.08 ft'],
+    correctAnswer: 0,
+    explanation: 'Correction per setup = -error/n × setup number = -(+0.08)/8 × 3 = -0.01 × 3 = -0.03 ft. The correction is proportional to the number of setups and opposite in sign to the error.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The curvature and refraction correction for a distance of 2 miles is (using C&R = 0.0675M² where M is in miles):',
+    options: ['0.27 ft', '0.14 ft', '0.54 ft', '0.07 ft'],
+    correctAnswer: 0,
+    explanation: 'C&R = 0.0675 × M² = 0.0675 × 2² = 0.0675 × 4 = 0.27 ft. This correction accounts for Earth\'s curvature minus the offsetting effect of atmospheric refraction.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Differential leveling rise-fall method: BS₁=4.52, FS₁=6.21, BS₂=8.33, FS₂=3.17. Starting elevation = 200.00 ft. What is the final elevation?',
+    options: ['203.47 ft', '200.00 ft', '196.53 ft', '205.00 ft'],
+    correctAnswer: 0,
+    explanation: 'Rise/Fall for each: Setup 1: BS-FS = 4.52 - 6.21 = -1.69 (fall). Setup 2: BS-FS = 8.33 - 3.17 = +5.16 (rise). Net change = -1.69 + 5.16 = +3.47 ft. Final elevation = 200.00 + 3.47 = 203.47 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A trigonometric leveling shot: horizontal distance = 800 ft, vertical angle = +6° 15\'. Instrument height = 5.4 ft, rod reading = 6.0 ft. What is the elevation difference?',
+    options: ['+86.92 ft', '+87.52 ft', '+80.00 ft', '+95.00 ft'],
+    correctAnswer: 0,
+    explanation: 'ΔElev = HD × tan(vertical angle) + HI - rod reading. ΔElev = 800 × tan(6°15\') + 5.4 - 6.0 = 800 × 0.10941 + (-0.6) = 87.53 - 0.6 = 86.93 ft ≈ 86.92 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A level circuit runs from BM 1 (elev 500.00) through 3 TPs to BM 2 (elev 512.45). The computed elevation of BM 2 is 512.33 ft. The total distance is 4.8 km. TP1 is at 1.2 km. What is the adjusted elevation of TP1?',
+    options: ['503.15 ft (approx)', '503.00 ft', '504.00 ft', '502.50 ft'],
+    correctAnswer: 0,
+    explanation: 'Closure error = known - computed = 512.45 - 512.33 = +0.12 ft. Correction at TP1 = (distance to TP1 / total distance) × error = (1.2/4.8) × 0.12 = 0.25 × 0.12 = +0.03 ft. If the computed TP1 elevation was 503.12 ft, adjusted = 503.12 + 0.03 = 503.15 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Over a distance of 5,000 ft, what is the curvature correction alone (without refraction)? Use C = 0.0239F² where F is in thousands of feet.',
+    options: ['0.60 ft', '0.30 ft', '1.20 ft', '0.12 ft'],
+    correctAnswer: 0,
+    explanation: 'C = 0.0239 × F² where F = 5.0 (thousands of feet). C = 0.0239 × 25.0 = 0.5975 ≈ 0.60 ft. Note: curvature alone is larger than the combined C&R because refraction partially offsets curvature.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A three-wire leveling observation: top wire = 6.247, middle wire = 5.832, bottom wire = 5.418. What is the rod interval and the rod reading?',
+    options: ['Interval = 0.829 ft, Reading = 5.832 ft', 'Interval = 0.415 ft, Reading = 5.832 ft', 'Interval = 0.829 ft, Reading = 6.247 ft', 'Interval = 1.658 ft, Reading = 5.832 ft'],
+    correctAnswer: 0,
+    explanation: 'Rod reading = middle wire = 5.832 ft. Rod interval = top - bottom = 6.247 - 5.418 = 0.829 ft. Check: average of top and bottom = (6.247 + 5.418)/2 = 5.8325 ≈ 5.832 (confirms middle wire). The interval is used for stadia distance: D = K × interval = 100 × 0.829 = 82.9 ft.',
+    difficulty: 'hard'
   }
 ];
 
