@@ -108,7 +108,10 @@ export default function FlashcardsPage() {
 
   // Start session mutation - now handles resume
   const startSessionMutation = useMutation({
-    mutationFn: () => apiRequest('POST', '/api/flashcards/sessions/start', { examTrack }),
+    mutationFn: async () => {
+      const res = await apiRequest('POST', '/api/flashcards/sessions/start', { examTrack });
+      return await res.json() as FlashcardReviewSession;
+    },
     onSuccess: (data: FlashcardReviewSession) => {
       console.log('Session started/resumed:', data.id);
       setCurrentSessionId(data.id);
