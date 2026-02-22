@@ -104,31 +104,49 @@ export default function FlashcardsPage() {
       return await res.json() as FlashcardReviewSession;
     },
     onSuccess: (data: FlashcardReviewSession) => {
-      console.log('Session started/resumed:', data.id);
-      setCurrentSessionId(data.id);
-      
-      // Check if this is a resume (session has userState)
-      const savedState = data.userState as FlashcardSessionState | null;
-      if (savedState && !data.completedAt) {
-        setIsResumingSession(true);
-        // Restore session state
-        setSelectedDeck(savedState.deck);
-        setSelectedDomains(savedState.domains as Domain[]);
-        setStudyMode(savedState.studyMode);
-        setShuffledIndices(savedState.shuffledIndices);
-        setCurrentIndex(savedState.currentIndex);
-        sessionStatsRef.current = {
-          cardsReviewed: savedState.masteryRatings.length,
-          masteryRatings: savedState.masteryRatings,
-          domainsReviewed: {},
-          startTime: savedState.startTime
-        };
-        toast({
-          title: "Session Resumed",
-          description: `Continuing from card ${savedState.currentIndex + 1}`,
-        });
-        setTimeout(() => setIsResumingSession(false), 100);
-      } else {
+      try {
+        if (!data || !data.id) {
+          console.error('Invalid session data received:', data);
+          return;
+        }
+        console.log('Session started/resumed:', data.id);
+        setCurrentSessionId(data.id);
+        
+        const savedState = data.userState as FlashcardSessionState | null;
+        if (savedState && !data.completedAt &&
+            savedState.deck && savedState.studyMode &&
+            Array.isArray(savedState.shuffledIndices) &&
+            Array.isArray(savedState.masteryRatings) &&
+            typeof savedState.currentIndex === 'number') {
+          setIsResumingSession(true);
+          const validDeck = (savedState.deck === 'original' || savedState.deck === 'comprehensive') ? savedState.deck : 'comprehensive';
+          const validMode = ['quick', 'challenge', 'triad', 'feynman', 'mnemonic'].includes(savedState.studyMode) ? savedState.studyMode : 'quick';
+          setSelectedDeck(validDeck as FlashcardDeck);
+          setSelectedDomains(Array.isArray(savedState.domains) ? savedState.domains.filter((d: string) => DOMAINS.includes(d as Domain)) as Domain[] : []);
+          setStudyMode(validMode as FlashcardMode);
+          setShuffledIndices(savedState.shuffledIndices);
+          setCurrentIndex(Math.max(0, savedState.currentIndex));
+          sessionStatsRef.current = {
+            cardsReviewed: savedState.masteryRatings.length,
+            masteryRatings: savedState.masteryRatings,
+            domainsReviewed: {},
+            startTime: savedState.startTime || Date.now()
+          };
+          toast({
+            title: "Session Resumed",
+            description: `Continuing from card ${savedState.currentIndex + 1}`,
+          });
+          setTimeout(() => setIsResumingSession(false), 100);
+        } else {
+          sessionStatsRef.current = {
+            cardsReviewed: 0,
+            masteryRatings: [],
+            domainsReviewed: {},
+            startTime: Date.now()
+          };
+        }
+      } catch (err) {
+        console.error('Error in session start handler:', err);
         sessionStatsRef.current = {
           cardsReviewed: 0,
           masteryRatings: [],
@@ -186,24 +204,22 @@ export default function FlashcardsPage() {
 
   // Complete session mutation
   const completeSessionMutation = useMutation({
-    mutationFn: (sessionId: string) => {
+    mutationFn: async (sessionId: string) => {
       const stats = sessionStatsRef.current;
       const avgMastery = stats.masteryRatings.length > 0
         ? stats.masteryRatings.reduce((a, b) => a + b, 0) / stats.masteryRatings.length
         : 0;
       const timeSpent = Math.floor((Date.now() - stats.startTime) / 1000);
       
-      console.log('Completing session:', sessionId, 'Cards:', stats.cardsReviewed);
-      
-      return apiRequest('POST', `/api/flashcards/sessions/${sessionId}/complete`, {
+      const res = await apiRequest('POST', `/api/flashcards/sessions/${sessionId}/complete`, {
         cardsReviewed: stats.cardsReviewed,
         avgMasteryRating: avgMastery,
         domainBreakdown: stats.domainsReviewed,
         timeSpentSeconds: timeSpent
       });
+      return await res.json();
     },
     onSuccess: (data: any) => {
-      console.log('Session completed:', data);
       setCurrentSessionId(null);
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions/today'] });
@@ -214,7 +230,7 @@ export default function FlashcardsPage() {
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });
       
-      if (data.xpAwarded) {
+      if (data?.xpAwarded) {
         toast({
           title: "Session Complete!",
           description: `You earned ${data.xpAmount} XP for this review session.`,
@@ -435,6 +451,8 @@ export default function FlashcardsPage() {
     );
   }
 
+  const safeCurrentCard = currentCard || { domain: DOMAINS[0] || 'Mathematics & Basic Science', front: '', back: '', category: '', difficulty: 'medium' as const };
+
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
@@ -529,9 +547,9 @@ export default function FlashcardsPage() {
     }
   };
 
-  const domainConfig = getDomainConfig(currentCard.domain);
+  const domainConfig = getDomainConfig(safeCurrentCard.domain);
   const Icon = domainConfig.icon;
-  const stableIndex = activeFlashcards.indexOf(currentCard);
+  const stableIndex = currentCard ? activeFlashcards.indexOf(currentCard) : -1;
   const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
   const currentCardId = `${deckPrefix}${stableIndex}`;
   const isMastered = masteredCards.has(currentCardId);
@@ -559,10 +577,10 @@ export default function FlashcardsPage() {
           >
             <Badge variant="outline" className={`mb-6 ${domainConfig.textColor} border-transparent`}>
               <Icon className="w-3 h-3 mr-1" />
-              {currentCard.domain}
+              {safeCurrentCard.domain}
             </Badge>
             <p className="text-2xl font-semibold text-foreground leading-relaxed whitespace-pre-line">
-              {currentCard.front}
+              {safeCurrentCard.front}
             </p>
             <p className="text-sm text-muted-foreground mt-8">Click to flip</p>
           </Card>
@@ -576,7 +594,7 @@ export default function FlashcardsPage() {
             }}
           >
             <p className="text-lg text-foreground leading-relaxed whitespace-pre-line font-mono">
-              {currentCard.back}
+              {safeCurrentCard.back}
             </p>
             <p className="text-sm text-muted-foreground mt-8">Click to flip back</p>
           </Card>
@@ -632,7 +650,7 @@ export default function FlashcardsPage() {
       <Card className="p-4 bg-muted">
         <p className="text-sm text-muted-foreground text-center">
           <strong>Tip:</strong> Review mastered cards periodically using spaced repetition for better retention.
-          Categories: {currentCard.category}
+          Categories: {safeCurrentCard.category}
         </p>
       </Card>
     </>
@@ -644,7 +662,7 @@ export default function FlashcardsPage() {
       if (currentSessionId) {
         sessionStatsRef.current.cardsReviewed += 1;
         sessionStatsRef.current.masteryRatings.push(3); // Default rating for enhanced modes
-        const domain = currentCard.domain;
+        const domain = safeCurrentCard.domain;
         sessionStatsRef.current.domainsReviewed[domain] = 
           (sessionStatsRef.current.domainsReviewed[domain] || 0) + 1;
         
@@ -670,21 +688,21 @@ export default function FlashcardsPage() {
       <div className="mb-6">
         {studyMode === 'triad' && (
           <TriadDrillCard
-            card={currentCard}
+            card={safeCurrentCard}
             cardId={currentCardId}
             onComplete={handleModeComplete}
           />
         )}
         {studyMode === 'feynman' && (
           <FeynmanModeCard
-            card={currentCard}
+            card={safeCurrentCard}
             cardId={currentCardId}
             onComplete={handleModeComplete}
           />
         )}
         {studyMode === 'mnemonic' && (
           <MnemonicBuilderCard
-            card={currentCard}
+            card={safeCurrentCard}
             cardId={currentCardId}
             onComplete={handleModeComplete}
           />

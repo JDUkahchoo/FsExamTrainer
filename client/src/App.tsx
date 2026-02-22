@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { ExamTrackProvider } from "@/contexts/exam-track-context";
 import { ExamLayout } from "@/components/exam-layout";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import GettingStartedPage from "@/pages/getting-started";
@@ -181,7 +182,9 @@ function AppContent() {
   return (
     <>
       <WelcomeDialog />
-      <Router />
+      <ErrorBoundary>
+        <Router />
+      </ErrorBoundary>
     </>
   );
 }

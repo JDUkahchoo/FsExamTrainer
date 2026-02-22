@@ -330,7 +330,7 @@ export function FlashcardChallengeMode({
             roundsCompleted: totalRounds,
             totalRounds,
           }).then(() => {
-            queryClient.invalidateQueries({ queryKey: ['/api/flashcards/challenge/stats', examTrack] });
+            queryClient.invalidateQueries({ queryKey: [`/api/flashcards/challenge/stats?examTrack=${examTrack}`] });
             queryClient.invalidateQueries({ queryKey: ['/api/flashcards/challenge/sessions'] });
             queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
             queryClient.invalidateQueries({ queryKey: ['/api/xp'] });

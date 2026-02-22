@@ -120,7 +120,7 @@ export default function ProgressPage() {
     overallAccuracy: number;
     domainStats: Record<string, { sessions: number; accuracy: number; totalCards: number }>;
   }>({
-    queryKey: ['/api/flashcards/challenge/stats', examTrack],
+    queryKey: [`/api/flashcards/challenge/stats?examTrack=${examTrack}`],
     refetchOnMount: 'always'
   });
 
