@@ -2685,18 +2685,19 @@ export class DatabaseStorage implements IStorage {
       const hasWeakDomainQuest = existingQuests.some(q => q.questType === 'review_weak_domain');
       if (!hasWeakDomainQuest) {
         const analytics = await this.getPersonalAnalytics(userId);
-        // Get weak domains, or use all domains as fallback if no predictions
-        let weakDomains = analytics.weaknessPredictions
-          .filter(w => w.predictedStruggle)
-          .map(w => w.domain);
+        // Prioritize domains with real data and confirmed struggle (confidence >= 70)
+        const domainsWithRealData = analytics.weaknessPredictions
+          .filter(w => w.predictedStruggle && w.confidence >= 70);
+        const domainsLowData = analytics.weaknessPredictions
+          .filter(w => w.predictedStruggle && w.confidence < 70);
         
-        // Fallback: use highest confidence struggle domain (or just pick first one)
-        if (weakDomains.length === 0 && analytics.weaknessPredictions.length > 0) {
-          // Pick the domain with highest struggle confidence, or just the first
-          const highestConfidence = analytics.weaknessPredictions.reduce((max, w) => 
-            w.confidence > max.confidence ? w : max
-          );
-          weakDomains = [highestConfidence.domain];
+        let weakDomains: string[] = [];
+        if (domainsWithRealData.length > 0) {
+          domainsWithRealData.sort((a, b) => b.confidence - a.confidence);
+          weakDomains = [domainsWithRealData[0].domain];
+        } else if (domainsLowData.length > 0 && domainsLowData.length < analytics.weaknessPredictions.length) {
+          const shuffled = domainsLowData.sort(() => Math.random() - 0.5);
+          weakDomains = [shuffled[0].domain];
         }
         
         if (weakDomains.length > 0) {
@@ -2724,20 +2725,29 @@ export class DatabaseStorage implements IStorage {
       return [...existingQuests, ...newQuests];
     }
 
-    // Get user's weak domains from analytics - use predictedStruggle flag
+    // Get user's weak domains from analytics - prioritize domains with actual quiz data
     const analytics = await this.getPersonalAnalytics(userId);
-    let weakDomains = analytics.weaknessPredictions
-      .filter(w => w.predictedStruggle)
-      .map(w => w.domain);
     
-    // Fallback: use highest confidence struggle domain (or just pick first one)
-    if (weakDomains.length === 0 && analytics.weaknessPredictions.length > 0) {
-      const highestConfidence = analytics.weaknessPredictions.reduce((max, w) => 
-        w.confidence > max.confidence ? w : max
-      );
-      weakDomains = [highestConfidence.domain];
-      console.log(`[DailyQuests] Using fallback weak domain: ${highestConfidence.domain} (confidence: ${highestConfidence.confidence}%)`);
+    // First, find domains with real data and low accuracy (most meaningful)
+    const domainsWithData = analytics.weaknessPredictions
+      .filter(w => w.predictedStruggle && w.confidence >= 70);
+    
+    // Then domains with some data but not enough (confidence 60 = less than 5 questions)
+    const domainsLowData = analytics.weaknessPredictions
+      .filter(w => w.predictedStruggle && w.confidence < 70);
+    
+    // Prioritize domains where user has practiced but struggles, over untested domains
+    let weakDomains: string[] = [];
+    if (domainsWithData.length > 0) {
+      // Sort by confidence descending (higher confidence = more certain weakness)
+      domainsWithData.sort((a, b) => b.confidence - a.confidence);
+      weakDomains = domainsWithData.map(w => w.domain);
+    } else if (domainsLowData.length > 0 && domainsLowData.length < analytics.weaknessPredictions.length) {
+      // Some domains have data but all are low-data: pick randomly from them
+      const shuffled = domainsLowData.sort(() => Math.random() - 0.5);
+      weakDomains = [shuffled[0].domain];
     }
+    // If ALL domains are low-data (new user), don't add the quest at all
 
     // Core quests that are always included
     const coreQuests = [

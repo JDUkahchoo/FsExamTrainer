@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { getDomainConfig } from '@/lib/domains';
 import { CheckCircle2, XCircle, Trophy, RotateCcw, ArrowRight, ChevronRight, Target, Play } from 'lucide-react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import type { Flashcard, Domain } from '@shared/schema';
 
@@ -147,6 +148,15 @@ export function FlashcardChallengeMode({
 }: FlashcardChallengeModeProps) {
   const { toast } = useToast();
   const BATCH_SIZE = 8;
+
+  const { data: challengeStats } = useQuery<{
+    totalSessions: number;
+    totalCards: number;
+    overallAccuracy: number;
+    domainStats: Record<string, { sessions: number; accuracy: number; cards: number }>;
+  }>({
+    queryKey: [`/api/flashcards/challenge/stats?examTrack=${examTrack}`],
+  });
 
   const cardsIdentityKey = useMemo(() => {
     return `${selectedDeck}:${selectedDomain || ''}:${examTrack}:${cards.length}`;
@@ -568,9 +578,15 @@ export function FlashcardChallengeMode({
               : 'Keep practicing - repetition builds mastery!'}
           </span>
         </div>
+        {challengeStats && challengeStats.totalSessions > 0 && (
+          <p className="text-xs text-muted-foreground mb-4" data-testid="text-total-completions">
+            Total completions: {challengeStats.totalSessions}
+            {selectedDomain && challengeStats.domainStats?.[selectedDomain] ? ` (${selectedDomain}: ${challengeStats.domainStats[selectedDomain].sessions})` : ''}
+          </p>
+        )}
         <Button onClick={handleRestart} data-testid="button-restart-challenge">
           <RotateCcw className="w-4 h-4 mr-2" />
-          Play Again
+          Start Over
         </Button>
       </Card>
     );

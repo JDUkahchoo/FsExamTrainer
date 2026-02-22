@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Save, Loader2, Plus, Trash2, Calendar, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FileText, Save, Loader2, Plus, Trash2, Calendar, BookOpen, ChevronLeft, ChevronRight, Search, StickyNote, Hash, FolderOpen } from 'lucide-react';
 import { STUDY_PLAN } from '@shared/data/studyPlan';
 import { NCEES_DOMAINS } from '@shared/domains';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -31,6 +31,8 @@ export default function NotesPage() {
   const [newNoteTitle, setNewNoteTitle] = useState('');
   const [newNoteDomain, setNewNoteDomain] = useState<string | null>(null);
   const [newNoteDay, setNewNoteDay] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'week' | 'search'>('week');
   const { toast } = useToast();
 
   const { data: allNotes = [], isLoading } = useQuery<StudyNote[]>({
@@ -84,7 +86,21 @@ export default function NotesPage() {
     ? weekNotes.filter(n => n.dayOfWeek === selectedDay)
     : weekNotes;
 
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return allNotes.filter(n => 
+      n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q)
+    );
+  }, [searchQuery, allNotes]);
+
+  const displayNotes = viewMode === 'search' ? searchResults : filteredNotes;
+
   const currentWeekPlan = STUDY_PLAN.find(plan => plan.week === selectedWeek);
+
+  const totalCharacters = allNotes.reduce((sum, n) => sum + n.content.length, 0);
+  const domainsUsed = new Set(allNotes.filter(n => n.domainNumber !== null && n.domainNumber !== undefined).map(n => n.domainNumber));
+  const weeksWithNotes = new Set(allNotes.filter(n => n.week).map(n => n.week));
 
   useEffect(() => {
     if (selectedNote) {
@@ -143,6 +159,12 @@ export default function NotesPage() {
     return acc;
   }, {} as Record<number, number>);
 
+  const getContentPreview = (content: string): string => {
+    if (!content) return 'Empty note';
+    const trimmed = content.trim().substring(0, 120);
+    return trimmed.length < content.trim().length ? trimmed + '...' : trimmed;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -160,46 +182,129 @@ export default function NotesPage() {
         </p>
       </div>
 
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <StickyNote className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-foreground" data-testid="stat-total-notes">{allNotes.length}</p>
+              <p className="text-xs text-muted-foreground">Total Notes</p>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
+              <FolderOpen className="h-5 w-5 text-green-600 dark:text-green-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-foreground" data-testid="stat-weeks-with-notes">{weeksWithNotes.size}</p>
+              <p className="text-xs text-muted-foreground">Weeks Covered</p>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10">
+              <Hash className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-foreground" data-testid="stat-domains-tagged">{domainsUsed.size}</p>
+              <p className="text-xs text-muted-foreground">Domains Tagged</p>
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
+              <FileText className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-foreground" data-testid="stat-total-chars">{totalCharacters > 1000 ? `${(totalCharacters / 1000).toFixed(1)}k` : totalCharacters}</p>
+              <p className="text-xs text-muted-foreground">Characters Written</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
           <Button
-            size="icon"
-            variant="outline"
-            onClick={() => setSelectedWeek(Math.max(1, selectedWeek - 1))}
-            disabled={selectedWeek <= 1}
-            data-testid="button-prev-week"
+            size="sm"
+            variant={viewMode === 'week' ? 'default' : 'outline'}
+            onClick={() => { setViewMode('week'); setSearchQuery(''); }}
+            data-testid="button-view-week"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <Calendar className="w-4 h-4 mr-1" />
+            By Week
           </Button>
-          <Select
-            value={selectedWeek.toString()}
-            onValueChange={(value) => {
-              setSelectedWeek(parseInt(value));
-              setSelectedNote(null);
-              setSelectedDay(null);
-            }}
-          >
-            <SelectTrigger className="w-64" data-testid="select-week">
-              <SelectValue placeholder="Select week" />
-            </SelectTrigger>
-            <SelectContent>
-              {STUDY_PLAN.map(plan => (
-                <SelectItem key={plan.week} value={plan.week.toString()}>
-                  Week {plan.week}: {plan.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Button
-            size="icon"
-            variant="outline"
-            onClick={() => setSelectedWeek(Math.min(STUDY_PLAN.length, selectedWeek + 1))}
-            disabled={selectedWeek >= STUDY_PLAN.length}
-            data-testid="button-next-week"
+            size="sm"
+            variant={viewMode === 'search' ? 'default' : 'outline'}
+            onClick={() => setViewMode('search')}
+            data-testid="button-view-search"
           >
-            <ChevronRight className="w-4 h-4" />
+            <Search className="w-4 h-4 mr-1" />
+            Search All
           </Button>
         </div>
+
+        {viewMode === 'week' && (
+          <div className="flex items-center gap-2">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => setSelectedWeek(Math.max(1, selectedWeek - 1))}
+              disabled={selectedWeek <= 1}
+              data-testid="button-prev-week"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <Select
+              value={selectedWeek.toString()}
+              onValueChange={(value) => {
+                setSelectedWeek(parseInt(value));
+                setSelectedNote(null);
+                setSelectedDay(null);
+              }}
+            >
+              <SelectTrigger className="w-64" data-testid="select-week">
+                <SelectValue placeholder="Select week" />
+              </SelectTrigger>
+              <SelectContent>
+                {STUDY_PLAN.map(plan => (
+                  <SelectItem key={plan.week} value={plan.week.toString()}>
+                    Week {plan.week}: {plan.title} {notesCountByWeek[plan.week] ? `(${notesCountByWeek[plan.week]})` : ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => setSelectedWeek(Math.min(STUDY_PLAN.length, selectedWeek + 1))}
+              disabled={selectedWeek >= STUDY_PLAN.length}
+              data-testid="button-next-week"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+
+        {viewMode === 'search' && (
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search all notes by title or content..."
+              className="pl-9"
+              data-testid="input-search-notes"
+            />
+          </div>
+        )}
 
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
@@ -266,47 +371,74 @@ export default function NotesPage() {
         </Dialog>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        <Button
-          variant={selectedDay === null ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setSelectedDay(null)}
-          data-testid="button-filter-all"
-        >
-          All Days
-        </Button>
-        {DAYS_OF_WEEK.map(day => (
+      {viewMode === 'week' && (
+        <div className="flex flex-wrap gap-2 mb-6">
           <Button
-            key={day}
-            variant={selectedDay === day ? 'default' : 'outline'}
+            variant={selectedDay === null ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setSelectedDay(day)}
-            data-testid={`button-filter-${day.toLowerCase()}`}
+            onClick={() => setSelectedDay(null)}
+            data-testid="button-filter-all"
           >
-            {day}
+            All Days
           </Button>
-        ))}
-      </div>
+          {DAYS_OF_WEEK.map(day => (
+            <Button
+              key={day}
+              variant={selectedDay === day ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setSelectedDay(day)}
+              data-testid={`button-filter-${day.toLowerCase()}`}
+            >
+              {day}
+            </Button>
+          ))}
+        </div>
+      )}
+
+      {viewMode === 'week' && currentWeekPlan && (
+        <Card className="p-4 mb-6 bg-muted/30 border-dashed">
+          <div className="flex items-start gap-3">
+            <BookOpen className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Week {selectedWeek}: {currentWeekPlan.title}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Domains: {currentWeekPlan.domains.join(', ')}
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="space-y-3">
           <h3 className="font-semibold text-foreground flex items-center gap-2">
             <FileText className="w-4 h-4" />
-            Notes for Week {selectedWeek}
-            <Badge variant="secondary">{filteredNotes.length}</Badge>
+            {viewMode === 'search' 
+              ? (searchQuery ? `Search Results` : 'Type to search')
+              : `Notes for Week ${selectedWeek}`
+            }
+            {displayNotes.length > 0 && <Badge variant="secondary">{displayNotes.length}</Badge>}
           </h3>
           
-          {filteredNotes.length === 0 ? (
+          {displayNotes.length === 0 ? (
             <Card className="p-6 text-center">
-              <p className="text-muted-foreground mb-4">No notes for this {selectedDay ? `${selectedDay}day` : 'week'} yet.</p>
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create First Note
-              </Button>
+              <BookOpen className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground mb-4">
+                {viewMode === 'search' 
+                  ? (searchQuery ? 'No notes match your search.' : 'Search across all your study notes.')
+                  : `No notes for this ${selectedDay ? `${selectedDay}day` : 'week'} yet.`
+                }
+              </p>
+              {viewMode === 'week' && (
+                <Button variant="outline" onClick={() => setIsCreateDialogOpen(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create First Note
+                </Button>
+              )}
             </Card>
           ) : (
             <div className="space-y-2 max-h-[600px] overflow-y-auto pr-2">
-              {filteredNotes.map(note => (
+              {displayNotes.map(note => (
                 <Card
                   key={note.id}
                   className={`p-4 cursor-pointer transition-all hover-elevate ${selectedNote?.id === note.id ? 'ring-2 ring-primary' : ''}`}
@@ -316,22 +448,27 @@ export default function NotesPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-foreground truncate">{note.title}</h4>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                        {getContentPreview(note.content)}
+                      </p>
                       <div className="flex flex-wrap items-center gap-2 mt-2">
+                        {viewMode === 'search' && note.week && (
+                          <Badge variant="outline" className="text-xs">
+                            W{note.week}
+                          </Badge>
+                        )}
                         {note.dayOfWeek && (
-                          <Badge variant="outline">
+                          <Badge variant="outline" className="text-xs">
                             <Calendar className="w-3 h-3 mr-1" />
                             {note.dayOfWeek}
                           </Badge>
                         )}
                         {note.domainNumber !== null && note.domainNumber !== undefined && (
-                          <Badge className={getDomainBadgeClass(note.domainNumber)}>
+                          <Badge className={`text-xs ${getDomainBadgeClass(note.domainNumber)}`}>
                             D{note.domainNumber}
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        {note.content.length} characters
-                      </p>
                     </div>
                   </div>
                 </Card>
@@ -347,6 +484,11 @@ export default function NotesPage() {
                 <div className="flex-1 min-w-0">
                   <h2 className="text-xl font-semibold text-foreground truncate">{selectedNote.title}</h2>
                   <div className="flex flex-wrap items-center gap-2 mt-2">
+                    {selectedNote.week && (
+                      <Badge variant="outline" className="text-xs">
+                        Week {selectedNote.week}
+                      </Badge>
+                    )}
                     {selectedNote.dayOfWeek && (
                       <Badge variant="outline">
                         <Calendar className="w-3 h-3 mr-1" />
@@ -419,10 +561,12 @@ export default function NotesPage() {
                   setSelectedWeek(plan.week);
                   setSelectedNote(null);
                   setSelectedDay(null);
+                  setViewMode('week');
+                  setSearchQuery('');
                 }}
                 className={`
                   p-2 rounded-md border text-center transition-all hover-elevate
-                  ${selectedWeek === plan.week ? 'border-primary bg-primary/10' : 'border-border'}
+                  ${selectedWeek === plan.week && viewMode === 'week' ? 'border-primary bg-primary/10' : 'border-border'}
                   ${count > 0 ? 'bg-success/5' : ''}
                 `}
                 data-testid={`button-week-${plan.week}`}

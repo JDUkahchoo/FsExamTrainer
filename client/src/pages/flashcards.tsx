@@ -37,13 +37,62 @@ export default function FlashcardsPage() {
   const domainsFromUrl = urlParams.get('domains');
   const { examTrack, domains: examDomains, examName } = useExamTrack();
   
-  const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>(examTrack === 'ps' ? 'original' : 'comprehensive');
-  const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
-  const [selectedDomains, setSelectedDomains] = useState<Domain[]>([]);
+  const getSavedFlashcardState = () => {
+    try {
+      const saved = localStorage.getItem(`flashcard-page-state-${examTrack}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Date.now() - (parsed.savedAt || 0) < 24 * 60 * 60 * 1000) return parsed;
+        localStorage.removeItem(`flashcard-page-state-${examTrack}`);
+      }
+    } catch {}
+    return null;
+  };
+  const savedPageState = useRef(getSavedFlashcardState());
+  const prevExamTrack = useRef(examTrack);
+
+  const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>(
+    savedPageState.current?.deck || (examTrack === 'ps' ? 'original' : 'comprehensive')
+  );
+  const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>(
+    savedPageState.current?.domain || 'all'
+  );
+  const [selectedDomains, setSelectedDomains] = useState<Domain[]>(
+    savedPageState.current?.domains || []
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
-  const [studyMode, setStudyMode] = useState<FlashcardMode>('quick');
+  const [studyMode, setStudyMode] = useState<FlashcardMode>(
+    savedPageState.current?.studyMode || 'quick'
+  );
+
+  useEffect(() => {
+    if (prevExamTrack.current !== examTrack) {
+      prevExamTrack.current = examTrack;
+      const newSaved = getSavedFlashcardState();
+      savedPageState.current = newSaved;
+      setSelectedDeck(newSaved?.deck || (examTrack === 'ps' ? 'original' : 'comprehensive'));
+      setSelectedDomain(newSaved?.domain || 'all');
+      setSelectedDomains(newSaved?.domains || []);
+      setStudyMode(newSaved?.studyMode || 'quick');
+      setCurrentIndex(0);
+      setIsFlipped(false);
+      setShuffledIndices([]);
+    }
+  }, [examTrack]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(`flashcard-page-state-${examTrack}`, JSON.stringify({
+        deck: selectedDeck,
+        domain: selectedDomain,
+        domains: selectedDomains,
+        studyMode,
+        savedAt: Date.now(),
+      }));
+    } catch {}
+  }, [selectedDeck, selectedDomain, selectedDomains, studyMode, examTrack]);
   const { logActivity } = useActivityLogger();
   const { toast } = useToast();
 
@@ -341,12 +390,16 @@ export default function FlashcardsPage() {
     }
   }, [domainsFromUrl]);
 
+  const initialExamTrackRef = useRef(examTrack);
   useEffect(() => {
     if (examTrack === 'ps') {
       setSelectedDeck('original');
     }
-    setSelectedDomain('all');
-    setSelectedDomains([]);
+    if (examTrack !== initialExamTrackRef.current) {
+      setSelectedDomain('all');
+      setSelectedDomains([]);
+      initialExamTrackRef.current = examTrack;
+    }
   }, [examTrack]);
 
   const examFilteredFlashcards = useMemo(() => {
