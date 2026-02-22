@@ -1,4 +1,4 @@
-import { BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library, ScrollText } from 'lucide-react';
+import { BookOpen, Brain, Calculator, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, MessageSquare, Star, HelpCircle, Library, ScrollText, Target } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,7 @@ const menuItems = [
   { id: '/study-plan', icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan' },
   { id: '/readings', icon: ScrollText, label: 'Study Readings', testId: 'nav-readings' },
   { id: '/quiz', icon: Brain, label: 'Practice Quiz', testId: 'nav-quiz' },
+  { id: '/drill', icon: Target, label: 'Weak Area Drill', testId: 'nav-drill' },
   { id: '/flashcards', icon: ClipboardCheck, label: 'Flashcards', testId: 'nav-flashcards' },
   { id: '/exam', icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam' },
   { id: '/notes', icon: FileText, label: 'Study Notes', testId: 'nav-notes' },
@@ -27,6 +28,7 @@ const menuItems = [
   { id: '/resources', icon: BookMarked, label: 'Resources', testId: 'nav-resources' },
   { id: '/reference-companion', icon: Library, label: 'Reference Companion', testId: 'nav-reference-companion' },
   { id: '/procedures', icon: ClipboardList, label: 'Procedures & Standards', testId: 'nav-procedures' },
+  { id: '/formulas', icon: Calculator, label: 'Formula Reference', testId: 'nav-formulas' },
 ];
 
 const communityItems = [

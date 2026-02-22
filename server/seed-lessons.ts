@@ -1344,6 +1344,83 @@ async function seedLessons() {
         { type: "multiple_choice", text: "Inverse interpolation finds:", options: ["Value given position", "Position given value", "Neither", "Both"], answer: "1", explanation: "Inverse interpolation: given f(x)=y, find x (opposite of normal interpolation)", points: 10 },
         { type: "multiple_choice", text: "Extrapolation extends:", options: ["Within known data", "Beyond known data", "Exactly at data points", "Nowhere"], answer: "1", explanation: "Extrapolation predicts beyond data range; less reliable than interpolation", points: 10 }
       ]
+    },
+    // ========== ADDITIONAL FS COMPUTATION LESSONS ==========
+    {
+      domainNumber: 3,
+      domain: DOMAINS[3],
+      title: "Photogrammetry Scale and Displacement Calculations",
+      description: "Calculate photo scale, relief displacement, and flying height for aerial mapping",
+      content: "Photogrammetry uses aerial photographs to obtain reliable measurements. Photo scale is determined by the ratio of the camera focal length (f) to the flying height above ground level (H): Scale = f/H. Relief displacement causes objects above the datum to appear shifted radially outward from the photo center; it is calculated as d = h·r/H, where h is the object height, r is the radial distance from the principal point, and H is the flying height above the base of the object. Understanding these relationships is essential for planning aerial surveys, determining ground distances from photo measurements, and correcting for terrain effects in photogrammetric mapping.",
+      difficulty: "hard",
+      orderIndex: 74,
+      estimatedMinutes: 25,
+      suggestedWeek: 10,
+      examTrack: 'fs',
+      questions: [
+        { type: "fill_in_blank", text: "A camera with a 6-inch focal length is flown at 6000 ft above ground level. The photo scale denominator is 1:___.", answer: "12000", explanation: "Photo scale = f/H. Convert focal length to feet: 6 in = 0.5 ft. Scale = 0.5/6000 = 1/12000. The scale denominator is 12000.", points: 10 },
+        { type: "fill_in_blank", text: "On a 1:12000 scale photo, a road segment measures 2.5 inches. The ground distance in feet is ___.", answer: "2500", explanation: "Ground distance = photo distance × scale denominator. 2.5 inches × 12000 = 30000 inches = 2500 feet.", points: 10 },
+        { type: "multiple_choice", text: "The formula for relief displacement on a vertical aerial photograph is:", options: ["d = f·r/H", "d = h·r/H", "d = h·f/R", "d = H·r/h"], answer: "1", explanation: "Relief displacement d = h·r/H, where h = height of object above datum, r = radial distance from principal point to top of object, and H = flying height above the base of the object.", points: 10 },
+        { type: "fill_in_blank", text: "To achieve a photo scale of 1:6000 with a 6-inch (152.4 mm) focal length camera, the required flying height above ground level in feet is ___.", answer: "3000", explanation: "Scale = f/H, so H = f × scale denominator. f = 6 inches = 0.5 ft. H = 0.5 × 6000 = 3000 ft AGL.", points: 10 },
+        { type: "fill_in_blank", text: "A 200-ft tall building is located 3.5 inches from the principal point on a photo taken at H = 7000 ft AGL. The relief displacement in inches is ___ (round to 2 decimal places).", answer: "0.10", explanation: "d = h·r/H = 200 × 3.5 / 7000 = 700/7000 = 0.10 inches.", points: 10 }
+      ]
+    },
+    {
+      domainNumber: 3,
+      domain: DOMAINS[3],
+      title: "Horizontal and Vertical Curve Calculations",
+      description: "Compute curve elements for horizontal and vertical alignment in route surveying",
+      content: "Route surveying requires precise calculation of horizontal and vertical curves to ensure safe and efficient roadway design. Horizontal curves are circular arcs defined by elements including radius (R), degree of curve (D), tangent distance (T), curve length (L), and deflection angle (Δ). The degree of curve by the arc definition is D = 5729.578/R. The tangent distance is T = R·tan(Δ/2), and curve length is L = 100·Δ/D. Vertical curves are parabolic and connect grades g1 and g2 over a length L. The high or low point station is found at x = g1·L/(g1 - g2) from the BVC, and elevations along the curve are computed using the parabolic equation. Mastery of these calculations is critical for the FS exam and professional practice.",
+      difficulty: "hard",
+      orderIndex: 75,
+      estimatedMinutes: 30,
+      suggestedWeek: 11,
+      examTrack: 'fs',
+      questions: [
+        { type: "fill_in_blank", text: "For a horizontal curve with R = 1500 ft, the degree of curve (arc definition) is ___ degrees (round to 2 decimal places).", answer: "3.82", explanation: "D = 5729.578/R = 5729.578/1500 = 3.8197 ≈ 3.82 degrees.", points: 10 },
+        { type: "fill_in_blank", text: "A horizontal curve has R = 1000 ft and a deflection angle Δ = 30°. The tangent distance T in feet is ___ (round to nearest whole number).", answer: "268", explanation: "T = R·tan(Δ/2) = 1000 × tan(15°) = 1000 × 0.2679 = 267.9 ≈ 268 ft.", points: 10 },
+        { type: "fill_in_blank", text: "On a 600-ft vertical curve, g1 = +3% and g2 = -1%. The high point is located ___ ft from the BVC (round to nearest whole number).", answer: "450", explanation: "x = g1·L/(g1 - g2) = 3 × 600/(3 - (-1)) = 1800/4 = 450 ft from BVC.", points: 10 },
+        { type: "multiple_choice", text: "On a 400-ft equal-tangent vertical curve with BVC elevation 520.00 ft, g1 = +2%, and g2 = -2%, the elevation at the midpoint (station 200 ft from BVC) is:", options: ["522.00 ft", "521.00 ft", "520.00 ft", "523.00 ft"], answer: "0", explanation: "Elevation on tangent at midpoint = 520.00 + 0.02 × 200 = 524.00 ft. The rate of change of grade r = (g2 - g1)/L = (-0.02 - 0.02)/400 = -0.0001/ft. Curve correction = (r/2)·x² = (-0.0001/2)·200² = -2.00 ft. Elevation = 524.00 - 2.00 = 522.00 ft.", points: 10 },
+        { type: "fill_in_blank", text: "A horizontal curve has D = 4° and a deflection angle Δ = 24°. The curve length L is ___ ft.", answer: "600", explanation: "L = 100·Δ/D = 100 × 24/4 = 600 ft.", points: 10 }
+      ]
+    },
+    {
+      domainNumber: 3,
+      domain: DOMAINS[3],
+      title: "Coordinate Geometry (COGO) Calculations",
+      description: "Perform inverse, radiation, and area computations using coordinate geometry",
+      content: "Coordinate Geometry (COGO) is fundamental to modern surveying, providing mathematical methods to compute positions, distances, directions, and areas from coordinate data. The inverse computation finds the distance and bearing between two known points: distance = √(ΔN² + ΔE²) and azimuth = arctan(ΔE/ΔN). Radiation computes new coordinates from a known point using bearing and distance: N₂ = N₁ + d·cos(Az) and E₂ = E₁ + d·sin(Az). Latitude is the north-south component of a line (d·cos Az) and departure is the east-west component (d·sin Az). The coordinate method for area uses the cross-multiply formula: 2A = Σ(Nᵢ·Eᵢ₊₁ - Nᵢ₊₁·Eᵢ). These COGO calculations form the backbone of boundary, traverse, and construction surveying computations.",
+      difficulty: "hard",
+      orderIndex: 76,
+      estimatedMinutes: 25,
+      suggestedWeek: 12,
+      examTrack: 'fs',
+      questions: [
+        { type: "fill_in_blank", text: "Point A is at N=5000.00, E=5000.00 and Point B is at N=5300.00, E=5400.00. The distance A to B is ___ ft (round to 2 decimal places).", answer: "500.00", explanation: "ΔN = 300.00, ΔE = 400.00. Distance = √(300² + 400²) = √(90000 + 160000) = √250000 = 500.00 ft.", points: 10 },
+        { type: "multiple_choice", text: "Given ΔN = +300 and ΔE = +400, the azimuth from A to B is:", options: ["N 53°08' E", "S 53°08' E", "N 36°52' E", "S 36°52' W"], answer: "0", explanation: "Azimuth = arctan(ΔE/ΔN) = arctan(400/300) = arctan(1.3333) = 53°08'. Since both ΔN and ΔE are positive, the direction is in the NE quadrant: N 53°08' E.", points: 10 },
+        { type: "fill_in_blank", text: "From point A (N=1000.00, E=2000.00), a line bears N 45°00' E for 141.42 ft. The Easting of the new point is ___ (round to 2 decimal places).", answer: "2100.00", explanation: "Departure = d·sin(Az) = 141.42 × sin(45°) = 141.42 × 0.7071 = 100.00. E₂ = 2000.00 + 100.00 = 2100.00.", points: 10 },
+        { type: "multiple_choice", text: "Using the coordinate method, the area of a triangle with vertices (0,0), (400,0), and (0,300) is:", options: ["60,000 sq ft", "120,000 sq ft", "70,000 sq ft", "140,000 sq ft"], answer: "0", explanation: "2A = |(N₁(E₂-E₃) + N₂(E₃-E₁) + N₃(E₁-E₂))| = |0(0-300) + 400(300-0) + 0(0-0)| = |0 + 120000 + 0| = 120000. A = 60,000 sq ft.", points: 10 },
+        { type: "multiple_choice", text: "In traverse computations, the latitude of a line is defined as:", options: ["The east-west component (d·sin Az)", "The north-south component (d·cos Az)", "The total length of the line", "The elevation difference along the line"], answer: "1", explanation: "Latitude = d·cos(Azimuth), the north-south projection of a line. Departure = d·sin(Azimuth), the east-west projection.", points: 10 }
+      ]
+    },
+    {
+      domainNumber: 2,
+      domain: DOMAINS[2],
+      title: "Differential and Trigonometric Leveling Computations",
+      description: "Compute elevations using differential and trigonometric leveling methods",
+      content: "Leveling determines elevation differences between points. The Height of Instrument (HI) method computes HI = known elevation + backsight (BS), then unknown elevation = HI - foresight (FS). For long lines, the combined curvature and refraction correction is approximately 0.0206F² (feet, with F in miles) or 0.0675M² (meters, with M in km). Trigonometric leveling uses the relationship ΔElev = SD·cos(zenith angle), where SD is the slope distance and the zenith angle is measured from vertical. Leveling loop closure is computed as the algebraic sum of all elevation differences around a closed loop; this is compared against the allowable tolerance, typically computed as C = k·√(number of setups or distance in miles/km). The rise and fall method provides an arithmetic check on leveling computations by independently summing rises and falls.",
+      difficulty: "hard",
+      orderIndex: 77,
+      estimatedMinutes: 25,
+      suggestedWeek: 9,
+      examTrack: 'fs',
+      questions: [
+        { type: "fill_in_blank", text: "A benchmark has elevation 450.00 ft. The backsight reading is 6.32 ft. The HI is ___ ft.", answer: "456.32", explanation: "HI = Elevation + BS = 450.00 + 6.32 = 456.32 ft.", points: 10 },
+        { type: "fill_in_blank", text: "The combined curvature and refraction correction for a distance of 2 miles is ___ ft (round to 2 decimal places, use formula 0.0206F²).", answer: "0.08", explanation: "C&R = 0.0206 × F² = 0.0206 × 2² = 0.0206 × 4 = 0.0824 ≈ 0.08 ft.", points: 10 },
+        { type: "fill_in_blank", text: "A slope distance of 500.00 ft is measured at a zenith angle of 85°. The elevation difference is ___ ft (round to 2 decimal places).", answer: "43.58", explanation: "ΔElev = SD × cos(zenith angle) = 500.00 × cos(85°) = 500.00 × 0.08716 = 43.58 ft.", points: 10 },
+        { type: "multiple_choice", text: "A leveling loop with 16 setups closes with an error of 0.03 ft. If the allowable closure is 0.01√n ft where n = number of setups, is the loop within tolerance?", options: ["Yes, 0.03 < 0.04", "No, 0.03 > 0.02", "Yes, 0.03 = 0.03", "Cannot be determined"], answer: "0", explanation: "Allowable closure = 0.01√16 = 0.01 × 4 = 0.04 ft. The actual closure of 0.03 ft < 0.04 ft, so the loop is within tolerance.", points: 10 },
+        { type: "multiple_choice", text: "Which leveling method provides a built-in arithmetic check by independently summing intermediate rises and falls?", options: ["Rise and fall method", "HI method", "Trigonometric method", "Reciprocal method"], answer: "0", explanation: "The rise and fall method computes the rise or fall between consecutive readings, providing an arithmetic check: Σ(rises) - Σ(falls) should equal the difference between the last and first elevations.", points: 10 }
+      ]
     }
   ];
 

@@ -10,6 +10,7 @@ import { STUDY_READINGS_D7_EXPANDED } from './studyReadingsD7Expanded';
 import { STUDY_READINGS_D1D2_EXPANDED } from './studyReadingsD1D2Expanded';
 import { STUDY_READINGS_STANDARDS } from './studyReadingsStandards';
 import { STUDY_READINGS_PS } from './studyReadingsPS';
+import { STUDY_READINGS_COMPUTATIONS } from './studyReadingsComputations';
 
 const STUDY_READINGS_BASE: ReadingModule[] = [
   {
@@ -684,4 +685,5 @@ export const STUDY_READINGS: ReadingModule[] = [
   ...STUDY_READINGS_D1D2_EXPANDED,
   ...STUDY_READINGS_STANDARDS,
   ...STUDY_READINGS_PS,
+  ...STUDY_READINGS_COMPUTATIONS,
 ];

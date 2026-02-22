@@ -33,8 +33,10 @@ import LessonPage from "@/pages/lesson";
 import ReferenceCompanionPage from "@/pages/reference-companion";
 import SettingsPage from "@/pages/settings";
 import ProceduresPage from "@/pages/procedures";
+import FormulaReferencePage from "@/pages/formula-reference";
 import StudyReadingsPage from "@/pages/study-readings";
 import StudyReadingPage from "@/pages/study-reading";
+import WeakAreaDrillPage from "@/pages/weak-area-drill";
 
 function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' }) {
   return (
@@ -92,6 +94,7 @@ function Router() {
       <Route path="/app/fs/readings" component={withExamTrack(StudyReadingsPage, 'fs')} />
       <Route path="/app/fs/readings/:id" component={withExamTrack(StudyReadingPage, 'fs')} />
       <Route path="/app/fs/quiz" component={withExamTrack(PracticeQuizPage, 'fs')} />
+      <Route path="/app/fs/drill" component={withExamTrack(WeakAreaDrillPage, 'fs')} />
       <Route path="/app/fs/flashcards" component={withExamTrack(FlashcardsPage, 'fs')} />
       <Route path="/app/fs/exam" component={withExamTrack(PracticeExamPage, 'fs')} />
       <Route path="/app/fs/notes" component={withExamTrack(NotesPage, 'fs')} />
@@ -99,6 +102,7 @@ function Router() {
       <Route path="/app/fs/resources" component={withExamTrack(ResourcesPage, 'fs')} />
       <Route path="/app/fs/reference-companion" component={withExamTrack(ReferenceCompanionPage, 'fs')} />
       <Route path="/app/fs/procedures" component={withExamTrack(ProceduresPage, 'fs')} />
+      <Route path="/app/fs/formulas" component={withExamTrack(FormulaReferencePage, 'fs')} />
       <Route path="/app/fs/pretest" component={withExamTrack(PretestPage, 'fs')} />
       <Route path="/app/fs/pretest/results" component={withExamTrack(PretestResultsPage, 'fs')} />
       <Route path="/app/fs/settings" component={withExamTrack(SettingsPage, 'fs')} />
@@ -114,6 +118,7 @@ function Router() {
       <Route path="/app/ps/readings" component={withExamTrack(StudyReadingsPage, 'ps')} />
       <Route path="/app/ps/readings/:id" component={withExamTrack(StudyReadingPage, 'ps')} />
       <Route path="/app/ps/quiz" component={withExamTrack(PracticeQuizPage, 'ps')} />
+      <Route path="/app/ps/drill" component={withExamTrack(WeakAreaDrillPage, 'ps')} />
       <Route path="/app/ps/flashcards" component={withExamTrack(FlashcardsPage, 'ps')} />
       <Route path="/app/ps/exam" component={withExamTrack(PracticeExamPage, 'ps')} />
       <Route path="/app/ps/notes" component={withExamTrack(NotesPage, 'ps')} />
@@ -121,6 +126,7 @@ function Router() {
       <Route path="/app/ps/resources" component={withExamTrack(ResourcesPage, 'ps')} />
       <Route path="/app/ps/reference-companion" component={withExamTrack(ReferenceCompanionPage, 'ps')} />
       <Route path="/app/ps/procedures" component={withExamTrack(ProceduresPage, 'ps')} />
+      <Route path="/app/ps/formulas" component={withExamTrack(FormulaReferencePage, 'ps')} />
       <Route path="/app/ps/pretest" component={withExamTrack(PretestPage, 'ps')} />
       <Route path="/app/ps/pretest/results" component={withExamTrack(PretestResultsPage, 'ps')} />
       <Route path="/app/ps/settings" component={withExamTrack(SettingsPage, 'ps')} />
