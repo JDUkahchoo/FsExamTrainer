@@ -42,14 +42,20 @@ export default function FlashcardsPage() {
       const saved = localStorage.getItem(`flashcard-page-state-${examTrack}`);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Date.now() - (parsed.savedAt || 0) < 24 * 60 * 60 * 1000) return parsed;
+        if (Date.now() - (parsed.savedAt || 0) < 24 * 60 * 60 * 1000) {
+          const validDeck = parsed.deck === 'original' || parsed.deck === 'comprehensive' ? parsed.deck : undefined;
+          const validMode = ['quick', 'challenge', 'triad', 'feynman', 'mnemonic'].includes(parsed.studyMode) ? parsed.studyMode : undefined;
+          const validDomain = parsed.domain === 'all' || (typeof parsed.domain === 'string' && DOMAINS.includes(parsed.domain as Domain)) ? parsed.domain : 'all';
+          return { deck: validDeck, studyMode: validMode, domain: validDomain, domains: Array.isArray(parsed.domains) ? parsed.domains : [] };
+        }
         localStorage.removeItem(`flashcard-page-state-${examTrack}`);
       }
-    } catch {}
+    } catch {
+      try { localStorage.removeItem(`flashcard-page-state-${examTrack}`); } catch {}
+    }
     return null;
   };
   const savedPageState = useRef(getSavedFlashcardState());
-  const prevExamTrack = useRef(examTrack);
 
   const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>(
     savedPageState.current?.deck || (examTrack === 'ps' ? 'original' : 'comprehensive')
@@ -66,21 +72,6 @@ export default function FlashcardsPage() {
   const [studyMode, setStudyMode] = useState<FlashcardMode>(
     savedPageState.current?.studyMode || 'quick'
   );
-
-  useEffect(() => {
-    if (prevExamTrack.current !== examTrack) {
-      prevExamTrack.current = examTrack;
-      const newSaved = getSavedFlashcardState();
-      savedPageState.current = newSaved;
-      setSelectedDeck(newSaved?.deck || (examTrack === 'ps' ? 'original' : 'comprehensive'));
-      setSelectedDomain(newSaved?.domain || 'all');
-      setSelectedDomains(newSaved?.domains || []);
-      setStudyMode(newSaved?.studyMode || 'quick');
-      setCurrentIndex(0);
-      setIsFlipped(false);
-      setShuffledIndices([]);
-    }
-  }, [examTrack]);
 
   useEffect(() => {
     try {
@@ -393,15 +384,9 @@ export default function FlashcardsPage() {
     }
   }, [domainsFromUrl]);
 
-  const initialExamTrackRef = useRef(examTrack);
   useEffect(() => {
     if (examTrack === 'ps') {
       setSelectedDeck('original');
-    }
-    if (examTrack !== initialExamTrackRef.current) {
-      setSelectedDomain('all');
-      setSelectedDomains([]);
-      initialExamTrackRef.current = examTrack;
     }
   }, [examTrack]);
 
