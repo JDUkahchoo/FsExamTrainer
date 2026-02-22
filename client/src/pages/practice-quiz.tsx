@@ -55,6 +55,7 @@ export default function PracticeQuizPage() {
   const [shuffledOptionsMap, setShuffledOptionsMap] = useState<Record<number, { options: string[]; correctIndex: number }>>({});
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const [quizSessionId, setQuizSessionId] = useState<string | null>(null);
+  const [shuffleSeedBase, setShuffleSeedBase] = useState<number>(0);
   const { logActivity } = useActivityLogger();
   const resumeInProgressRef = useRef(false);
 
@@ -72,7 +73,7 @@ export default function PracticeQuizPage() {
   });
 
   const saveDraftMutation = useMutation({
-    mutationFn: (draft: { domain: string; examTrack: string; sessionId: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number }) =>
+    mutationFn: (draft: { domain: string; examTrack: string; sessionId: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number; shuffleSeed: number }) =>
       apiRequest('POST', '/api/quiz/draft', draft),
     retry: 1,
     retryDelay: 1000,
@@ -151,7 +152,8 @@ export default function PracticeQuizPage() {
         questionIds: quizQuestions.map(q => q.id),
         currentQuestionIndex: indexOverride !== undefined ? indexOverride : currentQuestionIndex,
         userAnswers,
-        timeSpentSeconds: elapsedSeconds
+        timeSpentSeconds: elapsedSeconds,
+        shuffleSeed: shuffleSeedBase
       });
     }
   };
@@ -208,12 +210,12 @@ export default function PracticeQuizPage() {
       return { ...question, id };
     }).filter(Boolean) as Array<typeof QUIZ_QUESTIONS[0] & { id: string }>;
 
-    // Shuffle answer options for resumed questions using stable seed based on question ID
+    // Use the saved shuffle seed from the draft to reproduce the exact same option ordering
+    const savedSeed = draftData.shuffleSeed || 0;
+    setShuffleSeedBase(savedSeed);
     const shuffledMap: Record<number, { options: string[]; correctIndex: number }> = {};
     reconstructedQuestions.forEach((q, index) => {
-      // Use question ID hash as seed for consistent shuffling per question
-      const seed = q.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) + index;
-      const shuffled = shuffleQuestionOptions(q, seed);
+      const shuffled = shuffleQuestionOptions(q, savedSeed + index);
       shuffledMap[index] = {
         options: shuffled.shuffledOptions,
         correctIndex: shuffled.shuffledCorrectIndex
@@ -300,6 +302,7 @@ export default function PracticeQuizPage() {
     
     const shuffledMap: Record<number, { options: string[]; correctIndex: number }> = {};
     const seedBase = Date.now();
+    setShuffleSeedBase(seedBase);
     variedQuestions.forEach((q, index) => {
       const shuffled = shuffleQuestionOptions(q, seedBase + index);
       shuffledMap[index] = {

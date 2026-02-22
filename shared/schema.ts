@@ -754,6 +754,7 @@ export const quizDrafts = pgTable("quiz_drafts", {
   timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
   examTrack: text("exam_track").notNull().default('fs'),
   sessionId: varchar("session_id").notNull().default(sql`gen_random_uuid()`),
+  shuffleSeed: integer("shuffle_seed").notNull().default(0),
   startedAt: timestamp("started_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
