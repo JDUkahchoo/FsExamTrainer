@@ -89,7 +89,6 @@ export default function FlashcardsPage() {
 
   // Session tracking state
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
-  const [isResumingSession, setIsResumingSession] = useState(false);
   const sessionStatsRef = useRef<SessionStats>({
     cardsReviewed: 0,
     masteryRatings: [],
@@ -97,7 +96,7 @@ export default function FlashcardsPage() {
     startTime: Date.now()
   });
 
-  // Start session mutation - now handles resume
+  // Start session mutation - always starts fresh (deck/domain/mode restored from localStorage instead)
   const startSessionMutation = useMutation({
     mutationFn: async () => {
       const res = await apiRequest('POST', '/api/flashcards/sessions/start', { examTrack });
@@ -109,50 +108,15 @@ export default function FlashcardsPage() {
           console.error('Invalid session data received:', data);
           return;
         }
-        console.log('Session started/resumed:', data.id);
         setCurrentSessionId(data.id);
-        
-        const savedState = data.userState as FlashcardSessionState | null;
-        if (savedState && !data.completedAt &&
-            savedState.deck && savedState.studyMode &&
-            Array.isArray(savedState.shuffledIndices) &&
-            Array.isArray(savedState.masteryRatings) &&
-            typeof savedState.currentIndex === 'number') {
-          setIsResumingSession(true);
-          const validDeck = (savedState.deck === 'original' || savedState.deck === 'comprehensive') ? savedState.deck : 'comprehensive';
-          const validMode = ['quick', 'challenge', 'triad', 'feynman', 'mnemonic'].includes(savedState.studyMode) ? savedState.studyMode : 'quick';
-          setSelectedDeck(validDeck as FlashcardDeck);
-          setSelectedDomains(Array.isArray(savedState.domains) ? savedState.domains.filter((d: string) => DOMAINS.includes(d as Domain)) as Domain[] : []);
-          setStudyMode(validMode as FlashcardMode);
-          setShuffledIndices(savedState.shuffledIndices);
-          setCurrentIndex(Math.max(0, savedState.currentIndex));
-          sessionStatsRef.current = {
-            cardsReviewed: savedState.masteryRatings.length,
-            masteryRatings: savedState.masteryRatings,
-            domainsReviewed: {},
-            startTime: savedState.startTime || Date.now()
-          };
-          toast({
-            title: "Session Resumed",
-            description: `Continuing from card ${savedState.currentIndex + 1}`,
-          });
-          setTimeout(() => setIsResumingSession(false), 100);
-        } else {
-          sessionStatsRef.current = {
-            cardsReviewed: 0,
-            masteryRatings: [],
-            domainsReviewed: {},
-            startTime: Date.now()
-          };
-        }
-      } catch (err) {
-        console.error('Error in session start handler:', err);
         sessionStatsRef.current = {
           cardsReviewed: 0,
           masteryRatings: [],
           domainsReviewed: {},
           startTime: Date.now()
         };
+      } catch (err) {
+        console.error('Error in session start handler:', err);
       }
     },
     onError: (error: any) => {
@@ -187,7 +151,7 @@ export default function FlashcardsPage() {
 
   // Persist session state helper (skip for challenge mode - it manages its own state)
   const persistSessionState = useCallback(() => {
-    if (!currentSessionId || isResumingSession || studyMode === 'challenge') return;
+    if (!currentSessionId || studyMode === 'challenge') return;
     
     const state: FlashcardSessionState = {
       deck: selectedDeck,
@@ -200,7 +164,7 @@ export default function FlashcardsPage() {
     };
     
     updateStateMutation.mutate({ sessionId: currentSessionId, state });
-  }, [currentSessionId, selectedDeck, selectedDomains, shuffledIndices, currentIndex, studyMode, isResumingSession]);
+  }, [currentSessionId, selectedDeck, selectedDomains, shuffledIndices, currentIndex, studyMode]);
 
   // Complete session mutation
   const completeSessionMutation = useMutation({
@@ -265,15 +229,14 @@ export default function FlashcardsPage() {
 
   // Persist state on navigation (debounced)
   useEffect(() => {
-    if (!currentSessionId || isResumingSession) return;
+    if (!currentSessionId) return;
     
-    // Debounce state persistence
     const timeoutId = setTimeout(() => {
       persistSessionState();
     }, 500);
     
     return () => clearTimeout(timeoutId);
-  }, [currentIndex, currentSessionId, isResumingSession, persistSessionState]);
+  }, [currentIndex, currentSessionId, persistSessionState]);
 
   // Complete session on page unload/visibility change
   useEffect(() => {
