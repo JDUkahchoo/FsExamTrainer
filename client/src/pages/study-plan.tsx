@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -64,7 +64,9 @@ export default function StudyPlan() {
   const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const weekFromUrl = urlParams.get('week');
   const parsedWeek = weekFromUrl ? parseInt(weekFromUrl, 10) : null;
-  const [expandedWeek, setExpandedWeek] = useState<number | null>(parsedWeek && !isNaN(parsedWeek) ? parsedWeek : 1);
+  const savedWeek = typeof window !== 'undefined' ? parseInt(localStorage.getItem(`studyPlan_expandedWeek_${examTrack}`) || '', 10) : NaN;
+  const initialWeek = parsedWeek && !isNaN(parsedWeek) ? parsedWeek : (!isNaN(savedWeek) ? savedWeek : 1);
+  const [expandedWeek, setExpandedWeek] = useState<number | null>(initialWeek);
   const [expandedDailyLogs, setExpandedDailyLogs] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newWeekTitle, setNewWeekTitle] = useState('');
@@ -79,6 +81,12 @@ export default function StudyPlan() {
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
+
+  useEffect(() => {
+    if (expandedWeek !== null) {
+      localStorage.setItem(`studyPlan_expandedWeek_${examTrack}`, String(expandedWeek));
+    }
+  }, [expandedWeek, examTrack]);
 
   // Use appropriate study plan based on exam track
   const baseStudyPlan = examTrack === 'ps' ? PS_STUDY_PLAN : STUDY_PLAN;
