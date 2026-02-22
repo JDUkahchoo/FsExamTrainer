@@ -78,7 +78,7 @@ export const STUDY_READINGS_D5_EXPANDED: ReadingModule[] = [
         title: 'Further Reading: Easements & Encumbrances',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Legal Principles, sections on easements, encumbrances, and property rights' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapter 41', topic: 'Property Law, sections on easements, liens, and encumbrances' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Chapters 24-25 (History of Title, Transfer of Ownership)', topic: 'Cadastral law, sections on easements, liens, and encumbrances' },
           { book: 'Evidence and Procedures for Boundary Location (Brown, Robillard & Wilson)', chapter: 'Chapters 3-5', topic: 'Comprehensive treatment of easements, encumbrances, and their effect on boundary surveys' },
           { book: 'NCEES FS Reference Handbook', chapter: 'Legal Principles', topic: 'Easement types, encumbrances, and property rights review' },
         ],
@@ -156,7 +156,7 @@ export const STUDY_READINGS_D5_EXPANDED: ReadingModule[] = [
         title: 'Further Reading: Conveyances & Public Records',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Legal Principles, sections on deeds, conveyances, and property rights' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 41-42', topic: 'Property Law and Title Research' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Chapters 24-26 (Title, Transfer, Water Boundaries)', topic: 'Cadastral and boundary law including title research and conveyances' },
           { book: 'Evidence and Procedures for Boundary Location (Brown, Robillard & Wilson)', chapter: 'Chapters 6-8', topic: 'Chain of title research, weighing evidence, and interpreting conveyances' },
           { book: 'BLM Manual of Surveying Instructions (2009)', chapter: 'Chapter 7', topic: 'Original and dependent resurveys, evidence evaluation' },
         ],
@@ -249,7 +249,7 @@ export const STUDY_READINGS_D5_EXPANDED: ReadingModule[] = [
         title: 'Further Reading: Common Law Principles',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Legal Principles, boundary law, and metes and bounds' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 41-43', topic: 'Property Law, Boundary Determination, Legal Descriptions' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Chapters 24-31 (Cadastral and Boundary Law)', topic: 'Cadastral law, boundary determination, and legal descriptions' },
           { book: 'Evidence and Procedures for Boundary Location (Brown, Robillard & Wilson)', chapter: 'Chapters 1-2, 9-11', topic: 'Original vs. retracement surveys, unwritten rights, and the footsteps doctrine' },
           { book: 'BLM Manual of Surveying Instructions (2009)', chapter: 'Chapter 5', topic: 'Principles of resurveys and the hierarchy of evidence' },
         ],
@@ -327,7 +327,7 @@ export const STUDY_READINGS_D5_EXPANDED: ReadingModule[] = [
         title: 'Further Reading: Sources of Law',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Legal Principles, sources of boundary law' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapter 41', topic: 'Property Law, legal framework' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Chapters 24-25 (History of Title, Transfer of Ownership)', topic: 'Cadastral law, legal framework for property ownership' },
           { book: 'BLM Manual of Surveying Instructions (2009)', chapter: 'Chapters 1-3', topic: 'Federal authority and PLSS legal framework' },
           { book: 'Boundary Control and Legal Principles (Brown, Robillard & Wilson)', chapter: 'Chapters 1-4', topic: 'Comprehensive treatment of the legal framework for boundary surveying' },
         ],

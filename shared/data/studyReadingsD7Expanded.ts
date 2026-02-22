@@ -89,7 +89,7 @@ export const STUDY_READINGS_D7_EXPANDED: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 10-11', topic: 'Mathematical foundations of adjustment computations, least squares, observation equations, and error analysis' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Chapters 10-11 (Analytical Geometry, Statistics of Measurements)', topic: 'Mathematical foundations of adjustment computations, least squares, observation equations, and error analysis' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 16', topic: 'Adjustment computations for leveling networks, traverses, and triangulation networks' },
         ],
       },
@@ -181,7 +181,7 @@ export const STUDY_READINGS_D7_EXPANDED: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 11-12', topic: 'Statistical analysis methods, probability distributions, hypothesis testing, and regression analysis' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Chapters 11-12 (Statistics of Measurements, Calculus)', topic: 'Statistical analysis methods, probability distributions, hypothesis testing, and regression analysis' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 2', topic: 'Theory of errors, normal distribution, measures of precision, and statistical analysis of survey data' },
         ],
       },
@@ -285,7 +285,7 @@ export const STUDY_READINGS_D7_EXPANDED: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 11-12', topic: 'Error propagation theory, general law of propagation of variances, and accuracy standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Chapters 11-12 (Statistics of Measurements, Calculus)', topic: 'Error propagation theory, general law of propagation of variances, and accuracy standards' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 3', topic: 'Theory of errors and error propagation with worked examples for surveying measurements' },
         ],
       },

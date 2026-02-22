@@ -156,7 +156,7 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         title: 'Trigonometry References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 9', topic: 'Traverse Computations and trigonometric applications' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic 1', topic: 'Mathematics fundamentals including trigonometry review' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Chapter 8 (Trigonometry)', topic: 'Mathematics fundamentals including trigonometry review' },
         ],
       },
     ],
@@ -292,7 +292,7 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         title: 'Coordinate Geometry References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 10', topic: 'Area computations and coordinate geometry methods' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic 3', topic: 'Plane survey calculations and COGO procedures' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Chapters 17-19 (Traverses, Adjustment, Partitioning)', topic: 'Plane survey calculations and COGO procedures' },
           { book: 'Surveying Solved Problems (Buckner)', chapter: 'Part II', topic: 'Worked COGO problems with step-by-step solutions' },
         ],
       },
@@ -404,7 +404,7 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         title: 'Units and Measurement References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 1', topic: 'Units of measurement and significant figures' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic 1', topic: 'Units, conversions, and measurement standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Chapters 3-4 (Dimensional Equations, Systems of Units)', topic: 'Units, conversions, and measurement standards' },
           { book: 'NIST Special Publication 811', chapter: 'Appendix B', topic: 'Conversion factors for U.S. customary and SI units (free online)' },
         ],
       },
@@ -538,7 +538,7 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         title: 'Leveling and Distance Measurement References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapters 4-6', topic: 'Leveling theory, equipment, and distance measurement methods' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topics 3-4', topic: 'Leveling procedures and distance measurement corrections' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Chapters 13-15 (Taping, EDM, Leveling)', topic: 'Leveling procedures and distance measurement corrections' },
         ],
       },
     ],
@@ -664,7 +664,7 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         title: 'Angles and Direction References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapters 7-8', topic: 'Angle measurement, azimuths, bearings, and compass surveying' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic 5', topic: 'Angles, directions, and traverse computations' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Chapter 16 (Compass Survey) & Topic III, Chapter 17 (Traverses)', topic: 'Angles, directions, and traverse computations' },
         ],
       },
     ],

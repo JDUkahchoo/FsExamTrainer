@@ -145,7 +145,7 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         title: 'Traverse and Coordinate Geometry References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapters 9-10', topic: 'Traverse computations, adjustments, and coordinate geometry' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapter 6', topic: 'Plane survey calculations including traverses and COGO' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Chapters 17-18 (Traverses, Traverse Adjustment)', topic: 'Plane survey calculations including traverses and COGO' },
         ],
       },
     ],
@@ -274,7 +274,7 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         title: 'Areas and Volumes References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapters 12, 26', topic: 'Area computation methods and earthwork volume calculations' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapter 8', topic: 'Area and volume computation techniques for surveying applications' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Chapters 6-7 (Area, Volume)', topic: 'Area and volume computation techniques for surveying applications' },
         ],
       },
     ],
@@ -423,7 +423,7 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         title: 'Curve Design References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapters 24-25', topic: 'Horizontal and vertical curve design and computation' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapter 10', topic: 'Route surveying including horizontal and vertical curve geometry' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Chapters 20-21 (Horizontal Curves, Vertical Alignment)', topic: 'Route surveying including horizontal and vertical curve geometry' },
         ],
       },
     ],

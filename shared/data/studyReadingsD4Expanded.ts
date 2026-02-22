@@ -105,7 +105,7 @@ export const STUDY_READINGS_D4_EXPANDED: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading: Advanced Geodesy',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 25-28', topic: 'Geodesy, satellite positioning, and coordinate systems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Chapters 22-23 (GPS, Map Projections & Coordinate Systems)', topic: 'Geodesy, satellite positioning, and coordinate systems' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 19-20', topic: 'Control surveys, satellite positioning' },
           { book: 'NGS (geodesy.noaa.gov)', chapter: 'Online Tools', topic: 'GEOID models, coordinate conversion tools, CORS data' },
           { book: 'NCEES FS Reference Handbook', chapter: 'Geodesy', topic: 'Geodetic reference systems and coordinate conversions' },
@@ -197,7 +197,7 @@ export const STUDY_READINGS_D4_EXPANDED: ReadingModule[] = [
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 7-8', topic: 'Compass and transit surveys, magnetic declination' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 24-25', topic: 'Route surveying, highway curves, and alignment design' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 13-14', topic: 'Historical measurement methods' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Chapters 13-14 (Taping, EDM)', topic: 'Distance measurement methods: traditional taping techniques and electronic distance measurement (EDM) principles' },
           { book: 'BLM Manual of Surveying Instructions (2009)', chapter: 'Chapter 3', topic: 'Original PLSS survey methods using compass and chain' },
         ],
       },

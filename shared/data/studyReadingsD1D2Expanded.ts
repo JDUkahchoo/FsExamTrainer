@@ -86,7 +86,7 @@ export const STUDY_READINGS_D1D2_EXPANDED: ReadingModule[] = [
         title: 'Further Reading: Construction Surveys & Land Development',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 23-26', topic: 'Construction surveys, earthwork volumes, horizontal curves, and vertical curves' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 29-32', topic: 'Construction surveying practices, quantity calculations, subdivision design, and land development' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VIII, Chapters 38-39 (Construction Staking, Earthwork)', topic: 'Construction surveying practices, quantity calculations, and earthwork' },
           { book: 'NCEES FS Exam Specification', chapter: 'Domain 1', topic: 'Field Data Acquisition topics currently tested on the FS exam' },
         ],
       },
@@ -141,7 +141,7 @@ export const STUDY_READINGS_D1D2_EXPANDED: ReadingModule[] = [
         title: 'Further Reading: Topographic Surveys & Field Documentation',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 16-17', topic: 'Topographic surveys, mapping, contour generation, and GIS integration' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 19-22', topic: 'Field data acquisition techniques, electronic data collection, and field record keeping standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Chapters 13-16 (Taping, EDM, Leveling, Compass Survey)', topic: 'Field data acquisition techniques, electronic data collection, and field record keeping standards' },
         ],
       },
     ],
@@ -215,7 +215,7 @@ export const STUDY_READINGS_D1D2_EXPANDED: ReadingModule[] = [
         title: 'Further Reading: ALTA/NSPS Standards, DTMs & Map Types',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 17-18, 27-28', topic: 'Mapping, GIS, digital terrain modeling, photogrammetry, and laser scanning' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 34-37', topic: 'Mapping standards, ALTA/NSPS survey requirements, CAD and GIS applications' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Chapters 34-37 (Topographic, GIS, Aerial, Laser Scanning)', topic: 'Mapping standards, ALTA/NSPS survey requirements, CAD and GIS applications' },
           { book: '2021 ALTA/NSPS Minimum Standard Detail Requirements', chapter: 'Sections 3, 5, 6, and Table A', topic: 'Survey standards, boundary and easement requirements, and optional survey responsibilities' },
         ],
       },

@@ -72,8 +72,8 @@ export const STUDY_READINGS_D6_EXPANDED: ReadingModule[] = [
         title: 'Further Reading',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 1-3', topic: 'Introduction to surveying, field notes and documentation procedures, and survey project organization' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapter 13', topic: 'Survey project management, scheduling, and resource allocation' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 41-44', topic: 'Professional practice topics including safety regulations, OSHA compliance, and field documentation standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic X, Chapters 42-43 (Job Costing, Economic Analysis)', topic: 'Survey project cost estimation, budgeting, scheduling, and economic analysis for survey operations' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX-X, Chapters 41-44 (Accuracy Standards, Job Costing, Economics, Ethics)', topic: 'Accuracy standards for survey measurements, business management, economic analysis, and professional ethics' },
         ],
       },
     ],
@@ -149,7 +149,7 @@ export const STUDY_READINGS_D6_EXPANDED: ReadingModule[] = [
         title: 'Further Reading',
         furtherReading: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapters 1-2', topic: 'Introduction to the surveying profession, professional ethics, legal responsibilities, and the role of the licensed surveyor' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Chapters 41-44', topic: 'Professional liability, negligence, supervision requirements, and professional communication skills' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic X, Chapter 44 (Ethics for Surveyors)', topic: 'Professional ethics, liability, standards of conduct, and ethical responsibilities of licensed surveyors' },
         ],
       },
     ],
