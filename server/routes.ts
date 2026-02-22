@@ -921,7 +921,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const draft = await storage.getActiveQuizDraft(userId);
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      const draft = await storage.getActiveQuizDraft(userId, examTrack);
       res.json(draft || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch quiz draft" });
@@ -943,7 +944,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      await storage.deleteQuizDraft(userId);
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      await storage.deleteQuizDraft(userId, examTrack);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete quiz draft" });

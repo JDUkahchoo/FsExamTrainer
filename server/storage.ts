@@ -305,9 +305,9 @@ export interface IStorage {
   deleteCustomWeek(userId: string, id: string): Promise<void>;
 
   // Quiz Draft methods (for resume functionality)
-  getActiveQuizDraft(userId: string): Promise<QuizDraft | undefined>;
+  getActiveQuizDraft(userId: string, examTrack?: string): Promise<QuizDraft | undefined>;
   saveQuizDraft(draft: InsertQuizDraft): Promise<QuizDraft>;
-  deleteQuizDraft(userId: string): Promise<void>;
+  deleteQuizDraft(userId: string, examTrack?: string): Promise<void>;
 
   // Exam Draft methods (for resume functionality)
   getActiveExamDraft(userId: string): Promise<ExamDraft | undefined>;
@@ -1396,19 +1396,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Quiz Draft methods (for resume functionality)
-  async getActiveQuizDraft(userId: string): Promise<QuizDraft | undefined> {
+  async getActiveQuizDraft(userId: string, examTrack?: string): Promise<QuizDraft | undefined> {
+    const conditions = [eq(quizDrafts.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(quizDrafts.examTrack, examTrack));
+    }
     const [draft] = await db
       .select()
       .from(quizDrafts)
-      .where(eq(quizDrafts.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(quizDrafts.startedAt))
       .limit(1);
     return draft || undefined;
   }
 
   async saveQuizDraft(draftData: InsertQuizDraft): Promise<QuizDraft> {
-    // Delete any existing draft for this user first (one draft at a time)
-    await this.deleteQuizDraft(draftData.userId);
+    await this.deleteQuizDraft(draftData.userId, draftData.examTrack);
     
     const [draft] = await db
       .insert(quizDrafts)
@@ -1417,10 +1420,14 @@ export class DatabaseStorage implements IStorage {
     return draft;
   }
 
-  async deleteQuizDraft(userId: string): Promise<void> {
+  async deleteQuizDraft(userId: string, examTrack?: string): Promise<void> {
+    const conditions = [eq(quizDrafts.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(quizDrafts.examTrack, examTrack));
+    }
     await db
       .delete(quizDrafts)
-      .where(eq(quizDrafts.userId, userId));
+      .where(and(...conditions));
   }
 
   // Exam Draft methods (for resume functionality)

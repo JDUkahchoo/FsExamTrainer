@@ -747,11 +747,13 @@ export type ReadingProgress = typeof readingProgress.$inferSelect;
 export const quizDrafts = pgTable("quiz_drafts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  domain: text("domain").notNull(), // Domain filter used, or "all" for mixed
-  questionIds: text("question_ids").array().notNull(), // Array of question IDs in this quiz
+  domain: text("domain").notNull(),
+  questionIds: text("question_ids").array().notNull(),
   currentQuestionIndex: integer("current_question_index").notNull().default(0),
-  userAnswers: jsonb("user_answers").notNull().default(sql`'{}'::jsonb`), // { [index]: answerIndex }
+  userAnswers: jsonb("user_answers").notNull().default(sql`'{}'::jsonb`),
   timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  examTrack: text("exam_track").notNull().default('fs'),
+  sessionId: varchar("session_id").notNull().default(sql`gen_random_uuid()`),
   startedAt: timestamp("started_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

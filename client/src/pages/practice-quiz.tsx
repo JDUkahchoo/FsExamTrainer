@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearch } from 'wouter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,18 @@ export default function PracticeQuizPage() {
   // Get appropriate domains based on exam track
   const availableDomains = examTrack === 'ps' ? PS_DOMAINS : FS_DOMAINS;
   
+  const ACTIVE_SESSION_KEY = `quiz-active-session-${examTrack}`;
+  
+  const getActiveSession = (): string | null => {
+    try { return sessionStorage.getItem(ACTIVE_SESSION_KEY); } catch { return null; }
+  };
+  const setActiveSession = (id: string) => {
+    try { sessionStorage.setItem(ACTIVE_SESSION_KEY, id); } catch {}
+  };
+  const clearActiveSession = () => {
+    try { sessionStorage.removeItem(ACTIVE_SESSION_KEY); } catch {}
+  };
+
   const [quizState, setQuizState] = useState<QuizState>('setup');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
   const [selectedDomains, setSelectedDomains] = useState<Domain[]>([]);
@@ -42,34 +54,34 @@ export default function PracticeQuizPage() {
   const [quizQuestions, setQuizQuestions] = useState<Array<typeof QUIZ_QUESTIONS[0] & { id: string }>>([]);
   const [shuffledOptionsMap, setShuffledOptionsMap] = useState<Record<number, { options: string[]; correctIndex: number }>>({});
   const [showResumeDialog, setShowResumeDialog] = useState(false);
+  const [quizSessionId, setQuizSessionId] = useState<string | null>(null);
   const { logActivity } = useActivityLogger();
+  const resumeInProgressRef = useRef(false);
 
-  // Query to detect existing draft on page load
   const { data: draftData, isLoading: isDraftLoading } = useQuery<QuizDraft | null>({
-    queryKey: ['/api/quiz/draft'],
+    queryKey: ['/api/quiz/draft', examTrack],
     queryFn: async () => {
-      const response = await fetch('/api/quiz/draft');
+      const response = await fetch(`/api/quiz/draft?examTrack=${examTrack}`);
       if (!response.ok) return null;
       return response.json();
-    }
+    },
+    enabled: quizState === 'setup',
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
   });
 
-  // Mutation to save draft with retry
   const saveDraftMutation = useMutation({
-    mutationFn: (draft: { domain: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number }) =>
+    mutationFn: (draft: { domain: string; examTrack: string; sessionId: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number }) =>
       apiRequest('POST', '/api/quiz/draft', draft),
     retry: 1,
     retryDelay: 1000,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft'] });
-    }
   });
 
-  // Mutation to delete draft
   const deleteDraftMutation = useMutation({
-    mutationFn: () => apiRequest('DELETE', '/api/quiz/draft', {}),
+    mutationFn: () => apiRequest('DELETE', `/api/quiz/draft?examTrack=${examTrack}`, {}),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft', examTrack] });
     }
   });
 
@@ -86,9 +98,15 @@ export default function PracticeQuizPage() {
     }
   });
 
-  // Show resume dialog when draft is detected
   useEffect(() => {
-    if (draftData && quizState === 'setup' && !isDraftLoading) {
+    if (!draftData || quizState !== 'setup' || isDraftLoading || resumeInProgressRef.current) return;
+    
+    const activeId = getActiveSession();
+    if (activeId && draftData.sessionId === activeId) {
+      resumeInProgressRef.current = true;
+      handleResumeDraft();
+    } else {
+      if (activeId) clearActiveSession();
       setShowResumeDialog(true);
     }
   }, [draftData, quizState, isDraftLoading]);
@@ -119,18 +137,17 @@ export default function PracticeQuizPage() {
     }
   }, [domainsFromUrl, quizState]);
 
-  // Helper function to save draft
   const saveDraft = (indexOverride?: number) => {
-    if (quizState === 'active' && quizQuestions.length > 0) {
-      // Convert answeredQuestions to userAnswers format
+    if (quizState === 'active' && quizQuestions.length > 0 && quizSessionId) {
       const userAnswers: Record<number, number> = {};
       Object.entries(answeredQuestions).forEach(([index, answer]) => {
         userAnswers[parseInt(index)] = answer.selected;
       });
 
-      // Save draft with stable question IDs
       saveDraftMutation.mutate({
         domain: selectedDomain,
+        examTrack,
+        sessionId: quizSessionId,
         questionIds: quizQuestions.map(q => q.id),
         currentQuestionIndex: indexOverride !== undefined ? indexOverride : currentQuestionIndex,
         userAnswers,
@@ -235,12 +252,13 @@ export default function PracticeQuizPage() {
       setShowExplanation(false);
     }
 
-    // Set start time to account for elapsed time
+    const resumedSessionId = draftData.sessionId || crypto.randomUUID();
+    setQuizSessionId(resumedSessionId);
+    setActiveSession(resumedSessionId);
     setStartTime(Date.now() - (draftData.timeSpentSeconds * 1000));
     setQuizState('active');
     setShowResumeDialog(false);
 
-    // Delete the draft since we're resuming
     deleteDraftMutation.mutate();
   };
 
@@ -290,6 +308,9 @@ export default function PracticeQuizPage() {
       };
     });
     
+    const newSessionId = crypto.randomUUID();
+    setQuizSessionId(newSessionId);
+    setActiveSession(newSessionId);
     setShuffledOptionsMap(shuffledMap);
     setQuizQuestions(variedQuestions);
     setQuizState('active');
@@ -389,7 +410,7 @@ export default function PracticeQuizPage() {
       ? (selectedAnswer === currentCorrectIndex ? correctCount + 1 : correctCount)
       : correctCount;
     
-    // Delete the draft before saving session
+    clearActiveSession();
     deleteDraftMutation.mutate();
     
     // Save the complete quiz session
@@ -404,6 +425,9 @@ export default function PracticeQuizPage() {
   };
 
   const handleRestart = () => {
+    clearActiveSession();
+    resumeInProgressRef.current = false;
+    setQuizSessionId(null);
     setQuizState('setup');
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
@@ -411,6 +435,7 @@ export default function PracticeQuizPage() {
     setAnsweredQuestions({});
     setStartTime(null);
     setElapsedSeconds(0);
+    queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft', examTrack] });
   };
 
   const formatTime = (seconds: number) => {
@@ -428,7 +453,7 @@ export default function PracticeQuizPage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Resume Previous Quiz?</AlertDialogTitle>
               <AlertDialogDescription>
-                You have an unfinished quiz from a previous session. Would you like to continue where you left off?
+                You have an unfinished {draftData?.domain === 'all' ? 'mixed' : draftData?.domain} quiz with {draftData?.questionIds?.length || 0} questions ({Object.keys(draftData?.userAnswers || {}).length} answered). Would you like to continue where you left off?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
