@@ -17,6 +17,7 @@ import type { Domain, QuizDraft } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { shuffleQuestionOptions, type ShuffledQuestion } from '@/lib/shuffleOptions';
 import { ProblemSolvingLoop } from '@/components/problem-solving-loop';
+import { getVariedQuizQuestions, getSessionSeed } from '@shared/data/quizVariationSystem';
 
 type QuizState = 'setup' | 'active' | 'completed';
 
@@ -271,16 +272,17 @@ export default function PracticeQuizPage() {
       questionsForQuiz = examQuestions.filter(q => q.domain === selectedDomain);
     }
     
-    // Add stable IDs based on original array position
     const questionsWithIds = questionsForQuiz.map(q => ({
       ...q,
       id: `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
     }));
     
-    // Shuffle answer options for each question and store the mapping
+    const sessionSeed = getSessionSeed();
+    const variedQuestions = getVariedQuizQuestions(questionsWithIds, sessionSeed);
+    
     const shuffledMap: Record<number, { options: string[]; correctIndex: number }> = {};
     const seedBase = Date.now();
-    questionsWithIds.forEach((q, index) => {
+    variedQuestions.forEach((q, index) => {
       const shuffled = shuffleQuestionOptions(q, seedBase + index);
       shuffledMap[index] = {
         options: shuffled.shuffledOptions,
@@ -289,7 +291,7 @@ export default function PracticeQuizPage() {
     });
     
     setShuffledOptionsMap(shuffledMap);
-    setQuizQuestions(questionsWithIds);
+    setQuizQuestions(variedQuestions);
     setQuizState('active');
     setStartTime(Date.now());
     setCurrentQuestionIndex(0);

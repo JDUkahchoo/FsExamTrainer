@@ -18,6 +18,7 @@ import type { Domain, ExamDraft } from '@shared/schema';
 import { PS_DOMAINS, FS_DOMAINS } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { shuffleQuestionOptions } from '@/lib/shuffleOptions';
+import { getVariedQuizQuestions, getSessionSeed } from '@shared/data/quizVariationSystem';
 
 const FS_EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
 const PS_EXAM_DURATION_MINUTES = 300; // 5 hours = 300 minutes
@@ -154,16 +155,17 @@ export default function PracticeExamPage() {
   const handleResumeDraft = () => {
     if (!draftData) return;
 
-    // Create a map of ID -> question from original array for efficient lookup
-    const questionMap = new Map(
+    const examQuestionMap = new Map(
       EXAM_QUESTIONS.map((q, i) => [`exam-${i}`, q])
     );
+    const quizQuestionMap = new Map(
+      QUIZ_QUESTIONS.map((q, i) => [`quiz-${i}`, q])
+    );
 
-    // Reconstruct exam questions from stable question IDs
     const reconstructedQuestions = draftData.questionIds.map(id => {
-      const question = questionMap.get(id);
+      const question = examQuestionMap.get(id) || quizQuestionMap.get(id);
       if (!question) {
-        console.error(`Question ${id} not found in EXAM_QUESTIONS`);
+        console.error(`Question ${id} not found`);
         return null;
       }
       return { ...question, id };
@@ -258,33 +260,34 @@ export default function PracticeExamPage() {
     const seedBase = Date.now();
     
     if (mode === 'standard') {
-      // Standard exam - shuffle and select questions from appropriate pool
       const questionPool = examTrack === 'ps' ? PS_EXAM_QUESTIONS : EXAM_QUESTIONS;
       const shuffled = [...questionPool].sort(() => Math.random() - 0.5);
       const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
       
-      // Add stable IDs based on original array position
       const questionsWithIds = selected.map(q => ({
         ...q,
         id: examTrack === 'ps' 
-          ? `ps-exam-${PS_EXAM_QUESTIONS.indexOf(q)}`
+          ? `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
           : `exam-${EXAM_QUESTIONS.indexOf(q)}`
       }));
       
-      setExamQuestions(questionsWithIds);
-      setShuffledOptionsMap(createShuffledOptionsMap(questionsWithIds, seedBase));
+      const variedQuestions = examTrack === 'ps' 
+        ? getVariedQuizQuestions(questionsWithIds, getSessionSeed())
+        : questionsWithIds;
+      
+      setExamQuestions(variedQuestions);
+      setShuffledOptionsMap(createShuffledOptionsMap(variedQuestions, seedBase));
     } else {
-      // NCEES-style exam - only available for FS exam currently
       if (examTrack === 'ps') {
-        // Fall back to standard mode for PS
         const shuffled = [...PS_EXAM_QUESTIONS].sort(() => Math.random() - 0.5);
         const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
         const questionsWithIds = selected.map(q => ({
           ...q,
-          id: `ps-exam-${PS_EXAM_QUESTIONS.indexOf(q)}`
+          id: `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
         }));
-        setExamQuestions(questionsWithIds);
-        setShuffledOptionsMap(createShuffledOptionsMap(questionsWithIds, seedBase));
+        const variedQuestions = getVariedQuizQuestions(questionsWithIds, getSessionSeed());
+        setExamQuestions(variedQuestions);
+        setShuffledOptionsMap(createShuffledOptionsMap(variedQuestions, seedBase));
       } else {
         // NCEES-style exam for FS - use questions with alternative item types
         // Filter out scenario context questions (they're displayed with their related questions)

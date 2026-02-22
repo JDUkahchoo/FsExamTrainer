@@ -8,6 +8,7 @@ import { CheckCircle2, XCircle, Target, Zap, Trophy, ArrowRight } from 'lucide-r
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
+import { getVariedQuizQuestions, getSessionSeed } from '@shared/data/quizVariationSystem';
 import type { Domain } from '@shared/schema';
 
 interface MicroDrillModalProps {
@@ -86,16 +87,14 @@ export function MicroDrillModal({ open, onOpenChange, focusDomains }: MicroDrill
       selected = [...selected, ...otherQuestions.slice(0, remainingCount)];
     }
 
-    const questionsWithIds = selected.map((q, i) => ({
-      id: `micro-drill-${Date.now()}-${i}`,
-      question: q.question,
-      options: q.options,
-      correctAnswer: q.correctAnswer,
-      explanation: q.explanation,
-      domain: q.domain
+    const questionsWithIds = selected.map(q => ({
+      ...q,
+      id: `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
     }));
 
-    setQuestions(questionsWithIds);
+    const variedQuestions = getVariedQuizQuestions(questionsWithIds, getSessionSeed());
+
+    setQuestions(variedQuestions);
     setCurrentIndex(0);
     setSelectedAnswer(null);
     setShowFeedback(false);
