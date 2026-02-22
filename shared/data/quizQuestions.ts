@@ -1421,6 +1421,144 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
 
+  // TAPING CORRECTIONS - Computational Problems
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A 100 ft steel tape (α = 0.00000645/°F) is standardized at 68°F. A distance is measured as 872.54 ft at 95°F. What is the corrected distance?',
+    options: ['872.69 ft', '872.54 ft', '872.39 ft', '873.02 ft'],
+    correctAnswer: 0,
+    explanation: 'Temperature correction: Ct = α × (T − Ts) × L = 0.00000645 × (95 − 68) × 872.54 = +0.152 ft. Corrected distance = 872.54 + 0.15 = 872.69 ft. Tape expands in heat, so measured distance is too short — add correction.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A steel tape (α = 0.00000645/°F) standardized at 68°F is used at 32°F to measure 500.00 ft. What is the temperature correction?',
+    options: ['−0.116 ft', '+0.116 ft', '−0.058 ft', '+0.058 ft'],
+    correctAnswer: 0,
+    explanation: 'Ct = α × (T − Ts) × L = 0.00000645 × (32 − 68) × 500.00 = 0.00000645 × (−36) × 500 = −0.116 ft. Cold temperature shrinks the tape, so correction is negative.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A 100 ft steel tape (cross-section area A = 0.003 sq in, E = 29,000,000 psi) is standardized at 10 lbf. If 25 lbf tension is applied, what is the tension correction per tape length?',
+    options: ['+0.017 ft', '−0.017 ft', '+0.172 ft', '+0.0017 ft'],
+    correctAnswer: 0,
+    explanation: 'Tension correction: Cp = (P − Ps) × L / (A × E) = (25 − 10) × 100 / (0.003 × 29,000,000) = 1500 / 87,000 = +0.017 ft. Extra tension stretches the tape — add correction.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor measures 450.00 ft with a tape under 30 lbf tension. The tape is standardized at 12 lbf, has A = 0.004 sq in and E = 29,000,000 psi. What is the total tension correction?',
+    options: ['+0.070 ft', '−0.070 ft', '+0.035 ft', '+0.140 ft'],
+    correctAnswer: 0,
+    explanation: 'Cp = (P − Ps) × L / (A × E) = (30 − 12) × 450 / (0.004 × 29,000,000) = 8,100 / 116,000 = +0.070 ft. More tension = longer tape = measured distance too short = add correction.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The sag correction for a 100 ft tape weighing 1.5 lbs total, supported at endpoints with 12 lbf tension is:',
+    options: ['−0.065 ft', '+0.065 ft', '−0.130 ft', '−0.033 ft'],
+    correctAnswer: 0,
+    explanation: 'Unit weight w = 1.5/100 = 0.015 lb/ft. Sag correction: Cs = −w²L³/(24P²) = −(0.015²)(100³)/(24 × 12²) = −(0.000225 × 1,000,000)/(3,456) = −225/3,456 = −0.065 ft. Sag always makes measured distance too long — correction is always negative.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A 100 ft steel tape weighs 2.0 lbs. It is supported at the ends only with 20 lbf of tension. What is the sag correction?',
+    options: ['−0.042 ft', '+0.042 ft', '−0.083 ft', '−0.021 ft'],
+    correctAnswer: 0,
+    explanation: 'w = 2.0/100 = 0.02 lb/ft. Cs = −w²L³/(24P²) = −(0.02²)(100³)/(24 × 20²) = −(0.0004 × 1,000,000)/9,600 = −400/9,600 = −0.042 ft. Sag correction is always negative.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A tape is known to be 100.03 ft long (too long by 0.03 ft). A measured distance reads 856.27 ft. What is the corrected distance?',
+    options: ['856.53 ft', '856.01 ft', '856.27 ft', '855.98 ft'],
+    correctAnswer: 0,
+    explanation: 'Correction for incorrect length: Corrected = Measured × (Actual Length / Nominal Length) = 856.27 × (100.03/100) = 856.27 + (0.03/100 × 856.27) = 856.27 + 0.257 = 856.53 ft. A long tape means measured distance is too short — add correction.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A 100 ft tape is actually 99.97 ft (too short by 0.03 ft). A line measured with it reads 623.45 ft. What is the true distance?',
+    options: ['623.26 ft', '623.64 ft', '623.45 ft', '623.08 ft'],
+    correctAnswer: 0,
+    explanation: 'Corrected = Measured × (Actual/Nominal) = 623.45 × (99.97/100) = 623.45 − (0.03/100 × 623.45) = 623.45 − 0.187 = 623.26 ft. A short tape means measured distance is too long — subtract correction.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor lays out a building corner at exactly 200.00 ft using a tape that is actually 100.02 ft long. What distance should be set?',
+    options: ['199.96 ft', '200.04 ft', '200.00 ft', '199.98 ft'],
+    correctAnswer: 0,
+    explanation: 'When laying out (setting a distance), reverse the correction. The tape is too long, so each "100 ft" is actually 100.02. To get 200.00 true ft: Set distance = 200.00 × (100/100.02) = 199.96 ft on the tape.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A 300 ft distance is measured but the rear end of the tape is offset 1.5 ft from the true line. What is the alignment correction?',
+    options: ['−0.004 ft', '+0.004 ft', '−0.75 ft', '−1.5 ft'],
+    correctAnswer: 0,
+    explanation: 'Alignment correction: Ca = −d²/(2L) = −(1.5²)/(2 × 300) = −2.25/600 = −0.004 ft. Misalignment always makes the measured distance too long. This small error shows why minor alignment issues are negligible for long lines.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A 100 ft tape measurement has the end offset 2.0 ft perpendicular to the line. What is the error due to this misalignment?',
+    options: ['−0.020 ft', '+0.020 ft', '−2.000 ft', '−0.200 ft'],
+    correctAnswer: 0,
+    explanation: 'Alignment error: Ca = −d²/(2L) = −(2.0²)/(2 × 100) = −4.0/200 = −0.020 ft. Being off-line always makes measured distance longer than true distance.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor measures 534.82 ft with these conditions: temperature correction = +0.12 ft, sag correction = −0.08 ft, tape too long by 0.02 ft per 100 ft. What is the fully corrected distance?',
+    options: ['534.97 ft', '534.67 ft', '534.82 ft', '535.03 ft'],
+    correctAnswer: 0,
+    explanation: 'Tape length correction = +0.02/100 × 534.82 = +0.107 ft. Combined: 534.82 + 0.12 (temp) − 0.08 (sag) + 0.107 (length) = 534.82 + 0.147 = 534.97 ft. All corrections are algebraically added.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A distance of 750.00 ft is measured at 40°F with a tape standardized at 68°F (α = 0.00000645/°F). The tape is 99.98 ft long. What is the corrected distance applying temperature and tape length corrections only?',
+    options: ['749.72 ft', '750.28 ft', '749.85 ft', '750.00 ft'],
+    correctAnswer: 0,
+    explanation: 'Temp: Ct = 0.00000645 × (40 − 68) × 750 = 0.00000645 × (−28) × 750 = −0.135 ft. Length: (−0.02/100) × 750 = −0.150 ft. Combined = 750.00 − 0.135 − 0.150 = 749.72 ft. Both corrections are negative (cold + short tape).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Normal tension is the applied tension that makes the sag correction equal to the tension correction. For a tape with w = 0.015 lb/ft, A = 0.003 sq in, E = 29,000,000 psi, standardized at Ps = 10 lbf, normal tension is approximately:',
+    options: ['About 19-20 lbf', 'About 10 lbf', 'About 30 lbf', 'About 50 lbf'],
+    correctAnswer: 0,
+    explanation: 'Normal tension Pn ≈ 0.204 × W × √(AE/(Pn−Ps)). Solved iteratively: at ~20 lbf, sag correction ≈ tension correction, so they cancel. Normal tension eliminates the need for separate sag and tension corrections.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Which statement about normal tension is correct?',
+    options: ['It is the tension at which the elongation due to pull equals the shortening due to sag', 'It is the standard tension printed on the tape', 'It always equals 20 pounds', 'It only applies to Invar tapes'],
+    correctAnswer: 0,
+    explanation: 'Normal tension is the specific pull at which tension correction (positive, stretching tape) exactly cancels the sag correction (negative, tape drooping). At normal tension, no separate corrections for sag or tension are needed.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A slope distance of 425.67 ft is measured along a uniform 8% grade. What is the horizontal distance?',
+    options: ['424.31 ft', '425.67 ft', '391.62 ft', '459.72 ft'],
+    correctAnswer: 0,
+    explanation: 'For an 8% grade: tan(θ) = 0.08, θ = 4.574°. Horizontal distance = slope × cos(θ) = 425.67 × cos(4.574°) = 425.67 × 0.99681 = 424.31 ft. Alternatively, slope correction = −h²/(2S).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor measures a slope distance of 200.00 ft with an elevation difference of 12.0 ft between endpoints. What is the slope correction?',
+    options: ['−0.36 ft', '+0.36 ft', '−12.0 ft', '−6.0 ft'],
+    correctAnswer: 0,
+    explanation: 'Slope correction: Ch = −h²/(2S) = −(12.0²)/(2 × 200.00) = −144/400 = −0.36 ft. Horizontal distance = 200.00 − 0.36 = 199.64 ft. Slope distances are always longer than horizontal.',
+    difficulty: 'hard'
+  },
+
   // LEVELING (Chapter 15) - Word Problems
   {
     domain: 'Field Data Acquisition',

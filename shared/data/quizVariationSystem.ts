@@ -349,6 +349,229 @@ const fsVariationDefs: Record<number, VariationDef> = {
       return [`${(v + 0.10).toFixed(2)} ft`, `${(v - 0.07).toFixed(2)} ft`, `${(p.ft + p.in / 10).toFixed(2)} ft`];
     },
     computeExplanation: (p, a) => `${p.in}.${p.frac || '0'} inches ÷ 12 = ${((p.in + p.frac / 100) / 12).toFixed(3)} ft. Total = ${p.ft} + ${((p.in + p.frac / 100) / 12).toFixed(3)} = ${a}.`
+  },
+  // Temperature correction (hot) - index 166
+  166: {
+    type: 'computational',
+    stemTemplate: 'A 100 ft steel tape (α = 0.00000645/°F) is standardized at 68°F. A distance is measured as {dist} ft at {temp}°F. What is the corrected distance?',
+    paramRanges: { dist: [456.32, 523.18, 645.90, 728.45, 812.73, 872.54, 935.21, 1050.60], temp: [85, 90, 95, 100, 105, 110] },
+    computeAnswer: (p) => {
+      const ct = 0.00000645 * (p.temp - 68) * p.dist;
+      return `${(p.dist + ct).toFixed(2)} ft`;
+    },
+    computeDistractors: (p) => {
+      const ct = 0.00000645 * (p.temp - 68) * p.dist;
+      return [`${p.dist.toFixed(2)} ft`, `${(p.dist - ct).toFixed(2)} ft`, `${(p.dist + ct * 2).toFixed(2)} ft`];
+    },
+    computeExplanation: (p, a) => {
+      const ct = 0.00000645 * (p.temp - 68) * p.dist;
+      return `Ct = α × (T − Ts) × L = 0.00000645 × (${p.temp} − 68) × ${p.dist} = +${ct.toFixed(3)} ft. Corrected = ${p.dist} + ${ct.toFixed(3)} = ${a}. Hot → tape expands → add correction.`;
+    }
+  },
+  // Temperature correction (cold) - index 167
+  167: {
+    type: 'computational',
+    stemTemplate: 'A steel tape (α = 0.00000645/°F) standardized at 68°F is used at {temp}°F to measure {dist} ft. What is the temperature correction?',
+    paramRanges: { dist: [300.00, 400.00, 500.00, 600.00, 750.00, 850.00, 1000.00], temp: [20, 25, 30, 32, 35, 40, 45, 50] },
+    computeAnswer: (p) => {
+      const ct = 0.00000645 * (p.temp - 68) * p.dist;
+      return `${ct.toFixed(3)} ft`;
+    },
+    computeDistractors: (p) => {
+      const ct = 0.00000645 * (p.temp - 68) * p.dist;
+      return [`+${(-ct).toFixed(3)} ft`, `${(ct / 2).toFixed(3)} ft`, `${(ct * 2).toFixed(3)} ft`];
+    },
+    computeExplanation: (p, a) => `Ct = α × (T − Ts) × L = 0.00000645 × (${p.temp} − 68) × ${p.dist} = ${a}. Cold → tape shrinks → negative correction.`
+  },
+  // Tension correction per tape length - index 168
+  168: {
+    type: 'computational',
+    stemTemplate: 'A 100 ft steel tape (A = {area} sq in, E = 29,000,000 psi) is standardized at {ps} lbf. If {p} lbf tension is applied, what is the tension correction per tape length?',
+    paramRanges: { area: [0.003, 0.004, 0.005, 0.006], ps: [10, 12], p: [20, 25, 28, 30, 35] },
+    computeAnswer: (p) => {
+      const cp = (p.p - p.ps) * 100 / (p.area * 29000000);
+      return `+${cp.toFixed(3)} ft`;
+    },
+    computeDistractors: (p) => {
+      const cp = (p.p - p.ps) * 100 / (p.area * 29000000);
+      return [`−${cp.toFixed(3)} ft`, `+${(cp * 10).toFixed(3)} ft`, `+${(cp / 10).toFixed(4)} ft`];
+    },
+    computeExplanation: (p, a) => {
+      const cp = (p.p - p.ps) * 100 / (p.area * 29000000);
+      return `Cp = (P − Ps) × L / (A × E) = (${p.p} − ${p.ps}) × 100 / (${p.area} × 29,000,000) = ${((p.p - p.ps) * 100).toFixed(0)} / ${(p.area * 29000000).toFixed(0)} = ${a}. Extra tension stretches tape.`;
+    }
+  },
+  // Tension correction for longer distance - index 169
+  169: {
+    type: 'computational',
+    stemTemplate: 'A surveyor measures {dist} ft with a tape under {p} lbf tension. Standardized at {ps} lbf, A = {area} sq in, E = 29,000,000 psi. What is the total tension correction?',
+    paramRanges: { dist: [300.00, 400.00, 450.00, 500.00, 600.00, 750.00], p: [20, 25, 28, 30, 35], ps: [10, 12], area: [0.003, 0.004, 0.005] },
+    computeAnswer: (p) => {
+      const cp = (p.p - p.ps) * p.dist / (p.area * 29000000);
+      return `+${cp.toFixed(3)} ft`;
+    },
+    computeDistractors: (p) => {
+      const cp = (p.p - p.ps) * p.dist / (p.area * 29000000);
+      return [`−${cp.toFixed(3)} ft`, `+${(cp / 2).toFixed(3)} ft`, `+${(cp * 2).toFixed(3)} ft`];
+    },
+    computeExplanation: (p, a) => `Cp = (P − Ps) × L / (A × E) = (${p.p} − ${p.ps}) × ${p.dist} / (${p.area} × 29,000,000) = ${a}.`
+  },
+  // Sag correction #1 - index 170
+  170: {
+    type: 'computational',
+    stemTemplate: 'The sag correction for a 100 ft tape weighing {w} lbs total, supported at endpoints with {p} lbf tension is:',
+    paramRanges: { w: [1.0, 1.2, 1.5, 1.8, 2.0, 2.5], p: [10, 12, 15, 18, 20, 25] },
+    computeAnswer: (p) => {
+      const wPerFt = p.w / 100;
+      const cs = -(wPerFt * wPerFt * 100 * 100 * 100) / (24 * p.p * p.p);
+      return `${cs.toFixed(3)} ft`;
+    },
+    computeDistractors: (p) => {
+      const wPerFt = p.w / 100;
+      const cs = -(wPerFt * wPerFt * 100 * 100 * 100) / (24 * p.p * p.p);
+      return [`+${(-cs).toFixed(3)} ft`, `${(cs * 2).toFixed(3)} ft`, `${(cs / 2).toFixed(3)} ft`];
+    },
+    computeExplanation: (p, a) => {
+      const wPerFt = p.w / 100;
+      return `w = ${p.w}/${100} = ${wPerFt.toFixed(3)} lb/ft. Cs = −w²L³/(24P²) = −(${wPerFt.toFixed(3)}²)(100³)/(24 × ${p.p}²) = ${a}. Sag correction is always negative.`;
+    }
+  },
+  // Sag correction #2 - index 171
+  171: {
+    type: 'computational',
+    stemTemplate: 'A 100 ft steel tape weighs {w} lbs. Supported at ends only with {p} lbf tension. What is the sag correction?',
+    paramRanges: { w: [1.0, 1.2, 1.5, 1.8, 2.0, 2.5, 3.0], p: [10, 12, 15, 18, 20, 25, 30] },
+    computeAnswer: (p) => {
+      const wPerFt = p.w / 100;
+      const cs = -(wPerFt * wPerFt * 1000000) / (24 * p.p * p.p);
+      return `${cs.toFixed(3)} ft`;
+    },
+    computeDistractors: (p) => {
+      const wPerFt = p.w / 100;
+      const cs = -(wPerFt * wPerFt * 1000000) / (24 * p.p * p.p);
+      return [`+${(-cs).toFixed(3)} ft`, `${(cs * 2).toFixed(3)} ft`, `${(cs / 3).toFixed(3)} ft`];
+    },
+    computeExplanation: (p, a) => `w = ${p.w}/100 = ${(p.w/100).toFixed(3)} lb/ft. Cs = −w²L³/(24P²) = ${a}. Sag always negative.`
+  },
+  // Incorrect tape length (too long) - index 172
+  172: {
+    type: 'computational',
+    stemTemplate: 'A tape is known to be {actual} ft long (too long by {err} ft). A measured distance reads {dist} ft. What is the corrected distance?',
+    paramRanges: { err: [0.02, 0.03, 0.04, 0.05], dist: [425.18, 534.72, 623.45, 756.30, 856.27, 945.50, 1023.65] },
+    computeAnswer: (p) => {
+      const actual = 100 + p.err;
+      const corrected = p.dist * (actual / 100);
+      return `${corrected.toFixed(2)} ft`;
+    },
+    computeDistractors: (p) => {
+      const actual = 100 + p.err;
+      const corrected = p.dist * (actual / 100);
+      return [`${(p.dist * (100 - p.err) / 100).toFixed(2)} ft`, `${p.dist.toFixed(2)} ft`, `${(corrected + p.err * 2).toFixed(2)} ft`];
+    },
+    computeExplanation: (p, a) => {
+      const actual = 100 + p.err;
+      return `Corrected = Measured × (Actual/Nominal) = ${p.dist} × (${actual.toFixed(2)}/100) = ${a}. Long tape → measured distance too short → add correction.`;
+    }
+  },
+  // Incorrect tape length (too short) - index 173
+  173: {
+    type: 'computational',
+    stemTemplate: 'A 100 ft tape is actually {actual} ft (too short by {err} ft). A line measured with it reads {dist} ft. What is the true distance?',
+    paramRanges: { err: [0.02, 0.03, 0.04, 0.05], dist: [423.60, 534.82, 623.45, 750.20, 845.15, 956.30] },
+    computeAnswer: (p) => {
+      const actual = 100 - p.err;
+      const corrected = p.dist * (actual / 100);
+      return `${corrected.toFixed(2)} ft`;
+    },
+    computeDistractors: (p) => {
+      const actual = 100 - p.err;
+      const corrected = p.dist * (actual / 100);
+      return [`${(p.dist * (100 + p.err) / 100).toFixed(2)} ft`, `${p.dist.toFixed(2)} ft`, `${(corrected - p.err).toFixed(2)} ft`];
+    },
+    computeExplanation: (p, a) => {
+      const actual = 100 - p.err;
+      return `Corrected = Measured × (Actual/Nominal) = ${p.dist} × (${actual.toFixed(2)}/100) = ${a}. Short tape → measured distance too long → subtract correction.`;
+    }
+  },
+  // Layout with incorrect tape - index 174
+  174: {
+    type: 'computational',
+    stemTemplate: 'A surveyor lays out a building corner at exactly {target} ft using a tape that is actually {actual} ft long. What distance should be set on the tape?',
+    paramRanges: { target: [100.00, 150.00, 200.00, 250.00, 300.00, 400.00, 500.00], actual: [100.02, 100.03, 100.04, 100.05] },
+    computeAnswer: (p) => {
+      const set = p.target * (100 / p.actual);
+      return `${set.toFixed(2)} ft`;
+    },
+    computeDistractors: (p) => {
+      const set = p.target * (100 / p.actual);
+      return [`${(p.target * (p.actual / 100)).toFixed(2)} ft`, `${p.target.toFixed(2)} ft`, `${(set - 0.10).toFixed(2)} ft`];
+    },
+    computeExplanation: (p, a) => `When laying out, reverse the correction. Set distance = ${p.target} × (100/${p.actual}) = ${a}. Tape is too long so set a shorter reading.`
+  },
+  // Alignment correction (long line) - index 175
+  175: {
+    type: 'computational',
+    stemTemplate: 'A {dist} ft distance is measured but the end of the tape is offset {d} ft from the true line. What is the alignment correction?',
+    paramRanges: { dist: [100, 150, 200, 250, 300, 400, 500], d: [0.5, 1.0, 1.5, 2.0, 2.5, 3.0] },
+    computeAnswer: (p) => {
+      const ca = -(p.d * p.d) / (2 * p.dist);
+      return `${ca.toFixed(3)} ft`;
+    },
+    computeDistractors: (p) => {
+      const ca = -(p.d * p.d) / (2 * p.dist);
+      return [`+${(-ca).toFixed(3)} ft`, `−${p.d.toFixed(1)} ft`, `${(ca * 10).toFixed(3)} ft`];
+    },
+    computeExplanation: (p, a) => `Alignment: Ca = −d²/(2L) = −(${p.d}²)/(2 × ${p.dist}) = ${a}. Off-line always makes measured distance too long.`
+  },
+  // Alignment correction (shorter line) - index 176
+  176: {
+    type: 'computational',
+    stemTemplate: 'A {dist} ft tape measurement has the end offset {d} ft perpendicular to the line. What is the error due to this misalignment?',
+    paramRanges: { dist: [50, 75, 100, 125, 150, 200], d: [1.0, 1.5, 2.0, 2.5, 3.0, 4.0] },
+    computeAnswer: (p) => {
+      const ca = -(p.d * p.d) / (2 * p.dist);
+      return `${ca.toFixed(3)} ft`;
+    },
+    computeDistractors: (p) => {
+      const ca = -(p.d * p.d) / (2 * p.dist);
+      return [`+${(-ca).toFixed(3)} ft`, `−${(p.d).toFixed(1)} ft`, `−${(p.d * p.d / p.dist).toFixed(3)} ft`];
+    },
+    computeExplanation: (p, a) => `Ca = −d²/(2L) = −(${p.d}²)/(2 × ${p.dist}) = ${a}. Being off-line always makes measured distance longer.`
+  },
+  // Slope distance to horizontal - index 181
+  181: {
+    type: 'computational',
+    stemTemplate: 'A slope distance of {dist} ft is measured along a uniform {grade}% grade. What is the horizontal distance?',
+    paramRanges: { dist: [200.00, 300.50, 350.25, 425.67, 500.00, 575.30, 650.00], grade: [4, 5, 6, 8, 10, 12, 15] },
+    computeAnswer: (p) => {
+      const theta = Math.atan(p.grade / 100);
+      const hd = p.dist * Math.cos(theta);
+      return `${hd.toFixed(2)} ft`;
+    },
+    computeDistractors: (p) => {
+      const theta = Math.atan(p.grade / 100);
+      const hd = p.dist * Math.cos(theta);
+      return [`${p.dist.toFixed(2)} ft`, `${(hd - 5).toFixed(2)} ft`, `${(p.dist * p.grade / 100).toFixed(2)} ft`];
+    },
+    computeExplanation: (p, a) => {
+      const theta = Math.atan(p.grade / 100) * 180 / Math.PI;
+      return `${p.grade}% grade: tan(θ) = ${(p.grade / 100).toFixed(2)}, θ = ${theta.toFixed(2)}°. H = ${p.dist} × cos(${theta.toFixed(2)}°) = ${a}.`;
+    }
+  },
+  // Slope correction from elevation difference - index 182
+  182: {
+    type: 'computational',
+    stemTemplate: 'A surveyor measures a slope distance of {dist} ft with an elevation difference of {h} ft between endpoints. What is the slope correction?',
+    paramRanges: { dist: [100.00, 150.00, 200.00, 250.00, 300.00, 400.00, 500.00], h: [5.0, 8.0, 10.0, 12.0, 15.0, 18.0, 20.0, 25.0] },
+    computeAnswer: (p) => {
+      const ch = -(p.h * p.h) / (2 * p.dist);
+      return `${ch.toFixed(2)} ft`;
+    },
+    computeDistractors: (p) => {
+      const ch = -(p.h * p.h) / (2 * p.dist);
+      return [`+${(-ch).toFixed(2)} ft`, `−${p.h.toFixed(1)} ft`, `${(ch / 2).toFixed(2)} ft`];
+    },
+    computeExplanation: (p, a) => `Slope correction: Ch = −h²/(2S) = −(${p.h}²)/(2 × ${p.dist}) = ${a}. Horizontal = ${p.dist} + (${a}) = ${(p.dist + (-(p.h * p.h) / (2 * p.dist))).toFixed(2)} ft.`
   }
 };
 
