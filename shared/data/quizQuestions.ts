@@ -581,10 +581,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     domain: 'Survey Computations & Applications',
-    question: 'The exterior angle of a closed traverse equals:',
-    options: ['(n+2) × 180°', '(n-2) × 180°', 'n × 360°', '(n+2) × 360°'],
+    question: 'The sum of exterior angles of any closed polygon traverse is:',
+    options: ['360°', '(n-2) × 180°', '(n+2) × 180°', '180°'],
     correctAnswer: 0,
-    explanation: 'Sum of exterior angles = (n+2) × 180°, where n is the number of sides.',
+    explanation: 'The sum of exterior angles of any convex polygon is always 360°, regardless of the number of sides. The sum of interior angles is (n-2) × 180°.',
     difficulty: 'medium'
   },
   {
@@ -2447,6 +2447,714 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 0,
     explanation: 'Topographic surveys depict the terrain including contour lines, spot elevations, and the locations of natural and man-made features.',
     difficulty: 'easy'
+  },
+
+  // ====================================
+  // NEW FS QUESTIONS - Applied Mathematics & Statistics (22 questions)
+  // ====================================
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In State Plane Coordinate Systems, which projection is typically used for states that are longer in the east-west direction?',
+    options: ['Lambert conformal conic', 'Transverse Mercator', 'Oblique Mercator', 'Polyconic'],
+    correctAnswer: 0,
+    explanation: 'Lambert conformal conic projection is used for states/zones that are wider east-west (e.g., Tennessee, Kentucky). Transverse Mercator is used for zones longer north-south (e.g., New Jersey, Vermont).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In a Transverse Mercator State Plane zone, the scale factor at the central meridian is:',
+    options: ['Less than 1 (typically about 0.9999)', 'Exactly 1.0000', 'Greater than 1', 'Variable depending on latitude'],
+    correctAnswer: 0,
+    explanation: 'In Transverse Mercator SPC zones, the scale factor at the central meridian is less than 1 (around 0.9999) so that distortion is minimized across the zone width. Scale factor equals 1.0 along two lines parallel to the central meridian.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The convergence angle in State Plane Coordinates is the angle between:',
+    options: ['Grid north and geodetic (true) north', 'Magnetic north and true north', 'The central meridian and the equator', 'Two adjacent SPC zones'],
+    correctAnswer: 0,
+    explanation: 'Convergence angle (mapping angle or grid declination) is the difference between grid north and geodetic north at a point. It is zero on the central meridian and increases with distance from it.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'NAD 27 differs from NAD 83 primarily because NAD 27:',
+    options: ['Uses the Clarke 1866 ellipsoid and a single origin point at Meades Ranch, Kansas', 'Is an Earth-centered datum using GRS 80', 'Was developed using GPS observations', 'Is more accurate than NAD 83'],
+    correctAnswer: 0,
+    explanation: 'NAD 27 is based on the Clarke 1866 ellipsoid with an initial point at Meades Ranch, KS. NAD 83 uses the GRS 80 ellipsoid and is an Earth-centered (geocentric) datum developed with satellite observations.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The GEOID18 model is used to:',
+    options: ['Convert ellipsoid heights from GPS to orthometric (elevation) heights', 'Determine magnetic declination', 'Calculate atmospheric refraction', 'Compute satellite orbits'],
+    correctAnswer: 0,
+    explanation: 'GEOID18 is a hybrid geoid model published by NGS that provides geoid undulation values (N) to convert GPS ellipsoid heights (h) to NAVD 88 orthometric heights (H) using h = H + N.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'Which GPS error source is caused by the signal reflecting off nearby surfaces before reaching the antenna?',
+    options: ['Multipath', 'Ionospheric delay', 'Tropospheric delay', 'Satellite clock drift'],
+    correctAnswer: 0,
+    explanation: 'Multipath occurs when GPS signals reflect off surfaces (buildings, vehicles, water) before reaching the antenna, causing range measurement errors. It cannot be eliminated by differential correction.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'Ionospheric delay affects GPS signals by:',
+    options: ['Slowing the code but advancing the carrier phase', 'Speeding up both code and carrier', 'Only affecting signals at night', 'Having no measurable effect on L1 frequency'],
+    correctAnswer: 0,
+    explanation: 'The ionosphere causes a group delay (slows the pseudorange code) but advances the carrier phase by an equal amount. Dual-frequency receivers can model and remove most ionospheric delay.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In carrier-phase GPS surveying, "integer ambiguity" refers to:',
+    options: ['The unknown number of full carrier wavelengths between satellite and receiver', 'The number of satellites visible', 'The atmospheric error in the signal', 'The receiver clock offset'],
+    correctAnswer: 0,
+    explanation: 'Integer ambiguity (N) is the unknown whole number of carrier phase cycles between satellite and receiver at the start of tracking. Resolving N is critical for centimeter-level accuracy.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'What is the primary difference between PPK and RTK GNSS surveying?',
+    options: ['PPK processes corrections after data collection; RTK applies corrections in real time', 'PPK is less accurate than RTK', 'RTK does not require a base station', 'PPK can only use GPS satellites'],
+    correctAnswer: 0,
+    explanation: 'Post-Processed Kinematic (PPK) stores raw data and applies differential corrections afterward. Real-Time Kinematic (RTK) receives corrections via radio/cellular link in real time, providing immediate results in the field.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'OPUS (Online Positioning User Service) processes GPS data by:',
+    options: ['Using three nearby CORS stations to compute a position solution', 'Providing real-time corrections via satellite', 'Connecting directly to a base station', 'Using only broadcast ephemeris data'],
+    correctAnswer: 0,
+    explanation: 'OPUS is a free NGS service that processes uploaded GPS observation files using three nearby CORS reference stations. It returns NAD 83 coordinates and NAVD 88 orthometric heights.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'To convert a grid distance to a ground distance, you divide by the:',
+    options: ['Combined scale factor (grid scale factor × elevation factor)', 'Grid scale factor only', 'Elevation factor only', 'Geoid undulation'],
+    correctAnswer: 0,
+    explanation: 'Ground distance = Grid distance / Combined factor. The combined factor = grid scale factor × elevation factor. This accounts for both map projection distortion and elevation above the ellipsoid.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In the UTM coordinate system, the false easting applied to the central meridian is:',
+    options: ['500,000 meters', '10,000,000 meters', '0 meters', '200,000 meters'],
+    correctAnswer: 0,
+    explanation: 'UTM applies a false easting of 500,000 m to the central meridian to avoid negative easting coordinates. A false northing of 10,000,000 m is applied in the southern hemisphere.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'What is the primary advantage of using CORS (Continuously Operating Reference Stations) for GNSS surveying?',
+    options: ['Eliminates the need for a user-owned base station', 'Increases satellite count', 'Eliminates multipath errors', 'Provides higher orbit accuracy'],
+    correctAnswer: 0,
+    explanation: 'CORS networks provide permanent reference stations with known coordinates, eliminating the need for surveyors to set up their own base station. Data can be used for post-processing (e.g., via OPUS) or real-time corrections.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The difference between PPK (Post-Processed Kinematic) and RTK (Real-Time Kinematic) GPS is:',
+    options: ['PPK processes corrections after data collection; RTK applies corrections in real time', 'PPK is less accurate than RTK', 'RTK does not require a base station', 'PPK only works with single-frequency receivers'],
+    correctAnswer: 0,
+    explanation: 'PPK and RTK both achieve centimeter-level accuracy using carrier-phase measurements. The key difference is timing: RTK applies corrections via radio link during the survey, while PPK stores raw data and applies corrections during post-processing.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The elevation factor is calculated as:',
+    options: ['R / (R + h), where R is the mean radius of the Earth and h is the elevation above the ellipsoid', 'h / R', '(R + h) / R', 'R × h'],
+    correctAnswer: 0,
+    explanation: 'Elevation factor = R / (R + h). At higher elevations, ground distances are longer than the corresponding ellipsoid distances, so the elevation factor is less than 1.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'NAVD 88 differs from NGVD 29 primarily because NAVD 88:',
+    options: ['Is based on a single tidal benchmark (Father Point, Rimouski, Quebec) and uses a geopotential model', 'Uses 26 tidal stations around North America', 'Is referenced to the WGS 84 ellipsoid', 'Has been superseded by NGVD 29'],
+    correctAnswer: 0,
+    explanation: 'NAVD 88 is based on a minimum-constraint adjustment with one fixed benchmark (Father Point/Rimouski). NGVD 29 was constrained to 26 tidal stations. Differences between the two can be up to about 1.5 meters regionally.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'GLONASS is the satellite navigation system operated by:',
+    options: ['Russia', 'European Union', 'China', 'India'],
+    correctAnswer: 0,
+    explanation: 'GLONASS is the Russian Global Navigation Satellite System. Galileo is the EU system, BeiDou is China\'s, and NavIC (IRNSS) is India\'s regional system.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In differential leveling, closing on a known benchmark and finding a misclosure of +0.030 ft over 6 setups, what is the correction per setup?',
+    options: ['-0.005 ft per setup', '+0.005 ft per setup', '-0.030 ft to the last station only', '+0.030 ft distributed to the first station'],
+    correctAnswer: 0,
+    explanation: 'The correction is distributed equally (or proportionally by distance) across all setups. Correction per setup = -0.030/6 = -0.005 ft. The correction sign is opposite to the misclosure.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In least squares adjustment, the goal is to:',
+    options: ['Minimize the sum of the squares of the weighted residuals', 'Eliminate all measurement errors', 'Average all measurements equally', 'Use only the best single measurement'],
+    correctAnswer: 0,
+    explanation: 'Least squares adjustment finds the most probable values by minimizing v\'Pv (the sum of squared weighted residuals), where P is the weight matrix. It optimally distributes errors based on measurement quality.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A cycle slip in GPS carrier phase data is:',
+    options: ['A sudden jump of an integer number of wavelengths in the phase count', 'A gradual drift in the satellite clock', 'A slow change in atmospheric delay', 'A normal part of pseudorange measurement'],
+    correctAnswer: 0,
+    explanation: 'A cycle slip is an instantaneous jump in the carrier phase count by an integer number of cycles, caused by signal obstruction, low signal-to-noise ratio, or receiver malfunction. It must be detected and repaired.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'Static GPS surveying is best suited for:',
+    options: ['High-accuracy control surveys with long observation times', 'Rapid topographic data collection', 'Real-time construction staking', 'Single-frequency autonomous positioning'],
+    correctAnswer: 0,
+    explanation: 'Static GPS requires simultaneous observations at two or more stations for extended periods (typically 1-2+ hours). It achieves the highest accuracy and is used for geodetic control networks.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'CORS (Continuously Operating Reference Stations) provide:',
+    options: ['Continuously recorded GNSS data at known locations for post-processing and real-time corrections', 'Magnetic declination values', 'Tide gauge readings', 'Weather forecast data for surveyors'],
+    correctAnswer: 0,
+    explanation: 'CORS are permanent GNSS stations that continuously collect data. Users can download this data for differential post-processing or receive real-time corrections via NTRIP for RTK surveying.',
+    difficulty: 'medium'
+  },
+
+  // ====================================
+  // NEW FS QUESTIONS - Surveying Principles (22 questions)
+  // ====================================
+  {
+    domain: 'Surveying Principles',
+    question: 'The linear error of closure for a traverse is defined as:',
+    options: ['The resultant of the latitude and departure misclosures: √(ΣΔN² + ΣΔE²)', 'The sum of all distances in the traverse', 'The difference between the longest and shortest sides', 'The angular misclosure divided by the number of angles'],
+    correctAnswer: 0,
+    explanation: 'Linear error of closure = √(ΣΔN² + ΣΔE²). It represents the distance between the theoretical closing point and the actual computed closing point of the traverse.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'The relative precision ratio of a traverse is computed as:',
+    options: ['1 : (Perimeter / Linear error of closure)', 'Linear error / Perimeter', 'Number of stations / Total error', 'Total distance × Angular error'],
+    correctAnswer: 0,
+    explanation: 'Relative precision = 1:(P/E), where P is total traverse perimeter and E is linear error of closure. For example, if P = 5000 ft and E = 0.25 ft, precision = 1:20,000.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'The Compass (Bowditch) Rule distributes traverse closure error in proportion to:',
+    options: ['The length of each traverse leg relative to the total perimeter', 'The number of angles measured', 'The azimuth of each line', 'The elevation difference at each station'],
+    correctAnswer: 0,
+    explanation: 'Bowditch Rule: Correction for any leg = (leg length / perimeter) × total error in latitude (or departure). It assumes errors are equally likely in angles and distances.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'When should the Transit Rule be used instead of the Compass Rule for traverse adjustment?',
+    options: ['When angles are measured more precisely than distances', 'When distances are measured more precisely than angles', 'When all measurements have equal precision', 'When the traverse is an open traverse'],
+    correctAnswer: 0,
+    explanation: 'The Transit Rule adjusts more in the direction of travel (proportional to latitude for latitude corrections, departure for departure corrections). It is preferred when angular measurements are more precise than distance measurements.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In a closed traverse with 5 angles, the theoretical sum of interior angles is 540°. If the measured sum is 540°00\'25", how should the angular misclosure be distributed?',
+    options: ['-5" applied to each of the 5 angles', '-25" applied to the largest angle only', '+5" applied to each angle', '-25" applied to the first angle'],
+    correctAnswer: 0,
+    explanation: 'Angular misclosure = 540°00\'25" - 540°00\'00" = +25". Correction = -25"/5 = -5" per angle. The correction is distributed equally (or weighted by field conditions) to each measured angle.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'To compute the bearing and distance between two points from their coordinates, you use:',
+    options: ['The inverse: bearing = arctan(ΔE/ΔN), distance = √(ΔE² + ΔN²)', 'The forward: distance × cos(bearing) for each component', 'The Compass Rule for adjustment', 'The DMD method for area'],
+    correctAnswer: 0,
+    explanation: 'An inverse computation finds bearing (azimuth = arctan(ΔE/ΔN), adjusted for quadrant) and distance (√(ΔE² + ΔN²)) from known coordinates of two points.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In a bearing-bearing intersection, the position of an unknown point is found by:',
+    options: ['Observing directions from two known points and computing the intersection of the two lines', 'Measuring distances from three known points', 'Running a level circuit', 'Using a single baseline and deflection angle'],
+    correctAnswer: 0,
+    explanation: 'A bearing-bearing (direction-direction) intersection locates a point by computing where two lines of known direction from two known stations intersect. Requires at least two known points with observed bearings to the unknown point.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Resection determines the position of an unknown point by:',
+    options: ['Observing angles or directions from the unknown point to three or more known control points', 'Setting up on a known point and measuring to an unknown point', 'Running a traverse from one known point', 'Measuring only distances with a tape'],
+    correctAnswer: 0,
+    explanation: 'Resection locates the instrument station by observing angles to at least three known control points. The point\'s position is computed from the observed angles and known coordinates.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In a traverse with one missing distance and one missing bearing on the same line, the problem is solved by:',
+    options: ['Treating the known sides as a sub-traverse and computing the closing line', 'Ignoring the missing data and adjusting the rest', 'Re-measuring the entire traverse', 'Using least squares with no constraints'],
+    correctAnswer: 0,
+    explanation: 'When one side has both unknown bearing and distance, compute the sums of latitudes and departures for all known sides. The closing line gives the missing bearing (from arctan) and distance (from Pythagorean theorem).',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In differential leveling, the Height of Instrument (HI) is computed as:',
+    options: ['Elevation of the benchmark + backsight reading', 'Foresight reading - backsight reading', 'Elevation of the benchmark - foresight reading', 'Backsight reading × foresight reading'],
+    correctAnswer: 0,
+    explanation: 'HI = Elevation of known point + BS (backsight). The HI represents the elevation of the line of sight. Elevation of a new point = HI - FS (foresight).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Three-wire leveling differs from standard differential leveling by:',
+    options: ['Reading the upper, middle, and lower stadia crosshairs on the rod to check for consistency', 'Using three level instruments simultaneously', 'Taking three separate foresights to different points', 'Setting up on three different benchmarks'],
+    correctAnswer: 0,
+    explanation: 'Three-wire leveling reads all three crosshairs (upper, middle, lower). The mean of the half-intervals (upper-middle and middle-lower) should agree closely, providing a check on the middle reading.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Trigonometric leveling determines elevation differences by:',
+    options: ['Measuring a vertical angle and a slope or horizontal distance', 'Using a spirit level and rod only', 'Running a closed level loop', 'Measuring atmospheric pressure changes'],
+    correctAnswer: 0,
+    explanation: 'Trigonometric leveling: ΔElev = distance × tan(vertical angle), or ΔElev = slope distance × sin(vertical angle). Corrections for curvature and refraction may be needed for long distances.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Reciprocal leveling is used when:',
+    options: ['Leveling across a wide river, valley, or obstacle where balanced BS/FS distances are impossible', 'The terrain is flat and uniform', 'Only one benchmark is available', 'The instrument cannot be leveled properly'],
+    correctAnswer: 0,
+    explanation: 'Reciprocal leveling takes readings from both sides of an obstacle (river, canyon). Averaging the two elevation differences cancels systematic errors from curvature, refraction, and instrument maladjustment.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'The atmospheric correction for an EDM measurement is typically expressed in:',
+    options: ['Parts per million (ppm)', 'Degrees Fahrenheit', 'Feet per second', 'Percentage of humidity'],
+    correctAnswer: 0,
+    explanation: 'EDM atmospheric corrections are given in ppm. The correction depends on temperature and pressure. For example, a +5 ppm correction on a 1000 m distance = +0.005 m.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A prism constant correction is necessary because:',
+    options: ['The effective center of the reflector is offset from the physical center of the prism', 'The battery level affects distance readings', 'Temperature changes the prism shape', 'Humidity causes signal refraction inside the prism'],
+    correctAnswer: 0,
+    explanation: 'The prism constant accounts for the difference between the physical plumb point and the effective reflection point inside the prism. It must be set correctly in the instrument or applied as a correction.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Systematic errors differ from random errors in that systematic errors:',
+    options: ['Have a consistent magnitude and sign and can be corrected if known', 'Are unpredictable and follow a normal distribution', 'Cancel out when multiple measurements are averaged', 'Cannot be detected by any method'],
+    correctAnswer: 0,
+    explanation: 'Systematic errors are consistent and predictable (e.g., a tape that is 0.02 ft too long). They do NOT cancel with averaging. Random errors are unpredictable and tend to cancel with repeated measurements.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'The most probable value of a set of equally weighted measurements is:',
+    options: ['The arithmetic mean', 'The median value', 'The mode', 'The largest measurement'],
+    correctAnswer: 0,
+    explanation: 'For equally weighted measurements, the most probable value (MPV) is the arithmetic mean. This follows from the principle of least squares applied to equally weighted observations.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Precision refers to:',
+    options: ['The degree of consistency or repeatability of measurements', 'How close measurements are to the true value', 'The number of decimal places displayed', 'The cost of the survey equipment'],
+    correctAnswer: 0,
+    explanation: 'Precision describes repeatability — how closely repeated measurements agree with each other. Accuracy describes how close measurements are to the true (correct) value. High precision does not guarantee high accuracy.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'If a distance is measured as the sum of two independent segments with standard deviations σ₁ = ±0.03 ft and σ₂ = ±0.04 ft, the standard deviation of the total distance is:',
+    options: ['±0.05 ft', '±0.07 ft', '±0.035 ft', '±0.04 ft'],
+    correctAnswer: 0,
+    explanation: 'For the sum of independent measurements: σ_total = √(σ₁² + σ₂²) = √(0.03² + 0.04²) = √(0.0009 + 0.0016) = √0.0025 = ±0.05 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'When recording measurements, the number of significant figures should reflect:',
+    options: ['The precision of the measuring instrument', 'The number of decimal places on a calculator', 'The maximum number available', 'The client\'s preference'],
+    correctAnswer: 0,
+    explanation: 'Significant figures should reflect the precision of the least precise measurement used. Recording more figures than the instrument can resolve implies false precision.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A weighted mean is used when:',
+    options: ['Measurements have different reliabilities (different weights)', 'All measurements are equally precise', 'Only two measurements are available', 'The mean is negative'],
+    correctAnswer: 0,
+    explanation: 'Weighted mean = Σ(wᵢxᵢ)/Σ(wᵢ). Weights are typically proportional to the number of observations or inversely proportional to the variance. More reliable measurements receive higher weights.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'For a distance-distance intersection, the position of an unknown point is found by:',
+    options: ['Computing the intersection of two circles centered at two known points with known radii (distances)', 'Measuring two angles from the unknown point', 'Running a traverse through the point', 'Using a single distance and bearing'],
+    correctAnswer: 0,
+    explanation: 'Distance-distance intersection (trilateration) locates a point at the intersection of two circles. Each circle is centered at a known point with radius equal to the measured distance. This typically yields two solutions; field conditions determine which is correct.',
+    difficulty: 'hard'
+  },
+
+  // ====================================
+  // NEW FS QUESTIONS - Math & Basic Science (13 questions)
+  // ====================================
+  {
+    domain: 'Math & Basic Science',
+    question: 'The trigonometric identity sin²θ + cos²θ equals:',
+    options: ['1', '0', 'tan²θ', '2sinθcosθ'],
+    correctAnswer: 0,
+    explanation: 'The Pythagorean identity sin²θ + cos²θ = 1 is fundamental. It derives from the Pythagorean theorem applied to the unit circle.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Two survey lines with known bearings from different stations intersect at an unknown point. This is solved using:',
+    options: ['A bearing-bearing intersection using the Law of Sines', 'A distance-distance intersection only', 'Least squares adjustment', 'Differential leveling'],
+    correctAnswer: 0,
+    explanation: 'A bearing-bearing intersection uses the known positions of two stations and the observed bearings to compute the position of the intersection point, typically using the Law of Sines to solve the triangle formed.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One chain (Gunter\'s) equals how many feet?',
+    options: ['66 feet', '100 feet', '80 feet', '33 feet'],
+    correctAnswer: 0,
+    explanation: '1 Gunter\'s chain = 66 feet = 4 rods = 100 links. 80 chains = 1 mile. 10 square chains = 1 acre.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The U.S. survey foot differs from the international foot by:',
+    options: ['About 2 parts per million (1 US survey foot = 1200/3937 meters)', 'Exactly 1 inch', 'More than 1 foot', 'There is no difference'],
+    correctAnswer: 0,
+    explanation: 'US survey foot = 1200/3937 m = 0.3048006... m. International foot = 0.3048 m exactly. The difference is about 2 ppm (0.01 ft per mile), which matters for large-scale coordinate systems.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'To convert a slope distance of 500.00 ft measured at a zenith angle of 85° to horizontal distance, you calculate:',
+    options: ['500.00 × sin(85°) = 498.10 ft', '500.00 × cos(85°) = 43.63 ft', '500.00 × tan(85°) = 5,715 ft', '500.00 / sin(85°) = 501.90 ft'],
+    correctAnswer: 0,
+    explanation: 'With zenith angle: Horizontal distance = Slope distance × sin(zenith angle) = 500 × sin(85°) = 498.10 ft. Note: zenith angle of 85° = vertical angle of +5° from horizontal.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A zenith angle of 90° corresponds to a vertical angle of:',
+    options: ['0° (horizontal)', '+90° (straight up)', '-90° (straight down)', '180° (directly behind)'],
+    correctAnswer: 0,
+    explanation: 'Zenith angle is measured from the vertical (zenith). A zenith angle of 90° points horizontally (vertical angle = 0°). Zenith angle of 0° is straight up, 180° is straight down.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A roadway has a 6% grade. Over a horizontal distance of 500 ft, the rise in elevation is:',
+    options: ['30 ft', '3 ft', '60 ft', '300 ft'],
+    correctAnswer: 0,
+    explanation: 'Grade (%) = (rise/horizontal distance) × 100. Rise = 0.06 × 500 = 30 ft. A 6% grade means 6 ft of rise per 100 ft of horizontal distance.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The radius of a circular curve that passes through three known points can be determined using:',
+    options: ['The perpendicular bisectors of two chords formed by the three points', 'The sum of the three distances', 'The arithmetic mean of the coordinates', 'A single bearing from one point'],
+    correctAnswer: 0,
+    explanation: 'The center of a circle through three points lies at the intersection of the perpendicular bisectors of any two chords connecting the points. The radius is the distance from this center to any of the three points.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Linear interpolation between two contour lines at elevations 100 ft and 110 ft shows that the 105 ft contour is:',
+    options: ['Halfway between the two contour lines', 'One-quarter of the way', 'Three-quarters of the way', 'At the same position as the 100 ft contour'],
+    correctAnswer: 0,
+    explanation: 'Linear interpolation: (105-100)/(110-100) = 5/10 = 0.50 = 50% of the distance from the 100 ft contour to the 110 ft contour, assuming uniform slope.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Express 0.00000645 in scientific notation:',
+    options: ['6.45 × 10⁻⁶', '6.45 × 10⁻⁵', '64.5 × 10⁻⁷', '0.645 × 10⁻⁵'],
+    correctAnswer: 0,
+    explanation: '0.00000645 = 6.45 × 10⁻⁶. Move the decimal point 6 places to the right. This is the coefficient of thermal expansion for steel, commonly used in tape correction calculations.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Two lines are defined by the equations y = 2x + 3 and y = -x + 9. Their intersection point is at:',
+    options: ['(2, 7)', '(3, 6)', '(1, 5)', '(4, 11)'],
+    correctAnswer: 0,
+    explanation: 'Set 2x + 3 = -x + 9. Solving: 3x = 6, x = 2. Then y = 2(2) + 3 = 7. The intersection point is (2, 7).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'One rod (pole/perch) equals how many feet?',
+    options: ['16.5 feet', '33 feet', '66 feet', '100 feet'],
+    correctAnswer: 0,
+    explanation: '1 rod = 1 pole = 1 perch = 16.5 ft. 4 rods = 1 chain = 66 ft. This unit appears frequently in old property descriptions.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'If a distance D has an error σ_D and an angle θ has an error σ_θ (in radians), the propagated error in Departure (D × sinθ) is approximately:',
+    options: ['√[(sinθ × σ_D)² + (D × cosθ × σ_θ)²]', 'σ_D + σ_θ', 'D × σ_θ', 'sinθ × σ_D'],
+    correctAnswer: 0,
+    explanation: 'Using error propagation for f = D × sinθ: σ_f = √[(∂f/∂D × σ_D)² + (∂f/∂θ × σ_θ)²] = √[(sinθ × σ_D)² + (D cosθ × σ_θ)²]. This combines both distance and angular uncertainties.',
+    difficulty: 'hard'
+  },
+
+  // ====================================
+  // NEW FS QUESTIONS - Boundary Law & PLSS (15 questions)
+  // ====================================
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In the hierarchy of conflicting calls in a deed, which order of priority is correct?',
+    options: ['Natural monuments > Artificial monuments > Courses (bearings) > Distances > Area', 'Area > Distances > Courses > Monuments', 'Distances > Courses > Natural monuments > Area', 'Artificial monuments > Natural monuments > Area > Courses'],
+    correctAnswer: 0,
+    explanation: 'The standard priority of calls is: (1) Natural monuments (rivers, ridges), (2) Artificial monuments (stakes, pipes), (3) Courses/Bearings, (4) Distances, (5) Area/Quantity. "Monuments control over courses and distances."',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'When two properties are created by a simultaneous conveyance (e.g., subdivision plat), boundary disputes between them are resolved by:',
+    options: ['Giving equal weight to both parcels since neither has senior rights', 'Giving priority to the parcel sold first', 'Giving priority to the larger parcel', 'Ignoring the original plat'],
+    correctAnswer: 0,
+    explanation: 'In simultaneous conveyance, all lots are created at the same time (e.g., a recorded plat). No lot has senior rights over another, so boundaries are determined by the plat and mutual calls with equal weight.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In sequential conveyances, the "senior rights" belong to:',
+    options: ['The grantee of the first conveyance', 'The grantee of the last conveyance', 'The original grantor who retained the land', 'The surveyor who prepared the descriptions'],
+    correctAnswer: 0,
+    explanation: 'Senior rights belong to the first (earliest) grantee. When there is a conflict, the first deed out has priority. The remaining land (junior parcel) absorbs any excess or deficiency.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The parol evidence rule generally provides that:',
+    options: ['Oral testimony cannot contradict the terms of a written deed', 'Oral agreements always take priority over written documents', 'Surveys are not admissible in court', 'Deeds do not need to be in writing'],
+    correctAnswer: 0,
+    explanation: 'The parol evidence rule prevents the introduction of oral (parol) evidence to contradict, vary, or add to the terms of a complete written instrument (deed). Exceptions exist for ambiguity and fraud.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The Statute of Frauds requires that conveyances of real property must be:',
+    options: ['In writing and signed by the grantor', 'Approved by a licensed surveyor', 'Published in a newspaper', 'Witnessed by at least five people'],
+    correctAnswer: 0,
+    explanation: 'The Statute of Frauds requires that transfers of interest in real property be evidenced by a writing signed by the party to be charged. This prevents fraudulent oral claims of land ownership.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The elements of adverse possession can be remembered by the acronym OCEAN, which stands for:',
+    options: ['Open, Continuous, Exclusive, Adverse/Hostile, Notorious', 'Original, Certified, Established, Approved, Notarized', 'Observed, Calculated, Estimated, Adjusted, Noted', 'Opened, Closed, Extended, Aligned, Numbered'],
+    correctAnswer: 0,
+    explanation: 'OCEAN: Open (visible), Continuous (uninterrupted for statutory period), Exclusive (not shared with owner), Adverse/Hostile (without permission), Notorious (obvious to owner). All elements must be met.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'The key difference between a prescriptive easement and adverse possession is:',
+    options: ['Prescriptive easement grants a right to use; adverse possession transfers title/ownership', 'Adverse possession requires less time', 'Prescriptive easement requires payment', 'There is no difference'],
+    correctAnswer: 0,
+    explanation: 'Prescriptive easement grants only a right to use another\'s land (e.g., a path). Adverse possession actually transfers fee title (ownership). Both require open, continuous, hostile use for the statutory period.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'In PLSS, when subdividing a regular section into quarter sections, the quarter-section corners are placed:',
+    options: ['At the midpoint of each section boundary line', 'At random locations along the boundary', 'Only on the north and west boundaries', 'At the center of the section only'],
+    correctAnswer: 0,
+    explanation: 'Quarter-section corners are placed at the midpoints of each section line (north, south, east, west boundaries). The center quarter corner is at the intersection of lines connecting opposite quarter-section corners.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Fractional sections and lots in the PLSS occur primarily along:',
+    options: ['The north and west boundaries of a township due to convergence of meridians and measurement errors', 'The south and east boundaries', 'The center of the township', 'Every section in the township'],
+    correctAnswer: 0,
+    explanation: 'PLSS surveys proceed from south to north and east to west. Fractional sections and lots are placed along the north and west boundaries where excess or deficiency accumulates.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Meander lines in the PLSS were established to:',
+    options: ['Determine the area of fractional sections bordering navigable waters, not to define the boundary', 'Define the exact legal boundary of waterfront property', 'Mark the center of rivers and streams', 'Establish straight boundaries along rivers'],
+    correctAnswer: 0,
+    explanation: 'Meander lines are survey lines run along the bank of navigable water bodies to compute areas of fractional sections. The actual boundary is typically the water\'s edge (ordinary high water mark), not the meander line.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Double proportionate measurement is used to restore:',
+    options: ['A lost interior section corner by proportioning in both N-S and E-W directions', 'An obliterated corner from existing evidence', 'A corner on a standard parallel', 'A witness corner that was displaced'],
+    correctAnswer: 0,
+    explanation: 'Double proportionate measurement restores lost interior corners of the PLSS by proportioning distances in both cardinal directions (N-S and E-W) from the nearest found corners on each line.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Single proportionate measurement is used to restore:',
+    options: ['A lost quarter-section corner or other corner on a line between two found corners', 'An interior section corner', 'A township corner only', 'A corner on a state boundary'],
+    correctAnswer: 0,
+    explanation: 'Single proportionate measurement restores a lost corner on a line between two existing corners by proportioning the distance. It is used for quarter-section corners, meander corners, and other corners on a single line.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'An obliterated corner differs from a lost corner because:',
+    options: ['An obliterated corner can be restored from evidence and records; a lost corner cannot', 'A lost corner can be found in records; an obliterated corner cannot', 'They are the same thing', 'An obliterated corner was never originally set'],
+    correctAnswer: 0,
+    explanation: 'An obliterated corner has no remaining physical evidence at the site but its position can be determined from recorded measurements, witness testimony, or other evidence. A lost corner has no evidence at all and must be restored by proportionate measurement.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'Riparian rights relate to land bordering _____, while littoral rights relate to land bordering _____.',
+    options: ['Flowing water (streams/rivers); standing water (lakes/oceans)', 'Standing water; flowing water', 'Underground water; surface water', 'Navigable water; non-navigable water'],
+    correctAnswer: 0,
+    explanation: 'Riparian rights apply to property abutting flowing water (streams, rivers). Littoral rights apply to property abutting standing water bodies (lakes, seas, oceans). Both include rights to access and reasonable use.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'When land is added by accretion, the boundary:',
+    options: ['Follows the gradually shifting waterline, and the owner gains title to the new land', 'Remains at the original meander line', 'Reverts to the government', 'Must be re-surveyed by the BLM'],
+    correctAnswer: 0,
+    explanation: 'Accretion (gradual, imperceptible addition of soil by water action) causes the boundary to shift with the water. The riparian/littoral owner gains title to accreted land. Avulsion (sudden change) does not move the boundary.',
+    difficulty: 'medium'
+  },
+
+  // ====================================
+  // NEW FS QUESTIONS - Professional Practice (14 questions)
+  // ====================================
+  {
+    domain: 'Professional Practice',
+    question: 'ALTA/NSPS Table A items are:',
+    options: ['Optional survey requirements that the client may select beyond the minimum standards', 'Mandatory requirements for all surveys', 'Government regulations that apply only to federal land', 'A list of surveying equipment specifications'],
+    correctAnswer: 0,
+    explanation: 'Table A contains optional items (e.g., flood zone determination, utility location, zoning information) that the client, lender, or title company may request in addition to the minimum standards.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'An ALTA/NSPS Land Title Survey differs from a simple boundary survey primarily because it:',
+    options: ['Must meet specific standards for title insurance purposes and includes detailed items such as encroachments, easements, and setback lines', 'Only shows property corners without any improvements', 'Is performed without any standards', 'Does not require a licensed surveyor'],
+    correctAnswer: 0,
+    explanation: 'ALTA/NSPS surveys meet rigorous standards jointly established by ALTA and NSPS. They identify boundary lines, encroachments, easements, rights-of-way, and other matters affecting title, at a specified relative positional precision.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Errors and omissions (E&O) insurance for surveyors covers:',
+    options: ['Claims arising from unintentional professional negligence or mistakes', 'Theft of survey equipment', 'Injuries to field crew members', 'Damage caused by the surveyor\'s vehicle'],
+    correctAnswer: 0,
+    explanation: 'E&O (professional liability) insurance protects surveyors against claims of negligence, errors, or omissions in professional services. It does not cover intentional acts, bodily injury, or property damage (those are covered by general liability).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The "standard of care" for a surveyor is defined as:',
+    options: ['The degree of care, skill, and diligence that a reasonably competent surveyor would exercise under similar circumstances', 'Achieving perfect accuracy in all measurements', 'Following only the client\'s instructions regardless of standards', 'Using the most expensive equipment available'],
+    correctAnswer: 0,
+    explanation: 'Standard of care is a legal concept: the level of competence expected of a reasonably prudent surveyor in the same area and time. It does not require perfection, but rather reasonable professional competence.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Minimum Technical Standards (MTS) adopted by states typically specify:',
+    options: ['Required accuracy, procedures, monumentation, and documentation for land surveys within that state', 'The price a surveyor may charge', 'Which manufacturer of equipment to use', 'That only federal surveyors may perform boundary surveys'],
+    correctAnswer: 0,
+    explanation: 'State Minimum Technical Standards establish requirements for accuracy, closure, monumentation, plat content, and documentation. They vary by state and must be followed by all licensed surveyors practicing in that state.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'For field notes to be admissible as evidence in court, they must generally be:',
+    options: ['Original, made at the time of the survey, and authenticated by the surveyor', 'Typed and bound in a leather cover', 'Prepared after the survey from memory', 'Signed by the property owner'],
+    correctAnswer: 0,
+    explanation: 'Field notes are admissible when they are original records made contemporaneously in the field. They must be authenticated by the person who made them and should show dates, conditions, personnel, and methods used.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Chain of custody for survey monuments refers to:',
+    options: ['The documented history of who set, maintained, or disturbed a monument over time', 'The physical chain used to secure a monument', 'The process of ordering monuments from a supplier', 'The distance between consecutive monuments'],
+    correctAnswer: 0,
+    explanation: 'Chain of custody documents the history of a survey monument: who set it, when, its condition over time, and any disturbances. This is important for establishing the reliability and original position of the monument.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The primary distinction between certification and licensure for surveyors is:',
+    options: ['Licensure is mandatory by law to practice; certification is a voluntary professional credential', 'Certification is required by law; licensure is optional', 'They are identical in all states', 'Certification requires more education than licensure'],
+    correctAnswer: 0,
+    explanation: 'Licensure is a government requirement — you cannot legally practice surveying without it. Certification is typically a voluntary credential from a professional organization that recognizes additional competency.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A key principle of the NSPS Code of Ethics states that surveyors shall:',
+    options: ['Hold paramount the safety, health, and welfare of the public', 'Always provide the lowest cost survey', 'Never refuse a client\'s request', 'Keep all survey methods confidential'],
+    correctAnswer: 0,
+    explanation: 'The NSPS Code of Ethics places public safety, health, and welfare as the surveyor\'s paramount obligation. Other principles include competence, honesty, avoidance of conflicts of interest, and professional development.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The primary purpose of continuing education requirements for licensed surveyors is to:',
+    options: ['Ensure surveyors stay current with evolving technology, standards, and laws', 'Generate revenue for licensing boards', 'Reduce the number of licensed surveyors', 'Replace the need for initial licensing exams'],
+    correctAnswer: 0,
+    explanation: 'Continuing education ensures that licensed professionals maintain competency as technology, laws, standards, and best practices evolve. Most states require a specified number of CE hours per renewal period.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A survey is typically required by law when:',
+    options: ['Subdividing land, establishing boundaries for construction, or when required by a title company or lender', 'A property owner simply wants to know approximate lot dimensions', 'Mowing a lawn near a property line', 'Painting a fence within a yard'],
+    correctAnswer: 0,
+    explanation: 'Surveys are legally required for subdivisions, boundary establishment for title insurance, construction near property lines, and when disputes arise. Requirements vary by jurisdiction.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Construction staking by a surveyor establishes:',
+    options: ['Reference points, offset stakes, and grades to guide construction per the design plans', 'Legal property boundaries for recording', 'Topographic contour lines only', 'Environmental impact assessment data'],
+    correctAnswer: 0,
+    explanation: 'Construction staking provides horizontal and vertical control for builders: offset stakes, cut/fill values, slope stakes, and reference lines based on engineering design plans.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A Record of Survey is typically required to be filed when:',
+    options: ['Monuments are set or reset, or when discrepancies are found with the record', 'Every time a surveyor visits a property', 'Only for federal land surveys', 'Only when the property is larger than 100 acres'],
+    correctAnswer: 0,
+    explanation: 'Record of Survey filing requirements vary by state but commonly trigger when monuments are set/reset, evidence is found that differs from the record, or a boundary is established for the first time.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A complete boundary survey report should include:',
+    options: ['A plat/map, legal description, basis of bearings, monuments found/set, and the surveyor\'s certification', 'Only a verbal description of the property', 'Only GPS coordinates without a map', 'Only the area in acres'],
+    correctAnswer: 0,
+    explanation: 'A boundary survey report typically includes: a plat/map showing boundaries, monuments, dimensions, and bearings; a legal description; basis of bearings; record references; monuments found and set; and the surveyor\'s signed and sealed certification.',
+    difficulty: 'medium'
   }
 ];
 
