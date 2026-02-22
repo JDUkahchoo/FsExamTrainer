@@ -376,6 +376,14 @@ export default function StudyReadingPage() {
   const { examTrack } = useExamTrack();
   const readingId = params.id;
 
+  const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const fromStudyPlan = urlParams.get('from') === 'study-plan';
+  const returnWeek = urlParams.get('week');
+  const backPath = fromStudyPlan && returnWeek
+    ? `/app/${examTrack}/study-plan?week=${returnWeek}`
+    : `/app/${examTrack}/readings`;
+  const backLabel = fromStudyPlan ? 'Back to Study Plan' : 'Back to Readings';
+
   const reading = STUDY_READINGS.find((r) => r.id === readingId);
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
@@ -431,10 +439,10 @@ export default function StudyReadingPage() {
             <p className="text-center text-muted-foreground" data-testid="text-not-found">
               Reading not found.
             </p>
-            <Link href={`/app/${examTrack}/readings`}>
+            <Link href={backPath}>
               <Button className="w-full" data-testid="button-back-to-readings">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Readings
+                {backLabel}
               </Button>
             </Link>
           </CardContent>
@@ -505,10 +513,10 @@ export default function StudyReadingPage() {
   return (
     <div className="container mx-auto p-6 max-w-3xl">
       <div className="mb-6 space-y-4">
-        <Link href={`/app/${examTrack}/readings`}>
+        <Link href={backPath}>
           <Button variant="ghost" size="sm" data-testid="button-back-to-readings">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Readings
+            {backLabel}
           </Button>
         </Link>
 
@@ -587,10 +595,10 @@ export default function StudyReadingPage() {
             <p className="text-sm text-muted-foreground">
               You have completed all {totalSections} sections of this reading.
             </p>
-            <Link href={`/app/${examTrack}/readings`}>
+            <Link href={backPath}>
               <Button data-testid="button-back-after-complete">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Readings
+                {backLabel}
               </Button>
             </Link>
           </CardContent>

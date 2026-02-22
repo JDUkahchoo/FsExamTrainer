@@ -61,7 +61,10 @@ import { FileText } from 'lucide-react';
 export default function StudyPlan() {
   const [, navigate] = useLocation();
   const { examTrack, examName, domains: examDomains } = useExamTrack();
-  const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
+  const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const weekFromUrl = urlParams.get('week');
+  const parsedWeek = weekFromUrl ? parseInt(weekFromUrl, 10) : null;
+  const [expandedWeek, setExpandedWeek] = useState<number | null>(parsedWeek && !isNaN(parsedWeek) ? parsedWeek : 1);
   const [expandedDailyLogs, setExpandedDailyLogs] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newWeekTitle, setNewWeekTitle] = useState('');
@@ -1121,7 +1124,7 @@ export default function StudyPlan() {
                                   size="sm"
                                   className="w-full"
                                   variant={isMastered || isPassed ? "outline" : "default"}
-                                  onClick={() => navigate(`/app/${examTrack}/lesson/${lesson.id}`)}
+                                  onClick={() => navigate(`/app/${examTrack}/lesson/${lesson.id}?from=study-plan&week=${plan.week}`)}
                                   data-testid={`button-lesson-${lesson.id}`}
                                 >
                                   {isMastered ? 'Review Lesson' : isPassed ? 'Improve Score' : isFailed ? 'Retry Lesson' : 'Start Lesson'}

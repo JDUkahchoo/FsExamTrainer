@@ -68,6 +68,14 @@ export default function LessonPage() {
   const { examTrack } = useExamTrack();
   const lessonId = params.id;
 
+  const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const fromStudyPlan = urlParams.get('from') === 'study-plan';
+  const returnWeek = urlParams.get('week');
+  const backPath = fromStudyPlan && returnWeek
+    ? `/app/${examTrack}/study-plan?week=${returnWeek}`
+    : `/app/${examTrack}/lessons`;
+  const backLabel = fromStudyPlan ? 'Back to Study Plan' : 'Back to Lessons';
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -178,10 +186,10 @@ export default function LessonPage() {
             <p className="text-center text-muted-foreground">Lesson not found</p>
             <Button
               className="mt-4 w-full"
-              onClick={() => navigate(`/app/${examTrack}/lessons`)}
+              onClick={() => navigate(backPath)}
               data-testid="button-back-to-study-plan"
             >
-              Back to Lessons
+              {backLabel}
             </Button>
           </CardContent>
         </Card>
@@ -212,11 +220,11 @@ export default function LessonPage() {
             </div>
             <Button
               className="w-full"
-              onClick={() => navigate(`/app/${examTrack}/lessons`)}
+              onClick={() => navigate(backPath)}
               data-testid="button-back-to-study-plan"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Lessons
+              {backLabel}
             </Button>
           </CardContent>
         </Card>
@@ -430,12 +438,12 @@ export default function LessonPage() {
                 </Button>
               )}
               <Button
-                onClick={() => navigate(`/app/${examTrack}/lessons`)}
+                onClick={() => navigate(backPath)}
                 variant={submitMutation.data?.passed ? "default" : "outline"}
                 className="flex-1"
                 data-testid="button-back-to-study-plan-from-results"
               >
-                Back to Lessons
+                {backLabel}
               </Button>
             </div>
           </CardContent>

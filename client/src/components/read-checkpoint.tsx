@@ -235,7 +235,7 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
               Interactive Study Readings
             </div>
             {weekReadings.map(reading => (
-              <Link key={reading!.id} href={`/app/${examTrack}/readings/${reading!.id}`}>
+              <Link key={reading!.id} href={`/app/${examTrack}/readings/${reading!.id}?from=study-plan&week=${week}`}>
                 <a
                   className="flex items-center gap-2 rounded-md border p-2 text-sm hover-elevate cursor-pointer no-underline text-foreground"
                   data-testid={`link-reading-${reading!.id}`}
