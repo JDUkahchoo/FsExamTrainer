@@ -463,10 +463,12 @@ export default function FlashcardsPage() {
       if (studyMode === 'quick') {
         const cardIndex = shuffledIndices[currentIndex];
         const card = filteredCards[cardIndex];
-        const stableIndex = activeFlashcards.indexOf(card);
-        const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
-        const cardId = `${deckPrefix}${stableIndex}`;
-        recordProgressMutation.mutate({ cardId, mode: 'quick' });
+        if (card) {
+          const stableIndex = activeFlashcards.indexOf(card);
+          const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
+          const cardId = `${deckPrefix}${stableIndex}`;
+          recordProgressMutation.mutate({ cardId, mode: 'quick' });
+        }
       }
       
       setCurrentIndex(currentIndex + 1);
@@ -495,13 +497,13 @@ export default function FlashcardsPage() {
   const handleToggleMastered = () => {
     const cardIndex = shuffledIndices[currentIndex];
     const card = filteredCards[cardIndex];
+    if (!card) return;
     const stableIndex = activeFlashcards.indexOf(card);
     const deckPrefix = selectedDeck === 'comprehensive' ? 'comp-card-' : 'card-';
     const cardId = `${deckPrefix}${stableIndex}`;
     const wasMastered = masteredCards.has(cardId);
     const newMasteryLevel = wasMastered ? 2 : 5;
     
-    // Track session stats and log review event
     if (currentSessionId) {
       sessionStatsRef.current.cardsReviewed += 1;
       sessionStatsRef.current.masteryRatings.push(newMasteryLevel);
