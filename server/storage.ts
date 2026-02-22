@@ -3462,7 +3462,7 @@ export class DatabaseStorage implements IStorage {
 
   // --- Forgetting Curve Methods ---
 
-  async getForgettingCurveData(userId: string): Promise<{
+  async getForgettingCurveData(userId: string, examTrack: string = 'fs'): Promise<{
     items: Array<{
       itemId: string;
       itemTitle: string;
@@ -3481,11 +3481,14 @@ export class DatabaseStorage implements IStorage {
   }> {
     const now = new Date();
     
-    // Get all review items for this user
+    // Get all review items for this user filtered by exam track
     const reviews = await db
       .select()
       .from(reviewSchedule)
-      .where(eq(reviewSchedule.userId, userId));
+      .where(and(
+        eq(reviewSchedule.userId, userId),
+        eq(reviewSchedule.examTrack, examTrack)
+      ));
 
     if (reviews.length === 0) {
       return {

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Brain, AlertTriangle, Clock, TrendingDown, CheckCircle } from "lucide-react";
+import { useExamTrack } from '@/contexts/exam-track-context';
 
 interface ForgettingCurveItem {
   itemId: string;
@@ -26,8 +27,9 @@ interface ForgettingCurveData {
 }
 
 export function ForgettingCurveChart({ compact = false }: { compact?: boolean }) {
+  const { examTrack } = useExamTrack();
   const { data, isLoading } = useQuery<ForgettingCurveData>({
-    queryKey: ['/api/forgetting-curve'],
+    queryKey: [`/api/forgetting-curve?examTrack=${examTrack}`],
   });
 
   if (isLoading) {

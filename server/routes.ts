@@ -6,6 +6,8 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod, FS_DOMAINS, PS_DOMAINS } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
+import { FLASHCARDS } from "@shared/data/flashcards";
+import { COMPREHENSIVE_FLASHCARDS } from "@shared/data/flashcardsComprehensive";
 import { db } from "./db";
 import { lessons, lessonQuestions } from "@shared/schema";
 import { count, eq } from "drizzle-orm";
@@ -865,6 +867,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
+      // Auto-populate review schedule for the quiz domain
+      if (session && data.domain && data.domain !== 'all') {
+        try {
+          const quizAccuracy = data.totalQuestions > 0 ? data.correctAnswers / data.totalQuestions : 0;
+          const quality = quizAccuracy >= 0.9 ? 5 : quizAccuracy >= 0.7 ? 4 : quizAccuracy >= 0.5 ? 3 : quizAccuracy >= 0.3 ? 2 : 1;
+          const quizPrefs = await storage.getUserPreferences(userId);
+          const quizExamTrack = req.body.examTrack && ['fs', 'ps'].includes(req.body.examTrack) ? req.body.examTrack : (quizPrefs?.preferredExamTrack || 'fs');
+          await storage.createOrUpdateReviewItem(
+            userId, 'concept', `quiz-domain:${data.domain}`,
+            `${data.domain} Quiz Review`,
+            data.domain,
+            quality, quizExamTrack
+          );
+        } catch (reviewErr) {
+          console.error("Non-critical: Failed to update review schedule for quiz:", reviewErr);
+        }
+      }
+
       // Log daily activity for streak tracking
       await storage.logDailyActivity(userId, 'quiz');
       
@@ -1306,7 +1326,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // Also record progress for quest tracking (pass examTrack for correct quest matching)
-      await storage.recordFlashcardProgress(userId, cardId, mode, examTrack || 'fs');
+      const trackForCard = examTrack || 'fs';
+      await storage.recordFlashcardProgress(userId, cardId, mode, trackForCard);
+      
+      // Auto-populate review schedule for spaced repetition
+      try {
+        const isComprehensive = cardId.startsWith('comp-card-');
+        const cardIndex = parseInt(cardId.replace(/^(comp-card-|card-)/, ''), 10);
+        let cardSource: typeof FLASHCARDS;
+        if (isComprehensive) {
+          cardSource = COMPREHENSIVE_FLASHCARDS;
+        } else {
+          cardSource = FLASHCARDS.filter(c => !c.examTrack || c.examTrack === trackForCard);
+        }
+        if (!isNaN(cardIndex) && cardIndex >= 0 && cardIndex < cardSource.length) {
+          const card = cardSource[cardIndex];
+          const quality = rating >= 4 ? 5 : rating >= 3 ? 4 : rating >= 2 ? 3 : rating >= 1 ? 2 : 1;
+          await storage.createOrUpdateReviewItem(
+            userId, 'flashcard', cardId,
+            card.front.substring(0, 100),
+            card.domain || undefined,
+            quality, trackForCard
+          );
+        }
+      } catch (reviewErr) {
+        console.error("Non-critical: Failed to update review schedule for flashcard:", reviewErr);
+      }
       
       // Get current event count for this session to determine if XP should be awarded
       const eventCount = await storage.getFlashcardReviewEventCount(userId, new Date());
@@ -2406,6 +2451,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Auto-populate review schedule for completed lessons
+      if (completed) {
+        try {
+          const lessonAccuracy = totalPoints > 0 ? score / totalPoints : 0;
+          const quality = lessonAccuracy >= 0.9 ? 5 : lessonAccuracy >= 0.7 ? 4 : lessonAccuracy >= 0.5 ? 3 : 2;
+          const examTrackForLesson = lesson.examTrack || 'fs';
+          await storage.createOrUpdateReviewItem(
+            userId, 'lesson', `lesson:${lessonId}`,
+            lesson.title,
+            lesson.domain || undefined,
+            quality, examTrackForLesson
+          );
+        } catch (reviewErr) {
+          console.error("Non-critical: Failed to update review schedule for lesson:", reviewErr);
+        }
+      }
+
       // Log daily activity for streak tracking (any lesson attempt counts)
       await storage.logDailyActivity(userId, 'lesson');
 
@@ -2609,7 +2671,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/forgetting-curve", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const data = await storage.getForgettingCurveData(userId);
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      const data = await storage.getForgettingCurveData(userId, examTrack);
       res.json(data);
     } catch (error) {
       console.error("Error fetching forgetting curve:", error);
