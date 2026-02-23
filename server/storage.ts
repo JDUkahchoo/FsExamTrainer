@@ -493,7 +493,7 @@ export class DatabaseStorage implements IStorage {
     
     const conditions = [eq(quizResults.userId, userId), eq(quizResults.isCorrect, false)];
     if (examTrack) {
-      conditions.push(sql`${quizResults.domain} = ANY(${validDomains})`);
+      conditions.push(inArray(quizResults.domain, validDomains));
     }
     return await db
       .select()
@@ -510,7 +510,7 @@ export class DatabaseStorage implements IStorage {
     
     const conditions = [eq(quizResults.userId, userId)];
     if (examTrack) {
-      conditions.push(sql`${quizResults.domain} = ANY(${validDomains})`);
+      conditions.push(inArray(quizResults.domain, validDomains));
     }
     const results = await db
       .select()
@@ -541,7 +541,7 @@ export class DatabaseStorage implements IStorage {
     
     const conditions = [eq(quizResults.userId, userId)];
     if (examTrack) {
-      conditions.push(sql`${quizResults.domain} = ANY(${validDomains})`);
+      conditions.push(inArray(quizResults.domain, validDomains));
     }
     const results = await db
       .select()
