@@ -663,10 +663,10 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   // ===== STANDARDS AND SPECIFICATIONS (~40 questions) =====
   {
     domain: 'Standards and Specifications',
-    question: 'The 2021 ALTA/NSPS Land Title Survey standards require a minimum positional tolerance of:',
+    question: 'The 2026 ALTA/NSPS Land Title Survey standards require a minimum positional tolerance of:',
     options: ['0.50 feet', '0.07 feet plus 50 ppm', '0.10 feet', '1.00 feet'],
     correctAnswer: 1,
-    explanation: 'The 2021 ALTA/NSPS standards specify a Relative Positional Precision of 0.07 feet (2 cm) plus 50 ppm. This means for a 1,000-foot measurement, the tolerance is 0.07 + (50 × 0.001) = 0.12 feet. This is a significant accuracy requirement that typically requires precise equipment and methods.',
+    explanation: 'The 2026 ALTA/NSPS standards specify a Relative Positional Precision of 0.07 feet (2 cm) plus 50 ppm. This means for a 1,000-foot measurement, the tolerance is 0.07 + (50 × 0.001) = 0.12 feet. This is a significant accuracy requirement that typically requires precise equipment and methods.',
     difficulty: 'medium'
   },
   {
@@ -722,7 +722,7 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
     question: 'For an ALTA/NSPS survey, the surveyor must certify to the:',
     options: ['General public only', 'Client, lender, title company, and other parties as negotiated', 'Federal government only', 'State licensing board only'],
     correctAnswer: 1,
-    explanation: 'The ALTA/NSPS certification is addressed to specific parties: typically the client (buyer/owner), the lender, and the title insurance company. Additional parties may be added as negotiated. The certification states that the survey was performed in accordance with the 2021 ALTA/NSPS standards.',
+    explanation: 'The ALTA/NSPS certification is addressed to specific parties: typically the client (buyer/owner), the lender, and the title insurance company. Additional parties may be added as negotiated. The certification states that the survey was performed in accordance with the 2026 ALTA/NSPS standards.',
     difficulty: 'medium'
   },
   {
@@ -778,7 +778,7 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
     question: 'For ALTA/NSPS surveys, the surveyor must show evidence of:',
     options: ['Only visible improvements within 5 feet of boundary lines', 'All improvements, easements, and encroachments observed on or within 5 feet of the boundaries', 'Only buildings and fences', 'Only items specifically requested by the client'],
     correctAnswer: 1,
-    explanation: 'The 2021 ALTA/NSPS standards require the surveyor to show all improvements on the property and within 5 feet of the boundary lines that are observed during the field survey. This includes buildings, fences, walls, utilities, driveways, and other visible improvements, as well as any encroachments across boundary lines.',
+    explanation: 'The 2026 ALTA/NSPS standards require the surveyor to show all improvements on the property and within 5 feet of the boundary lines that are observed during the field survey. This includes buildings, fences, walls, utilities, driveways, and other visible improvements, as well as any encroachments across boundary lines.',
     difficulty: 'medium'
   },
   {
@@ -815,10 +815,10 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   },
   {
     domain: 'Standards and Specifications',
-    question: 'Under the 2021 ALTA/NSPS standards, the surveyor must report the datum and adjustment used for:',
-    options: ['All surveys regardless of Table A selections', 'Only when Table A Item 20 is requested', 'Only GPS surveys', 'Only state plane coordinate surveys'],
+    question: 'Under the 2026 ALTA/NSPS standards, the surveyor must report the datum and adjustment used for:',
+    options: ['All surveys regardless of Table A selections', 'Only when Table A Item 21 is requested', 'Only GPS surveys', 'Only state plane coordinate surveys'],
     correctAnswer: 0,
-    explanation: 'The 2021 ALTA/NSPS standards require that if coordinates are shown on the survey, the datum, adjustment, and zone must be reported on the survey plat. This is a minimum requirement for all ALTA/NSPS surveys, regardless of which Table A items are selected.',
+    explanation: 'The 2026 ALTA/NSPS standards require that if coordinates are shown on the survey, the datum, adjustment, and zone must be reported on the survey plat. This is a minimum requirement for all ALTA/NSPS surveys, regardless of which Table A items are selected.',
     difficulty: 'hard'
   },
   {
@@ -887,10 +887,10 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   },
   {
     domain: 'Standards and Specifications',
-    question: 'The purpose of an ALTA/NSPS Table A Item 19 (Offsite Easements) is to:',
+    question: 'The purpose of an ALTA/NSPS Table A Item 18 (Offsite Easements) is to:',
     options: ['Survey easements located entirely off the subject property', 'Identify easements visible from the property', 'Survey all roads adjacent to the property', 'Map underground utilities off the property'],
     correctAnswer: 0,
-    explanation: 'Table A Item 19 requires the surveyor to survey, locate, and show on the plat any offsite easements or servitudes that benefit the subject property (appurtenant easements), such as access easements or utility easements that cross neighboring properties.',
+    explanation: 'Table A Item 18 requires the surveyor to survey, locate, and show on the plat any plottable offsite (appurtenant) easements disclosed in documents provided to or obtained by the surveyor, such as access easements or utility easements that cross neighboring properties.',
     difficulty: 'hard'
   },
   {
@@ -1601,10 +1601,10 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   // ===== ADDITIONAL STANDARDS AND SPECIFICATIONS =====
   {
     domain: 'Standards and Specifications',
-    question: 'The 2021 ALTA/NSPS standards require that the survey plat show the relationship of the property to:',
+    question: 'The 2026 ALTA/NSPS standards require that the survey plat show the relationship of the property to:',
     options: ['The nearest school', 'Adjoining properties (record owners if ascertainable)', 'The nearest fire station', 'The county seat'],
     correctAnswer: 1,
-    explanation: 'The 2021 ALTA/NSPS standards require showing the names of adjoining property owners (if reasonably ascertainable from public records) and the relationship of the subject property to adjoining parcels. This helps the title company identify potential boundary issues and encroachments.',
+    explanation: 'The 2026 ALTA/NSPS standards require showing the names of adjoining property owners (if reasonably ascertainable from public records) and the relationship of the subject property to adjoining parcels. This helps the title company identify potential boundary issues and encroachments.',
     difficulty: 'medium'
   },
   {
@@ -1612,7 +1612,7 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
     question: 'According to ALTA/NSPS standards, the basis of bearings must be:',
     options: ['Assumed north in all cases', 'Disclosed on the plat with reference to its source', 'Always magnetic north', 'Always true north from GPS'],
     correctAnswer: 1,
-    explanation: 'The 2021 ALTA/NSPS standards require that the basis of bearings be clearly identified on the survey plat and its source disclosed. This may be geodetic north, grid north (state plane), record bearings, or other source, but it must be clearly stated so others can properly interpret the survey.',
+    explanation: 'The 2026 ALTA/NSPS standards require that the basis of bearings be clearly identified on the survey plat and its source disclosed. This may be geodetic north, grid north (state plane), record bearings, or other source, but it must be clearly stated so others can properly interpret the survey.',
     difficulty: 'medium'
   },
   {
@@ -2219,10 +2219,10 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   // ===== ADDITIONAL STANDARDS AND SPECIFICATIONS (~40 questions) =====
   {
     domain: 'Standards and Specifications',
-    question: 'The 2021 ALTA/NSPS Minimum Standard Detail Requirements specify a maximum allowable Relative Positional Precision of:',
+    question: 'The 2026 ALTA/NSPS Minimum Standard Detail Requirements specify a maximum allowable Relative Positional Precision of:',
     options: ['0.50 feet', '0.07 feet (2 cm)', '0.20 feet', '1.00 feet'],
     correctAnswer: 1,
-    explanation: 'The 2021 ALTA/NSPS standards require that the Relative Positional Precision (RPP) of the survey shall not exceed 2 cm (0.07 feet) plus 50 parts per million (based on the distance between points). This is a very high standard of accuracy reflective of the survey\'s use in major real estate transactions.',
+    explanation: 'The 2026 ALTA/NSPS standards require that the Relative Positional Precision (RPP) of the survey shall not exceed 2 cm (0.07 feet) plus 50 parts per million (based on the distance between points). This is a very high standard of accuracy reflective of the survey\'s use in major real estate transactions.',
     difficulty: 'hard'
   },
   {
@@ -2243,10 +2243,10 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   },
   {
     domain: 'Standards and Specifications',
-    question: 'ALTA/NSPS Table A Item 8 relates to:',
-    options: ['Setting monuments', 'Wetlands location', 'Underground utility location', 'Flood zone determination'],
+    question: 'Under the 2026 ALTA/NSPS standards, Table A Item 11 relates to:',
+    options: ['Setting monuments', 'Substantial features', 'Underground utility location', 'Flood zone determination'],
     correctAnswer: 2,
-    explanation: 'Table A Item 8 addresses the location of underground utilities. Depending on which sub-option is selected, this may include locating utilities based on plans, observed evidence, or a private utility locator. The surveyor is typically not responsible for locating utilities that are not visible or marked.',
+    explanation: 'In the 2026 ALTA/NSPS standards, Table A Item 11 addresses evidence of underground utilities existing on or serving the surveyed property. Depending on which sub-option is selected, this may include locating utilities based on plans and/or reports provided by the client (Item 11a) or markings coordinated pursuant to a private utility locate request (Item 11b).',
     difficulty: 'hard'
   },
   {
@@ -2443,10 +2443,10 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   },
   {
     domain: 'Standards and Specifications',
-    question: 'For ALTA/NSPS surveys, Table A Item 11 relates to:',
+    question: 'Under the 2026 ALTA/NSPS standards, Table A Item 6 relates to:',
     options: ['Monuments', 'Zoning information', 'Flood zone classification', 'Underground utilities'],
     correctAnswer: 1,
-    explanation: 'Table A Item 11 covers zoning information. When selected, the surveyor provides zoning classification, setback requirements, height restrictions, floor area ratios, parking requirements, and other applicable zoning regulations. This information is critical for lenders and title companies to assess the property\'s compliance with local regulations.',
+    explanation: 'In the 2026 ALTA/NSPS standards, Table A Item 6 covers zoning information. Item 6(a) requires listing zoning classification, setback requirements, height and floor space area restrictions, and parking requirements from a zoning report provided by the client. Item 6(b) requires graphically depicting zoning setback requirements on the plat. This information is critical for lenders and title companies to assess the property\'s compliance with local regulations.',
     difficulty: 'medium'
   },
   {
@@ -3155,6 +3155,46 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
     options: ['Only when the firm is losing money', 'Regularly (at least annually) to reflect changes in the market, industry, and firm capabilities', 'Only at firm inception', 'Only when required by the licensing board'],
     correctAnswer: 1,
     explanation: 'Strategic planning should be an ongoing process reviewed at least annually. The plan should address the firm\'s mission, vision, goals, market analysis, competitive positioning, service offerings, staffing plan, technology investments, and financial projections. Regular updates ensure the plan remains relevant and actionable.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Under the 2026 ALTA/NSPS standards, if a surveyor discovers a recorded easement not listed in the title evidence provided, the surveyor must:',
+    options: ['Ignore it since it was not in the title commitment', 'Advise the insurer prior to delivery and show it on the plat unless evidence of termination is provided', 'File a report with the county recorder', 'Refuse to complete the survey until the title commitment is amended'],
+    correctAnswer: 1,
+    explanation: 'Section 6.C.viii of the 2026 ALTA/NSPS standards states that if in the process of preparing the survey the surveyor becomes aware of a recorded easement not otherwise listed in the title evidence provided, the surveyor must advise the insurer prior to delivery of the plat or map and, unless the insurer provides evidence that the easement has been terminated or extinguished, show or otherwise explain it on the face of the plat or map with a note that the insurer has been advised.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The 2026 ALTA/NSPS standards require the surveyor to include which new contact information on the plat or map?',
+    options: ['Social media accounts', 'Company website and email address', 'Personal cell phone number', 'Professional references'],
+    correctAnswer: 1,
+    explanation: 'Section 6.D.ii.(h) of the 2026 ALTA/NSPS standards now requires the surveyor\'s company website and email address (if any) to be shown on the plat, in addition to the previously required name, registration/license number, signature, seal, street address, and telephone number. This expands the contact information requirements from the 2021 standards.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Table A Item 15 of the 2026 ALTA/NSPS standards addresses the use of imagery on surveys. Before using imagery, the surveyor must do all of the following EXCEPT:',
+    options: ['Agree with the client in writing on source, date, and licensing of imagery', 'Discuss accuracy and precision ramifications with insurer, lender, and client', 'Obtain written approval from the title insurance underwriter for each image used', 'Place a note on the plat explaining source, date, precision, and qualifications of imagery'],
+    correctAnswer: 2,
+    explanation: 'Table A Item 15 (new in 2026) requires three things: (a) written agreement with the client on imagery source, date/version, and licensing, (b) discussion of ramifications (accuracy, precision, completeness) with insurer, lender, and client prior to the survey, and (c) a note on the face of the survey about the imagery. Individual underwriter approval for each image is not required.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'Under the 2026 ALTA/NSPS standards, Table A Item 20 requires the surveyor to prepare an encroachment summary table. Which of the following must be included in the table?',
+    options: ['Monetary damages caused by each encroachment', 'Potential encroachments over boundary lines and into easements, rights of way, and setback lines', 'Legal opinions on the validity of each encroachment', 'Recommendations for resolving each encroachment'],
+    correctAnswer: 1,
+    explanation: 'Table A Item 20 (new in 2026) requires a summary table identifying: potential encroachments over boundary lines onto/from adjoining property, encroachments into rights of way and easements, encroachments into setback lines (when provided per Item 6), physical access between parcels without documented easements, and use of adjoining parcels without documented easements. The table must provide a means to locate conditions on the plat. It does not require legal opinions, monetary damages, or resolution recommendations.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Standards and Specifications',
+    question: 'The 2026 ALTA/NSPS standards added Section 5.F requiring the surveyor to locate:',
+    options: ['All trees and vegetation on the property', 'Cemeteries, burial grounds, and isolated gravesites', 'Underground storage tanks', 'Historic structures eligible for preservation'],
+    correctAnswer: 1,
+    explanation: 'Section 5.F of the 2026 ALTA/NSPS standards explicitly requires the surveyor to locate, as accurately as the evidence permits, the perimeter of cemeteries and burial grounds, and the location of isolated gravesites not within a cemetery or burial ground. This applies to both those disclosed in documents provided to the surveyor and those observed during fieldwork. This was a new addition not found in the 2021 standards.',
     difficulty: 'easy'
   },
 ];

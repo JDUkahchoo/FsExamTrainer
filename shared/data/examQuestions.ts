@@ -2520,7 +2520,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     question: 'Positional accuracy standard for ALTA/NSPS surveys is:',
     options: ['Relative positional precision of 2 cm + 50 ppm', '0.01 ft always', '1 meter', '10 cm'],
     correctAnswer: 0,
-    explanation: 'ALTA/NSPS 2021 standards: Relative Positional Precision ≤ 2 cm + 50 ppm at 95% confidence level.',
+    explanation: 'ALTA/NSPS 2026 standards: Relative Positional Precision ≤ 2 cm + 50 ppm at 95% confidence level.',
     difficulty: 'hard'
   },
   {

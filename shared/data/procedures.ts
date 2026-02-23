@@ -248,7 +248,7 @@ export const PROCEDURES: Procedure[] = [
       { step: 5, action: 'Table A items are optional unless specifically requested', detail: 'Client negotiates which items apply' },
     ],
     keyPoints: [
-      'Current standard: 2021 ALTA/NSPS Standards',
+      'Current standard: 2026 ALTA/NSPS Standards (effective February 23, 2026)',
       'RPP = 0.07 ft + 50 ppm (parts per million of measured distance)',
       'This is RELATIVE precision (between any two points on survey)',
       'Table A items are negotiable additions to the base survey',
@@ -259,7 +259,7 @@ export const PROCEDURES: Procedure[] = [
       correctAnswer: 'Current standard uses Relative Positional Precision formula: 0.07 ft + 50 ppm',
       explanation: 'The standard changed from closure ratios to RPP. For a 2000-foot perimeter, allowable RPP = 0.07 + 0.10 = 0.17 feet.',
     },
-    reference: '2021 ALTA/NSPS Standards',
+    reference: '2026 ALTA/NSPS Standards',
   },
   {
     id: 'riparian-boundaries',

@@ -482,7 +482,7 @@ export const NCEES_STYLE_QUESTIONS: NCEESQuestion[] = [
       'E. Interior floor plans of buildings'
     ],
     correctAnswer: [0, 1, 2, 3],
-    explanation: 'ALTA surveys require showing improvements near boundaries (A), utilities (B), flood zone data (C), and zoning (D) through Table A items. Interior floor plans (E) are not part of the standard requirements.',
+    explanation: 'Under the 2026 ALTA/NSPS standards, improvements within 5 feet of boundaries (A) and evidence of utilities (B) are base survey requirements (Sections 5.C.ii and 5.E.iv). Flood zone classification (C) is Table A Item 3 and zoning (D) is Table A Item 6. Interior floor plans (E) are not part of the standard requirements.',
     difficulty: 'medium',
     partialCredit: true
   },

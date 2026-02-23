@@ -366,7 +366,7 @@ export const PS_DOMAIN_CONTENT: Record<PSDomainNumber, DomainContent> = {
   3: {
     // Standards and Specifications
     read: [
-      "ALTA/NSPS 2021 Minimum Standard Detail Requirements",
+      "ALTA/NSPS 2026 Minimum Standard Detail Requirements",
       "State minimum technical standards for surveying",
       "Federal specifications (FGDC, NGS standards)",
       "Industry accuracy standards (ASPRS, etc.)"

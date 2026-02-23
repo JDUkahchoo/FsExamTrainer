@@ -867,23 +867,26 @@ export default function Resources() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-[hsl(var(--domain-boundary))]" />
-                      ALTA/NSPS Table A (2021)
+                      ALTA/NSPS Table A (2026)
                     </CardTitle>
                     <CardDescription>Optional survey responsibilities for land title surveys</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <h4 className="font-semibold text-sm">19 Standard Optional Items:</h4>
+                      <h4 className="font-semibold text-sm">20 Standard Optional Items (+ Item 21 for custom):</h4>
                       <ul className="space-y-2 text-sm">
                         <RefTopic topic="Item 1: Monuments" description="Placement at boundary corners" />
                         <RefTopic topic="Item 2: Addresses" description="Street addresses if available" />
                         <RefTopic topic="Item 3: Flood Zones" description="FEMA classification and mapping" />
                         <RefTopic topic="Item 4: Gross Land Area" description="Acreage calculations" />
                         <RefTopic topic="Item 5: Vertical Relief" description="Contours and topography" />
-                        <RefTopic topic="Item 6: Zoning" description="Classification and setbacks" />
-                        <RefTopic topic="Item 7: Building Dimensions" description="Exterior footprint and square footage" />
-                        <RefTopic topic="Item 8: Substantial Features" description="Parking, pools, landscaping" />
-                        <RefTopic topic="Item 11: Underground Utilities" description="Location evidence from plans/markings" />
+                        <RefTopic topic="Item 6: Zoning" description="Classification, setbacks, height/floor area restrictions, parking" />
+                        <RefTopic topic="Item 7: Building Dimensions" description="Exterior dimensions, square footage, and measured height" />
+                        <RefTopic topic="Item 8: Substantial Features" description="Parking lots, billboards, signs, pools, landscaping, refuse areas" />
+                        <RefTopic topic="Item 9: Parking Spaces" description="Number and type of identifiable parking spaces and striping" />
+                        <RefTopic topic="Item 11: Underground Utilities" description="Location evidence from plans/markings and utility locate requests" />
+                        <RefTopic topic="Item 15: Imagery (NEW)" description="Features shown using imagery with client agreement and disclosure" />
+                        <RefTopic topic="Item 20: Encroachment Summary Table (NEW)" description="Summary table of encroachments and conditions on plat" />
                       </ul>
                       <div className="mt-4 p-3 bg-muted rounded">
                         <p className="text-sm text-muted-foreground">

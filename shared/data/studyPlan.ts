@@ -154,7 +154,7 @@ export const PS_STUDY_PLAN: WeekPlan[] = [
     week: 1,
     title: "Legal Foundations & Boundary Principles",
     domains: ['Legal Principles'] as PSDomain[],
-    read: ["Brown's Boundary Control Ch. 1-3 (Introduction to Boundary Law)", "State-specific property law statutes overview", "ALTA/NSPS 2021 Standards (Introduction)"],
+    read: ["Brown's Boundary Control Ch. 1-3 (Introduction to Boundary Law)", "State-specific property law statutes overview", "ALTA/NSPS 2026 Standards (Introduction)"],
     focus: ["Hierarchy of title elements (rights, seniority, monuments, measurements)", "Types of deeds and their legal implications", "Statute of frauds requirements", "Recording acts and priority systems"],
     apply: ["Analyze sample deed descriptions for legal sufficiency", "Case study: Identify hierarchy conflicts in overlapping claims"],
     reinforce: ["Flashcards: Legal terminology definitions", "Mnemonic: Order of conflicting title elements"]
@@ -199,7 +199,7 @@ export const PS_STUDY_PLAN: WeekPlan[] = [
     week: 6,
     title: "ALTA/NSPS Standards Mastery",
     domains: ['Standards and Specifications'] as PSDomain[],
-    read: ["ALTA/NSPS 2021 Minimum Standard Detail Requirements (complete)", "Table A optional items detailed review", "Certification and disclaimer language"],
+    read: ["ALTA/NSPS 2026 Minimum Standard Detail Requirements (complete)", "Table A optional items detailed review", "Certification and disclaimer language"],
     focus: ["ALTA/NSPS Table A items (all 20)", "Positional tolerance calculations", "Relative positional precision requirements", "Certification language requirements"],
     apply: ["Prepare an ALTA/NSPS compliant survey checklist", "Calculate positional tolerance for sample surveys"],
     reinforce: ["Flashcards: Table A items 1-20", "Memorize: Standard certification language"]

@@ -171,7 +171,7 @@ export const PS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
   {
     domain: 'Standards & Specifications',
     front: 'ALTA Table A Items',
-    back: 'OPTIONAL services client may request:\n\n• Item 1: Monuments\n• Item 6: Zoning\n• Item 8: Flood zone\n• Item 11: Utilities\n• Item 19: Underground utilities\n\n(Negotiated before survey)',
+    back: 'OPTIONAL services client may request (2026):\n\n• Item 1: Monuments\n• Item 3: Flood zone classification\n• Item 6: Zoning\n• Item 8: Substantial features\n• Item 11: Underground utilities\n• Item 15: Imagery (NEW in 2026)\n• Item 20: Encroachment summary table (NEW in 2026)\n\n20 standard items + Item 21 for custom (Negotiated before survey)',
     category: 'concept',
     examTrack: 'ps'
   },
@@ -617,7 +617,7 @@ export const PS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
   {
     domain: 'Standards & Specifications',
     front: 'Minimum Standard Detail Requirements (MSDR)',
-    back: 'ALTA/NSPS core requirements:\n\n• Boundary delineation\n• Visible improvements\n• Apparent easements\n• Evidence of utilities\n• Water features\n\nMust be shown on every survey',
+    back: 'ALTA/NSPS core requirements (2026):\n\n• Boundary delineation\n• Visible improvements\n• Apparent easements\n• Evidence of utilities\n• Water features\n• Cemeteries and burial grounds (Section 5.F)\n\nMust be shown on every survey',
     category: 'concept',
     examTrack: 'ps'
   },

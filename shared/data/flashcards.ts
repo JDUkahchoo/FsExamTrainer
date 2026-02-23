@@ -750,7 +750,7 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
   {
     domain: 'Survey Computations & Applications',
     front: 'ALTA/NSPS Positional Tolerance',
-    back: 'Relative Positional Precision ≤ 2 cm + 50 ppm\n\nWhere ppm = parts per million of distance.\n\nExample for 1,000 m line:\nTolerance = 0.02 + (50 × 0.001) = 0.07 m = 7 cm\n\n2021 Standards require this for all measured points.\nApplies to ALTA/NSPS land title surveys.',
+    back: 'Relative Positional Precision ≤ 2 cm + 50 ppm\n\nWhere ppm = parts per million of distance.\n\nExample for 1,000 m line:\nTolerance = 0.02 + (50 × 0.001) = 0.07 m = 7 cm\n\n2026 Standards require this for all measured points.\nApplies to ALTA/NSPS land title surveys.',
     category: 'formula',
     examTrack: 'fs'
   },

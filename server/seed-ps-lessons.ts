@@ -489,7 +489,7 @@ async function seedPSLessons() {
       estimatedMinutes: 40,
       suggestedWeek: 9,
       questions: [
-        { type: "multiple_choice", text: "The current ALTA/NSPS standards were adopted in:", options: ["2016", "2021", "2011", "2000", "2025"], answer: "1", explanation: "The 2021 ALTA/NSPS standards are currently in effect.", points: 10 },
+        { type: "multiple_choice", text: "The current ALTA/NSPS standards were adopted in:", options: ["2016", "2026", "2011", "2000", "2021"], answer: "1", explanation: "The 2026 ALTA/NSPS standards are currently in effect (effective February 23, 2026).", points: 10 },
         { type: "fill_in_blank", text: "ALTA/NSPS surveys require a relative positional precision of ___ feet at 95% confidence.", answer: "0.07", explanation: "The standards require a relative positional precision of 0.07 feet plus 50 ppm at 95% confidence.", points: 10 },
         { type: "multiple_choice", text: "Table A items in ALTA/NSPS surveys are:", options: ["Mandatory requirements", "Optional additional services", "Title company requirements", "State requirements", "Federal requirements"], answer: "1", explanation: "Table A contains optional services that clients may select in addition to minimum requirements.", points: 10 },
         { type: "multiple_choice", text: "An ALTA/NSPS survey must show:", options: ["Only building locations", "Improvements, easements, and servitudes affecting the property", "Only the boundary", "Only utilities", "Only access"], answer: "1", explanation: "The survey must show improvements and evidence of easements and servitudes.", points: 10 },

@@ -2278,26 +2278,26 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   // Standards and Specifications (PS Domain 3)
   {
     domain: 'Standards and Specifications',
-    question: 'According to ALTA/NSPS 2021 Standards, the Relative Positional Precision for a survey must be:',
+    question: 'According to ALTA/NSPS 2026 Standards, the Relative Positional Precision for a survey must be:',
     options: ['0.07 feet plus 50 ppm or better', '1 foot or better', 'Whatever the client requests', 'Not specified'],
     correctAnswer: 0,
-    explanation: 'ALTA/NSPS 2021 requires Relative Positional Precision of 0.07 feet (2 cm) + 50 ppm at 95% confidence level.',
+    explanation: 'ALTA/NSPS 2026 requires Relative Positional Precision of 0.07 feet (2 cm) + 50 ppm at 95% confidence level.',
     difficulty: 'hard'
   },
   {
     domain: 'Standards and Specifications',
     question: 'ALTA/NSPS Table A Item 11 requires:',
-    options: ['Location of utilities on or serving the surveyed property', 'A flood zone determination', 'Soil samples', 'An environmental assessment'],
+    options: ['Evidence of underground utilities existing on or serving the surveyed property', 'A flood zone determination', 'Soil samples', 'An environmental assessment'],
     correctAnswer: 0,
-    explanation: 'Table A Item 11 requires location of utilities (water, gas, electric, telephone, cable TV, etc.) on or serving the property based on observed evidence and utility company records.',
+    explanation: 'Table A Item 11 addresses evidence of underground utilities existing on or serving the surveyed property, determined by plans/reports provided by the client and/or markings from a private utility locate request, combined with observed evidence pursuant to Section 5.E.iv.',
     difficulty: 'medium'
   },
   {
     domain: 'Standards and Specifications',
     question: 'For an ALTA/NSPS survey, a flood zone determination requires:',
-    options: ['Table A Item 8 to be selected by the client', 'No additional requirements', 'Only an elevation certificate', 'A FEMA map only'],
+    options: ['Table A Item 3 to be selected by the client', 'No additional requirements', 'Only an elevation certificate', 'A FEMA map only'],
     correctAnswer: 0,
-    explanation: 'Table A Item 8 specifies that a flood zone determination be provided if requested by the client.',
+    explanation: 'Table A Item 3 specifies that flood zone classification (with proper annotation based on federal Flood Insurance Rate Maps or state/local equivalent) be depicted by scaled map location and graphic plotting only, if requested by the client.',
     difficulty: 'medium'
   },
   {
@@ -2327,9 +2327,9 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     domain: 'Standards and Specifications',
     question: 'The ALTA/NSPS certification requires the surveyor to state:',
-    options: ['Compliance with the minimum standards and any Table A items selected', 'That no encroachments exist', 'That the title is clear', 'Future construction plans'],
+    options: ['Compliance with the 2026 minimum standards and any Table A items selected', 'That no encroachments exist', 'That the title is clear', 'Future construction plans'],
     correctAnswer: 0,
-    explanation: 'The certification states the survey complies with the ALTA/NSPS Minimum Standard Detail Requirements and identifies which Table A items were addressed.',
+    explanation: 'The certification states the survey was made in accordance with the 2026 Minimum Standard Detail Requirements for ALTA/NSPS Land Title Surveys and includes the specified Table A items thereof.',
     difficulty: 'medium'
   },
 
@@ -3555,6 +3555,46 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 0,
     explanation: 'Rod reading = middle wire = 5.832 ft. Rod interval = top - bottom = 6.247 - 5.418 = 0.829 ft. Check: average of top and bottom = (6.247 + 5.418)/2 = 5.8325 ≈ 5.832 (confirms middle wire). The interval is used for stadia distance: D = K × interval = 100 × 0.829 = 82.9 ft.',
     difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Under the 2026 ALTA/NSPS standards, Table A Item 15 allows features to be shown using imagery. Which of the following is NOT a requirement when using imagery on an ALTA/NSPS survey?',
+    options: ['Agree with the client in writing on imagery source, date, and licensing', 'Discuss ramifications of imagery accuracy with insurer, lender, and client', 'Place a note on the plat explaining source, date, and precision of imagery', 'Obtain FAA approval for all drone flights used to capture imagery'],
+    correctAnswer: 3,
+    explanation: 'Table A Item 15 (2026) has three specific requirements: (1) agree with the client in writing on the imagery source, date/version, and licensing costs, (2) discuss the ramifications (accuracy, precision, completeness) with the insurer, lender, and client before the survey, and (3) place a note on the face of the survey explaining the source, date, precision, and other qualifications. FAA drone approvals may be separately required by law but are not part of the ALTA/NSPS standards themselves.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The 2026 ALTA/NSPS standards added a new requirement in Section 5.F regarding what type of feature?',
+    options: ['Solar panel installations', 'Cemeteries and burial grounds', 'Stormwater detention facilities', 'Environmental monitoring wells'],
+    correctAnswer: 1,
+    explanation: 'Section 5.F of the 2026 ALTA/NSPS standards requires the surveyor to locate the perimeter of cemeteries and burial grounds, and the location of isolated gravesites not within a cemetery or burial ground, whether disclosed in documents provided to the surveyor or observed during fieldwork. This was not explicitly addressed in the 2021 standards.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Under the 2026 ALTA/NSPS standards, what new requirement applies to utility locate markings observed during fieldwork?',
+    options: ['The surveyor must verify ownership of all marked utilities', 'The source of the markings must be noted, with a note if unknown', 'All locate markings must be photographed and attached to the plat', 'The surveyor must contact 811 before every survey'],
+    correctAnswer: 1,
+    explanation: 'The 2026 standards emphasize throughout Sections 5.E.ii, 5.E.iii, and 5.E.iv that utility locate markings must include the source of the markings, with a note if the source is unknown. This is a new emphasis in the 2026 standards, responding to industry concerns about undocumented utility markings on survey sites.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Under the 2026 ALTA/NSPS standards, Table A Item 20 requires the surveyor to:',
+    options: ['Provide an electronic CAD file of the survey', 'Prepare a summary table of encroachments and conditions on the plat', 'Locate improvements on easement areas', 'Carry professional liability insurance'],
+    correctAnswer: 1,
+    explanation: 'Table A Item 20 (new in 2026) requires a structured encroachment summary table on the face of the plat identifying: potential encroachments over boundary lines, encroachments into rights of way and easements, encroachments into setback lines, physical access between parcels without easement documentation, and use of adjoining parcels without easement documentation. The table must provide a means to readily locate each condition on the plat.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The 2026 ALTA/NSPS standards require which of the following new items on the face of the plat or map?',
+    options: ['GPS coordinates of all property corners', 'A note identifying the source of the title commitment and its effective date', 'The assessed tax value of the property', 'A topographic survey of the entire parcel'],
+    correctAnswer: 1,
+    explanation: 'Section 6.B.xii of the 2026 standards adds a new requirement for a note on the face of the plat identifying the source of the title commitment or other title evidence provided pursuant to Section 4, the effective date, and the name of the insurer. This was not required in the 2021 standards and helps document the title information relied upon by the surveyor.',
+    difficulty: 'easy'
   }
 ];
 
