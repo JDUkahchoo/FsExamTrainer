@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,10 @@ import {
   BarChart3,
   Globe,
   Landmark,
+  Download,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface Formula {
   name: string;
@@ -175,6 +178,7 @@ const domainIcons: Record<string, typeof Calculator> = {
 export default function FormulaReferencePage() {
   const { examTrack } = useExamTrack();
   const [searchQuery, setSearchQuery] = useState('');
+  const { toast } = useToast();
 
   const filteredDomains = useMemo(() => {
     return FORMULA_DOMAINS.map(domain => {
@@ -197,6 +201,78 @@ export default function FormulaReferencePage() {
   }, [examTrack, searchQuery]);
 
   const totalFormulas = filteredDomains.reduce((sum, d) => sum + d.formulas.length, 0);
+
+  const handleExportPdf = useCallback(async () => {
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const margin = 16;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxLineWidth = pageWidth - margin * 2;
+    let y = margin;
+
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    const trackLabel = examTrack === 'ps' ? 'PS Exam' : 'FS Exam';
+    doc.text(`${trackLabel} Formula Quick-Reference`, margin, y);
+    y += 7;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(120, 120, 120);
+    doc.text(`${totalFormulas} formulas${searchQuery ? ` matching "${searchQuery}"` : ''}  •  Generated ${new Date().toLocaleDateString()}`, margin, y);
+    y += 5;
+    doc.setTextColor(200, 200, 200);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 6;
+    doc.setTextColor(30, 30, 30);
+
+    for (const domain of filteredDomains) {
+      if (y > 265) { doc.addPage(); y = margin; }
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(domain.name, margin, y);
+      y += 6;
+
+      for (const formula of domain.formulas) {
+        if (y > 265) { doc.addPage(); y = margin; }
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(formula.name, margin + 4, y);
+        y += 5;
+
+        doc.setFont('courier', 'normal');
+        doc.setFontSize(10);
+        const exprLines = doc.splitTextToSize(formula.expression, maxLineWidth - 8);
+        for (const l of exprLines) {
+          if (y > 270) { doc.addPage(); y = margin; }
+          doc.text(l, margin + 4, y);
+          y += 4.5;
+        }
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(80, 80, 80);
+        const varLines = doc.splitTextToSize(`Variables: ${formula.variables}`, maxLineWidth - 8);
+        for (const l of varLines) {
+          if (y > 270) { doc.addPage(); y = margin; }
+          doc.text(l, margin + 4, y);
+          y += 4;
+        }
+        const tipLines = doc.splitTextToSize(`Tip: ${formula.tip}`, maxLineWidth - 8);
+        for (const l of tipLines) {
+          if (y > 270) { doc.addPage(); y = margin; }
+          doc.text(l, margin + 4, y);
+          y += 4;
+        }
+        doc.setTextColor(30, 30, 30);
+        y += 2;
+      }
+      y += 4;
+    }
+
+    const filename = `formula-reference-${examTrack}${searchQuery ? '-filtered' : ''}.pdf`;
+    doc.save(filename);
+    toast({ title: 'PDF exported', description: `Saved as ${filename}` });
+  }, [filteredDomains, examTrack, searchQuery, totalFormulas, toast]);
 
   return (
     <div className="container max-w-5xl py-6 px-4">
@@ -226,6 +302,10 @@ export default function FormulaReferencePage() {
         <Badge variant="secondary" data-testid="badge-formula-count">
           {totalFormulas} formula{totalFormulas !== 1 ? 's' : ''}
         </Badge>
+        <Button variant="outline" size="sm" onClick={handleExportPdf} data-testid="button-export-formulas-pdf">
+          <Download className="w-4 h-4 mr-2" />
+          Export PDF
+        </Button>
       </div>
 
       <ScrollArea className="h-[calc(100vh-250px)]">

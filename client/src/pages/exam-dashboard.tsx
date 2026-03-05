@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   BookOpen, Brain, ClipboardCheck, GraduationCap, BarChart3, Flame, Target, Trophy,
-  Clock, TrendingUp, Zap, CheckCircle2, Lightbulb, FileText, BookMarked
+  Clock, TrendingUp, Zap, CheckCircle2, Lightbulb, FileText, BookMarked, CalendarDays
 } from 'lucide-react';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { EXAM_TRACKS } from '@shared/schema';
@@ -56,6 +56,16 @@ export default function ExamDashboard() {
 
   const completedLessons = lessonsProgress?.completed || 0;
   const progressPercent = lessonCount > 0 ? Math.round((completedLessons / lessonCount) * 100) : 0;
+
+  const daysUntilExam = (() => {
+    if (!preferences?.examDate) return null;
+    const examDate = new Date(preferences.examDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    examDate.setHours(0, 0, 0, 0);
+    const diff = Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : null;
+  })();
 
   const quickActions = [
     { 
@@ -297,6 +307,32 @@ export default function ExamDashboard() {
               <CardContent>
                 <div className="text-2xl font-bold">{stats?.totalXp || 0}</div>
                 <p className="text-xs text-muted-foreground mt-1">Experience earned</p>
+              </CardContent>
+            </Card>
+
+            <Card data-testid="stat-exam-countdown" className={daysUntilExam !== null && daysUntilExam <= 30 ? 'border-orange-400 dark:border-orange-600' : ''}>
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Days Until Exam</CardTitle>
+                <CalendarDays className={`h-4 w-4 ${daysUntilExam !== null && daysUntilExam <= 30 ? 'text-orange-500' : 'text-muted-foreground'}`} />
+              </CardHeader>
+              <CardContent>
+                {daysUntilExam !== null ? (
+                  <>
+                    <div className={`text-2xl font-bold ${daysUntilExam <= 30 ? 'text-orange-600 dark:text-orange-400' : ''}`}>
+                      {daysUntilExam} days
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {daysUntilExam <= 7 ? 'Final push — you got this!' : daysUntilExam <= 30 ? 'Getting close — stay consistent' : 'Stay on track with your plan'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold text-muted-foreground">—</div>
+                    <Link href={`/app/${examTrack}/settings`}>
+                      <p className="text-xs text-primary mt-1 hover:underline cursor-pointer">Set exam date →</p>
+                    </Link>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>

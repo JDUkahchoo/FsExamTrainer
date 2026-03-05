@@ -100,6 +100,84 @@ function ProfileNameForm({ user }: { user?: { id: string; email?: string; firstN
   );
 }
 
+function ReminderSettings({ preferences, onSave }: { preferences?: UserPreferences; onSave: (data: Partial<UserPreferences>) => void }) {
+  const [enabled, setEnabled] = useState(preferences?.reminderEmailEnabled ?? false);
+  const [email, setEmail] = useState(preferences?.reminderEmail ?? '');
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    setEnabled(preferences?.reminderEmailEnabled ?? false);
+    setEmail(preferences?.reminderEmail ?? '');
+    setIsDirty(false);
+  }, [preferences?.reminderEmailEnabled, preferences?.reminderEmail]);
+
+  const handleToggle = (val: boolean) => {
+    setEnabled(val);
+    setIsDirty(true);
+  };
+
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    setIsDirty(true);
+  };
+
+  const handleSave = () => {
+    onSave({ reminderEmailEnabled: enabled, reminderEmail: enabled ? email : undefined });
+    setIsDirty(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <Label htmlFor="reminder-toggle">Daily Study Reminders</Label>
+          <p className="text-sm text-muted-foreground">
+            Receive an email when you haven't studied in 20+ hours
+          </p>
+        </div>
+        <Switch
+          id="reminder-toggle"
+          checked={enabled}
+          onCheckedChange={handleToggle}
+          data-testid="switch-study-reminders"
+        />
+      </div>
+
+      {enabled && (
+        <>
+          <Separator />
+          <div className="space-y-2">
+            <Label htmlFor="reminder-email">Reminder Email Address</Label>
+            <Input
+              id="reminder-email"
+              type="email"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              placeholder="you@example.com"
+              data-testid="input-reminder-email"
+            />
+            <p className="text-xs text-muted-foreground">
+              You'll receive at most one reminder per day. Unsubscribe anytime by turning this off.
+            </p>
+          </div>
+        </>
+      )}
+
+      {isDirty && (
+        <Button onClick={handleSave} size="sm" data-testid="button-save-reminders">
+          Save Reminder Settings
+        </Button>
+      )}
+
+      {preferences?.lastReminderSent && (
+        <p className="text-xs text-muted-foreground">
+          Last reminder sent: {new Date(preferences.lastReminderSent).toLocaleDateString()}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const { toast } = useToast();
   const { examTrack, examName } = useExamTrack();
@@ -426,49 +504,11 @@ export default function SettingsPage() {
         <TabsContent value="notifications" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>Control how you receive updates</CardDescription>
+              <CardTitle>Email Study Reminders</CardTitle>
+              <CardDescription>Get a daily email when you haven't studied in 20+ hours</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Study Reminders</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get reminded to study daily
-                  </p>
-                </div>
-                <Switch disabled data-testid="switch-study-reminders" />
-              </div>
-
-              <Separator />
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Progress Updates</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Weekly summary of your progress
-                  </p>
-                </div>
-                <Switch disabled data-testid="switch-progress-updates" />
-              </div>
-
-              <Separator />
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Achievement Alerts</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get notified when you earn badges
-                  </p>
-                </div>
-                <Switch disabled data-testid="switch-achievement-alerts" />
-              </div>
-
-              <div className="bg-muted/50 rounded-lg p-4 mt-4">
-                <p className="text-sm text-muted-foreground">
-                  Notification features coming soon! We're working on bringing you study reminders and progress updates.
-                </p>
-              </div>
+              <ReminderSettings preferences={preferences} onSave={(data) => updatePreferencesMutation.mutate(data)} />
             </CardContent>
           </Card>
         </TabsContent>

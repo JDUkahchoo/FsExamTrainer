@@ -9,16 +9,22 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import type { UserPreferences } from '@shared/schema';
-import { BookOpen, TrendingUp, Target, Zap, Clock, BarChart3, CheckCircle2, ArrowRight } from 'lucide-react';
+import { BookOpen, TrendingUp, Target, Zap, Clock, BarChart3, CheckCircle2, ArrowRight, Calendar } from 'lucide-react';
 
-type Step = 'welcome' | 'study-modes' | 'pretest-guide' | 'dashboard' | 'features';
+type Step = 'welcome' | 'study-modes' | 'pretest-guide' | 'exam-target' | 'dashboard' | 'features';
+const STEPS: Step[] = ['welcome', 'study-modes', 'pretest-guide', 'exam-target', 'dashboard', 'features'];
 
 export function GettingStartedOnboarding() {
   const [step, setStep] = useState<Step>('welcome');
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedMode, setSelectedMode] = useState<string | null>(null);
+  const [examDateValue, setExamDateValue] = useState('');
+  const [weeklyHours, setWeeklyHours] = useState<number | null>(null);
 
   const { data: preferences, isLoading } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
@@ -28,37 +34,47 @@ export function GettingStartedOnboarding() {
 
   const updatePreferencesMutation = useMutation({
     mutationFn: (data: Partial<UserPreferences>) =>
-      apiRequest('PUT', '/api/preferences', data),
+      apiRequest('PATCH', '/api/preferences', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
     }
   });
 
-  // Show onboarding if user hasn't seen it yet
   useEffect(() => {
     if (!isLoading && preferences && !preferences.hasSeenWelcome) {
       setIsOpen(true);
+      if (preferences.studyMode) setSelectedMode(preferences.studyMode);
     }
   }, [preferences, isLoading]);
 
   const handleNext = () => {
-    const steps: Step[] = ['welcome', 'study-modes', 'pretest-guide', 'dashboard', 'features'];
-    const currentIndex = steps.indexOf(step);
-    if (currentIndex < steps.length - 1) {
-      setStep(steps[currentIndex + 1]);
+    const currentIndex = STEPS.indexOf(step);
+    if (currentIndex < STEPS.length - 1) {
+      setStep(STEPS[currentIndex + 1]);
     }
   };
 
   const handlePrev = () => {
-    const steps: Step[] = ['welcome', 'study-modes', 'pretest-guide', 'dashboard', 'features'];
-    const currentIndex = steps.indexOf(step);
+    const currentIndex = STEPS.indexOf(step);
     if (currentIndex > 0) {
-      setStep(steps[currentIndex - 1]);
+      setStep(STEPS[currentIndex - 1]);
     }
   };
 
+  const handleSelectMode = (mode: string) => {
+    setSelectedMode(mode);
+    updatePreferencesMutation.mutate({ studyMode: mode });
+  };
+
   const handleComplete = async () => {
-    await updatePreferencesMutation.mutateAsync({ hasSeenWelcome: true });
+    const updates: Partial<UserPreferences> = { hasSeenWelcome: true };
+    if (examDateValue) {
+      updates.examDate = new Date(examDateValue) as any;
+    }
+    if (weeklyHours !== null) {
+      updates.weeklyHoursGoal = weeklyHours;
+    }
+    await updatePreferencesMutation.mutateAsync(updates);
     setIsOpen(false);
   };
 
@@ -69,8 +85,22 @@ export function GettingStartedOnboarding() {
 
   if (isLoading) return null;
 
-  const stepNum = ['welcome', 'study-modes', 'pretest-guide', 'dashboard', 'features'].indexOf(step) + 1;
-  const totalSteps = 5;
+  const stepNum = STEPS.indexOf(step) + 1;
+  const totalSteps = STEPS.length;
+
+  const modeOptions = [
+    { id: 'standard', label: 'Standard', desc: '16 weeks, ~8 hrs/week. Balanced coverage of all domains.' },
+    { id: 'result-driven', label: 'Result-Driven', desc: 'Targets your weakest areas from the pretest first.' },
+    { id: 'working-professional', label: 'Working Professional', desc: '~1hr/day M-F + weekends. Built for busy schedules.' },
+    { id: 'custom', label: 'Custom Plan', desc: 'You set the timeline and domain priorities.' },
+  ];
+
+  const hoursOptions = [
+    { label: '5-6 hrs/week', value: 5 },
+    { label: '8-10 hrs/week', value: 9 },
+    { label: '12-15 hrs/week', value: 13 },
+    { label: '20+ hrs/week', value: 20 },
+  ];
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -81,7 +111,7 @@ export function GettingStartedOnboarding() {
             <Badge variant="outline">{stepNum}/{totalSteps}</Badge>
           </div>
           <div className="w-full bg-muted rounded-full h-1 mt-2">
-            <div 
+            <div
               className="bg-primary h-1 rounded-full transition-all duration-300"
               style={{ width: `${(stepNum / totalSteps) * 100}%` }}
             />
@@ -96,30 +126,30 @@ export function GettingStartedOnboarding() {
                   <Target className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <div className="font-semibold">Welcome to Your FS Exam Journey</div>
-                  <div className="text-sm text-muted-foreground">Master the Fundamentals of Surveying exam with our comprehensive study guide</div>
+                  <div className="font-semibold">Welcome to Your Exam Journey</div>
+                  <div className="text-sm text-muted-foreground">Your comprehensive study guide for the FS and PS surveying exams</div>
                 </div>
               </div>
               <div className="space-y-3">
                 <p className="text-muted-foreground">
-                  This interactive guide will help you understand how to use the app effectively. We'll cover:
+                  This short tour will help you get set up in about 2 minutes. We'll cover:
                 </p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex gap-2 items-start">
                     <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>4 flexible study modes tailored to your schedule</span>
+                    <span>Choose the study mode that fits your schedule</span>
                   </li>
                   <li className="flex gap-2 items-start">
                     <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>How to take the diagnostic pretest and get personalized recommendations</span>
+                    <span>Set your exam date and study hours goal</span>
                   </li>
                   <li className="flex gap-2 items-start">
                     <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Navigate your dashboard and track progress</span>
+                    <span>Take the diagnostic pretest for personalized recommendations</span>
                   </li>
                   <li className="flex gap-2 items-start">
                     <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Key features to accelerate your exam prep</span>
+                    <span>Tour the dashboard and key study tools</span>
                   </li>
                 </ul>
               </div>
@@ -133,27 +163,29 @@ export function GettingStartedOnboarding() {
                   <Zap className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <div className="font-semibold">4 Flexible Study Modes</div>
-                  <div className="text-sm text-muted-foreground">Choose what works best for your schedule</div>
+                  <div className="font-semibold">Choose Your Study Mode</div>
+                  <div className="text-sm text-muted-foreground">Pick the approach that matches your schedule. You can change it anytime in Settings.</div>
                 </div>
               </div>
-              <div className="space-y-3">
-                <div className="p-3 bg-muted rounded-lg">
-                  <div className="font-semibold text-sm mb-1">Standard Mode</div>
-                  <div className="text-sm text-muted-foreground">Balanced 16-week plan covering all 7 domains evenly. Best for: Structured learners with flexible schedules.</div>
-                </div>
-                <div className="p-3 bg-muted rounded-lg">
-                  <div className="font-semibold text-sm mb-1">Result-Driven Mode</div>
-                  <div className="text-sm text-muted-foreground">Prioritizes weak domains from your pretest. Best for: Targeting specific knowledge gaps.</div>
-                </div>
-                <div className="p-3 bg-muted rounded-lg">
-                  <div className="font-semibold text-sm mb-1">Working Professional</div>
-                  <div className="text-sm text-muted-foreground">Optimized for busy schedules (~1hr/day M-F + 2-3hrs weekends). Best for: Full-time professionals with limited study time.</div>
-                </div>
-                <div className="p-3 bg-muted rounded-lg">
-                  <div className="font-semibold text-sm mb-1">Custom Plan</div>
-                  <div className="text-sm text-muted-foreground">Create your own timeline (8-16 weeks) and select domains. Best for: Complete control over study path.</div>
-                </div>
+              <div className="space-y-2">
+                {modeOptions.map(opt => (
+                  <button
+                    key={opt.id}
+                    onClick={() => handleSelectMode(opt.id)}
+                    className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+                      selectedMode === opt.id
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border bg-muted hover:border-primary/50'
+                    }`}
+                    data-testid={`button-mode-${opt.id}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-semibold text-sm">{opt.label}</div>
+                      {selectedMode === opt.id && <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />}
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-0.5">{opt.desc}</div>
+                  </button>
+                ))}
               </div>
             </>
           )}
@@ -190,8 +222,55 @@ export function GettingStartedOnboarding() {
                 </div>
                 <div className="p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
                   <p className="text-sm text-amber-900 dark:text-amber-100">
-                    💡 <strong>Tip:</strong> You can always retake the pretest later from the Progress dashboard if you want to measure improvement.
+                    💡 <strong>Tip:</strong> You can always retake the pretest later from the Progress dashboard to measure improvement.
                   </p>
+                </div>
+              </div>
+            </>
+          )}
+
+          {step === 'exam-target' && (
+            <>
+              <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-lg">
+                <div className="p-3 bg-primary/20 rounded-lg">
+                  <Calendar className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <div className="font-semibold">Set Your Exam Target</div>
+                  <div className="text-sm text-muted-foreground">Help us keep you on track toward your exam date</div>
+                </div>
+              </div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="onboarding-exam-date">When is your exam? (optional)</Label>
+                  <Input
+                    id="onboarding-exam-date"
+                    type="date"
+                    value={examDateValue}
+                    onChange={(e) => setExamDateValue(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    data-testid="input-onboarding-exam-date"
+                  />
+                  <p className="text-xs text-muted-foreground">Your dashboard will show a countdown once set.</p>
+                </div>
+                <div className="space-y-3">
+                  <Label>How many hours per week can you study?</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {hoursOptions.map(opt => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setWeeklyHours(opt.value)}
+                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                          weeklyHours === opt.value
+                            ? 'border-primary bg-primary/5 text-primary'
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                        data-testid={`button-hours-${opt.value}`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </>
@@ -243,7 +322,7 @@ export function GettingStartedOnboarding() {
                   </div>
                   <div>
                     <div className="font-semibold text-sm">Interactive Lessons</div>
-                    <div className="text-sm text-muted-foreground">68 Duolingo-style lessons covering all 7 domains</div>
+                    <div className="text-sm text-muted-foreground">132 Duolingo-style lessons covering all domains</div>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -252,7 +331,7 @@ export function GettingStartedOnboarding() {
                   </div>
                   <div>
                     <div className="font-semibold text-sm">Practice Quizzes</div>
-                    <div className="text-sm text-muted-foreground">116+ questions with detailed explanations</div>
+                    <div className="text-sm text-muted-foreground">822 questions with detailed explanations and 4-step problem-solving guidance</div>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -269,8 +348,8 @@ export function GettingStartedOnboarding() {
                     <TrendingUp className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <div className="font-semibold text-sm">Flashcards & Notes</div>
-                    <div className="text-sm text-muted-foreground">50+ flashcards + rich text note-taking</div>
+                    <div className="font-semibold text-sm">Flashcards, Notes & PDF Export</div>
+                    <div className="text-sm text-muted-foreground">Spaced repetition flashcards, rich note-taking, and downloadable PDF exports for offline study</div>
                   </div>
                 </div>
               </div>

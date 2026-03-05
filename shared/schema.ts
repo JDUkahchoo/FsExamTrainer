@@ -1016,6 +1016,10 @@ export const userPreferences = pgTable("user_preferences", {
   preferredExamTrack: text("preferred_exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'state-specific'
   stateCode: text("state_code").default('TX'), // US state code (e.g., 'TX' for Texas)
   timezone: text("timezone").default('America/Chicago'), // User's timezone for midnight reset (IANA format)
+  reminderEmailEnabled: boolean("reminder_email_enabled").notNull().default(false),
+  reminderEmail: text("reminder_email"),
+  lastReminderSent: timestamp("last_reminder_sent"),
+  weeklyHoursGoal: integer("weekly_hours_goal"),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
@@ -1034,6 +1038,15 @@ export const insertUserPreferencesSchema = createInsertSchema(userPreferences).o
     (val) => {
       if (val === null || val === undefined) return null;
       if (typeof val === 'string' && val.trim() === '') return null;
+      if (val instanceof Date) return val;
+      if (typeof val === 'string') return new Date(val);
+      return val;
+    },
+    z.date().nullable()
+  ).optional(),
+  lastReminderSent: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return null;
       if (val instanceof Date) return val;
       if (typeof val === 'string') return new Date(val);
       return val;

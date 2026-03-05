@@ -6,6 +6,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod, FS_DOMAINS, PS_DOMAINS } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
+import { checkAndSendReminder } from "./email";
 import { FLASHCARDS } from "@shared/data/flashcards";
 import { COMPREHENSIVE_FLASHCARDS } from "@shared/data/flashcardsComprehensive";
 import { db } from "./db";
@@ -1946,6 +1947,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       res.json(preferences);
+
+      // Fire-and-forget reminder check (non-blocking, after response sent)
+      checkAndSendReminder(userId, storage).catch(() => {});
     } catch (error) {
       console.error("Error fetching user preferences:", error);
       res.status(500).json({ error: "Failed to fetch user preferences" });
@@ -1976,6 +1980,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         customTimeline: req.body.customTimeline ?? existing?.customTimeline ?? 12,
         preferredExamTrack: req.body.preferredExamTrack ?? existing?.preferredExamTrack ?? 'fs',
         stateCode: req.body.stateCode ?? existing?.stateCode ?? 'TX',
+        reminderEmailEnabled: req.body.reminderEmailEnabled ?? existing?.reminderEmailEnabled ?? false,
+        reminderEmail: req.body.reminderEmail !== undefined ? req.body.reminderEmail : existing?.reminderEmail,
+        lastReminderSent: req.body.lastReminderSent !== undefined ? req.body.lastReminderSent : existing?.lastReminderSent,
+        weeklyHoursGoal: req.body.weeklyHoursGoal !== undefined ? req.body.weeklyHoursGoal : existing?.weeklyHoursGoal,
       };
       
       const data = insertUserPreferencesSchema.parse(merged);

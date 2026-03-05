@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Save, Loader2, Plus, Trash2, Calendar, BookOpen, ChevronLeft, ChevronRight, Search, StickyNote, Hash, FolderOpen } from 'lucide-react';
+import { FileText, Save, Loader2, Plus, Trash2, Calendar, BookOpen, ChevronLeft, ChevronRight, Search, StickyNote, Hash, FolderOpen, Download } from 'lucide-react';
 import { STUDY_PLAN } from '@shared/data/studyPlan';
 import { NCEES_DOMAINS } from '@shared/domains';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -116,6 +116,58 @@ export default function NotesPage() {
     }, 2000);
     return () => clearTimeout(timer);
   }, [editingContent]);
+
+  const handleExportPdf = useCallback(async (note: StudyNote) => {
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const margin = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxLineWidth = pageWidth - margin * 2;
+    let y = margin;
+
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text(note.title, margin, y);
+    y += 10;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(120, 120, 120);
+    const meta: string[] = [];
+    if (note.week) meta.push(`Week ${note.week}`);
+    if (note.dayOfWeek) meta.push(note.dayOfWeek);
+    if (note.domainNumber !== null && note.domainNumber !== undefined) {
+      const domainLabel = DOMAIN_OPTIONS.find(d => d.value === String(note.domainNumber))?.label;
+      if (domainLabel) meta.push(domainLabel);
+    }
+    if (meta.length > 0) {
+      doc.text(meta.join('  |  '), margin, y);
+      y += 6;
+    }
+
+    doc.setTextColor(200, 200, 200);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 6;
+
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(11);
+    doc.setFont('courier', 'normal');
+
+    const lines = doc.splitTextToSize(note.content || '(empty note)', maxLineWidth);
+    for (const line of lines) {
+      if (y > 270) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.text(line, margin, y);
+      y += 5.5;
+    }
+
+    const safeTitle = note.title.replace(/[^a-z0-9]/gi, '-').toLowerCase().slice(0, 40);
+    const filename = note.week ? `study-note-week${note.week}-${safeTitle}.pdf` : `study-note-${safeTitle}.pdf`;
+    doc.save(filename);
+    toast({ title: 'PDF exported', description: `Saved as ${filename}` });
+  }, [toast]);
 
   const handleCreateNote = () => {
     if (!newNoteTitle.trim()) {
@@ -503,6 +555,15 @@ export default function NotesPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleExportPdf(selectedNote)}
+                    data-testid="button-export-pdf"
+                  >
+                    <Download className="w-4 h-4 mr-1" />
+                    PDF
+                  </Button>
                   <Button
                     variant="outline"
                     size="icon"
