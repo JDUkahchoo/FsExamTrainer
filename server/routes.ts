@@ -2326,17 +2326,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Helper function to compare fill-in-blank answers
       const compareFillInBlank = (userAnswer: string, correctAnswer: string): boolean => {
-        const userStr = (userAnswer || '').toLowerCase().trim();
-        const correctStr = correctAnswer.toLowerCase().trim();
+        // Normalize Unicode math symbols to plain ASCII equivalents so users
+        // don't need to type special characters that aren't on a keyboard.
+        const normalizeUnicode = (str: string) => str
+          // Superscript digits/letters → plain
+          .replace(/²/g, '2').replace(/³/g, '3').replace(/¹/g, '1')
+          .replace(/⁰/g, '0').replace(/⁴/g, '4').replace(/⁵/g, '5')
+          .replace(/⁶/g, '6').replace(/⁷/g, '7').replace(/⁸/g, '8').replace(/⁹/g, '9')
+          .replace(/ˣ/g, 'x').replace(/ⁿ/g, 'n').replace(/ᵃ/g, 'a').replace(/ᵇ/g, 'b')
+          // Radical symbols → text equivalents
+          .replace(/√x?/g, 'sqrt').replace(/∛x?/g, 'cbrt').replace(/∜x?/g, 'qrt')
+          // Caret notation: x^2 or x2 when correct is x² (already converted above)
+          .replace(/\^/g, '')
+          .toLowerCase().trim();
 
-        // Direct string match
+        const userStr = normalizeUnicode(userAnswer || '');
+        const correctStr = normalizeUnicode(correctAnswer);
+
+        // Direct match after normalization
         if (userStr === correctStr) {
+          return true;
+        }
+
+        // Also compare raw (for answers that don't need normalization)
+        const userRaw = (userAnswer || '').toLowerCase().trim();
+        const correctRaw = correctAnswer.toLowerCase().trim();
+        if (userRaw === correctRaw) {
           return true;
         }
 
         // Try numeric comparison with tolerance
         const normalizeNumber = (str: string) => {
-          // Remove commas and common separators
           return str.replace(/,/g, '').replace(/\s/g, '');
         };
 

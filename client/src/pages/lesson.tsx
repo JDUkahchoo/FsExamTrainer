@@ -83,6 +83,12 @@ export default function LessonPage() {
   const [showResults, setShowResults] = useState(false);
   const [startTime, setStartTime] = useState(Date.now());
 
+  useEffect(() => {
+    if (showResults) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showResults]);
+
   const { data: lessonData, isLoading } = useQuery<LessonData>({
     queryKey: ["/api/lessons", lessonId],
     enabled: !!lessonId,
