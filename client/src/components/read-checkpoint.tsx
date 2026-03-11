@@ -20,36 +20,64 @@ import { XP_AWARDS } from '@shared/schema';
 import { STUDY_READINGS } from '@shared/data/studyReadings';
 
 const FS_WEEK_TO_READING_IDS: Record<number, string[]> = {
+  // Week 1 — Math & Basic Science (D0)
   1: ['fs-d0-trig', 'fs-d0-cogo', 'fs-d0-units'],
-  2: ['fs-d1-leveling', 'fs-d1-topo'],
+  // Week 2 — Field Measurements: Leveling (D1) + leveling computation practice
+  2: ['fs-d1-leveling', 'fs-d1-topo', 'fs-d2-leveling-comp'],
+  // Week 3 — Angles, Traverses & Construction Surveys (D1)
   3: ['fs-d1-angles', 'fs-d1-construction'],
-  4: ['fs-d2-traverse', 'fs-d2-alta'],
+  // Week 4 — Traverse Computation & ALTA Surveys (D2) + COGO computation practice
+  4: ['fs-d2-traverse', 'fs-d2-alta', 'fs-d3-cogo-comp'],
+  // Week 5 — Area Calculations & UAS/Drone Surveys (D1/D2)
   5: ['fs-d2-areas', 'fs-d1-uas'],
-  6: ['fs-d2-curves'],
+  // Week 6 — Horizontal & Vertical Curves (D2) + curves computation practice
+  6: ['fs-d2-curves', 'fs-d3-curves-comp'],
+  // Week 7 — Geodesy & Coordinate Systems (D3/D4)
   7: ['fs-d3-geodesy', 'fs-d4-advgeo'],
+  // Week 8 — GNSS/GPS & Historical Survey Methods (D3/D4)
   8: ['fs-d3-gnss', 'fs-d4-historical'],
-  9: ['fs-d4-mapping', 'fs-d6-project'],
+  // Week 9 — Mapping, GIS, CAD & Photogrammetry (D4/D6) + photo comp practice
+  9: ['fs-d4-mapping', 'fs-d6-project', 'fs-d3-photogrammetry-comp'],
+  // Week 10 — Boundary Law Fundamentals & Easements (D5)
   10: ['fs-d5-boundary', 'fs-d5-easements'],
+  // Week 11 — PLSS & Deed Conveyances (D5)
   11: ['fs-d5-plss', 'fs-d5-conveyances'],
+  // Week 12 — Corner Restoration, Common Law & Evidence Sources (D5)
   12: ['fs-d5-corners', 'fs-d5-commonlaw', 'fs-d5-sources'],
+  // Week 13 — Professional Practice: Ethics & Liability (D6)
   13: ['fs-d6-ethics', 'fs-d6-liability'],
+  // Week 14 — Applied Math & Statistics (D7)
   14: ['fs-d7-errorprop', 'fs-d7-leastsquares', 'fs-d7-hypothesis'],
+  // Week 15 — Survey Standards: ALTA, FEMA, FGCS, NSPS
   15: ['fs-std-alta', 'fs-std-fema', 'fs-std-fgcs', 'fs-std-nsps'],
+  // Week 16 — Exam Prep (no new readings; focus on practice exams)
 };
 
 const PS_WEEK_TO_READING_IDS: Record<number, string[]> = {
+  // Week 1 — Legal Principles: Evidence Hierarchy & Deed Interpretation (D1)
   1: ['ps-d1-evidence', 'ps-d1-deeds'],
+  // Week 2 — Easements & Adverse Possession (D1)
   2: ['ps-d1-easements', 'ps-d1-adverse'],
-  3: ['ps-d1-water'],
+  // Week 3 — Water Boundaries & Recording Acts (D1)
+  3: ['ps-d1-water', 'ps-d1-recording'],
+  // Week 4 — Standard of Care & Field Documentation (D2)
   4: ['ps-d2-standard-care', 'ps-d2-documentation'],
-  5: ['ps-d2-reports', 'ps-d2-expert'],
-  6: ['ps-d3-alta', 'ps-d3-fema'],
-  7: ['ps-d3-accuracy', 'ps-d3-mts'],
+  // Week 5 — Survey Reports, Expert Testimony & Report Writing (D2)
+  5: ['ps-d2-reports', 'ps-d2-expert', 'ps-d2-survey-reports'],
+  // Week 6 — ALTA/NSPS Standards, FEMA & Floodplain Determination (D3)
+  6: ['ps-d3-alta', 'ps-d3-fema', 'ps-d3-floodplain'],
+  // Week 7 — Accuracy Standards, MTS & Geodetic Control (D3)
+  7: ['ps-d3-accuracy', 'ps-d3-mts', 'ps-d3-geodetic-control'],
+  // Week 8 — Business Entities, Contracts & Risk Management (D4)
   8: ['ps-d4-entities', 'ps-d4-contracts', 'ps-d4-risk'],
-  9: ['ps-d5-boundary', 'ps-d5-construction'],
-  10: ['ps-d5-subdivision', 'ps-d5-geodetic'],
-  11: ['ps-d1-evidence', 'ps-d2-standard-care', 'ps-d5-boundary'],
-  12: ['ps-d3-alta', 'ps-d4-risk', 'ps-d5-construction'],
+  // Week 9 — Boundary Retracement, Construction & Right-of-Way Surveys (D5/D4)
+  9: ['ps-d5-boundary', 'ps-d5-construction', 'ps-d4-row'],
+  // Week 10 — Subdivision, Geodetic Surveys & Hydrographic Surveys (D5/D4)
+  10: ['ps-d5-subdivision', 'ps-d5-geodetic', 'ps-d4-hydrographic'],
+  // Week 11 — Advanced Legal: Boundary Doctrines, Documentation & Geodetic Control
+  11: ['ps-d1-boundary-doctrines', 'ps-d2-documentation', 'ps-d5-contracts'],
+  // Week 12 — Final Integration: Standards, Risk & Geodetic Practice
+  12: ['ps-d3-geodetic-control', 'ps-d4-risk', 'ps-d5-geodetic'],
 };
 
 function getWeekToReadingIds(examTrack: string): Record<number, string[]> {
