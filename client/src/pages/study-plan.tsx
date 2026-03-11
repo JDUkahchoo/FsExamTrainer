@@ -91,16 +91,6 @@ export default function StudyPlan() {
     }
   }, [expandedWeek, examTrack]);
 
-  // Auto-record week completions when they hit 100% for the first time
-  useEffect(() => {
-    if (!weekProgressData || weekCompleteMutation.isPending) return;
-    allWeeks.forEach(plan => {
-      const progress = weekProgressData.find(wp => wp.week === plan.week && wp.examTrack === examTrack);
-      if (progress && progress.percentage === 100 && !memoryHealthMap.has(plan.week)) {
-        weekCompleteMutation.mutate({ weekNumber: plan.week, domains: plan.domains as string[] });
-      }
-    });
-  }, [weekProgressData, memoryHealthMap]);
 
   // Use appropriate study plan based on exam track
   const baseStudyPlan = examTrack === 'ps' ? PS_STUDY_PLAN : STUDY_PLAN;
@@ -711,6 +701,18 @@ export default function StudyPlan() {
     const meta = { totalWeeks: baseWeeks.length, examDate: null, isAdaptive: false, weeklyHours, planType: studyMode };
     return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
   }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, preferences?.examDate, preferences?.weeklyHoursGoal, customWeeks, examTrack, baseStudyPlan, domainScores]);
+
+  // Auto-record week completions when they hit 100% for the first time
+  // NOTE: placed here — after allWeeks, memoryHealthMap, weekCompleteMutation are all declared
+  useEffect(() => {
+    if (!weekProgressData || weekCompleteMutation.isPending) return;
+    allWeeks.forEach(plan => {
+      const progress = weekProgressData.find(wp => wp.week === plan.week && wp.examTrack === examTrack);
+      if (progress && progress.percentage === 100 && !memoryHealthMap.has(plan.week)) {
+        weekCompleteMutation.mutate({ weekNumber: plan.week, domains: plan.domains as string[] });
+      }
+    });
+  }, [weekProgressData, memoryHealthMap]);
 
   if (isLoading) {
     return (
