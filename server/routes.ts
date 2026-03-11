@@ -2750,6 +2750,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // --- Plan Memory Health Routes ---
+
+  app.get("/api/plan/memory-health", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      const records = await storage.getWeekMemoryHealth(userId, examTrack);
+
+      const withScores = records.map(r => {
+        const refDate = r.lastReviewedAt ?? r.completedAt;
+        const daysSince = (Date.now() - new Date(refDate).getTime()) / (1000 * 60 * 60 * 24);
+        const stability = 14 * Math.pow(2, r.reviewCount || 0);
+        const health = Math.max(0, Math.round(Math.exp(-daysSince / stability) * 100));
+        const status = health >= 80 ? 'fresh' : health >= 50 ? 'fading' : 'stale';
+        return { ...r, health, status };
+      });
+
+      res.json(withScores);
+    } catch (error) {
+      console.error("Error fetching week memory health:", error);
+      res.status(500).json({ error: "Failed to fetch memory health" });
+    }
+  });
+
+  app.post("/api/plan/week-complete/:weekNumber", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const weekNumber = parseInt(req.params.weekNumber);
+      const { examTrack = 'fs', domains = [] } = req.body;
+
+      if (isNaN(weekNumber) || weekNumber < 1) {
+        return res.status(400).json({ error: "Invalid week number" });
+      }
+
+      const record = await storage.upsertWeekCompletion(userId, examTrack, weekNumber, domains);
+
+      const refDate = record.lastReviewedAt ?? record.completedAt;
+      const daysSince = (Date.now() - new Date(refDate).getTime()) / (1000 * 60 * 60 * 24);
+      const stability = 14 * Math.pow(2, record.reviewCount || 0);
+      const health = Math.max(0, Math.round(Math.exp(-daysSince / stability) * 100));
+      const status = health >= 80 ? 'fresh' : health >= 50 ? 'fading' : 'stale';
+
+      res.json({ ...record, health, status });
+    } catch (error) {
+      console.error("Error recording week completion:", error);
+      res.status(500).json({ error: "Failed to record week completion" });
+    }
+  });
+
+  app.post("/api/plan/week-review/:weekNumber", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const weekNumber = parseInt(req.params.weekNumber);
+      const { examTrack = 'fs' } = req.body;
+
+      if (isNaN(weekNumber) || weekNumber < 1) {
+        return res.status(400).json({ error: "Invalid week number" });
+      }
+
+      const record = await storage.recordWeekReview(userId, examTrack, weekNumber);
+
+      await storage.awardXp(userId, 10, `week-review:${examTrack}:${weekNumber}:${new Date().toDateString()}`);
+
+      const refDate = record.lastReviewedAt ?? record.completedAt;
+      const daysSince = (Date.now() - new Date(refDate).getTime()) / (1000 * 60 * 60 * 24);
+      const stability = 14 * Math.pow(2, record.reviewCount || 0);
+      const health = Math.max(0, Math.round(Math.exp(-daysSince / stability) * 100));
+      const status = health >= 80 ? 'fresh' : health >= 50 ? 'fading' : 'stale';
+
+      res.json({ ...record, health, status });
+    } catch (error) {
+      console.error("Error recording week review:", error);
+      res.status(500).json({ error: "Failed to record week review" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

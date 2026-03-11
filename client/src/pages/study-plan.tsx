@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -36,6 +36,8 @@ import {
 } from "@/components/ui/collapsible";
 import { getDomainConfig } from '@/lib/domains';
 import { STUDY_PLAN, PS_STUDY_PLAN } from '@shared/data/studyPlan';
+import { generateStudyPlan } from '@shared/lib/planGenerator';
+import { WeekReviewModal } from '@/components/week-review-modal';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -79,6 +81,7 @@ export default function StudyPlan() {
   const [newTimeSpent, setNewTimeSpent] = useState('');
   const [newDomain, setNewDomain] = useState<Domain | ''>('');
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
+  const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[] } | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
 
@@ -87,6 +90,17 @@ export default function StudyPlan() {
       localStorage.setItem(`studyPlan_expandedWeek_${examTrack}`, String(expandedWeek));
     }
   }, [expandedWeek, examTrack]);
+
+  // Auto-record week completions when they hit 100% for the first time
+  useEffect(() => {
+    if (!weekProgressData || weekCompleteMutation.isPending) return;
+    allWeeks.forEach(plan => {
+      const progress = weekProgressData.find(wp => wp.week === plan.week && wp.examTrack === examTrack);
+      if (progress && progress.percentage === 100 && !memoryHealthMap.has(plan.week)) {
+        weekCompleteMutation.mutate({ weekNumber: plan.week, domains: plan.domains as string[] });
+      }
+    });
+  }, [weekProgressData, memoryHealthMap]);
 
   // Use appropriate study plan based on exam track
   const baseStudyPlan = examTrack === 'ps' ? PS_STUDY_PLAN : STUDY_PLAN;
@@ -179,6 +193,40 @@ export default function StudyPlan() {
       const res = await fetch(`/api/progress/overall?examTrack=${examTrack}`);
       if (!res.ok) throw new Error("Failed to fetch progress");
       return res.json();
+    },
+  });
+
+  // Fetch week memory health records
+  const { data: memoryHealthData = [] } = useQuery<Array<{
+    weekNumber: number;
+    completedAt: string;
+    lastReviewedAt: string | null;
+    reviewCount: number;
+    health: number;
+    status: 'fresh' | 'fading' | 'stale';
+    domains: string[];
+  }>>({
+    queryKey: ['/api/plan/memory-health', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/plan/memory-health?examTrack=${examTrack}`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    refetchInterval: 5 * 60 * 1000,
+  });
+
+  const memoryHealthMap = useMemo(() => {
+    const map = new Map<number, typeof memoryHealthData[0]>();
+    memoryHealthData.forEach(r => map.set(r.weekNumber, r));
+    return map;
+  }, [memoryHealthData]);
+
+  // Mutation to record week completion
+  const weekCompleteMutation = useMutation({
+    mutationFn: ({ weekNumber, domains }: { weekNumber: number; domains: string[] }) =>
+      apiRequest('POST', `/api/plan/week-complete/${weekNumber}`, { examTrack, domains }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/plan/memory-health', examTrack] });
     },
   });
 
@@ -622,43 +670,47 @@ export default function StudyPlan() {
     });
   };
 
-  // Generate dynamic weekly content based on study mode
+  // Generate dynamic weekly content based on study mode + adaptive plan generator
   // MUST be before early return to maintain consistent hook order
-  const allWeeks: Array<WeekPlan & { isCustom?: boolean; customId?: string }> = useMemo(() => {
+  const { allWeeks, adaptiveMeta } = useMemo(() => {
     let baseWeeks: WeekPlan[];
     
-    // Determine base weeks based on study mode
-    if (preferences?.studyMode === 'custom' && 
+    const studyMode = (preferences?.studyMode || 'standard') as import('@shared/schema').StudyMode;
+    const examDate = preferences?.examDate ? new Date(preferences.examDate) : null;
+    const weeklyHours = preferences?.weeklyHoursGoal || 9;
+
+    const pretestScoresMap: Record<number, number> = {};
+    domainScores.forEach(ds => { pretestScoresMap[ds.domainNumber] = ds.percentage; });
+
+    if (studyMode === 'custom' && 
         preferences?.customWeeklyDomains && 
         typeof preferences.customWeeklyDomains === 'object' && 
         Object.keys(preferences.customWeeklyDomains).length > 0) {
-      // Custom mode: Generate weeks based on user's selected domains and timeline
       baseWeeks = generateCustomWeekPlans(
         preferences.customWeeklyDomains as Record<number, number[]>,
         preferences.customTimeline || (examTrack === 'ps' ? 12 : 16),
         examTrack as 'fs' | 'ps'
       );
-    } else {
-      // Standard/Result-Driven mode: Use default plan based on exam track
-      baseWeeks = baseStudyPlan;
+      const meta = { totalWeeks: baseWeeks.length, examDate, isAdaptive: false, weeklyHours, planType: studyMode };
+      return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
     }
-    
-    // Merge base weeks with manually added custom weeks
-    return [
-      ...baseWeeks,
-      ...customWeeks.map(cw => ({
-        week: cw.weekNumber,
-        title: cw.title,
-        domains: cw.domain ? [cw.domain as Domain] : [],
-        read: cw.readItems || [],
-        focus: cw.focusItems || [],
-        apply: cw.applyItems || [],
-        reinforce: cw.reinforceItems || [],
-        isCustom: true,
-        customId: cw.id
-      }))
-    ];
-  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, customWeeks, examTrack, baseStudyPlan]);
+
+    if (examDate && examDate > new Date()) {
+      const { plan, meta } = generateStudyPlan({
+        examDate,
+        planType: studyMode,
+        weeklyHours,
+        pretestScores: pretestScoresMap,
+        examTrack: examTrack as 'fs' | 'ps',
+      });
+      baseWeeks = plan;
+      return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
+    }
+
+    baseWeeks = baseStudyPlan;
+    const meta = { totalWeeks: baseWeeks.length, examDate: null, isAdaptive: false, weeklyHours, planType: studyMode };
+    return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
+  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, preferences?.examDate, preferences?.weeklyHoursGoal, customWeeks, examTrack, baseStudyPlan, domainScores]);
 
   if (isLoading) {
     return (
@@ -678,29 +730,38 @@ export default function StudyPlan() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8 flex items-start justify-between gap-4">
-        <div>
+        <div className="flex-1">
           <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="heading-study-plan">
-            {actualTimeline}-Week {examName} Study Plan
+            {adaptiveMeta.totalWeeks}-Week {examName} Study Plan
           </h1>
           <p className="text-muted-foreground">
             Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all {domainCount} NCEES domains.
           </p>
-          {preferences?.studyMode === 'custom' && 
-           preferences?.customWeeklyDomains && 
-           typeof preferences.customWeeklyDomains === 'object' && 
-           Object.keys(preferences.customWeeklyDomains).length > 0 ? (
-            <Badge variant="secondary" className="mt-2">
-              Custom Plan Active
-            </Badge>
-          ) : preferences?.studyMode === 'result-driven' ? (
-            <Badge variant="secondary" className="mt-2">
-              Result-Driven Plan Active
-            </Badge>
-          ) : preferences?.studyMode === 'working-professional' ? (
-            <Badge variant="secondary" className="mt-2">
-              Working Professional Schedule
-            </Badge>
-          ) : null}
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            {adaptiveMeta.isAdaptive && (
+              <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-purple-200 dark:border-purple-800">
+                <Brain className="w-3 h-3 mr-1" />
+                Adaptive Plan
+              </Badge>
+            )}
+            {preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 ? (
+              <Badge variant="secondary">Custom Plan Active</Badge>
+            ) : preferences?.studyMode === 'result-driven' ? (
+              <Badge variant="secondary">Result-Driven Plan Active</Badge>
+            ) : preferences?.studyMode === 'working-professional' ? (
+              <Badge variant="secondary">Working Professional Schedule</Badge>
+            ) : null}
+            {adaptiveMeta.examDate && (() => {
+              const daysLeft = Math.ceil((adaptiveMeta.examDate!.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+              const weeksLeft = Math.ceil(daysLeft / 7);
+              return daysLeft > 0 ? (
+                <Badge variant="outline" className="border-orange-300 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20">
+                  <Flame className="w-3 h-3 mr-1" />
+                  {daysLeft} days to exam · {weeksLeft} weeks left
+                </Badge>
+              ) : null;
+            })()}
+          </div>
           
           {/* Overall Progress Indicator */}
           {overallProgressData && (
@@ -960,8 +1021,39 @@ export default function StudyPlan() {
                       );
                     })}
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-4 space-y-2">
                     <Progress value={progress} className="h-2" />
+                    {(() => {
+                      const health = memoryHealthMap.get(plan.week);
+                      if (!health) return null;
+                      const healthColor = health.status === 'fresh' ? 'bg-green-500' : health.status === 'fading' ? 'bg-yellow-500' : 'bg-red-500';
+                      const healthBg = health.status === 'fresh' ? 'bg-green-100 dark:bg-green-950' : health.status === 'fading' ? 'bg-yellow-100 dark:bg-yellow-950' : 'bg-red-100 dark:bg-red-950';
+                      const healthText = health.status === 'fresh' ? 'text-green-700 dark:text-green-300' : health.status === 'fading' ? 'text-yellow-700 dark:text-yellow-300' : 'text-red-700 dark:text-red-300';
+                      return (
+                        <div className={`flex items-center gap-2 rounded-md px-2 py-1 ${healthBg}`}>
+                          <div className="flex-1 flex items-center gap-2">
+                            <Brain className={`h-3 w-3 ${healthText}`} />
+                            <div className="flex-1 bg-muted rounded-full h-1.5 overflow-hidden">
+                              <div className={`h-full ${healthColor} transition-all`} style={{ width: `${health.health}%` }} />
+                            </div>
+                            <span className={`text-xs font-medium ${healthText}`}>{health.health}% memory</span>
+                          </div>
+                          {health.status !== 'fresh' && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReviewWeekInfo({ week: plan.week, title: plan.title, domains: plan.domains as string[] });
+                              }}
+                              className={`text-xs font-medium px-2 py-0.5 rounded border ${health.status === 'stale' ? 'border-red-400 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 animate-pulse' : 'border-yellow-400 text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20'}`}
+                              data-testid={`button-review-week-${plan.week}`}
+                            >
+                              <RefreshCw className="h-3 w-3 inline mr-1" />
+                              {health.status === 'stale' ? 'Review Now' : 'Review'}
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
                 <div className="ml-4 text-muted-foreground">
@@ -1516,6 +1608,17 @@ export default function StudyPlan() {
           );
         })}
       </div>
+
+      {reviewWeekInfo && (
+        <WeekReviewModal
+          weekNumber={reviewWeekInfo.week}
+          weekTitle={reviewWeekInfo.title}
+          domains={reviewWeekInfo.domains}
+          examTrack={examTrack}
+          open={!!reviewWeekInfo}
+          onClose={() => setReviewWeekInfo(null)}
+        />
+      )}
     </div>
   );
 }

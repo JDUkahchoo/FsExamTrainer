@@ -1572,6 +1572,36 @@ export interface ReadingModule {
   sections: ReadingSection[];
 }
 
+// --- Week Memory Health Table ---
+// Tracks per-week completion and spaced review scheduling using Ebbinghaus forgetting curve
+
+export const weekMemoryHealth = pgTable("week_memory_health", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  examTrack: varchar("exam_track").notNull().default('fs'),
+  weekNumber: integer("week_number").notNull(),
+  domains: text("domains").array().notNull().default(sql`'{}'::text[]`),
+  completedAt: timestamp("completed_at").notNull().defaultNow(),
+  lastReviewedAt: timestamp("last_reviewed_at"),
+  reviewCount: integer("review_count").notNull().default(0),
+}, (table) => ({
+  uniqueUserWeek: uniqueIndex("week_memory_health_user_week_unique").on(table.userId, table.examTrack, table.weekNumber),
+}));
+
+export const weekMemoryHealthRelations = relations(weekMemoryHealth, ({ one }) => ({
+  user: one(users, {
+    fields: [weekMemoryHealth.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertWeekMemoryHealthSchema = createInsertSchema(weekMemoryHealth).omit({
+  id: true,
+});
+
+export type WeekMemoryHealth = typeof weekMemoryHealth.$inferSelect;
+export type InsertWeekMemoryHealth = z.infer<typeof insertWeekMemoryHealthSchema>;
+
 // --- Study Reading Progress Table ---
 
 export const studyReadingProgress = pgTable("study_reading_progress", {

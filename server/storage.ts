@@ -79,7 +79,8 @@ import type {
   InsertUserDifficultySettings,
   LeaderboardEntry,
   ForgettingCurvePoint,
-  DifficultyLevel
+  DifficultyLevel,
+  WeekMemoryHealth,
 } from "@shared/schema";
 import { SURVEYOR_RANKS, getSurveyorRank } from "@shared/schema";
 import { db } from "./db";
@@ -123,6 +124,7 @@ import {
   reviewSchedule,
   userDifficultySettings,
   studyReadingProgress,
+  weekMemoryHealth,
   DOMAINS
 } from "@shared/schema";
 import { eq, and, desc, gte, lte, lt, sql, inArray } from "drizzle-orm";
@@ -366,6 +368,11 @@ export interface IStorage {
   getStudyReadingProgress(userId: string, readingId: string): Promise<StudyReadingProgress[]>;
   getAllStudyReadingProgress(userId: string): Promise<StudyReadingProgress[]>;
   markStudyReadingSectionComplete(userId: string, readingId: string, sectionId: string): Promise<StudyReadingProgress>;
+
+  // Week Memory Health methods
+  getWeekMemoryHealth(userId: string, examTrack: string): Promise<WeekMemoryHealth[]>;
+  upsertWeekCompletion(userId: string, examTrack: string, weekNumber: number, domains: string[]): Promise<WeekMemoryHealth>;
+  recordWeekReview(userId: string, examTrack: string, weekNumber: number): Promise<WeekMemoryHealth>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -4020,6 +4027,79 @@ export class DatabaseStorage implements IStorage {
     }).returning();
 
     return progress;
+  }
+
+  // --- Week Memory Health ---
+
+  async getWeekMemoryHealth(userId: string, examTrack: string): Promise<WeekMemoryHealth[]> {
+    return db.select().from(weekMemoryHealth).where(
+      and(
+        eq(weekMemoryHealth.userId, userId),
+        eq(weekMemoryHealth.examTrack, examTrack)
+      )
+    ).orderBy(weekMemoryHealth.weekNumber);
+  }
+
+  async upsertWeekCompletion(userId: string, examTrack: string, weekNumber: number, domains: string[]): Promise<WeekMemoryHealth> {
+    const existing = await db.select().from(weekMemoryHealth).where(
+      and(
+        eq(weekMemoryHealth.userId, userId),
+        eq(weekMemoryHealth.examTrack, examTrack),
+        eq(weekMemoryHealth.weekNumber, weekNumber)
+      )
+    );
+
+    if (existing.length > 0) {
+      return existing[0];
+    }
+
+    const [record] = await db.insert(weekMemoryHealth).values({
+      userId,
+      examTrack,
+      weekNumber,
+      domains,
+      completedAt: new Date(),
+      reviewCount: 0,
+    }).returning();
+    return record;
+  }
+
+  async recordWeekReview(userId: string, examTrack: string, weekNumber: number): Promise<WeekMemoryHealth> {
+    const existing = await db.select().from(weekMemoryHealth).where(
+      and(
+        eq(weekMemoryHealth.userId, userId),
+        eq(weekMemoryHealth.examTrack, examTrack),
+        eq(weekMemoryHealth.weekNumber, weekNumber)
+      )
+    );
+
+    if (existing.length === 0) {
+      const [record] = await db.insert(weekMemoryHealth).values({
+        userId,
+        examTrack,
+        weekNumber,
+        domains: [],
+        completedAt: new Date(),
+        lastReviewedAt: new Date(),
+        reviewCount: 1,
+      }).returning();
+      return record;
+    }
+
+    const [updated] = await db.update(weekMemoryHealth)
+      .set({
+        lastReviewedAt: new Date(),
+        reviewCount: (existing[0].reviewCount || 0) + 1,
+      })
+      .where(
+        and(
+          eq(weekMemoryHealth.userId, userId),
+          eq(weekMemoryHealth.examTrack, examTrack),
+          eq(weekMemoryHealth.weekNumber, weekNumber)
+        )
+      )
+      .returning();
+    return updated;
   }
 }
 

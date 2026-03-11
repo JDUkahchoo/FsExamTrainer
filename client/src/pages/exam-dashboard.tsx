@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,8 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   BookOpen, Brain, ClipboardCheck, GraduationCap, BarChart3, Flame, Target, Trophy,
-  Clock, TrendingUp, Zap, CheckCircle2, Lightbulb, FileText, BookMarked, CalendarDays
+  Clock, TrendingUp, Zap, CheckCircle2, Lightbulb, FileText, BookMarked, CalendarDays,
+  RefreshCw, Activity
 } from 'lucide-react';
+import { WeekReviewModal } from '@/components/week-review-modal';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { EXAM_TRACKS } from '@shared/schema';
 import { StudyCoachBriefing } from '@/components/study-coach-briefing';
@@ -52,6 +55,20 @@ export default function ExamDashboard() {
 
   const { data: preferences } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
+  });
+
+  const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[] } | null>(null);
+
+  const { data: memoryHealth } = useQuery<Array<{
+    weekNumber: number; domains: string[]; health: number; status: 'fresh' | 'fading' | 'stale';
+    completedAt: string; lastReviewedAt: string | null; reviewCount: number;
+  }>>({
+    queryKey: ['/api/plan/memory-health', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/plan/memory-health?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed');
+      return res.json();
+    }
   });
 
   const completedLessons = lessonsProgress?.completed || 0;
@@ -443,10 +460,113 @@ export default function ExamDashboard() {
             </div>
           </div>
 
+          {memoryHealth && memoryHealth.length > 0 && (
+            <Card data-testid="card-plan-health">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Study Plan Health
+                </CardTitle>
+                <CardDescription>Memory retention across completed weeks (Ebbinghaus spaced review)</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-4 flex-wrap">
+                  {(() => {
+                    const fresh = memoryHealth.filter(h => h.status === 'fresh').length;
+                    const fading = memoryHealth.filter(h => h.status === 'fading').length;
+                    const stale = memoryHealth.filter(h => h.status === 'stale').length;
+                    return (
+                      <>
+                        <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-950 rounded-lg px-3 py-1.5" data-testid="stat-plan-health-fresh">
+                          <div className="w-2 h-2 rounded-full bg-green-500" />
+                          <span className="text-sm font-medium text-green-700 dark:text-green-300">{fresh} Fresh</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-yellow-50 dark:bg-yellow-950 rounded-lg px-3 py-1.5" data-testid="stat-plan-health-fading">
+                          <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                          <span className="text-sm font-medium text-yellow-700 dark:text-yellow-300">{fading} Fading</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-red-50 dark:bg-red-950 rounded-lg px-3 py-1.5" data-testid="stat-plan-health-stale">
+                          <div className="w-2 h-2 rounded-full bg-red-500" />
+                          <span className="text-sm font-medium text-red-700 dark:text-red-300">{stale} Stale</span>
+                        </div>
+                        {daysUntilExam && (
+                          <div className="ml-auto flex items-center gap-1.5 text-sm text-muted-foreground">
+                            <CalendarDays className="h-4 w-4" />
+                            {daysUntilExam} days to exam
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+
+                {memoryHealth.filter(h => h.status !== 'fresh').length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">Weeks needing review:</p>
+                    {memoryHealth
+                      .filter(h => h.status !== 'fresh')
+                      .sort((a, b) => a.health - b.health)
+                      .slice(0, 3)
+                      .map(h => (
+                        <div
+                          key={h.weekNumber}
+                          className={`flex items-center gap-3 rounded-lg p-3 ${h.status === 'stale' ? 'bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900' : 'bg-yellow-50 dark:bg-yellow-950/50 border border-yellow-200 dark:border-yellow-900'}`}
+                          data-testid={`plan-health-row-${h.weekNumber}`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className={`text-sm font-semibold ${h.status === 'stale' ? 'text-red-700 dark:text-red-300' : 'text-yellow-700 dark:text-yellow-300'}`}>
+                                Week {h.weekNumber}
+                              </span>
+                              <Badge variant="outline" className={`text-xs ${h.status === 'stale' ? 'border-red-400 text-red-600 dark:text-red-400' : 'border-yellow-400 text-yellow-600 dark:text-yellow-400'}`}>
+                                {h.health}% memory
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                              {h.domains.slice(0, 2).join(' · ')}{h.domains.length > 2 ? ` +${h.domains.length - 2}` : ''}
+                            </p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className={`shrink-0 text-xs gap-1 ${h.status === 'stale' ? 'border-red-400 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20' : 'border-yellow-400 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20'}`}
+                            onClick={() => setReviewWeekInfo({ week: h.weekNumber, title: `Week ${h.weekNumber}`, domains: h.domains })}
+                            data-testid={`button-review-health-week-${h.weekNumber}`}
+                          >
+                            <RefreshCw className="h-3 w-3" />
+                            {h.status === 'stale' ? 'Review Now' : 'Review'}
+                          </Button>
+                        </div>
+                      ))
+                    }
+                  </div>
+                )}
+
+                {memoryHealth.filter(h => h.status !== 'fresh').length === 0 && (
+                  <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950 rounded-lg px-3 py-2">
+                    <CheckCircle2 className="h-4 w-4" />
+                    All completed weeks are in great shape — keep it up!
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <WeeklyLeaderboard compact />
             <ForgettingCurveChart compact />
           </div>
+
+          {reviewWeekInfo && (
+            <WeekReviewModal
+              weekNumber={reviewWeekInfo.week}
+              weekTitle={reviewWeekInfo.title}
+              domains={reviewWeekInfo.domains}
+              examTrack={examTrack}
+              open={!!reviewWeekInfo}
+              onClose={() => setReviewWeekInfo(null)}
+            />
+          )}
         </TabsContent>
 
         <TabsContent value="tools" className="space-y-6">
