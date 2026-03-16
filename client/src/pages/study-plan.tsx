@@ -771,7 +771,7 @@ export default function StudyPlan() {
             )}
             {preferences?.studyMode === 'long-term' ? (() => {
               const activeWeek = allWeeks.find(w => calculateWeekProgress(w.week, w) < 100)?.week || 1;
-              const activePhase = getLongTermPhaseInfo(activeWeek, adaptiveMeta.longTermPhases);
+              const activePhase = getLongTermPhaseInfo(activeWeek, 'longTermPhases' in adaptiveMeta ? adaptiveMeta.longTermPhases : undefined);
               const activeMonth = Math.ceil(activeWeek / 4);
               return (
                 <>
@@ -784,8 +784,7 @@ export default function StudyPlan() {
                   </Badge>
                 </>
               );
-            })()
-            ) : preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 ? (
+            })() : preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 ? (
               <Badge variant="secondary">Custom Plan Active</Badge>
             ) : preferences?.studyMode === 'result-driven' ? (
               <Badge variant="secondary">Result-Driven Plan Active</Badge>
@@ -1008,8 +1007,9 @@ export default function StudyPlan() {
           const progress = calculateWeekProgress(plan.week, plan);
           const isExpanded = expandedWeek === plan.week;
 
-          const phaseInfo = adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(plan.week, adaptiveMeta.longTermPhases) : null;
-          const prevPhaseInfo = idx > 0 && adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(allWeeks[idx - 1].week, adaptiveMeta.longTermPhases) : null;
+          const ltPhases = 'longTermPhases' in adaptiveMeta ? adaptiveMeta.longTermPhases : undefined;
+          const phaseInfo = adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(plan.week, ltPhases) : null;
+          const prevPhaseInfo = idx > 0 && adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(allWeeks[idx - 1].week, ltPhases) : null;
           const showPhaseHeader = phaseInfo && (!prevPhaseInfo || phaseInfo.phase !== prevPhaseInfo.phase);
           const isMilestoneWeek = adaptiveMeta.planType === 'long-term' && PRACTICE_TEST_MILESTONE_WEEKS.has(plan.week);
           const isCheckpointWeek = adaptiveMeta.planType === 'long-term' && MONTH_CHECKPOINT_WEEKS.has(plan.week);
