@@ -698,21 +698,14 @@ export default function StudyPlan() {
       return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
     }
 
-    baseWeeks = [...baseStudyPlan];
-    if (studyMode !== 'custom' && Object.keys(pretestScoresMap).length > 0) {
-      baseWeeks.sort((a, b) => {
-        const avgScoreForWeek = (plan: WeekPlan) => {
-          if (!plan.domains.length) return 50;
-          const domainLabels = examTrack === 'ps'
-            ? { 'Legal Principles': 1, 'Professional Survey Practices': 2, 'Standards and Specifications': 3, 'Business Practices': 4, 'Areas of Practice': 5 }
-            : { 'Math & Basic Science': 0, 'Field Data Acquisition': 1, 'Mapping, GIS, and CAD': 2, 'Boundary Law & PLSS': 3, 'Surveying Principles': 4, 'Survey Computations & Applications': 5, 'Professional Practice': 6, 'Applied Mathematics & Statistics': 7 };
-          return plan.domains.reduce((sum, d) => sum + (pretestScoresMap[(domainLabels as Record<string, number>)[d] ?? -1] ?? 50), 0) / plan.domains.length;
-        };
-        return avgScoreForWeek(a) - avgScoreForWeek(b);
-      });
-      baseWeeks = baseWeeks.map((w, i) => ({ ...w, week: i + 1 }));
-    }
-    const meta = { totalWeeks: baseWeeks.length, examDate: null, isAdaptive: false, weeklyHours, planType: studyMode };
+    const { plan: fixedPlan, meta } = generateStudyPlan({
+      examDate: null,
+      planType: studyMode,
+      weeklyHours,
+      pretestScores: pretestScoresMap,
+      examTrack: examTrack as 'fs' | 'ps',
+    });
+    baseWeeks = fixedPlan;
     return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
   }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, preferences?.examDate, preferences?.weeklyHoursGoal, customWeeks, examTrack, baseStudyPlan, domainScores]);
 

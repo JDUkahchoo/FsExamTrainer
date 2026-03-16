@@ -160,10 +160,19 @@ export function generateStudyPlan(config: PlanGeneratorConfig): { plan: WeekPlan
   const domainNums = examTrack === 'ps' ? PS_DOMAIN_NUMBERS : FS_DOMAIN_NUMBERS;
 
   if (!examDate) {
-    if (planType === 'custom') {
+    if (planType !== 'custom' && hasPretestData(pretestScores)) {
+      const reordered = [...sourcePlan].sort((a, b) => {
+        const avgScore = (w: WeekPlan) => {
+          if (!w.domains.length) return 50;
+          const labels = examTrack === 'ps' ? PS_DOMAIN_LABELS : FS_DOMAIN_LABELS;
+          const reverseLookup = Object.fromEntries(Object.entries(labels).map(([k, v]) => [v, +k]));
+          return w.domains.reduce((sum, d) => sum + (pretestScores[reverseLookup[d] ?? -1] ?? 50), 0) / w.domains.length;
+        };
+        return avgScore(a) - avgScore(b);
+      }).map((w, i) => ({ ...w, week: i + 1 }));
       return {
-        plan: sourcePlan,
-        meta: { totalWeeks: sourcePlan.length, examDate: null, isAdaptive: false, weeklyHours, planType },
+        plan: reordered,
+        meta: { totalWeeks: reordered.length, examDate: null, isAdaptive: false, weeklyHours, planType },
       };
     }
     return {
