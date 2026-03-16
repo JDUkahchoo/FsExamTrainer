@@ -769,11 +769,22 @@ export default function StudyPlan() {
                 Adaptive Plan
               </Badge>
             )}
-            {preferences?.studyMode === 'long-term' ? (
-              <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
-                <Calendar className="w-3 h-3 mr-1" />
-                24-Month Pathway
-              </Badge>
+            {preferences?.studyMode === 'long-term' ? (() => {
+              const activeWeek = allWeeks.find(w => calculateWeekProgress(w.week, w) < 100)?.week || 1;
+              const activePhase = getLongTermPhaseInfo(activeWeek, adaptiveMeta.longTermPhases);
+              const activeMonth = Math.ceil(activeWeek / 4);
+              return (
+                <>
+                  <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+                    <Calendar className="w-3 h-3 mr-1" />
+                    24-Month Pathway
+                  </Badge>
+                  <Badge variant="outline" className="border-emerald-300 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20" data-testid="badge-long-term-progress">
+                    {activePhase ? `Phase ${activePhase.phase}: ${activePhase.phaseName}` : 'Foundation'} · Month {activeMonth} of 24
+                  </Badge>
+                </>
+              );
+            })()
             ) : preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 ? (
               <Badge variant="secondary">Custom Plan Active</Badge>
             ) : preferences?.studyMode === 'result-driven' ? (
@@ -1175,6 +1186,32 @@ export default function StudyPlan() {
                     domains={plan.domains as string[]}
                     examTrack={examTrack}
                   />
+
+                  {isCheckpointWeek && plan.domains.length > 0 && (
+                    <div className="md:col-span-2 mt-2 p-3 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 flex items-center gap-3" data-testid={`checkpoint-cta-${plan.week}`}>
+                      <CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                      <div className="flex-1">
+                        <span className="font-semibold text-blue-800 dark:text-blue-300 text-sm">Domain Checkpoint Quiz</span>
+                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">Test your knowledge before moving to the next domain.</p>
+                      </div>
+                      <a href={`/app/${examTrack}/quiz?domain=${encodeURIComponent(plan.domains[0])}`} className="px-3 py-1.5 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors" data-testid={`link-checkpoint-quiz-${plan.week}`}>
+                        Take Quiz →
+                      </a>
+                    </div>
+                  )}
+
+                  {phaseInfo?.phase === 3 && (
+                    <div className="md:col-span-2 mt-2 p-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 flex items-center gap-3" data-testid={`mixed-quiz-cta-${plan.week}`}>
+                      <Layers className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                      <div className="flex-1">
+                        <span className="font-semibold text-amber-800 dark:text-amber-300 text-sm">Cross-Domain Mixed Quiz</span>
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Practice connecting concepts across all domains.</p>
+                      </div>
+                      <a href={`/app/${examTrack}/quiz`} className="px-3 py-1.5 text-sm font-medium rounded-md bg-amber-600 text-white hover:bg-amber-700 transition-colors" data-testid={`link-mixed-quiz-${plan.week}`}>
+                        Mixed Quiz →
+                      </a>
+                    </div>
+                  )}
 
                   {/* Study Checklist Section - shows items with auto/manual completion */}
                   {(() => {

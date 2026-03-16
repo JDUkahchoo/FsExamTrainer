@@ -490,15 +490,8 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
   }
   const phase4End = weekNum - 1;
 
-  // --- Mark practice test milestone weeks at phase boundaries and midpoints ---
-  const milestoneTargets = [
-    Math.round(phase1End / 2),
-    phase1End,
-    Math.round((phase1End + phase2End) / 2),
-    phase2End,
-    phase3End,
-  ];
-  milestoneTargets.forEach(w => {
+  // --- Mark practice test milestone weeks at months 6, 12, 18, 22 ---
+  [24, 48, 72, 88].forEach(w => {
     if (w > 0 && w <= plan.length) PRACTICE_TEST_MILESTONE_WEEKS.add(w);
   });
 
