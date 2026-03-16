@@ -666,14 +666,15 @@ export default function StudyPlan() {
   const { allWeeks, adaptiveMeta } = useMemo(() => {
     let baseWeeks: WeekPlan[];
     
-    const studyMode = (preferences?.studyMode || 'standard') as import('@shared/schema').StudyMode;
+    let studyMode = (preferences?.studyMode || 'standard') as import('@shared/schema').StudyMode;
+    if (studyMode === 'long-term' && examTrack !== 'fs') studyMode = 'standard';
     const examDate = preferences?.examDate ? new Date(preferences.examDate) : null;
     const weeklyHours = preferences?.weeklyHoursGoal || 9;
 
     const pretestScoresMap: Record<number, number> = {};
     domainScores.forEach(ds => { pretestScoresMap[ds.domainNumber] = ds.percentage; });
 
-    if (studyMode === 'long-term' && examTrack === 'fs') {
+    if (studyMode === 'long-term') {
       const { plan, meta } = generateLongTermPlan({
         examDate: null,
         planType: 'long-term',
@@ -743,7 +744,7 @@ export default function StudyPlan() {
 
   // Calculate actual timeline based on study mode
   const defaultWeeks = examTrack === 'ps' ? 12 : 16;
-  const domainCount = examTrack === 'ps' ? 5 : 7;
+  const domainCount = examTrack === 'ps' ? 5 : 8;
   const actualTimeline = preferences?.studyMode === 'custom' && preferences?.customTimeline
     ? preferences.customTimeline + customWeeks.length
     : defaultWeeks + customWeeks.length;
@@ -1012,7 +1013,7 @@ export default function StudyPlan() {
           const prevPhaseInfo = idx > 0 && adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(allWeeks[idx - 1].week, ltPhases) : null;
           const showPhaseHeader = phaseInfo && (!prevPhaseInfo || phaseInfo.phase !== prevPhaseInfo.phase);
           const isMilestoneWeek = adaptiveMeta.planType === 'long-term' && PRACTICE_TEST_MILESTONE_WEEKS.has(plan.week);
-          const isCheckpointWeek = adaptiveMeta.planType === 'long-term' && MONTH_CHECKPOINT_WEEKS.has(plan.week);
+          const isCheckpointWeek = adaptiveMeta.planType === 'long-term' && MONTH_CHECKPOINT_WEEKS.has(plan.week) && phaseInfo && (phaseInfo.phase === 1 || phaseInfo.phase === 2);
 
           const phaseColors: Record<number, string> = {
             1: 'from-blue-500 to-blue-600',
