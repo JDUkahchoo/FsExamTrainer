@@ -698,7 +698,20 @@ export default function StudyPlan() {
       return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
     }
 
-    baseWeeks = baseStudyPlan;
+    baseWeeks = [...baseStudyPlan];
+    if (studyMode !== 'custom' && Object.keys(pretestScoresMap).length > 0) {
+      baseWeeks.sort((a, b) => {
+        const avgScoreForWeek = (plan: WeekPlan) => {
+          if (!plan.domains.length) return 50;
+          const domainLabels = examTrack === 'ps'
+            ? { 'Legal Principles': 1, 'Professional Survey Practices': 2, 'Standards and Specifications': 3, 'Business Practices': 4, 'Areas of Practice': 5 }
+            : { 'Math & Basic Science': 0, 'Field Data Acquisition': 1, 'Mapping, GIS, and CAD': 2, 'Boundary Law & PLSS': 3, 'Surveying Principles': 4, 'Survey Computations & Applications': 5, 'Professional Practice': 6, 'Applied Mathematics & Statistics': 7 };
+          return plan.domains.reduce((sum, d) => sum + (pretestScoresMap[(domainLabels as Record<string, number>)[d] ?? -1] ?? 50), 0) / plan.domains.length;
+        };
+        return avgScoreForWeek(a) - avgScoreForWeek(b);
+      });
+      baseWeeks = baseWeeks.map((w, i) => ({ ...w, week: i + 1 }));
+    }
     const meta = { totalWeeks: baseWeeks.length, examDate: null, isAdaptive: false, weeklyHours, planType: studyMode };
     return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
   }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, preferences?.examDate, preferences?.weeklyHoursGoal, customWeeks, examTrack, baseStudyPlan, domainScores]);
@@ -754,6 +767,12 @@ export default function StudyPlan() {
             ) : preferences?.studyMode === 'working-professional' ? (
               <Badge variant="secondary">Working Professional Schedule</Badge>
             ) : null}
+            {(preferences?.studyMode === 'standard' || preferences?.studyMode === 'working-professional') && domainScores.length > 0 && (
+              <Badge variant="outline" className="border-blue-300 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20">
+                <Brain className="w-3 h-3 mr-1" />
+                Adapted from your pretest
+              </Badge>
+            )}
             {adaptiveMeta.examDate && (() => {
               const daysLeft = Math.ceil((adaptiveMeta.examDate!.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
               const weeksLeft = Math.ceil(daysLeft / 7);

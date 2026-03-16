@@ -44,12 +44,24 @@ function weeksBetween(from: Date, to: Date): number {
   return Math.round((to.getTime() - from.getTime()) / (7 * 24 * 60 * 60 * 1000));
 }
 
+function hasPretestData(pretestScores: Record<number, number>): boolean {
+  return Object.keys(pretestScores).length > 0;
+}
+
 function domainWeight(domainNum: number, pretestScores: Record<number, number>, planType: StudyMode): number {
-  if (planType !== 'result-driven') return 1;
+  if (planType === 'custom') return 1;
+  if (!hasPretestData(pretestScores)) return 1;
   const score = pretestScores[domainNum] ?? 50;
-  if (score < 40) return 3;
-  if (score < 60) return 2;
-  if (score < 80) return 1.5;
+  if (planType === 'result-driven') {
+    if (score < 40) return 3;
+    if (score < 60) return 2;
+    if (score < 80) return 1.5;
+    return 1;
+  }
+  // standard & working-professional: lighter influence
+  if (score < 40) return 1.8;
+  if (score < 60) return 1.4;
+  if (score < 80) return 1.1;
   return 1;
 }
 
@@ -171,7 +183,7 @@ export function generateStudyPlan(config: PlanGeneratorConfig): { plan: WeekPlan
   const contentWeeks = available - Math.min(finalWeeks.length, 2);
 
   const sortedGroupKeys = Array.from(domainGroups.keys()).sort((a, b) => {
-    if (planType !== 'result-driven') return 0;
+    if (planType === 'custom' || !hasPretestData(pretestScores)) return 0;
     const domainsA = domainGroups.get(a)![0].domains;
     const domainsB = domainGroups.get(b)![0].domains;
     const scoreA = domainsA.map(d => {
@@ -241,7 +253,7 @@ export function generateStudyPlan(config: PlanGeneratorConfig): { plan: WeekPlan
     const diff = studyWeeks - totalSlots;
     if (diff > 0 && domainSlots.length > 0) domainSlots[0].count += diff;
 
-    if (planType === 'result-driven') {
+    if (planType !== 'custom' && hasPretestData(pretestScores)) {
       domainSlots.sort((a, b) => (pretestScores[a.num] ?? 50) - (pretestScores[b.num] ?? 50));
     }
 
