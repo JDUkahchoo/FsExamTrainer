@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame, Trophy } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/collapsible";
 import { getDomainConfig } from '@/lib/domains';
 import { STUDY_PLAN, PS_STUDY_PLAN } from '@shared/data/studyPlan';
-import { generateStudyPlan } from '@shared/lib/planGenerator';
+import { generateStudyPlan, generateLongTermPlan, getLongTermPhaseInfo, PRACTICE_TEST_MILESTONE_WEEKS, MONTH_CHECKPOINT_WEEKS } from '@shared/lib/planGenerator';
 import { WeekReviewModal } from '@/components/week-review-modal';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -673,6 +673,18 @@ export default function StudyPlan() {
     const pretestScoresMap: Record<number, number> = {};
     domainScores.forEach(ds => { pretestScoresMap[ds.domainNumber] = ds.percentage; });
 
+    if (studyMode === 'long-term' && examTrack === 'fs') {
+      const { plan, meta } = generateLongTermPlan({
+        examDate: null,
+        planType: 'long-term',
+        weeklyHours,
+        pretestScores: pretestScoresMap,
+        examTrack: 'fs',
+      });
+      baseWeeks = plan;
+      return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
+    }
+
     if (studyMode === 'custom' && 
         preferences?.customWeeklyDomains && 
         typeof preferences.customWeeklyDomains === 'object' && 
@@ -741,10 +753,14 @@ export default function StudyPlan() {
       <div className="mb-8 flex items-start justify-between gap-4">
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="heading-study-plan">
-            {adaptiveMeta.totalWeeks}-Week {examName} Study Plan
+            {adaptiveMeta.planType === 'long-term'
+              ? `24-Month ${examName} Study Pathway`
+              : `${adaptiveMeta.totalWeeks}-Week ${examName} Study Plan`}
           </h1>
           <p className="text-muted-foreground">
-            Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all {domainCount} NCEES domains.
+            {adaptiveMeta.planType === 'long-term'
+              ? `${adaptiveMeta.totalWeeks} weeks across 4 phases — sustainable long-term preparation for all ${domainCount} NCEES domains.`
+              : `Follow the READ → FOCUS → APPLY → REINFORCE framework weekly to master all ${domainCount} NCEES domains.`}
           </p>
           <div className="flex flex-wrap items-center gap-2 mt-2">
             {adaptiveMeta.isAdaptive && (
@@ -753,7 +769,12 @@ export default function StudyPlan() {
                 Adaptive Plan
               </Badge>
             )}
-            {preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 ? (
+            {preferences?.studyMode === 'long-term' ? (
+              <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+                <Calendar className="w-3 h-3 mr-1" />
+                24-Month Pathway
+              </Badge>
+            ) : preferences?.studyMode === 'custom' && preferences?.customWeeklyDomains && typeof preferences.customWeeklyDomains === 'object' && Object.keys(preferences.customWeeklyDomains).length > 0 ? (
               <Badge variant="secondary">Custom Plan Active</Badge>
             ) : preferences?.studyMode === 'result-driven' ? (
               <Badge variant="secondary">Result-Driven Plan Active</Badge>
@@ -824,6 +845,9 @@ export default function StudyPlan() {
                 <SelectItem value="standard">Standard Mode</SelectItem>
                 <SelectItem value="result-driven">Result-Driven Mode</SelectItem>
                 <SelectItem value="working-professional">Working Professional</SelectItem>
+                {examTrack === 'fs' && (
+                  <SelectItem value="long-term">Long-Term (24-Mo)</SelectItem>
+                )}
                 <SelectItem value="custom">Custom Plan</SelectItem>
               </SelectContent>
             </Select>
@@ -969,12 +993,55 @@ export default function StudyPlan() {
       )}
 
       <div className="space-y-4">
-        {allWeeks.map((plan) => {
+        {allWeeks.map((plan, idx) => {
           const progress = calculateWeekProgress(plan.week, plan);
           const isExpanded = expandedWeek === plan.week;
-          
+
+          const phaseInfo = adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(plan.week, adaptiveMeta.longTermPhases) : null;
+          const prevPhaseInfo = idx > 0 && adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(allWeeks[idx - 1].week, adaptiveMeta.longTermPhases) : null;
+          const showPhaseHeader = phaseInfo && (!prevPhaseInfo || phaseInfo.phase !== prevPhaseInfo.phase);
+          const isMilestoneWeek = adaptiveMeta.planType === 'long-term' && PRACTICE_TEST_MILESTONE_WEEKS.has(plan.week);
+          const isCheckpointWeek = adaptiveMeta.planType === 'long-term' && MONTH_CHECKPOINT_WEEKS.has(plan.week);
+
+          const phaseColors: Record<number, string> = {
+            1: 'from-blue-500 to-blue-600',
+            2: 'from-purple-500 to-purple-600',
+            3: 'from-amber-500 to-amber-600',
+            4: 'from-red-500 to-red-600',
+          };
+
           return (
-            <Card key={plan.week} className="overflow-hidden hover:shadow-md transition-shadow" data-testid={`card-week-${plan.week}`}>
+            <div key={plan.week}>
+              {showPhaseHeader && phaseInfo && (
+                <div className={`mb-4 mt-6 rounded-xl bg-gradient-to-r ${phaseColors[phaseInfo.phase] || 'from-gray-500 to-gray-600'} p-4 text-white shadow-lg`} data-testid={`phase-header-${phaseInfo.phase}`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl font-bold">Phase {phaseInfo.phase}</span>
+                    <span className="text-lg font-medium opacity-90">{phaseInfo.phaseName}</span>
+                  </div>
+                  <p className="text-sm mt-1 opacity-80">
+                    {phaseInfo.phase === 1 && 'Build your foundation — one domain at a time with deep practice.'}
+                    {phaseInfo.phase === 2 && 'Second pass — advanced problems and formula speed drills.'}
+                    {phaseInfo.phase === 3 && 'Cross-domain integration — mixed practice and connecting concepts.'}
+                    {phaseInfo.phase === 4 && 'Exam sprint — full-length practice tests and final review.'}
+                  </p>
+                </div>
+              )}
+              {isMilestoneWeek && (
+                <div className="mb-3 flex items-center gap-3 rounded-lg border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-3" data-testid={`milestone-${plan.week}`}>
+                  <Trophy className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  <span className="font-semibold text-amber-800 dark:text-amber-300">Milestone: Take a Full Practice Exam</span>
+                  <a href={`/app/${examTrack}/practice-exam`} className="ml-auto text-sm font-medium text-amber-600 dark:text-amber-400 underline hover:no-underline" data-testid={`link-milestone-exam-${plan.week}`}>
+                    Go to Practice Exam →
+                  </a>
+                </div>
+              )}
+              {isCheckpointWeek && !isMilestoneWeek && (
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-2 text-sm" data-testid={`checkpoint-${plan.week}`}>
+                  <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                  <span className="text-blue-700 dark:text-blue-300">Domain checkpoint — review quiz recommended before moving on</span>
+                </div>
+              )}
+            <Card className="overflow-hidden hover:shadow-md transition-shadow" data-testid={`card-week-${plan.week}`}>
               <div className="relative">
                 {plan.isCustom && (
                   <button
@@ -1002,6 +1069,9 @@ export default function StudyPlan() {
                       <span className="font-bold text-muted-foreground text-sm uppercase tracking-wider">
                         Week {plan.week}{plan.isCustom && ' (Custom)'}
                       </span>
+                      {phaseInfo && (
+                        <span className="text-xs text-muted-foreground">Month {phaseInfo.monthNumber} · {phaseInfo.phaseName}</span>
+                      )}
                     {progress === 100 ? (
                       <Badge variant="outline" className="bg-success/10 text-success border-success" data-testid={`badge-complete-${plan.week}`}>
                         <CheckCircle2 className="w-3 h-3 mr-1" />
@@ -1625,6 +1695,7 @@ export default function StudyPlan() {
                 </div>
               )}
             </Card>
+            </div>
           );
         })}
       </div>

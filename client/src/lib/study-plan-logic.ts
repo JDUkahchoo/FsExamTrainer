@@ -303,6 +303,9 @@ export function getWeeklyLessonsByMode(
     case 'working-professional':
       return getWorkingProfessionalModeWeeklyLessons(allLessons);
     
+    case 'long-term':
+      return getStandardModeWeeklyLessons(allLessons);
+    
     case 'custom':
       return getCustomModeWeeklyLessons(allLessons, customWeeklyDomains, customTimeline);
     

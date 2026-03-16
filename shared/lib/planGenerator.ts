@@ -16,6 +16,28 @@ export interface AdaptivePlanMeta {
   isAdaptive: boolean;
   weeklyHours: number;
   planType: StudyMode;
+  longTermPhases?: { phase1End: number; phase2End: number; phase3End: number; phase4End: number };
+}
+
+export interface LongTermPhaseInfo {
+  phase: 1 | 2 | 3 | 4;
+  phaseName: string;
+  monthNumber: number;
+}
+
+export const PRACTICE_TEST_MILESTONE_WEEKS = new Set<number>();
+export const MONTH_CHECKPOINT_WEEKS = new Set<number>();
+
+export function getLongTermPhaseInfo(
+  weekNumber: number,
+  phases?: { phase1End: number; phase2End: number; phase3End: number; phase4End: number }
+): LongTermPhaseInfo | null {
+  if (!phases) return null;
+  const monthNumber = Math.ceil(weekNumber / 4);
+  if (weekNumber <= phases.phase1End) return { phase: 1, phaseName: 'Foundation', monthNumber };
+  if (weekNumber <= phases.phase2End) return { phase: 2, phaseName: 'Deep Dive', monthNumber };
+  if (weekNumber <= phases.phase3End) return { phase: 3, phaseName: 'Integration', monthNumber };
+  return { phase: 4, phaseName: 'Exam Sprint', monthNumber };
 }
 
 const FS_DOMAIN_NUMBERS = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -348,6 +370,147 @@ export function generateStudyPlan(config: PlanGeneratorConfig): { plan: WeekPlan
       isAdaptive: true,
       weeklyHours,
       planType,
+    },
+  };
+}
+
+export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekPlan[]; meta: AdaptivePlanMeta } {
+  const { pretestScores, examTrack, weeklyHours } = config;
+  const sourcePlan = examTrack === 'ps' ? PS_STUDY_PLAN : STUDY_PLAN;
+  const domainNums = examTrack === 'ps' ? PS_DOMAIN_NUMBERS : FS_DOMAIN_NUMBERS;
+  const domainLabels = examTrack === 'ps' ? PS_DOMAIN_LABELS : FS_DOMAIN_LABELS;
+  const domainCount = domainNums.length;
+
+  const plan: WeekPlan[] = [];
+  let weekNum = 1;
+
+  // --- Allocate weeks per domain based on pretest ---
+  const baseWeeksPerDomain = 4;
+  let domainAlloc: { num: number; weeks: number }[];
+
+  if (hasPretestData(pretestScores)) {
+    const sorted = [...domainNums].sort((a, b) => (pretestScores[a] ?? 50) - (pretestScores[b] ?? 50));
+    const totalBudget = baseWeeksPerDomain * domainCount;
+    domainAlloc = sorted.map(num => {
+      const score = pretestScores[num] ?? 50;
+      let w: number;
+      if (score < 40) w = 6;
+      else if (score < 60) w = 5;
+      else if (score < 80) w = 4;
+      else w = 3;
+      return { num, weeks: w };
+    });
+    const totalAllocated = domainAlloc.reduce((s, d) => s + d.weeks, 0);
+    const diff = totalBudget - totalAllocated;
+    if (diff > 0) domainAlloc[0].weeks += diff;
+    else if (diff < 0) {
+      let remaining = -diff;
+      for (let i = domainAlloc.length - 1; i >= 0 && remaining > 0; i--) {
+        const trim = Math.min(remaining, domainAlloc[i].weeks - 3);
+        if (trim > 0) { domainAlloc[i].weeks -= trim; remaining -= trim; }
+      }
+    }
+  } else {
+    domainAlloc = domainNums.map(num => ({ num, weeks: baseWeeksPerDomain }));
+  }
+
+  PRACTICE_TEST_MILESTONE_WEEKS.clear();
+  MONTH_CHECKPOINT_WEEKS.clear();
+
+  // --- Phase 1: Foundation (one domain at a time) ---
+  for (const { num, weeks: wCount } of domainAlloc) {
+    const label = domainLabels[num] as Domain;
+    for (let i = 0; i < wCount; i++) {
+      const content = i === 0
+        ? generateWeekContent([num], examTrack)
+        : makeWeekContent([num], 'review', examTrack);
+      const weekTitle = i === 0
+        ? (examTrack === 'ps' ? generatePSWeekTitle([num]) : generateWeekTitle([num]))
+        : `${label} — Deep Practice (${i + 1}/${wCount})`;
+      plan.push({
+        week: weekNum,
+        title: weekTitle,
+        domains: [label].filter(Boolean),
+        ...content,
+      });
+      if (i === wCount - 1) {
+        MONTH_CHECKPOINT_WEEKS.add(weekNum);
+      }
+      weekNum++;
+    }
+  }
+  const phase1End = weekNum - 1;
+
+  // --- Phase 2: Second pass (deeper problems, weak-area focus) ---
+  for (const { num, weeks: wCount } of domainAlloc) {
+    const label = domainLabels[num] as Domain;
+    for (let i = 0; i < wCount; i++) {
+      const content = makeWeekContent([num], 'review', examTrack);
+      plan.push({
+        week: weekNum,
+        title: `Advanced Review: ${label} (${i + 1}/${wCount})`,
+        domains: [label].filter(Boolean),
+        read: content.read.map(r => r.startsWith('[Review]') ? r : `[Advanced] ${r}`),
+        focus: ['Re-test on hardest problems from this domain', 'Formula speed drills — target 30-second recall', ...content.focus.slice(0, 2)],
+        apply: ['15-question advanced quiz on this domain', 'Work through multi-step computation problems', ...content.apply.slice(0, 1)],
+        reinforce: content.reinforce,
+      });
+      if (i === wCount - 1) {
+        MONTH_CHECKPOINT_WEEKS.add(weekNum);
+      }
+      weekNum++;
+    }
+  }
+  const phase2End = weekNum - 1;
+
+  // --- Phase 3: Cross-domain integration (16 weeks) ---
+  const integrationWeeks = 16;
+  for (let i = 0; i < integrationWeeks; i++) {
+    const mixDomains = domainNums.slice(0, Math.min(3, domainCount));
+    const content = makeWeekContent(domainNums, 'integration', examTrack);
+    plan.push({
+      week: weekNum,
+      title: i < 8
+        ? `Mixed Practice — Cross-Domain Set ${i + 1}`
+        : `Integration Review ${i - 7}`,
+      domains: [],
+      ...content,
+    });
+    if ((i + 1) % 4 === 0) {
+      MONTH_CHECKPOINT_WEEKS.add(weekNum);
+    }
+    weekNum++;
+  }
+  const phase3End = weekNum - 1;
+
+  // --- Phase 4: Exam sprint (reuse existing 16-week plan) ---
+  for (const srcWeek of sourcePlan) {
+    plan.push({ ...srcWeek, week: weekNum });
+    weekNum++;
+  }
+  const phase4End = weekNum - 1;
+
+  // --- Mark practice test milestone weeks at phase boundaries and midpoints ---
+  const milestoneTargets = [
+    Math.round(phase1End / 2),
+    phase1End,
+    Math.round((phase1End + phase2End) / 2),
+    phase2End,
+    phase3End,
+  ];
+  milestoneTargets.forEach(w => {
+    if (w > 0 && w <= plan.length) PRACTICE_TEST_MILESTONE_WEEKS.add(w);
+  });
+
+  return {
+    plan,
+    meta: {
+      totalWeeks: plan.length,
+      examDate: null,
+      isAdaptive: false,
+      weeklyHours,
+      planType: 'long-term',
+      longTermPhases: { phase1End, phase2End, phase3End, phase4End },
     },
   };
 }
