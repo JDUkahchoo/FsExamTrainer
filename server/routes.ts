@@ -1637,7 +1637,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Determine total weeks based on study mode (same logic as /api/progress/overall)
       let coreWeekCount = examTrack === 'ps' ? 12 : 16;
-      if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
+      if (prefs?.studyMode === 'long-term' && examTrack === 'fs') {
+        coreWeekCount = 96;
+      } else if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
         coreWeekCount = prefs.customTimeline;
       }
       const totalWeeks = coreWeekCount + customWeeks.length;
@@ -1798,7 +1800,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       
       let coreWeekCount = examTrack === 'ps' ? 12 : 16;
-      if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
+      if (prefs?.studyMode === 'long-term' && examTrack === 'fs') {
+        coreWeekCount = 96;
+      } else if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
         coreWeekCount = prefs.customTimeline;
       }
       
