@@ -17,6 +17,8 @@ export interface AdaptivePlanMeta {
   weeklyHours: number;
   planType: StudyMode;
   longTermPhases?: { phase1End: number; phase2End: number; phase3End: number; phase4End: number };
+  milestoneWeeks?: number[];
+  checkpointWeeks?: number[];
 }
 
 export interface LongTermPhaseInfo {
@@ -24,9 +26,6 @@ export interface LongTermPhaseInfo {
   phaseName: string;
   monthNumber: number;
 }
-
-export const PRACTICE_TEST_MILESTONE_WEEKS = new Set<number>();
-export const MONTH_CHECKPOINT_WEEKS = new Set<number>();
 
 export function getLongTermPhaseInfo(
   weekNumber: number,
@@ -401,9 +400,13 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
       return { num, weeks: w };
     });
     const totalAllocated = domainAlloc.reduce((s, d) => s + d.weeks, 0);
-    const diff = totalBudget - totalAllocated;
-    if (diff > 0) domainAlloc[0].weeks += diff;
-    else if (diff < 0) {
+    let diff = totalBudget - totalAllocated;
+    if (diff > 0) {
+      for (let i = 0; i < domainAlloc.length && diff > 0; i++) {
+        const maxAdd = 6 - domainAlloc[i].weeks;
+        if (maxAdd > 0) { const add = Math.min(diff, maxAdd); domainAlloc[i].weeks += add; diff -= add; }
+      }
+    } else if (diff < 0) {
       let remaining = -diff;
       for (let i = domainAlloc.length - 1; i >= 0 && remaining > 0; i--) {
         const trim = Math.min(remaining, domainAlloc[i].weeks - 3);
@@ -414,8 +417,8 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
     domainAlloc = domainNums.map(num => ({ num, weeks: baseWeeksPerDomain }));
   }
 
-  PRACTICE_TEST_MILESTONE_WEEKS.clear();
-  MONTH_CHECKPOINT_WEEKS.clear();
+  const milestoneWeeks: number[] = [];
+  const checkpointWeeks: number[] = [];
 
   // --- Phase 1: Foundation (one domain at a time) ---
   for (const { num, weeks: wCount } of domainAlloc) {
@@ -434,7 +437,7 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
         ...content,
       });
       if (i === wCount - 1) {
-        MONTH_CHECKPOINT_WEEKS.add(weekNum);
+        checkpointWeeks.push(weekNum);
       }
       weekNum++;
     }
@@ -456,7 +459,7 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
         reinforce: content.reinforce,
       });
       if (i === wCount - 1) {
-        MONTH_CHECKPOINT_WEEKS.add(weekNum);
+        checkpointWeeks.push(weekNum);
       }
       weekNum++;
     }
@@ -476,9 +479,6 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
       domains: [],
       ...content,
     });
-    if ((i + 1) % 4 === 0) {
-      MONTH_CHECKPOINT_WEEKS.add(weekNum);
-    }
     weekNum++;
   }
   const phase3End = weekNum - 1;
@@ -492,7 +492,7 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
 
   // --- Mark practice test milestone weeks at months 6, 12, 18, 22 ---
   [24, 48, 72, 88].forEach(w => {
-    if (w > 0 && w <= plan.length) PRACTICE_TEST_MILESTONE_WEEKS.add(w);
+    if (w > 0 && w <= plan.length) milestoneWeeks.push(w);
   });
 
   return {
@@ -504,6 +504,8 @@ export function generateLongTermPlan(config: PlanGeneratorConfig): { plan: WeekP
       weeklyHours,
       planType: 'long-term',
       longTermPhases: { phase1End, phase2End, phase3End, phase4End },
+      milestoneWeeks,
+      checkpointWeeks,
     },
   };
 }

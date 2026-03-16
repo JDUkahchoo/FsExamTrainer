@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/collapsible";
 import { getDomainConfig } from '@/lib/domains';
 import { STUDY_PLAN, PS_STUDY_PLAN } from '@shared/data/studyPlan';
-import { generateStudyPlan, generateLongTermPlan, getLongTermPhaseInfo, PRACTICE_TEST_MILESTONE_WEEKS, MONTH_CHECKPOINT_WEEKS } from '@shared/lib/planGenerator';
+import { generateStudyPlan, generateLongTermPlan, getLongTermPhaseInfo } from '@shared/lib/planGenerator';
 import { WeekReviewModal } from '@/components/week-review-modal';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -1012,8 +1012,8 @@ export default function StudyPlan() {
           const phaseInfo = adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(plan.week, ltPhases) : null;
           const prevPhaseInfo = idx > 0 && adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(allWeeks[idx - 1].week, ltPhases) : null;
           const showPhaseHeader = phaseInfo && (!prevPhaseInfo || phaseInfo.phase !== prevPhaseInfo.phase);
-          const isMilestoneWeek = adaptiveMeta.planType === 'long-term' && PRACTICE_TEST_MILESTONE_WEEKS.has(plan.week);
-          const isCheckpointWeek = adaptiveMeta.planType === 'long-term' && MONTH_CHECKPOINT_WEEKS.has(plan.week) && phaseInfo && (phaseInfo.phase === 1 || phaseInfo.phase === 2);
+          const isMilestoneWeek = adaptiveMeta.planType === 'long-term' && adaptiveMeta.milestoneWeeks?.includes(plan.week);
+          const isCheckpointWeek = adaptiveMeta.planType === 'long-term' && adaptiveMeta.checkpointWeeks?.includes(plan.week) && phaseInfo && (phaseInfo.phase === 1 || phaseInfo.phase === 2);
 
           const phaseColors: Record<number, string> = {
             1: 'from-blue-500 to-blue-600',
