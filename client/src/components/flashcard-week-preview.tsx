@@ -27,6 +27,17 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
   return a;
 }
 
+/** Split a card's back text into definition and optional example */
+function parseBack(back: string): { definition: string; example: string | null } {
+  const exampleMatch = back.match(/\n\nExample:/i);
+  if (exampleMatch && exampleMatch.index !== undefined) {
+    const definition = back.slice(0, exampleMatch.index).trim();
+    const example = back.slice(exampleMatch.index + 2).trim(); // keep "Example:" prefix
+    return { definition, example };
+  }
+  return { definition: back.trim(), example: null };
+}
+
 export function FlashcardWeekPreview({ week, domains, examTrack }: FlashcardWeekPreviewProps) {
   const [index, setIndex] = useState(0);
 
@@ -45,6 +56,7 @@ export function FlashcardWeekPreview({ week, domains, examTrack }: FlashcardWeek
 
   const total = cards.length;
   const card = cards[index];
+  const { definition, example } = parseBack(card.back);
 
   const prev = () => setIndex(i => (i - 1 + total) % total);
   const next = () => setIndex(i => (i + 1) % total);
@@ -76,23 +88,38 @@ export function FlashcardWeekPreview({ week, domains, examTrack }: FlashcardWeek
         </Link>
       </div>
 
-      {/* Card — always shows both term and definition */}
+      {/* Card — term, definition, and example (if present) */}
       <div
-        className="rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50/40 dark:bg-yellow-900/10 px-4 py-3 space-y-2"
+        className="rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50/40 dark:bg-yellow-900/10 divide-y divide-yellow-200 dark:divide-yellow-800"
         data-testid={`flashcard-card-${week}`}
       >
-        <div>
+        {/* Term */}
+        <div className="px-4 py-3">
           <p className="text-xs text-yellow-600 dark:text-yellow-500 font-semibold uppercase tracking-wide mb-0.5">
             Term
           </p>
-          <p className="text-sm font-semibold text-foreground leading-snug">{card.term}</p>
+          <p className="text-sm font-semibold text-foreground leading-snug">{card.front}</p>
         </div>
-        <div className="border-t border-yellow-200 dark:border-yellow-800 pt-2">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">
+
+        {/* Definition */}
+        <div className="px-4 py-3">
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide mb-0.5">
             Definition
           </p>
-          <p className="text-sm text-foreground leading-snug whitespace-pre-line">{card.back}</p>
+          <p className="text-sm text-foreground leading-snug whitespace-pre-line">{definition}</p>
         </div>
+
+        {/* Example — only rendered when present */}
+        {example && (
+          <div className="px-4 py-3 bg-yellow-100/50 dark:bg-yellow-900/20 rounded-b-lg">
+            <p className="text-xs text-yellow-700 dark:text-yellow-400 font-semibold uppercase tracking-wide mb-0.5">
+              Example
+            </p>
+            <p className="text-sm text-foreground leading-snug whitespace-pre-line">
+              {example.replace(/^Example:\s*/i, '')}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
