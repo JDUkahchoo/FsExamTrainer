@@ -770,7 +770,7 @@ export default function StudyPlan() {
                 Adaptive Plan
               </Badge>
             )}
-            {preferences?.studyMode === 'long-term' ? (() => {
+            {adaptiveMeta.planType === 'long-term' ? (() => {
               const activeWeek = allWeeks.find(w => calculateWeekProgress(w.week, w) < 100)?.week || 1;
               const activePhase = getLongTermPhaseInfo(activeWeek, 'longTermPhases' in adaptiveMeta ? adaptiveMeta.longTermPhases : undefined);
               const activeMonth = Math.ceil(activeWeek / 4);
