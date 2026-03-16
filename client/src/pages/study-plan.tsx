@@ -51,6 +51,7 @@ import { ReadCheckpoint } from '@/components/read-checkpoint';
 import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
 import { ApplyScenarioLab } from '@/components/apply-scenario-lab';
 import { ReinforceRetentionBooster } from '@/components/reinforce-retention-booster';
+import { FlashcardWeekPreview } from '@/components/flashcard-week-preview';
 import { 
   getESWeeklyChapters, 
   getSRMWeeklyChapters,
@@ -1083,6 +1084,11 @@ export default function StudyPlan() {
                     examTrack={examTrack}
                   />
                   <ReinforceRetentionBooster
+                    week={plan.week}
+                    domains={plan.domains as string[]}
+                    examTrack={examTrack}
+                  />
+                  <FlashcardWeekPreview
                     week={plan.week}
                     domains={plan.domains as string[]}
                     examTrack={examTrack}
