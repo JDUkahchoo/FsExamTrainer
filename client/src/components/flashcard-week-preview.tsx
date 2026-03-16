@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LayersIcon, ChevronLeft, ChevronRight, ExternalLink, RotateCcw } from 'lucide-react';
+import { LayersIcon, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { COMPREHENSIVE_FLASHCARDS } from '@shared/data/flashcardsComprehensive';
 import { PS_FLASHCARDS } from '@shared/data/ps-flashcards';
 
@@ -29,7 +29,6 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
 
 export function FlashcardWeekPreview({ week, domains, examTrack }: FlashcardWeekPreviewProps) {
   const [index, setIndex] = useState(0);
-  const [revealed, setRevealed] = useState(false);
 
   const { cards, domainsParam } = useMemo(() => {
     const pool = examTrack === 'ps' ? PS_FLASHCARDS : COMPREHENSIVE_FLASHCARDS;
@@ -47,13 +46,8 @@ export function FlashcardWeekPreview({ week, domains, examTrack }: FlashcardWeek
   const total = cards.length;
   const card = cards[index];
 
-  const goTo = (nextIndex: number) => {
-    setIndex(nextIndex);
-    setRevealed(false);
-  };
-
-  const prev = () => goTo((index - 1 + total) % total);
-  const next = () => goTo((index + 1) % total);
+  const prev = () => setIndex(i => (i - 1 + total) % total);
+  const next = () => setIndex(i => (i + 1) % total);
 
   return (
     <div className="space-y-3">
@@ -82,32 +76,24 @@ export function FlashcardWeekPreview({ week, domains, examTrack }: FlashcardWeek
         </Link>
       </div>
 
-      {/* Card */}
-      <button
-        onClick={() => setRevealed(r => !r)}
-        className={`w-full text-left rounded-lg border transition-all duration-200 min-h-[80px] ${
-          revealed
-            ? 'border-yellow-400 dark:border-yellow-600 bg-yellow-50 dark:bg-yellow-900/20'
-            : 'border-border bg-muted/30 hover:border-yellow-300 dark:hover:border-yellow-700 hover:bg-muted/50'
-        }`}
+      {/* Card — always shows both term and definition */}
+      <div
+        className="rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50/40 dark:bg-yellow-900/10 px-4 py-3 space-y-2"
         data-testid={`flashcard-card-${week}`}
       >
-        <div className="px-4 py-3">
-          {!revealed ? (
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Term — tap to reveal</p>
-              <p className="text-sm font-medium text-foreground leading-snug">{card.term}</p>
-            </div>
-          ) : (
-            <div>
-              <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium mb-1">
-                Definition — tap to hide
-              </p>
-              <p className="text-sm text-foreground leading-snug whitespace-pre-line">{card.back}</p>
-            </div>
-          )}
+        <div>
+          <p className="text-xs text-yellow-600 dark:text-yellow-500 font-semibold uppercase tracking-wide mb-0.5">
+            Term
+          </p>
+          <p className="text-sm font-semibold text-foreground leading-snug">{card.term}</p>
         </div>
-      </button>
+        <div className="border-t border-yellow-200 dark:border-yellow-800 pt-2">
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">
+            Definition
+          </p>
+          <p className="text-sm text-foreground leading-snug whitespace-pre-line">{card.back}</p>
+        </div>
+      </div>
 
       {/* Navigation */}
       <div className="flex items-center justify-between gap-2">
@@ -120,20 +106,9 @@ export function FlashcardWeekPreview({ week, domains, examTrack }: FlashcardWeek
           Prev
         </button>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground tabular-nums">
-            {index + 1} of {total}
-          </span>
-          {revealed && (
-            <button
-              onClick={() => setRevealed(false)}
-              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
-              data-testid={`button-flashcard-flip-${week}`}
-            >
-              <RotateCcw className="h-3 w-3" />
-            </button>
-          )}
-        </div>
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {index + 1} / {total}
+        </span>
 
         <button
           onClick={next}
