@@ -18,6 +18,9 @@ import {
   Lightbulb,
   Trophy,
   Loader2,
+  AlertTriangle,
+  Star,
+  ListOrdered,
 } from "lucide-react";
 import { useExamTrack } from "@/contexts/exam-track-context";
 import { STUDY_READINGS } from "@shared/data/studyReadings";
@@ -371,6 +374,156 @@ function FurtherReadingSection({
   );
 }
 
+function CommonMistakesSection({
+  section,
+  completed,
+  onMarkRead,
+}: {
+  section: ReadingSection;
+  completed: boolean;
+  onMarkRead: () => void;
+}) {
+  const mistakes = section.commonMistakes ?? [];
+  return (
+    <Card
+      className="hover-elevate border-orange-200 dark:border-orange-800 bg-orange-50/30 dark:bg-orange-950/20"
+      data-testid={`section-common-mistakes-${section.id}`}
+    >
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 flex-wrap">
+          <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+          {section.title || "Common Mistakes"}
+          {completed && <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ul className="space-y-2">
+          {mistakes.map((mistake, i) => (
+            <li key={i} className="flex items-start gap-3 text-sm">
+              <span className="flex-shrink-0 mt-0.5 h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 flex items-center justify-center text-xs font-bold">
+                !
+              </span>
+              <span>{mistake}</span>
+            </li>
+          ))}
+        </ul>
+        {!completed && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onMarkRead}
+            data-testid={`button-mark-read-${section.id}`}
+          >
+            <CheckCircle2 className="h-4 w-4 mr-2" />
+            Mark as read
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function ExamTipsSection({
+  section,
+  completed,
+  onMarkRead,
+}: {
+  section: ReadingSection;
+  completed: boolean;
+  onMarkRead: () => void;
+}) {
+  const tips = section.examTips ?? [];
+  return (
+    <Card
+      className="hover-elevate border-yellow-200 dark:border-yellow-800 bg-yellow-50/30 dark:bg-yellow-950/20"
+      data-testid={`section-exam-tips-${section.id}`}
+    >
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 flex-wrap">
+          <Star className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+          {section.title || "Exam Tips"}
+          {completed && <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ul className="space-y-2">
+          {tips.map((tip, i) => (
+            <li key={i} className="flex items-start gap-3 text-sm">
+              <Lightbulb className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" />
+              <span>{tip}</span>
+            </li>
+          ))}
+        </ul>
+        {!completed && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onMarkRead}
+            data-testid={`button-mark-read-${section.id}`}
+          >
+            <CheckCircle2 className="h-4 w-4 mr-2" />
+            Mark as read
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function ProcedureSection({
+  section,
+  completed,
+  onMarkRead,
+}: {
+  section: ReadingSection;
+  completed: boolean;
+  onMarkRead: () => void;
+}) {
+  const steps = section.procedureSteps ?? [];
+  return (
+    <Card
+      className="hover-elevate border-teal-200 dark:border-teal-800 bg-teal-50/30 dark:bg-teal-950/20"
+      data-testid={`section-procedure-${section.id}`}
+    >
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 flex-wrap">
+          <ListOrdered className="h-5 w-5 text-teal-600 dark:text-teal-400" />
+          {section.title || "Step-by-Step Procedure"}
+          {completed && <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ol className="space-y-3">
+          {steps.map((s) => (
+            <li key={s.step} className="flex gap-3">
+              <div className="flex-shrink-0 h-7 w-7 rounded-full bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300 flex items-center justify-center text-xs font-bold mt-0.5">
+                {s.step}
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <p className="text-sm font-medium">{s.action}</p>
+                {s.detail && (
+                  <p className="text-sm text-muted-foreground">{s.detail}</p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+        {!completed && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onMarkRead}
+            data-testid={`button-mark-read-${section.id}`}
+          >
+            <CheckCircle2 className="h-4 w-4 mr-2" />
+            Mark as read
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function StudyReadingPage() {
   const params = useParams<{ id: string }>();
   const { examTrack } = useExamTrack();
@@ -500,6 +653,30 @@ export default function StudyReadingPage() {
       case "further_reading":
         return (
           <FurtherReadingSection
+            section={section}
+            completed={isCompleted}
+            onMarkRead={handleMarkRead}
+          />
+        );
+      case "common_mistakes":
+        return (
+          <CommonMistakesSection
+            section={section}
+            completed={isCompleted}
+            onMarkRead={handleMarkRead}
+          />
+        );
+      case "exam_tips":
+        return (
+          <ExamTipsSection
+            section={section}
+            completed={isCompleted}
+            onMarkRead={handleMarkRead}
+          />
+        );
+      case "procedure":
+        return (
+          <ProcedureSection
             section={section}
             completed={isCompleted}
             onMarkRead={handleMarkRead}

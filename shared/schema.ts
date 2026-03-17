@@ -1550,15 +1550,24 @@ export interface ReadingFurtherRef {
   topic: string;
 }
 
+export interface ReadingProcedureStep {
+  step: number;
+  action: string;
+  detail?: string;
+}
+
 export interface ReadingSection {
   id: string;
-  type: 'concept' | 'formula' | 'worked_example' | 'knowledge_check' | 'further_reading';
+  type: 'concept' | 'formula' | 'worked_example' | 'knowledge_check' | 'further_reading' | 'common_mistakes' | 'exam_tips' | 'procedure';
   title?: string;
   content?: string;
   formula?: ReadingFormula;
   workedExample?: ReadingWorkedExample;
   knowledgeCheck?: ReadingKnowledgeCheck;
   furtherReading?: ReadingFurtherRef[];
+  commonMistakes?: string[];
+  examTips?: string[];
+  procedureSteps?: ReadingProcedureStep[];
 }
 
 export interface ReadingModule {

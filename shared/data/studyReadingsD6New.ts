@@ -1,0 +1,246 @@
+import type { ReadingModule } from '../schema';
+
+export const STUDY_READINGS_D6_NEW: ReadingModule[] = [
+  {
+    id: 'fs-d6-gps-session-planning',
+    examTrack: 'fs',
+    domainNumber: 6,
+    domain: 'Professional Practice',
+    title: 'GPS Observation Session Planning',
+    description: 'A successful GPS/GNSS survey requires careful pre-field planning. This reading covers the key decisions in session planning: receiver configuration, satellite geometry (PDOP), observation window selection, session length, and network design — all of which are tested on the FS exam under Control Surveys and Professional Practice.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'fs-d6-gps-s1',
+        type: 'concept',
+        title: 'GNSS Session Planning Fundamentals',
+        content: 'Unlike total station surveys where the surveyor controls the measurement timing, GNSS surveys depend on the configuration of satellites visible from the project area at the planned observation time. Good planning maximizes satellite availability and geometric strength, ensuring that the work meets accuracy requirements efficiently.\n\nKey planning variables include:\n\nNumber of satellites: More satellites improve position accuracy and provide redundancy. A minimum of 4 satellites is required for a 3D position. Static surveys typically require at least 5–6 continuously tracked satellites.\n\nSatellite geometry (PDOP): The Position Dilution of Precision (PDOP) describes how the spatial geometry of the satellites affects position accuracy. A low PDOP (below 4) indicates good geometry with satellites spread widely across the sky. High PDOP (above 6) means the satellites are clustered together, degrading accuracy.\n\nObservation window: GPS planning software (such as Trimble Planning, Leica HxGNSS, or NGS\'s online tools) predicts satellite visibility and PDOP over time. The surveyor selects observation windows when PDOP is low and at least 5–6 satellites are above the elevation mask angle.\n\nElevation mask angle: Satellites near the horizon are observed through more atmosphere, increasing multipath and atmospheric errors. A typical elevation mask of 15° (some surveys use 10°–20°) excludes low-elevation satellites.\n\nSession length: The required session length depends on the baseline length and the project accuracy requirement. Longer baselines and higher accuracy requirements need longer sessions to resolve carrier-phase ambiguities and mitigate atmospheric errors.',
+      },
+      {
+        id: 'fs-d6-gps-s2',
+        type: 'formula',
+        title: 'PDOP and Position Accuracy Relationship',
+        formula: {
+          expression: 'σ_position ≈ PDOP × σ_range; HDOP relates horizontal only; VDOP relates vertical only',
+          variables: [
+            { symbol: 'σ_position', description: 'Expected position standard deviation (3D)' },
+            { symbol: 'PDOP', description: 'Position Dilution of Precision (dimensionless; lower = better; target < 4)' },
+            { symbol: 'σ_range', description: 'Range measurement uncertainty (depends on receiver quality and signal conditions)' },
+            { symbol: 'HDOP', description: 'Horizontal Dilution of Precision (subset of PDOP affecting E/N components)' },
+            { symbol: 'VDOP', description: 'Vertical Dilution of Precision (subset of PDOP affecting height component)' },
+          ],
+          whenToUse: 'Use PDOP to evaluate satellite geometry during planning and as a real-time quality indicator during data collection. When PDOP exceeds 6, consider postponing observations until geometry improves. Remember: VDOP is always larger than HDOP because the satellites are all above the horizon — vertical position is inherently weaker than horizontal.',
+        },
+      },
+      {
+        id: 'fs-d6-gps-s3',
+        type: 'procedure',
+        title: 'GNSS Session Planning Workflow',
+        procedureSteps: [
+          { step: 1, action: 'Determine project requirements', detail: 'Identify the required accuracy (e.g., ±2 cm horizontal, ±3 cm vertical), the baseline lengths, and the type of survey (static, rapid static, RTK, network RTK).' },
+          { step: 2, action: 'Run satellite availability prediction', detail: 'Enter the project location and date into GPS planning software. Generate satellite visibility and PDOP plots for the planned observation day. Note periods when PDOP < 4 and 6+ satellites are visible.' },
+          { step: 3, action: 'Select observation windows', detail: 'Choose the 1–4 hour windows with the lowest PDOP and most satellites. Avoid windows with PDOP > 6. For long baselines, choose the longest available good window.' },
+          { step: 4, action: 'Determine session length', detail: 'For rapid static (baselines < 20 km): 20–30 minutes minimum. For static control (baselines 20–100 km): 1–2 hours. For precise geodetic work (baselines > 100 km): 3–6 hours or longer. Longer sessions resolve ambiguities more reliably.' },
+          { step: 5, action: 'Plan the network geometry', detail: 'Design the network so that each unknown point is connected to at least 2 known control points by independent baselines, providing redundancy and enabling internal consistency checks.' },
+          { step: 6, action: 'Check for obstructions', detail: 'Use sky view plots or visit the site to identify trees, buildings, or terrain that block satellites below the critical elevation. Note that multipath from nearby reflective surfaces can also degrade results.' },
+        ],
+      },
+      {
+        id: 'fs-d6-gps-s4',
+        type: 'concept',
+        title: 'Static vs. Kinematic GNSS Methods',
+        content: 'Different GPS/GNSS observation methods suit different accuracy requirements and project types. The FS exam tests candidates\' understanding of which method to use when.\n\nStatic GPS: Both receivers remain stationary during the entire observation session. The long session (often 1–4+ hours) allows carrier-phase ambiguities to be resolved very reliably. Achieves the highest accuracy (±3–10 mm relative). Used for establishing primary horizontal control, geodetic networks, and any project requiring First or Second Order accuracy. Post-processing required.\n\nRapid Static (Fast Static): Similar to static, but session lengths are shorter (typically 20–30 minutes for baselines up to about 20 km). Requires dual-frequency receivers. Achieves ±5–20 mm relative accuracy. Suitable for Third Order control and engineering surveys. Post-processing required.\n\nReal-Time Kinematic (RTK): One receiver is stationary (the base station) and transmits corrections via radio or cellular link. The rover moves continuously while computing centimeter-level positions in real time. Typical accuracy: ±10–30 mm horizontal, ±20–50 mm vertical. Used for topographic surveys, construction staking, and boundary surveys where rapid coverage is needed. Limited to baselines of about 10–15 km from the base. Must use fixed-integer ambiguity solutions (not float).\n\nNetwork RTK (VRS, FKP): Uses a network of continuously operating reference stations (CORS) so no dedicated base station is needed. The rover receives corrections from the network infrastructure. Accuracy similar to RTK. Requires cellular or internet connectivity. Enables RTK over larger areas than a single base allows.\n\nContinuously Operating Reference Stations (CORS): Permanently installed GPS/GNSS receivers that log data 24/7 and upload it to the NGS CORS network. Surveyors can use CORS data (downloaded for free from NGS) as the "base station" for post-processed static surveys, eliminating the need to set up a base receiver.',
+      },
+      {
+        id: 'fs-d6-gps-s5',
+        type: 'common_mistakes',
+        title: 'Common Mistakes: GPS Survey Planning',
+        commonMistakes: [
+          'Ignoring PDOP during planning. Scheduling observations during high-PDOP windows (> 6) results in poor geometry and degraded accuracy, even with long sessions.',
+          'Setting the elevation mask too low in forested or urban environments. While a 10° mask maximizes satellite count, low-elevation satellites in obstructed sites are often multipath-contaminated. A 15°–20° mask is safer in these conditions.',
+          'Confusing "initialized" with "fixed." An RTK solution that has not resolved carrier-phase ambiguities (float solution) can have errors of decimeters, not centimeters. Always confirm "fixed integer" status before recording positions.',
+          'Running baselines that are too long for the observation method. Rapid static is not reliable for baselines over about 20 km; RTK is unreliable over about 15 km from the base. Use static for longer baselines.',
+          'Using only one base station without redundant check baselines. Every GNSS network should have enough redundant baselines to detect blunders and provide statistical closure checks.',
+        ],
+      },
+      {
+        id: 'fs-d6-gps-s6',
+        type: 'knowledge_check',
+        title: 'GPS Planning Knowledge Check',
+        knowledgeCheck: {
+          question: 'A surveyor needs to establish First Order horizontal control for a bridge design project across a 45 km baseline. Which GPS observation method and minimum session length is most appropriate?',
+          options: [
+            'RTK with a single base station; 30 minutes',
+            'Rapid static; 20 minutes',
+            'Static GPS post-processed; at least 1–2 hours',
+            'Network RTK (VRS); 10 minutes',
+          ],
+          correctIndex: 2,
+          explanation: 'A 45 km baseline for First Order control requires static GPS post-processing with a session of at least 1–2 hours (and often longer for First Order work). RTK (option A) is limited to about 10–15 km baselines and cannot achieve First Order accuracy reliably. Rapid static (option B) works well for baselines up to about 20 km — the 45 km baseline exceeds its reliable range. Network RTK (option D) could potentially span long distances via infrastructure, but 10 minutes is insufficient for First Order accuracy over 45 km; plus, VRS networks may not provide the archive data needed for rigorous post-processing of high-order control.',
+        },
+      },
+      {
+        id: 'fs-d6-gps-s7',
+        type: 'further_reading',
+        title: 'Further Reading',
+        furtherReading: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Chapter 22 (GPS Surveys)', topic: 'Static and kinematic GPS methods, session planning, PDOP, observation windows, and accuracy standards' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 13 and Chapter 19', topic: 'GPS receivers, observation methods, session planning, baseline processing, and network adjustment' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'fs-d6-cors-opus',
+    examTrack: 'fs',
+    domainNumber: 6,
+    domain: 'Professional Practice',
+    title: 'CORS, OPUS, and Online GPS Processing',
+    description: 'The NGS Continuously Operating Reference Station (CORS) network and the Online Positioning User Service (OPUS) have transformed how surveyors establish geodetic control. This reading explains what CORS and OPUS are, how to use them, the types of OPUS solutions, and their limitations — a modern topic on the FS exam.',
+    estimatedMinutes: 18,
+    sections: [
+      {
+        id: 'fs-d6-cors-s1',
+        type: 'concept',
+        title: 'The NGS CORS Network',
+        content: 'The Continuously Operating Reference Station (CORS) network is a system of permanently installed, continuously operating GPS/GNSS receivers managed by the National Geodetic Survey (NGS) and cooperating agencies. As of the 2020s, the network includes over 2,000 stations across the United States and its territories, with stations typically spaced 50–150 km apart.\n\nEach CORS station records raw GNSS observation data (carrier phase and pseudorange) 24 hours a day, 7 days a week. This data is archived and made freely available through the NGS website (geodesy.noaa.gov). Surveyors can download CORS data from any nearby station and use it as a "virtual base station" for post-processing their own GNSS observations — eliminating the need to set up their own base receiver.\n\nCoordinate accuracy: CORS stations have precise published coordinates in NAD 83 and ITRF, determined by continuous GNSS observation and periodic adjustment. Station coordinates are accurate to about 1 cm or better in all three dimensions.\n\nPractical benefit: Before CORS, establishing survey control via GPS required at least two receivers — one on a known benchmark (base station) and one at the new point (rover). With CORS, the surveyor operates only one rover receiver and downloads CORS data afterward. This simplifies field operations and reduces equipment costs significantly.',
+      },
+      {
+        id: 'fs-d6-cors-s2',
+        type: 'procedure',
+        title: 'Using OPUS for GPS Processing',
+        procedureSteps: [
+          { step: 1, action: 'Collect GNSS data in the field', detail: 'Occupy the new point with a dual-frequency geodetic GNSS receiver. For OPUS Static, observe for at least 2 hours (15 minutes minimum, but 2+ hours gives the most reliable result). Record the antenna height above the monument and the antenna reference point.' },
+          { step: 2, action: 'Upload the RINEX data file to NGS OPUS', detail: 'Convert the raw receiver data to RINEX format (most receivers do this automatically or via software). Go to geodesy.noaa.gov/OPUS and upload the RINEX file. Enter the antenna type and height.' },
+          { step: 3, action: 'OPUS selects CORS stations and processes baselines', detail: 'OPUS automatically selects 3 or more nearby CORS stations within 250–500 km, processes independent baselines from each, and performs a free-network adjustment. The results include NAD 83 latitude, longitude, and ellipsoidal height plus uncertainty estimates.' },
+          { step: 4, action: 'Evaluate the solution quality', detail: 'Check the peak-to-peak errors (should be small — typically < 2 cm for a 2-hour session), the number of baselines processed, and the normalized RMS. A good OPUS solution will show consistent results from multiple CORS stations.' },
+          { step: 5, action: 'Convert ellipsoidal height to orthometric height', detail: 'OPUS reports ellipsoidal height (h). Apply the geoid model (OPUS uses GEOID18 automatically) to compute the NAVD 88 orthometric height: H = h − N. OPUS provides this conversion in the output report.' },
+          { step: 6, action: 'Save and archive the OPUS report', detail: 'The OPUS output is a standardized report that serves as the documentation of the GPS control point. Archive it with the project records. You may also submit it to NGS for inclusion in the national database.' },
+        ],
+      },
+      {
+        id: 'fs-d6-cors-s3',
+        type: 'concept',
+        title: 'OPUS Solution Types: Static vs. Rapid Static',
+        content: 'OPUS offers two main solution types based on the length of the observation session:\n\nOPUS Static: For observation sessions of 2 hours or longer. Uses long-session processing to resolve carrier-phase ambiguities with high confidence. Typical accuracy: ±1–3 cm horizontal, ±2–5 cm vertical (ellipsoidal) at the 95% confidence level. Most appropriate for establishing primary survey control that will serve as reference for subsequent work.\n\nOPUS Rapid Static (OPUS-RS): For observation sessions of 15 minutes to 2 hours. Uses special algorithms to handle shorter sessions. Typical accuracy: ±3–10 cm horizontal, ±5–15 cm vertical. More variable than OPUS Static because there is less data to resolve ambiguities. Suitable for lower-order control or preliminary work, but not recommended for primary geodetic control.\n\nOPUS Projects: A special version of OPUS that processes multiple observation files simultaneously as a network, rather than independently. OPUS Projects allows users to submit data from multiple points and tie them together in a network adjustment. Useful for establishing a project-wide control network that references multiple CORS stations and includes ties between the new project points.\n\nKey limitations:\n- OPUS requires dual-frequency (L1/L2) GNSS data. Single-frequency receivers are not accepted.\n- The nearest CORS stations should be within about 250 km for best results. In remote areas, CORS spacing may limit OPUS accuracy.\n- Weather events (ionospheric storms, multipath from wet vegetation) can degrade OPUS results even with long sessions.',
+      },
+      {
+        id: 'fs-d6-cors-s4',
+        type: 'exam_tips',
+        title: 'Exam Tips: CORS and OPUS',
+        examTips: [
+          'OPUS requires dual-frequency GNSS data and a minimum observation time. The FS exam may ask about minimum session requirements — remember 2+ hours for OPUS Static.',
+          'OPUS automatically applies the geoid model (GEOID18) and reports both ellipsoidal height and orthometric (NAVD 88) elevation. You do not need to separately obtain N from GEOID18 when using OPUS.',
+          'CORS data is freely available from NGS — there is no charge to download raw GNSS data from CORS stations for post-processing.',
+          'Know the difference between CORS (reference stations) and OPUS (the free online processing service). CORS provides the data; OPUS is the tool that processes it.',
+          'The FS exam may distinguish between "OPUS Static" and "OPUS-RS" (Rapid Static). OPUS Static is more accurate and requires longer sessions.',
+        ],
+      },
+      {
+        id: 'fs-d6-cors-s5',
+        type: 'knowledge_check',
+        title: 'CORS/OPUS Knowledge Check',
+        knowledgeCheck: {
+          question: 'A surveyor wants to establish a new vertical control benchmark using OPUS. After collecting 3 hours of GNSS data with a dual-frequency receiver and processing through OPUS Static, the output shows an ellipsoidal height of 234.56 m and a NAVD 88 orthometric height of 265.43 m. Which value should be used as the benchmark elevation for conventional leveling projects in the area?',
+          options: [
+            '234.56 m, because GNSS produces ellipsoidal heights',
+            '265.43 m, because NAVD 88 orthometric height is the conventional elevation system',
+            'Either value, because OPUS converts between them automatically',
+            '(234.56 + 265.43)/2 = 249.995 m, the average of the two heights',
+          ],
+          correctIndex: 1,
+          explanation: 'The NAVD 88 orthometric height (265.43 m) is the correct value to use as a benchmark elevation for conventional surveying and engineering work. Orthometric height (H) is what appears on topographic maps, is reported for NGS benchmarks, and is used for all conventional leveling circuits. The ellipsoidal height (h = 234.56 m) is a geometric reference to the GRS 80 ellipsoid and is not meaningful as an "elevation" in the conventional sense. The large difference between h and H (about 31 m) reflects the local geoid height N ≈ −31 m (geoid is about 31 m below the ellipsoid here, making H > h).',
+        },
+      },
+      {
+        id: 'fs-d6-cors-s6',
+        type: 'further_reading',
+        title: 'Further Reading',
+        furtherReading: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Chapter 22 (GPS Surveys)', topic: 'CORS network, GPS post-processing, OPUS, and geodetic control surveys' },
+          { book: 'NGS (geodesy.noaa.gov)', chapter: 'OPUS documentation', topic: 'Online Positioning User Service — user guide, requirements, and solution interpretation' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'fs-d6-network-design',
+    examTrack: 'fs',
+    domainNumber: 6,
+    domain: 'Professional Practice',
+    title: 'GPS Network Design and Closure Checks',
+    description: 'Designing a GNSS control network requires more than just occupying points with receivers. This reading covers baseline selection, loop closures, redundancy requirements, internal consistency checks, and how to detect and eliminate blunders in GPS networks — all key competencies for the FS exam.',
+    estimatedMinutes: 18,
+    sections: [
+      {
+        id: 'fs-d6-net-s1',
+        type: 'concept',
+        title: 'Network Design Principles for GPS Control',
+        content: 'A GPS control network is a set of baselines (vector measurements between pairs of simultaneously observing stations) organized to meet three goals: (1) determine coordinates of all unknown points, (2) provide redundant observations to detect and eliminate blunders, and (3) support a network adjustment that quantifies the accuracy of the results.\n\nKey design concepts:\n\nRedundancy: Each unknown point should be determined by more than the minimum number of baselines needed to compute its position. A point determined by only one baseline has no way to check for errors. A point connected by three or more baselines allows internal consistency checks. For high-order control, a redundancy number (ratio of extra observations to unknowns) of 1.0 or higher is recommended.\n\nLoop closure: A GPS loop is a closed circuit of baselines connecting three or more stations that returns to the starting point. The sum of the baseline vectors around any loop must equal zero (since you return to the starting point). Any misclosure indicates measurement errors. Loops provide the primary tool for detecting blunders in GPS networks.\n\nTie to the National Spatial Reference System (NSRS): Every GPS control project should include observations to or from at least one (preferably two or more) NGS-published control stations. These ties anchor the new coordinates to the national datum and allow the project coordinates to be published to the NGS database if desired.\n\nBaseline length: Very short baselines (< 1 km) can be difficult to process because ambiguity resolution is highly sensitive to multipath and atmospheric noise over short distances. Very long baselines (> 100 km) require long sessions to adequately model ionospheric delay.',
+      },
+      {
+        id: 'fs-d6-net-s2',
+        type: 'formula',
+        title: 'GPS Loop Closure',
+        formula: {
+          expression: 'Loop closure: ΣΔX = 0, ΣΔY = 0, ΣΔZ = 0 (ECEF components); Linear misclosure = √(ΣΔX² + ΣΔY² + ΣΔZ²)',
+          variables: [
+            { symbol: 'ΔX, ΔY, ΔZ', description: 'ECEF (Earth-Centered, Earth-Fixed) components of each baseline vector; directional sign depends on traverse direction around the loop' },
+            { symbol: 'ΣΔX, ΣΔY, ΣΔZ', description: 'Sum of each component around a closed loop (should be zero for a perfect network)' },
+            { symbol: 'Linear misclosure', description: 'Magnitude of the 3D vector closure error; compared to allowable standards for the survey order' },
+          ],
+          whenToUse: 'Apply after processing all baselines in a GPS network. Select loops (closed circuits of 3+ baselines) and sum the baseline components around each loop. A non-zero sum indicates measurement errors in one or more of the loop baselines. Isolate the blundered baseline by checking sub-loops. The FGCS standards specify maximum allowable loop misclosure as a function of the total loop perimeter.',
+        },
+      },
+      {
+        id: 'fs-d6-net-s3',
+        type: 'procedure',
+        title: 'Performing a GPS Loop Closure Check',
+        procedureSteps: [
+          { step: 1, action: 'Process all baselines', detail: 'After collecting field data, process each baseline in software to obtain ΔX, ΔY, ΔZ (ECEF components) and the associated variance-covariance matrix. Check that each baseline processed with a fixed-integer solution.' },
+          { step: 2, action: 'Identify loops in the network', detail: 'A loop is any closed circuit of baselines. For n new points connected by baselines, select loops that cover all baselines. Aim for loops with 3–5 baselines. Longer loops are less sensitive to detecting individual blunders.' },
+          { step: 3, action: 'Sum the baseline vectors around each loop', detail: 'Assign signs to each ΔX, ΔY, ΔZ based on the direction you traverse each baseline (+ if traversing A→B when the baseline was processed A→B; − if traversing B→A). Sum all ΔX, all ΔY, all ΔZ for the loop.' },
+          { step: 4, action: 'Compute the loop misclosure', detail: 'Linear misclosure = √(ΣΔX² + ΣΔY² + ΣΔZ²). Compare to the allowable standard. For GPS relative accuracy of 1:100,000, the misclosure should be less than (total loop length)/100,000.' },
+          { step: 5, action: 'Accept or investigate', detail: 'If misclosure is within the standard, proceed to network adjustment. If it exceeds the standard, the loop contains a blundered baseline. Re-process baselines in the loop or re-observe the suspect baselines in the field.' },
+        ],
+      },
+      {
+        id: 'fs-d6-net-s4',
+        type: 'common_mistakes',
+        title: 'Common Mistakes: GPS Network Design',
+        commonMistakes: [
+          'Running GPS sessions without redundant baselines. A network with no loops cannot detect blunders. If any single baseline is blundered, there is no way to know without redundant observations.',
+          'Using float solutions in a network adjustment. Float solutions can have decimeter-level errors. Only baselines with confirmed fixed-integer solutions should be included in the final network adjustment.',
+          'Assigning the wrong sign to a baseline vector in a loop closure check. The sign depends on the direction you traverse the baseline in the loop, not on which receiver was "base" and which was "rover." A sign error causes the loop to appear to have a large misclosure even when all baselines are correct.',
+          'Failing to tie to published NGS control. Without ties to the NSRS, the network coordinates may be internally consistent but shifted from the national datum — potentially by several centimeters or more.',
+          'Processing only the minimum number of baselines. Networks should have a redundancy factor above 1.0 to ensure that blunders can be detected and the network can be statistically adjusted.',
+        ],
+      },
+      {
+        id: 'fs-d6-net-s5',
+        type: 'knowledge_check',
+        title: 'GPS Network Closure Knowledge Check',
+        knowledgeCheck: {
+          question: 'A GPS survey forms a 3-baseline loop between points A, B, and C. After processing, the ΔX components are: A→B = +1,523.124 m, B→C = −844.391 m, C→A = −678.705 m. What is the ΔX loop misclosure?',
+          options: [
+            '0.000 m (no misclosure)',
+            '+0.028 m',
+            '−0.028 m',
+            '+3.046 m',
+          ],
+          correctIndex: 1,
+          explanation: 'The ΔX loop misclosure = ΣΔX = (+1,523.124) + (−844.391) + (−678.705) = +1,523.124 − 844.391 − 678.705 = +0.028 m. A perfect network would give 0.000 m. The +0.028 m misclosure indicates a small inconsistency in the loop. Whether this is acceptable depends on the total loop perimeter and the required accuracy standard. For a loop with a perimeter of about 5,000 m and a required accuracy of 1:100,000, the allowable misclosure per component would be about 5,000/100,000 = 0.050 m, so this 0.028 m would be acceptable.',
+        },
+      },
+      {
+        id: 'fs-d6-net-s6',
+        type: 'further_reading',
+        title: 'Further Reading',
+        furtherReading: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Chapter 22 (GPS Surveys)', topic: 'GPS network design, loop closure, baseline processing, and network adjustment' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 19', topic: 'GPS control surveys, network design, redundancy, and quality control' },
+        ],
+      },
+    ],
+  },
+];

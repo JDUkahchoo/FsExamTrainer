@@ -1,0 +1,221 @@
+import type { ReadingModule } from '../schema';
+
+export const STUDY_READINGS_D7_NEW: ReadingModule[] = [
+  {
+    id: 'fs-d7-boundary-evidence',
+    examTrack: 'fs',
+    domainNumber: 7,
+    domain: 'Applied Mathematics & Statistics',
+    title: 'Boundary Evidence Hierarchy: Monuments, Deeds, and Maps',
+    description: 'Boundary surveying is not just a measurement task — it is a legal interpretation process. When evidence conflicts, surveyors must apply the established legal hierarchy to determine which type of evidence controls. This reading covers the priority order of boundary evidence: monuments, calls for adjoiners, bearings and distances, area, and coordinates.',
+    estimatedMinutes: 22,
+    sections: [
+      {
+        id: 'fs-d7-be-s1',
+        type: 'concept',
+        title: 'Why Evidence Has a Priority Hierarchy',
+        content: 'When a deed or plat is written, multiple types of information describe where the boundary is: monument locations, bearings and distances, names of adjoiners, area statements, and coordinate values. In an ideal world, all of these agree perfectly. In the real world, they often conflict due to measurement errors, drafting mistakes, ambiguous language, or changes since the original survey.\n\nBecause legal rights to property depend on where boundaries actually are, courts have developed a priority hierarchy for resolving conflicts between different types of boundary evidence. The hierarchy reflects a simple principle: the type of evidence most likely to represent the original surveyor\'s intent and the actual location of the boundary should take precedence.\n\nThe general hierarchy from highest to lowest priority is:\n1. Natural monuments (physical objects already existing in nature — streams, trees, rocks)\n2. Artificial monuments (objects set by the surveyor — iron pins, concrete monuments, pipes)\n3. Calls for adjoiners (references to neighboring tracts, boundaries, or rights-of-way)\n4. Bearings and distances (courses described in the deed)\n5. Area (acreage stated in the deed)\n6. Coordinates (mathematical coordinates)\n\nNote: This hierarchy is the general common-law rule. Individual states may modify the hierarchy by statute, and the PLSS has its own specific rules. Courts often exercise discretion based on the specific facts of each case.',
+      },
+      {
+        id: 'fs-d7-be-s2',
+        type: 'concept',
+        title: 'Types of Monuments and Their Weight as Evidence',
+        content: 'A monument is a fixed physical object that marks or references the location of a boundary point or line. Not all monuments have the same weight as evidence — original monuments set during the initial survey carry the highest authority.\n\nNatural monuments: Pre-existing natural features referenced in the deed, such as trees, rocks, streams, lakes, or hilltops. Because the original surveyor had no control over their placement, natural monuments are considered very reliable indicators of the intended boundary location. Example: "to a large white oak tree on the north bank of Smith Creek."\n\nArtificial monuments (set by the surveyor): Objects placed specifically to mark the boundary, such as iron pins, iron pipes, concrete monuments, stone monuments, wooden stakes, drill holes in rock, or chiseled squares on bedrock. The original monument set by the original surveyor has the highest weight. A monument set by a later surveyor attempting to retrace the original has less authority.\n\nMonument hierarchy within artificial monuments:\n- Original monument (set during the original survey): Highest weight\n- Monument called for in the deed and found in the field: High weight\n- Monument set during a prior retracement with documented evidence: Moderate weight\n- Monument set without documented evidence: Low weight\n\nWhen a monument is lost: A lost monument is one whose location cannot be identified in the field and cannot be determined by evidence or witnesses. In the PLSS, a "lost" corner must be re-established by a rule-based procedure (double proportionate measurement or single proportionate measurement depending on the corner type). A distinction exists between an obliterated corner (original position known from testimony or other evidence) and a lost corner (original position truly unknown).',
+      },
+      {
+        id: 'fs-d7-be-s3',
+        type: 'concept',
+        title: 'Applying the Hierarchy: Bearings, Distances, and Area',
+        content: 'Bearings and distances are lower in the hierarchy than monuments because they describe the measured relationship between monuments, not the monuments themselves. If a monument is found at a location that disagrees with the bearing and distance called for in the deed, the monument controls (assuming it is the original monument).\n\nBearings vs. distances: When a bearing and a distance conflict with each other (meaning that following the given bearing to its endpoint does not land at the correct distance from the next monument), the general rule is that distances are more reliable than bearings in old surveys made with compasses, because compass bearings are subject to magnetic declination errors and local attraction. Distance measurements by chain were generally more consistent. However, this is a guideline, not an absolute rule — courts evaluate all evidence.\n\nArea: Acreage stated in a deed is one of the least reliable forms of evidence because it is derived from the other calls (computed from bearings and distances) and because conveyancers frequently used the phrase "more or less" to indicate it is approximate. If area conflicts with monuments, bearings, or distances, area typically yields to all of them. The exception is when area is clearly the intent of the conveyance (e.g., "I convey one acre, more or less, along the road" — where the road frontage is the controlling factor).\n\nCoordinates: In older deeds, coordinates were rarely used and had no special standing. Modern deeds and plats increasingly rely on State Plane coordinates tied to the NSRS. Some states have statutes specifically assigning coordinates a high priority in boundary disputes. In general NCEES exam contexts, coordinates are listed last in the hierarchy but their priority can be elevated by statute.',
+      },
+      {
+        id: 'fs-d7-be-s4',
+        type: 'procedure',
+        title: 'Resolving a Boundary Conflict Using the Hierarchy',
+        procedureSteps: [
+          { step: 1, action: 'Gather and evaluate all evidence', detail: 'Collect deed descriptions, prior surveys, plat maps, occupation evidence, and monument information. Do not begin resolving conflicts until you have assembled all available evidence.' },
+          { step: 2, action: 'Identify the type of each piece of evidence', detail: 'Classify each piece of evidence (natural monument, artificial monument, call for adjoiner, bearing, distance, area, coordinate) so you know its position in the hierarchy.' },
+          { step: 3, action: 'Apply the hierarchy to control conflicts', detail: 'Where evidence types conflict, the higher-priority type controls. An original iron pin found in the field controls over a distance call that places the corner 0.5 ft away.' },
+          { step: 4, action: 'Evaluate monument reliability', detail: 'Not all monuments are equally reliable. Confirm that a found monument is likely the original (correct size, material, age, position relative to occupation and other evidence). A recently set pin by an unknown party has little authority.' },
+          { step: 5, action: 'Document your conclusions and basis for them', detail: 'Write a clear professional opinion describing which evidence you accepted, why, and how the boundary location was determined. This documentation is essential if the decision is later challenged in court.' },
+        ],
+      },
+      {
+        id: 'fs-d7-be-s5',
+        type: 'common_mistakes',
+        title: 'Common Mistakes: Boundary Evidence',
+        commonMistakes: [
+          'Automatically accepting any found monument without evaluating whether it is the original monument. A pin set by a prior surveyor who made an error still controls over bearings and distances — but only if it was set in the correct location. Evaluate the chain of evidence.',
+          'Applying the hierarchy rigidly without considering context. Courts have discretion; a very precise coordinate from a modern GPS survey may be given more weight than a vague call for a "large tree" that no longer exists.',
+          'Forgetting that calls for adjoiners (neighboring tracts) rank above bearings and distances. A deed that calls for land "to the east line of John Smith\'s tract" is controlled by where that east line actually is, not by the bearing and distance that follows.',
+          'Confusing "lost" and "obliterated" corners. An obliterated corner has a determinable location from other evidence (testimony, witness trees, occupation lines). A lost corner\'s location is truly unknown and requires the proportionate measurement procedure.',
+          'Ignoring possession and occupation evidence. Long-established fence lines, hedgerows, and agreements between neighbors may establish boundary locations under theories of acquiescence or adverse possession, regardless of what the deed says.',
+        ],
+      },
+      {
+        id: 'fs-d7-be-s6',
+        type: 'knowledge_check',
+        title: 'Boundary Evidence Knowledge Check',
+        knowledgeCheck: {
+          question: 'A deed describes a parcel boundary with a call reading "N 45°00\' E, 200.00 feet to an iron pin." During retracement, the surveyor finds an original iron pin at N 45°00\' E but at a distance of 197.35 feet. What controls the corner location?',
+          options: [
+            'The distance of 200.00 feet, because distances are more reliable than monuments',
+            'The bearing of N 45°00\' E, because the bearing was confirmed correct',
+            'The iron pin at 197.35 feet, because original monuments take priority over distances',
+            'The average of 197.35 and 200.00 = 198.68 feet, to split the difference',
+          ],
+          correctIndex: 2,
+          explanation: 'Monuments control over distances (and bearings) in the boundary evidence hierarchy. If the surveyor confirms that the iron pin at 197.35 feet is the original monument set during the initial survey — not a later interloper pin — it controls the corner location. The 200.00 foot distance call was the measured distance at the time of the original survey and reflects a measurement error of 2.65 feet, which is typical for older chain surveys. Averaging (option D) is not an accepted surveying practice for resolving this type of conflict — the hierarchy, not averaging, is the appropriate method.',
+        },
+      },
+      {
+        id: 'fs-d7-be-s7',
+        type: 'further_reading',
+        title: 'Further Reading',
+        furtherReading: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Chapter 34 (Property Law) and Chapter 35 (Boundary Retracement)', topic: 'Rules of evidence in boundary disputes, monument priority, and legal principles of boundary retracement' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Property surveys, deed calls, boundary evidence, monuments, and adjoiners' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'fs-d7-plats-recording',
+    examTrack: 'fs',
+    domainNumber: 7,
+    domain: 'Applied Mathematics & Statistics',
+    title: 'Plats, Subdivisions, and Recording',
+    description: 'A plat is the legal document that graphically depicts the division of land into lots, blocks, streets, and easements. This reading covers plat requirements, the subdivision recording process, how lots are conveyed by reference to a recorded plat, and the legal effect of recording — all tested on the FS exam.',
+    estimatedMinutes: 18,
+    sections: [
+      {
+        id: 'fs-d7-plat-s1',
+        type: 'concept',
+        title: 'What Is a Plat and Why Does It Matter?',
+        content: 'A plat (also called a "plat of subdivision," "map," or "plan" depending on jurisdiction) is a surveying document that graphically represents the layout of land divided into smaller parcels. Once recorded in the official public land records, the plat becomes the legal instrument that defines the boundaries of each lot and establishes streets, easements, and common areas.\n\nConveyance by plat reference: After a plat is recorded, the individual lots can be conveyed simply by reference to the plat: "Lot 12, Block 3, of Greenwood Subdivision, as recorded in Plat Book 47, Page 21, of the public records of Pine County." This description is legally complete because the plat itself contains all boundary information. The buyer, title insurer, and subsequent owners can look up the plat to see the dimensions and location of the lot.\n\nWhy plats are important for surveyors:\n1. They create new property boundaries that did not exist before — the surveyor\'s work has direct legal effect on ownership.\n2. Once recorded, a plat is difficult to amend. Errors in dimensions, lot numbers, easement locations, or monument descriptions can cause long-term title problems and require court action to correct.\n3. The plat becomes part of the chain of title for every lot within the subdivision and is used by surveyors for all future retracements.\n4. Plats establish dedication of streets and public areas to local government — a critical legal act that removes those areas from private ownership.',
+      },
+      {
+        id: 'fs-d7-plat-s2',
+        type: 'concept',
+        title: 'Typical Plat Requirements',
+        content: 'Plat requirements are established by state statutes, local ordinances, and sometimes by state surveying board rules. While requirements vary by jurisdiction, most plats must include the following elements:\n\nSurvey information:\n- Boundary of the entire subdivision with bearings and distances to close\n- Dimensions of every lot (lengths and bearings of all lot lines)\n- Locations of all monuments set, with a monument legend\n- Curve data for any curved boundaries (radius, arc length, delta, chord bearing, chord length)\n- Tie to the Public Land Survey System (PLSS) or other legal reference\n- Basis of bearing (how bearings are oriented — true north, magnetic north, grid north)\n- Scale of the plat and a graphic scale bar\n\nLot and block identification:\n- Lot numbers and block numbers for every parcel created\n- Areas of lots (may be required in some jurisdictions)\n- Lot and block numbers must be unique within the plat\n\nEasements and dedications:\n- Width and purpose of all easements (utility, drainage, access)\n- Dedication language for streets and other public areas\n- Reservation language for private areas\n\nTitle block and certificates:\n- Surveyor\'s certificate (attesting to the accuracy of the survey)\n- Owner\'s certificate or dedicatory statement (the property owner consents to and dedicates the plat)\n- Notary acknowledgment of the owner\'s signature\n- Approval signatures from local planning, health, and engineering departments\n- Date of survey and date of plat preparation',
+      },
+      {
+        id: 'fs-d7-plat-s3',
+        type: 'procedure',
+        title: 'The Subdivision Recording Process',
+        procedureSteps: [
+          { step: 1, action: 'Perform the boundary survey and design the subdivision', detail: 'Establish or verify control, perform field survey, locate all existing monuments and features, and work with the design team to lay out lot lines, streets, easements, and required setbacks.' },
+          { step: 2, action: 'Prepare the plat drawing', detail: 'Draft the plat to scale, showing all required elements per state and local requirements. Include all curve data, monument legend, title block, scale, and north arrow. Many jurisdictions require the plat to be on mylar or specified paper of a defined size.' },
+          { step: 3, action: 'Set all required monuments', detail: 'In most jurisdictions, all lot corners and block corners must be monumented before or immediately after recording. The plat must show the type, size, and location of all monuments set. Failure to set monuments is a license violation in most states.' },
+          { step: 4, action: 'Obtain required government approvals', detail: 'Submit the plat for review and approval by planning and zoning, the health department (if septic systems are involved), public works or engineering (for street and drainage design), and any other required agencies. This process can take weeks to months.' },
+          { step: 5, action: 'Have all required signatures obtained', detail: 'The owner (all owners of record) must sign the dedicatory statement, which must be notarized. The surveyor must sign and seal the plat. All required government officials must sign approval blocks.' },
+          { step: 6, action: 'Record the plat in the official land records', detail: 'Submit the signed, sealed, and approved plat to the county recorder (or equivalent office). Upon recording, the plat receives a plat book and page number (or instrument number) that becomes part of every lot\'s legal description.' },
+        ],
+      },
+      {
+        id: 'fs-d7-plat-s4',
+        type: 'exam_tips',
+        title: 'Exam Tips: Plats and Subdivisions',
+        examTips: [
+          'A plat is not effective until it is recorded. Before recording, the proposed subdivision has no legal existence — it is just a proposed drawing.',
+          'Street dedication occurs by the act of recording a plat that shows the street with a dedication statement. No separate deed is needed. This is called "statutory dedication."',
+          'A plat description (Lot X, Block Y, of [subdivision name], Plat Book Z, Page W) is a complete legal description — it does not need to repeat bearings and distances because the plat itself contains that information.',
+          'On the FS exam, remember that plats create new boundaries rather than retracing existing ones. The surveyor preparing a subdivision plat is acting as the original surveyor for the new lot lines.',
+          'Vacating a recorded plat (undoing the subdivision) requires a separate legal process — usually a court order or a statutory vacation procedure — and cannot be done by simply recording a new plat over the old one.',
+        ],
+      },
+      {
+        id: 'fs-d7-plat-s5',
+        type: 'knowledge_check',
+        title: 'Plats and Recording Knowledge Check',
+        knowledgeCheck: {
+          question: 'A property owner records a subdivision plat that shows Street A as a public street with a dedication statement. Three years later, the owner argues that Street A is still private because they never signed a separate deed conveying the street to the county. Is the owner correct?',
+          options: [
+            'Yes, a separate deed is always required to transfer street ownership to the public',
+            'No, the act of recording a plat with a dedication statement constitutes a statutory dedication of the street to the public',
+            'Yes, recording a plat does not affect ownership of the street',
+            'No, but the county must formally accept the dedication by resolution before the street becomes public',
+          ],
+          correctIndex: 1,
+          explanation: 'Recording a plat that includes a street with a proper dedicatory statement constitutes a statutory dedication of that street to the public. No separate deed is required. Under statutory dedication, the act of recording the plat with the dedicatory language transfers the street (or other publicly dedicated areas) to public ownership. Option D partially describes the common law "acceptance" requirement, but most states with statutory dedication laws do not require a formal acceptance — the public\'s use of the street over time is generally sufficient, or acceptance is implied by the government\'s approval of the plat.',
+        },
+      },
+      {
+        id: 'fs-d7-plat-s6',
+        type: 'further_reading',
+        title: 'Further Reading',
+        furtherReading: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Chapter 33 (Land Description) and Chapter 34 (Property Law)', topic: 'Plats of subdivision, recording requirements, lot and block descriptions, and subdivision law' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 22', topic: 'Subdivision surveys, plat preparation, recording, and legal description by reference to plat' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'fs-d7-senior-junior',
+    examTrack: 'fs',
+    domainNumber: 7,
+    domain: 'Applied Mathematics & Statistics',
+    title: 'Senior and Junior Rights in Boundary Resolution',
+    description: 'When properties share a common boundary and the deed descriptions conflict, the concept of seniority determines which deed controls. This reading covers the rule of senior and junior rights, how conveyances in a chain of title establish priority, the "senior grant rules" (like PLSS corner seniority), and practical examples of resolving overlapping claims.',
+    estimatedMinutes: 18,
+    sections: [
+      {
+        id: 'fs-d7-sj-s1',
+        type: 'concept',
+        title: 'The Principle of Senior and Junior Rights',
+        content: 'In property law, a grantor can convey only what they own. If a grantor conveys land to Buyer A, the grantor no longer owns that land and cannot convey it again to Buyer B. If the grantor later attempts to convey overlapping land to Buyer B, Buyer B receives only what the grantor still had to give — which excludes anything already conveyed to Buyer A.\n\nThe result is that Buyer A has the "senior" conveyance — the earlier, controlling grant. Buyer B has the "junior" conveyance — a later grant that can only convey what remained after the senior grant.\n\nThis principle is expressed in the legal doctrine of "nemo dat quod non habet" — no one can give what they do not have.\n\nIn boundary surveying, senior and junior rights matter when:\n- Two deeds in a chain of title describe overlapping boundaries\n- A grantor divided a parcel into multiple tracts over time and the descriptions conflict\n- A PLSS survey established corners by different methods (original vs. re-established) that must be evaluated for seniority\n\nSeniority is established by the DATE of recording (or execution) of the deed. An earlier-recorded deed is senior. A later-recorded deed is junior. If dates are the same, the order of recording during the same day may matter, depending on jurisdiction.',
+      },
+      {
+        id: 'fs-d7-sj-s2',
+        type: 'concept',
+        title: 'How Seniority Affects Boundary Retracement',
+        content: 'When retracing boundaries of a particular parcel, the surveyor must understand the ownership history to determine which deed in the chain of title is senior at each adjoining boundary.\n\nPractical example: Suppose the owner of a 40-acre tract first conveyed the eastern 10 acres to Buyer A in 1950, then conveyed the western 30 acres to Buyer B in 1960. The deed to Buyer B says "the western 30 acres of the original 40-acre tract" but also includes a distance that, if extended, would overlap 2 acres already conveyed to Buyer A.\n\nIn this case, Buyer A is senior because the 1950 deed came first. The 1960 deed to Buyer B is junior. The boundary between A and B is controlled by the 1950 conveyance to A, not by any description in the later deed to B. Buyer B receives only what remained after A\'s 10 acres were carved out — even if the 1960 deed\'s distances suggest otherwise.\n\nApplication to simultaneous conveyances: If a grantor divides a parcel simultaneously (same document, same date), neither resulting parcel is technically "senior." In this case, courts look at the specific language of the deed to determine intent, and the boundary evidence hierarchy (monuments over distances) applies.\n\nPLSS seniority: In the Public Land Survey System, original corners established during the original government survey are senior to all subsequently established corners. A "lost" corner re-established by proportionate measurement has less authority than an original corner that can be found and verified. Between PLSS corners, the seniority of the original survey controls over any later private surveys.',
+      },
+      {
+        id: 'fs-d7-sj-s3',
+        type: 'concept',
+        title: 'The Strip and Gore Doctrine',
+        content: 'When a grantor conveys multiple adjacent parcels and the descriptions do not perfectly tile together (leaving a gap or overlap), several legal doctrines address the residual land:\n\nStrip and gore doctrine: A very narrow strip of land between two conveyed parcels that was inadvertently retained by the grantor passes by implication to the adjoining grantee, because such a narrow strip has little independent value and the grantor clearly intended to convey up to the boundary of the adjacent parcel. Courts apply this doctrine when: (1) the grantor clearly intended to convey all land to a certain boundary, (2) the strip is very narrow and of little independent value, and (3) conveying the strip to the adjoining grantee is consistent with the grantor\'s intent.\n\nGap vs. overlap:\n- A gap is land between two conveyances that was not included in either deed. The grantor retains title to the gap by operation of law.\n- An overlap is land that appears in two separate conveyances. The senior grantee holds clear title; the junior grantee\'s deed is void as to the overlapping area (though the junior grantee may have claims against the grantor for breach of warranty).\n\nPractical implication: A surveyor who prepares descriptions of subdivided tracts has a professional duty to ensure that the parcels tile together properly — no gaps, no overlaps — because any residual strip or overlap will cause future title problems.',
+      },
+      {
+        id: 'fs-d7-sj-s4',
+        type: 'exam_tips',
+        title: 'Exam Tips: Senior and Junior Rights',
+        examTips: [
+          'The FS exam often presents a scenario where two deeds conflict. Always determine which was recorded FIRST — that is the senior deed and controls the boundary.',
+          'A senior grantor cannot convey more than they own. If the senior deed already conveyed the parcel, the junior deed is void for that area regardless of what the junior deed says.',
+          'In the PLSS, original corners are always senior to re-established corners. When a corner can be found in the field with sufficient evidence to identify it as original, it controls.',
+          'The term "acquiescence" refers to a situation where adjoining landowners have treated a line as the boundary for a long period (often 10+ years, varying by state). An acquiesced boundary may become the legal boundary regardless of the deed descriptions.',
+          'Riparian boundaries (along rivers and streams) can shift over time due to accretion (gradual addition of sediment) and reliction (land exposed by receding water). Accretion adds land to the riparian owner; avulsion (sudden change in river course) generally does NOT change the boundary.',
+        ],
+      },
+      {
+        id: 'fs-d7-sj-s5',
+        type: 'knowledge_check',
+        title: 'Senior and Junior Rights Knowledge Check',
+        knowledgeCheck: {
+          question: 'In 1970, Owner Jones conveyed the northern 5 acres of his 15-acre tract to Neighbor Smith with a deed describing a boundary line at "200 feet south of the north line of the original tract." In 1985, Jones conveyed the remaining 10 acres to Developer Brown with a deed that, due to a drafting error, describes the boundary as "225 feet south of the north line." Which description controls the boundary between Smith and Brown, and why?',
+          options: [
+            'Brown\'s 1985 deed controls because it is more recent and more precisely described',
+            'Smith\'s 1970 deed controls because it is the senior conveyance; Jones had already conveyed the northern 5 acres before the 1985 deed was executed',
+            'The boundary is at 212.5 feet (the average of 200 and 225 feet) to split the difference equitably',
+            'Brown\'s deed controls because 225 feet is larger and descriptions of larger parcels take priority',
+          ],
+          correctIndex: 1,
+          explanation: 'Smith\'s 1970 deed is the senior conveyance. When Jones conveyed the northern 5 acres to Smith in 1970 using a line 200 feet from the north line, he no longer owned the land north of that line. When Jones later conveyed the remaining land to Brown in 1985, he could only convey what he still owned — which was land starting at 200 feet from the north line, not 225 feet. The drafting error in the 1985 deed does not give Brown any additional land because Jones had nothing more to give in that area. The boundary between Smith and Brown is 200 feet from the north line, per Smith\'s senior 1970 deed.',
+        },
+      },
+      {
+        id: 'fs-d7-sj-s6',
+        type: 'further_reading',
+        title: 'Further Reading',
+        furtherReading: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Chapter 34 (Property Law) and Chapter 35 (Boundary Retracement)', topic: 'Senior and junior rights, chain of title, and boundary conflict resolution' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Boundary retracement, conflicting calls, senior vs. junior rights, and property law fundamentals' },
+        ],
+      },
+    ],
+  },
+];
