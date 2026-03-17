@@ -269,6 +269,18 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         ],
       },
       {
+        id: 'fs-d1-edm-et',
+        type: 'exam_tips',
+        title: 'Exam Tips: EDM Corrections',
+        examTips: [
+          'The ppm correction is always applied to the raw slope distance FIRST, before any slope-to-horizontal reduction. Remember: atmospheric → constant → slope reduction → grid/sea-level.',
+          'For a negative atmospheric ppm (e.g., −12 ppm), the measured distance is longer than actual. The correction shortens it: ΔD = ppm/1,000,000 × D (with appropriate sign).',
+          'The instrument/prism constant is a fixed offset in meters — it does not scale with distance. Add (or subtract) it after the ppm correction.',
+          'FS exam EDM problems often give you the atmospheric correction in ppm and a constant in millimeters. Convert the constant to meters before adding it to the distance.',
+          'If a question asks for the "grid distance" or "sea-level distance," you need one more step after all instrument corrections: multiply by the combined scale factor (grid factor = sea-level factor × scale factor).',
+        ],
+      },
+      {
         id: 'fs-d1-edm-s6',
         type: 'knowledge_check',
         title: 'EDM Corrections Knowledge Check',
