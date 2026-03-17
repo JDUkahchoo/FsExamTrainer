@@ -25,6 +25,10 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         id: 'fs-d2-traverse-s2',
         type: 'formula',
         title: 'Latitude and Departure Formulas',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Traverse computations and lat/dep' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 10', topic: 'Traverse computations' },
+        ],
         formula: {
           expression: 'Latitude = Distance * cos(Azimuth); Departure = Distance * sin(Azimuth)',
           variables: [
@@ -182,6 +186,10 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         id: 'fs-d2-areas-s2',
         type: 'formula',
         title: 'Double Meridian Distance (DMD) Method',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 6', topic: 'Area by DMD method' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 12', topic: 'DMD area computations' },
+        ],
         formula: {
           expression: 'DMD_first = Dep_first; DMD_i = DMD_{i-1} + Dep_{i-1} + Dep_i; 2*Area = |sum(DMD_i * Lat_i)|',
           variables: [
@@ -316,6 +324,10 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         id: 'fs-d2-curves-s2',
         type: 'formula',
         title: 'Horizontal Curve Formulas',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 20', topic: 'Horizontal curve formulas' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 24', topic: 'Curve computations' },
+        ],
         formula: {
           expression: 'T = R * tan(Delta/2); L = R * Delta (in radians); LC = 2 * R * sin(Delta/2)',
           variables: [

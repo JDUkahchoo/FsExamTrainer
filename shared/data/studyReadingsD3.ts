@@ -187,6 +187,9 @@ export const STUDY_READINGS_D3: ReadingModule[] = [
         id: 'fs-d3-gnss-s3',
         type: 'formula',
         title: 'Dilution of Precision (DOP) Concept',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22', topic: 'Dilution of Precision in GPS' },
+        ],
         formula: {
           expression: 'PDOP = sqrt(sigma_x^2 + sigma_y^2 + sigma_z^2) / sigma_range',
           variables: [
