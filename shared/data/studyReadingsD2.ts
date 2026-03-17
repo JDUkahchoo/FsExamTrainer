@@ -39,9 +39,6 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
           ],
           whenToUse: 'Use these formulas for every leg of a traverse to convert polar measurements (distance and direction) into rectangular coordinate components. This is the first step in computing traverse coordinates and checking closure.',
         },
-        bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Latitude and departure computation' },
-        ],
       },
       {
         id: 'fs-d2-traverse-s3',
