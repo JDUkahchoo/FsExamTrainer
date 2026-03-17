@@ -177,7 +177,7 @@ const fsVariationDefs: Record<number, VariationDef> = {
     },
     computeExplanation: (p, a) => `T = R × tan(Δ/2) = ${p.r} × tan(${p.delta / 2}°) = ${a}`
   },
-  37: {
+  64: {
     type: 'stem',
     stems: [
       'A line has a bearing of S 30° W. What is its azimuth from north?',
@@ -299,14 +299,6 @@ const fsVariationDefs: Record<number, VariationDef> = {
     computeAnswer: (p) => `1:${Math.round(p.perim / p.err).toLocaleString()}`,
     computeDistractors: (p) => { const r = Math.round(p.perim / p.err); return [`1:${Math.round(r / 10).toLocaleString()}`, `1:${Math.round(r * 2).toLocaleString()}`, `1:${Math.round(p.perim).toLocaleString()}`]; },
     computeExplanation: (p, a) => `Ratio = 1:(perimeter/error) = 1:(${p.perim}/${p.err}) = ${a}. Higher ratio = better precision.`
-  },
-  64: {
-    type: 'computational',
-    stemTemplate: 'If a measurement has a standard error of {se} feet, what is the 99.7% confidence interval (3σ)?',
-    paramRanges: { se: [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.10] },
-    computeAnswer: (p) => `±${(p.se * 3).toFixed(2)} ft`,
-    computeDistractors: (p) => [`±${p.se.toFixed(2)} ft`, `±${(p.se * 2).toFixed(2)} ft`, `±${(p.se * 4).toFixed(2)} ft`],
-    computeExplanation: (p, a) => `The 99.7% confidence interval is 3σ. 3 × ${p.se.toFixed(2)} = ${a}.`
   },
   65: {
     type: 'computational',
