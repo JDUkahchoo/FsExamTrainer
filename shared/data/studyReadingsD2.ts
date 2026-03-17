@@ -166,7 +166,7 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
     title: 'Areas & Volumes',
     description: 'Learn essential methods for computing land areas (coordinate method, DMD, trapezoidal rule) and earthwork volumes (average end area, prismoidal formula) commonly tested on the FS exam.',
     estimatedMinutes: 18,
-    prerequisites: ['fs-d0-cogo'],
+    prerequisites: ['fs-d0-cogo', 'fs-d0-trig'],
     sections: [
       {
         id: 'fs-d2-areas-s1',

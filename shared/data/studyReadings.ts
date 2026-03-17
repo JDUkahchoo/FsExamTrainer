@@ -582,6 +582,7 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
     title: 'Angles, Azimuths & Bearings',
     description: 'Learn how surveyors measure and describe directions in the field, including horizontal and vertical angle measurement, azimuth and bearing systems, magnetic declination, and angular closure.',
     estimatedMinutes: 20,
+    prerequisites: ['fs-d0-trig'],
     sections: [
       {
         id: 'fs-d1-angles-s1',
