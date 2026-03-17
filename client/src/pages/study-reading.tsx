@@ -440,7 +440,7 @@ function ExamTipsSection({
     >
       <CardHeader>
         <CardTitle className="flex items-center gap-2 flex-wrap">
-          <Star className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+          <Lightbulb className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
           {section.title || "Exam Tips"}
           {completed && <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />}
         </CardTitle>
