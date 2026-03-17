@@ -53,6 +53,29 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         },
       },
       {
+        id: 'fs-d1-ep-cm',
+        type: 'common_mistakes',
+        title: 'Common Mistakes: Error Propagation',
+        commonMistakes: [
+          'Adding standard deviations directly instead of adding their squares and then taking the square root. The correct formula for the sum of independent measurements is σ_total = √(σ₁² + σ₂² + ...), not σ₁ + σ₂ + ...',
+          'Forgetting to apply sensitivity coefficients (partial derivatives) when the function is not a simple sum. For F = A/c × x + B/c × y, the coefficients A/c and B/c must weight each uncertainty term before squaring.',
+          'Confusing the √n rule: for n measurements each with standard deviation σ, the sum has σ√n but the average has σ/√n. These two results are opposite in direction and magnitude.',
+          'Applying error propagation to systematic errors. The law of error propagation applies only to independent random errors. Systematic errors must be corrected before applying propagation rules.',
+        ],
+      },
+      {
+        id: 'fs-d1-ep-proc',
+        type: 'procedure',
+        title: 'Step-by-Step: Propagating Errors Through a Computation',
+        procedureSteps: [
+          { step: 1, action: 'Write out the functional relationship', detail: 'Express the computed quantity F as a mathematical function of the measured quantities: F = f(x₁, x₂, ..., xₙ).' },
+          { step: 2, action: 'Compute partial derivatives', detail: 'Take the partial derivative of F with respect to each measured quantity: ∂F/∂x₁, ∂F/∂x₂, etc. These are the sensitivity coefficients.' },
+          { step: 3, action: 'Square each term', detail: 'For each measurement, compute (∂F/∂xᵢ)² × σᵢ². This gives the variance contribution of each measurement to the total variance of F.' },
+          { step: 4, action: 'Sum the squared terms', detail: 'Add all variance contributions: σ_F² = Σ (∂F/∂xᵢ)² σᵢ².' },
+          { step: 5, action: 'Take the square root', detail: 'The standard deviation of F is σ_F = √(σ_F²). This is the propagated uncertainty in the computed result.' },
+        ],
+      },
+      {
         id: 'fs-d1-ep-s5',
         type: 'exam_tips',
         title: 'Exam Tips: Error Propagation',
@@ -252,13 +275,13 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         knowledgeCheck: {
           question: 'An EDM measures a raw slope distance of 500.000 m. The atmospheric correction is −12 ppm and the combined instrument/prism constant is +0.005 m. After applying these two corrections only, what is the corrected slope distance?',
           options: [
+            '499.994 m',
             '499.999 m',
             '500.005 m',
-            '499.999 m',
-            '499.995 m',
+            '500.011 m',
           ],
-          correctIndex: 3,
-          explanation: 'First apply the atmospheric correction: −12 ppm × 500.000 m / 1,000,000 = −0.006 m. Corrected distance = 500.000 − 0.006 = 499.994 m. Then apply the instrument/prism constant: 499.994 + 0.005 = 499.999 m. Wait — the closest answer is 499.995 m. Let us recheck: −12/1,000,000 × 500 = −0.006 m; 500.000 − 0.006 + 0.005 = 499.999 m. The answer is 499.999 m (Choice A/C, noting that A and C appear identical in this option set). If the exam presents 499.999, choose that.',
+          correctIndex: 1,
+          explanation: 'Apply corrections in sequence. Step 1 — atmospheric correction: −12 ppm × 500.000 / 1,000,000 = −0.006 m. Corrected = 500.000 − 0.006 = 499.994 m. Step 2 — instrument/prism constant: +0.005 m. Final = 499.994 + 0.005 = 499.999 m. Option A (499.994) applies the atmospheric correction but forgets the prism constant. Option C (500.005) applies only the prism constant and ignores the atmospheric correction. Option D (500.011) incorrectly adds both corrections instead of subtracting the atmospheric term.',
         },
       },
       {
@@ -317,6 +340,18 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
           { step: 3, action: 'Use a rod level', detail: 'A circular level (rod bubble) attached to the rod ensures the rod is plumb. Alternatively, the rodman can wave the rod slowly and the instrument operator reads the minimum value (which corresponds to the rod being vertical).' },
           { step: 4, action: 'Read the backsight before moving the instrument', detail: 'The standard sequence is: set up → level instrument → read backsight (on the known/previous point) → read foresight (on the turning point or new benchmark). Never move before reading both sights at each setup.' },
           { step: 5, action: 'Run level circuits and check closure', detail: 'For important work, level forward to the destination and then back to the start, or form a closed loop. The misclosure should not exceed the allowable standard for the required order. If it does, identify and rerun the suspect section.' },
+        ],
+      },
+      {
+        id: 'fs-d1-lev-cm',
+        type: 'common_mistakes',
+        title: 'Common Mistakes: Leveling Errors',
+        commonMistakes: [
+          'Thinking that balancing sights only helps with collimation error. Equal backsight and foresight distances also cancel curvature, atmospheric refraction, and compensator errors — all in one step.',
+          'Applying the curvature and refraction formula (0.0561 × K²) when the distances are expressed in meters instead of kilometers. K must be in km. A 100 m sight has K = 0.1 km, giving CR = 0.0561 × 0.01 = 0.00056 m — negligible for most work.',
+          'Forgetting that a rod tilted away from vertical always gives a reading that is too large, never too small. The rod acts as the hypotenuse of a right triangle; the hypotenuse is always longer than the vertical leg.',
+          'Confusing instrument settlement with ground movement. Settlement of the tripod between the backsight and foresight readings causes the foresight to be read too low, making the computed elevation appear lower than the true value.',
+          'Neglecting to close the level loop. Running levels one-way from A to B provides no check on accumulated error. A closed loop or reciprocal leveling run to a second benchmark is essential for detecting blunders and evaluating closure.',
         ],
       },
       {
