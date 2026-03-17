@@ -9,12 +9,17 @@ export const STUDY_READINGS_D5_EXPANDED: ReadingModule[] = [
     title: 'Easements & Encumbrances In Depth',
     description: 'Master the different types of easements, how they are created and terminated, and understand encumbrances including restrictive covenants, liens, and mortgages. These topics appear frequently on the FS exam and are essential for interpreting title reports and survey plats.',
     estimatedMinutes: 25,
+    prerequisites: ['fs-d5-boundary'],
     sections: [
       {
         id: 'fs-d5-easements-s1',
         type: 'concept',
         title: 'Easement Appurtenant vs. Easement in Gross',
         content: 'Easements are non-possessory rights to use another person\'s land for a specific purpose. They do not transfer ownership but grant limited use rights. The two fundamental categories differ in who benefits from the easement.\n\nEasement Appurtenant: This easement benefits a specific parcel of land called the dominant estate. It burdens another parcel called the servient estate. The key characteristic is that it "runs with the land," meaning it automatically transfers when either estate is sold. Neither the buyer of the dominant estate nor the buyer of the servient estate can eliminate the easement unilaterally.\n\nExample: Parcel A is landlocked behind Parcel B. An easement appurtenant grants Parcel A (dominant) the right to cross Parcel B (servient) to reach a public road. If Parcel A is sold, the new owner inherits the easement right. If Parcel B is sold, the new owner takes it subject to the easement.\n\nEasement in Gross: This easement benefits a specific person or entity rather than a parcel of land. There is a servient estate but no dominant estate. The easement is personal to the holder.\n\nCommercial Easements in Gross: Granted to utility companies, pipeline companies, or telecommunications providers. These are generally assignable and transferable. A power company\'s easement to run transmission lines across your property is a commercial easement in gross.\n\nPersonal Easements in Gross: Granted to a specific individual, such as the right to hunt or fish on someone\'s property. These are generally not transferable and terminate upon the death of the holder.\n\nSurveyors must identify easements during boundary surveys because they affect how the property can be used and must be shown on survey plats. Utility easements in particular must be located and depicted accurately.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 24-25', topic: 'Easements and property rights' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Legal principles: easements and encumbrances' },
+        ],
       },
       {
         id: 'fs-d5-easements-s2',
@@ -93,12 +98,17 @@ export const STUDY_READINGS_D5_EXPANDED: ReadingModule[] = [
     title: 'Conveyances, Chains of Title & Public Records',
     description: 'Understand how property ownership is transferred through conveyances, how to trace ownership through chains of title, and how to research public records. These skills are fundamental to retracement surveys and boundary dispute resolution.',
     estimatedMinutes: 25,
+    prerequisites: ['fs-d5-boundary'],
     sections: [
       {
         id: 'fs-d5-conveyances-s1',
         type: 'concept',
         title: 'Simultaneous vs. Sequential Conveyances',
         content: 'The distinction between simultaneous and sequential conveyances is critical in boundary law because it determines how ambiguities and conflicts in property descriptions are resolved.\n\nSimultaneous Conveyances: When a landowner divides a tract and conveys all resulting parcels at approximately the same time, these are treated as simultaneous conveyances. The key characteristic is that no parcel has priority over any other. All grantees receive their parcels under the same conditions. If the descriptions overlap or create a gap, the courts typically resolve the conflict by dividing the discrepancy proportionally among all the parcels. The original subdivider\'s intent, as shown on the plat, controls over individual deed descriptions.\n\nSequential Conveyances: When a landowner sells parcels from a larger tract over time, each sale is a sequential conveyance. The critical legal principle is "first in time, first in right." The first grantee receives exactly what the deed describes. The second grantee receives what is described, but only to the extent it does not overlap with the first conveyance. The last grantee receives whatever remains, which may be more or less than what is described.\n\nPractical Example: A landowner owns a 100-acre tract and sells the east 40 acres to Buyer A, then later sells the east 45 acres to Buyer B. Under sequential conveyance rules, Buyer A\'s deed controls for the east 40 acres (first in time). Buyer B receives only the 5-acre strip between Buyer A\'s western boundary and the 45-acre line because the east 40 acres were already conveyed.\n\nExcess and Deficiency: When a tract conveyed in sequential sales turns out to contain more or less land than the original owner claimed, the excess or deficiency falls on the last parcel conveyed (the "senior-junior" principle). Earlier conveyances are "senior" and hold their described land; the remaining (junior) parcel absorbs any discrepancy.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 24-26', topic: 'Conveyances and title research' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Deeds, conveyances, and property rights' },
+        ],
       },
       {
         id: 'fs-d5-conveyances-s2',
@@ -171,6 +181,7 @@ export const STUDY_READINGS_D5_EXPANDED: ReadingModule[] = [
     title: 'Common Law Principles & Controlling Elements',
     description: 'Understand the common law principles that govern boundary determination, including the hierarchy of controlling elements, unwritten rights such as adverse possession and acquiescence, and the rules that courts apply when resolving boundary disputes.',
     estimatedMinutes: 25,
+    prerequisites: ['fs-d5-boundary'],
     sections: [
       {
         id: 'fs-d5-commonlaw-s1',

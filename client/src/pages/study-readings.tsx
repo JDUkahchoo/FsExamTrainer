@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ScrollText, Clock, BookOpen, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ScrollText, Clock, BookOpen, ArrowRight, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useExamTrack } from "@/contexts/exam-track-context";
 import { STUDY_READINGS } from "@shared/data/studyReadings";
 import { getDomainConfig } from "@/lib/domains";
@@ -96,6 +96,13 @@ export default function StudyReadingsPage() {
                 const pct = totalSections > 0 ? Math.round((completedCount / totalSections) * 100) : 0;
                 const isComplete = completedCount === totalSections;
 
+                const hasUnmetPrereqs = reading.prerequisites?.some((prereqId) => {
+                  const prereqMod = readings.find((r) => r.id === prereqId);
+                  if (!prereqMod) return false;
+                  const prereqDone = progressByReading[prereqId]?.size ?? 0;
+                  return prereqDone < prereqMod.sections.length;
+                });
+
                 return (
                   <Link key={reading.id} href={`/app/${examTrack}/readings/${reading.id}`}>
                     <Card className="hover-elevate cursor-pointer" data-testid={`card-reading-${reading.id}`}>
@@ -109,6 +116,12 @@ export default function StudyReadingsPage() {
                               </h3>
                               {isComplete && (
                                 <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0" />
+                              )}
+                              {hasUnmetPrereqs && !isComplete && (
+                                <Badge variant="outline" className="text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-700 text-[10px] px-1.5 py-0" data-testid={`badge-prereq-${reading.id}`}>
+                                  <AlertTriangle className="w-3 h-3 mr-0.5" />
+                                  Prereq
+                                </Badge>
                               )}
                             </div>
                             <p className="text-sm text-muted-foreground line-clamp-2">

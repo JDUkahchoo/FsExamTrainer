@@ -31,6 +31,10 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         type: 'concept',
         title: 'Right Triangle Trigonometry (SOH-CAH-TOA)',
         content: 'Every right triangle contains one 90-degree angle and two acute angles. The three primary trigonometric ratios relate the sides of a right triangle to its acute angles. Given an acute angle A in a right triangle:\n\n- Sine (sin) = Opposite side / Hypotenuse\n- Cosine (cos) = Adjacent side / Hypotenuse\n- Tangent (tan) = Opposite side / Adjacent side\n\nThe mnemonic SOH-CAH-TOA helps you remember these ratios. In surveying, right triangles appear constantly: when computing horizontal distances from slope measurements, finding elevation differences, and resolving vectors into north/east components.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Trigonometry fundamentals' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 9', topic: 'Traverse computations using trigonometry' },
+        ],
       },
       {
         id: 'fs-d0-trig-s2',
@@ -46,6 +50,9 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
           ],
           whenToUse: 'Use when you have a right triangle and need to find an unknown side or angle. Common in slope distance to horizontal distance conversions and vertical angle problems.',
         },
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Trigonometric ratios and applications' },
+        ],
       },
       {
         id: 'fs-d0-trig-s3',
@@ -138,6 +145,10 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         type: 'concept',
         title: 'Bearings and Azimuths',
         content: 'Surveyors describe directions using two systems:\n\nBearings measure angles from either North or South toward East or West, always between 0 and 90 degrees. They are written as a quadrant notation, e.g., N 45 00 E means 45 degrees measured clockwise from North toward East.\n\nAzimuths are measured clockwise from North, ranging from 0 to 360 degrees. An azimuth of 135 degrees points Southeast.\n\nConversion rules:\n- NE quadrant (bearing N x E): Azimuth = x\n- SE quadrant (bearing S x E): Azimuth = 180 - x\n- SW quadrant (bearing S x W): Azimuth = 180 + x\n- NW quadrant (bearing N x W): Azimuth = 360 - x\n\nOn the FS exam, you must be comfortable converting between these systems quickly.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Bearings and azimuths' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 7', topic: 'Angles, bearings, and azimuths' },
+        ],
       },
       {
         id: 'fs-d0-trig-s10',
@@ -180,6 +191,10 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         type: 'concept',
         title: 'The Surveying Coordinate System',
         content: 'Surveyors use a Cartesian coordinate system where positions are described by Northing (Y) and Easting (X) values. By convention, Northing increases upward (north) and Easting increases to the right (east).\n\nState Plane Coordinate Systems assign large coordinate values so that all points in a zone have positive northings and eastings. When working with coordinates, the difference in northings (Delta N) and the difference in eastings (Delta E) between two points are the building blocks for computing distances and directions.\n\nDelta N = N2 - N1 (positive means point 2 is north of point 1)\nDelta E = E2 - E1 (positive means point 2 is east of point 1)',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Coordinate systems and COGO' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 10', topic: 'Coordinates and COGO computations' },
+        ],
       },
       {
         id: 'fs-d0-cogo-s2',
@@ -194,6 +209,9 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
           ],
           whenToUse: 'Use to compute the straight-line horizontal distance between any two points when you know their coordinates. This is the most fundamental COGO computation.',
         },
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Distance and direction from coordinates' },
+        ],
       },
       {
         id: 'fs-d0-cogo-s3',
@@ -214,6 +232,10 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         type: 'concept',
         title: 'Inverse Calculation: Direction from Coordinates',
         content: 'The inverse problem asks: given two points with known coordinates, what is the azimuth (direction) from one to the other?\n\nStart by computing Delta N and Delta E. Then find the reference angle using:\n\nReference angle = arctan(|Delta E| / |Delta N|)\n\nThe signs of Delta N and Delta E tell you which quadrant the direction falls in:\n- Delta N positive, Delta E positive: NE quadrant (azimuth = reference angle)\n- Delta N negative, Delta E positive: SE quadrant (azimuth = 180 - reference angle)\n- Delta N negative, Delta E negative: SW quadrant (azimuth = 180 + reference angle)\n- Delta N positive, Delta E negative: NW quadrant (azimuth = 360 - reference angle)\n\nThis is often called the "inverse" because you are working backward from coordinates to distance and direction.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Inverse computations' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 10', topic: 'Inversing from coordinates' },
+        ],
       },
       {
         id: 'fs-d0-cogo-s5',
@@ -317,6 +339,10 @@ const STUDY_READINGS_BASE: ReadingModule[] = [
         type: 'concept',
         title: 'Metric and Imperial Length Conversions',
         content: 'Surveyors in the United States work primarily in feet, but many projects, federal agencies, and international work require metric units. The key conversion factors are:\n\n- 1 meter = 3.28084 international feet\n- 1 meter = 39.3701 inches\n- 1 kilometer = 0.621371 miles\n- 1 inch = 2.54 centimeters (exact)\n- 1 chain = 66 feet = 4 rods\n- 1 mile = 80 chains = 5,280 feet\n\nFor the FS exam, you should be able to convert between meters and feet quickly. Many reference values on the exam are given in SI units, and being fluent with these conversions saves valuable time.',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 1', topic: 'Units of measurement' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 3-4', topic: 'Dimensional equations and systems of units' },
+        ],
       },
       {
         id: 'fs-d0-units-s2',

@@ -1568,6 +1568,7 @@ export interface ReadingSection {
   commonMistakes?: string[];
   examTips?: string[];
   procedureSteps?: ReadingProcedureStep[];
+  bookRefs?: ReadingFurtherRef[];
 }
 
 export interface ReadingModule {
@@ -1579,6 +1580,7 @@ export interface ReadingModule {
   description: string;
   estimatedMinutes: number;
   sections: ReadingSection[];
+  prerequisites?: string[];
 }
 
 // --- Week Memory Health Table ---

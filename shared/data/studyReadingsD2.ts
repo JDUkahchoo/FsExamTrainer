@@ -9,12 +9,17 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
     title: 'Traverse Computations & Coordinate Geometry',
     description: 'Master traverse computation techniques including latitude and departure calculations, Bowditch (Compass Rule) adjustment, inversing between coordinate pairs, and computing enclosed areas from coordinates.',
     estimatedMinutes: 22,
+    prerequisites: ['fs-d0-trig', 'fs-d0-cogo'],
     sections: [
       {
         id: 'fs-d2-traverse-s1',
         type: 'concept',
         title: 'Traverse Types, Latitudes, and Departures',
         content: 'A traverse is a series of connected lines whose lengths and directions have been measured in the field. There are two primary types:\n\nOpen Traverse: Starts at a known point but does not return to the starting point or close on another known point. Open traverses cannot be checked for errors internally and are used only when no alternative exists (e.g., preliminary route surveys).\n\nClosed Traverse: Either returns to the starting point (loop traverse) or connects between two known control points (connecting traverse). Closed traverses allow mathematical checks because the theoretical sum of latitudes and the theoretical sum of departures should each equal zero for a loop, or equal the known coordinate differences for a connecting traverse.\n\nLatitude of a line is its north-south projection, representing how far the line moves in the north or south direction. Departure of a line is its east-west projection, representing how far the line moves in the east or west direction. Together, latitudes and departures decompose each traverse leg into its rectangular components. Lines running northward produce positive latitudes, while lines running southward produce negative latitudes. Lines running eastward produce positive departures, and lines running westward produce negative departures.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17-18', topic: 'Traverse computations and adjustments' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 10', topic: 'Traverse computations' },
+        ],
       },
       {
         id: 'fs-d2-traverse-s2',
@@ -30,6 +35,9 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
           ],
           whenToUse: 'Use these formulas for every leg of a traverse to convert polar measurements (distance and direction) into rectangular coordinate components. This is the first step in computing traverse coordinates and checking closure.',
         },
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Latitude and departure computation' },
+        ],
       },
       {
         id: 'fs-d2-traverse-s3',
@@ -158,12 +166,17 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
     title: 'Areas & Volumes',
     description: 'Learn essential methods for computing land areas (coordinate method, DMD, trapezoidal rule) and earthwork volumes (average end area, prismoidal formula) commonly tested on the FS exam.',
     estimatedMinutes: 18,
+    prerequisites: ['fs-d0-cogo'],
     sections: [
       {
         id: 'fs-d2-areas-s1',
         type: 'concept',
         title: 'Area Computation Methods',
         content: 'Surveyors use several methods to compute land areas depending on the data available:\n\nCoordinate Method (Shoelace Formula): When coordinates of all polygon corners are known, this is the most direct and accurate approach. Cross-multiply coordinates taken in sequence around the polygon and take half the absolute value of the sum.\n\nDouble Meridian Distance (DMD) Method: This classic technique uses the latitudes and departures of traverse legs. Each leg\'s DMD represents twice the perpendicular distance from the midpoint of that leg to a reference meridian (typically the meridian through the most westerly point). The area contribution of each leg equals its DMD multiplied by its latitude. The DMD method is systematic and well-suited for tabular computation.\n\nTrapezoidal Rule: Used when one boundary is irregular (such as a stream or road). The irregular boundary is divided into strips of equal width, and heights are measured at regular intervals. Each strip is treated as a trapezoid. This method is approximate but practical for irregular boundaries.\n\nThe coordinate method and DMD method yield identical results when applied to the same traverse data. The trapezoidal rule is an approximation that improves as strip width decreases.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 19', topic: 'Area computations' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 12', topic: 'Area and volume computations' },
+        ],
       },
       {
         id: 'fs-d2-areas-s2',
@@ -287,12 +300,17 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
     title: 'Horizontal & Vertical Curves',
     description: 'Understand horizontal circular curve geometry (PC, PT, PI, tangent, length, external distance) and vertical parabolic curve computations (PVC, PVI, PVT, high/low points, elevations) as tested on the FS exam.',
     estimatedMinutes: 22,
+    prerequisites: ['fs-d0-trig'],
     sections: [
       {
         id: 'fs-d2-curves-s1',
         type: 'concept',
         title: 'Horizontal Curve Elements',
         content: 'When a highway, railroad, or pipeline changes direction, a horizontal circular curve provides a smooth transition between the two tangent (straight) sections. The key elements of a simple horizontal curve are:\n\nPI (Point of Intersection): Where the two tangent lines, if extended, would meet. This is the vertex of the deflection angle.\n\nPC (Point of Curvature): The beginning of the curve where the alignment leaves the back tangent and enters the curve. Also called BC (Beginning of Curve).\n\nPT (Point of Tangency): The end of the curve where the alignment returns to a straight tangent. Also called EC (End of Curve).\n\nR (Radius): The radius of the circular curve.\n\nDelta: The deflection angle (or central angle) at the PI. It equals the angle between the two tangent directions.\n\nT (Tangent Distance): The distance from the PC to the PI, or equivalently from the PI to the PT.\n\nL (Arc Length): The length of the curve measured along the arc from PC to PT.\n\nLC (Long Chord): The straight-line distance from PC to PT.\n\nE (External Distance): The distance from the PI to the midpoint of the curve, measured along the line from PI to the curve center.\n\nM (Middle Ordinate): The distance from the midpoint of the long chord to the midpoint of the arc.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 20-21', topic: 'Horizontal and vertical curves' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 24', topic: 'Horizontal curves' },
+        ],
       },
       {
         id: 'fs-d2-curves-s2',

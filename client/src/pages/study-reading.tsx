@@ -26,10 +26,79 @@ import { useExamTrack } from "@/contexts/exam-track-context";
 import { STUDY_READINGS } from "@shared/data/studyReadings";
 import type {
   ReadingSection,
+  ReadingFurtherRef,
 } from "@shared/schema";
 import { getDomainConfig } from "@/lib/domains";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+
+function BookRefChips({ refs }: { refs?: ReadingFurtherRef[] }) {
+  if (!refs || refs.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-1.5 pt-1" data-testid="book-ref-chips">
+      {refs.map((ref, i) => (
+        <span
+          key={i}
+          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border"
+          data-testid={`chip-book-ref-${i}`}
+        >
+          <BookMarked className="h-3 w-3 shrink-0" />
+          <span className="truncate max-w-[220px]">{ref.book} — {ref.chapter}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function PrerequisiteBanner({
+  prerequisites,
+  examTrack,
+  allProgress,
+}: {
+  prerequisites?: string[];
+  examTrack: string;
+  allProgress?: Array<{ readingId: string; sectionId: string }>;
+}) {
+  if (!prerequisites || prerequisites.length === 0) return null;
+
+  const unmet = prerequisites.filter((prereqId) => {
+    const prereqModule = STUDY_READINGS.find((r) => r.id === prereqId);
+    if (!prereqModule) return false;
+    const totalSections = prereqModule.sections.length;
+    const completedSet = new Set(
+      allProgress?.filter((p) => p.readingId === prereqId).map((p) => p.sectionId)
+    );
+    return completedSet.size < totalSections;
+  });
+
+  if (unmet.length === 0) return null;
+
+  const unmetModules = unmet
+    .map((id) => STUDY_READINGS.find((r) => r.id === id))
+    .filter(Boolean);
+
+  return (
+    <Alert className="border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-950/20" data-testid="alert-prerequisites">
+      <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+      <AlertDescription className="text-sm">
+        <span className="font-medium">Recommended prerequisite{unmet.length > 1 ? 's' : ''}:</span>{' '}
+        {unmetModules.map((mod, i) => (
+          <span key={mod!.id}>
+            {i > 0 && ', '}
+            <Link
+              href={`/app/${examTrack}/readings/${mod!.id}`}
+              className="underline text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100"
+              data-testid={`link-prereq-${mod!.id}`}
+            >
+              {mod!.title}
+            </Link>
+          </span>
+        ))}
+        {' '}first
+      </AlertDescription>
+    </Alert>
+  );
+}
 
 function ConceptSection({
   section,
@@ -53,6 +122,7 @@ function ConceptSection({
         <div className="text-sm leading-relaxed whitespace-pre-line">
           {section.content}
         </div>
+        <BookRefChips refs={section.bookRefs} />
         {!completed && (
           <Button
             variant="outline"
@@ -121,6 +191,7 @@ function FormulaSection({
           </AlertDescription>
         </Alert>
 
+        <BookRefChips refs={section.bookRefs} />
         {!completed && (
           <Button
             variant="outline"
@@ -186,6 +257,7 @@ function WorkedExampleSection({
           </p>
         </div>
 
+        <BookRefChips refs={section.bookRefs} />
         {!completed && (
           <Button
             variant="outline"
@@ -547,6 +619,11 @@ export default function StudyReadingPage() {
     enabled: !!readingId,
   });
 
+  const { data: allProgressData } = useQuery<Array<{ readingId: string; sectionId: string }>>({
+    queryKey: ['/api/study-reading-progress'],
+    enabled: !!reading?.prerequisites?.length,
+  });
+
   const completedSections = useMemo(() => {
     const set = new Set<string>();
     if (progressData) {
@@ -716,6 +793,12 @@ export default function StudyReadingPage() {
           </h1>
           <p className="text-muted-foreground text-sm">{reading.description}</p>
         </div>
+
+        <PrerequisiteBanner
+          prerequisites={reading.prerequisites}
+          examTrack={examTrack}
+          allProgress={allProgressData}
+        />
 
         <div className="space-y-1">
           <div className="flex items-center justify-between text-sm">
