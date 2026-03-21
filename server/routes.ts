@@ -251,21 +251,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const progress = await storage.upsertWeekProgress(data);
       
       // Log daily activity for streak tracking based on which pillars have items
-      if (data.readCompleted && data.readCompleted.length > 0) {
-        await storage.logDailyActivity(userId, 'read');
+      const anyPillarActive = (
+        (data.readCompleted && data.readCompleted.length > 0) ||
+        (data.focusCompleted && data.focusCompleted.length > 0) ||
+        (data.applyCompleted && data.applyCompleted.length > 0) ||
+        (data.reinforceCompleted && data.reinforceCompleted.length > 0)
+      );
+      
+      if (anyPillarActive) {
         const prefs = await storage.getUserPreferences(userId);
         const examTrack = data.examTrack || prefs?.preferredExamTrack || 'fs';
         const timezone = prefs?.timezone || 'America/Chicago';
-        await storage.updatePillarQuestProgress(userId, 'read', examTrack, timezone);
-      }
-      if (data.focusCompleted && data.focusCompleted.length > 0) {
-        await storage.logDailyActivity(userId, 'focus');
-      }
-      if (data.applyCompleted && data.applyCompleted.length > 0) {
-        await storage.logDailyActivity(userId, 'apply');
-      }
-      if (data.reinforceCompleted && data.reinforceCompleted.length > 0) {
-        await storage.logDailyActivity(userId, 'reinforce');
+        
+        if (data.readCompleted && data.readCompleted.length > 0) {
+          await storage.logDailyActivity(userId, 'read');
+          await storage.updatePillarQuestProgress(userId, 'read', examTrack, timezone);
+        }
+        if (data.focusCompleted && data.focusCompleted.length > 0) {
+          await storage.logDailyActivity(userId, 'focus');
+          await storage.updatePillarQuestProgress(userId, 'focus', examTrack, timezone);
+        }
+        if (data.applyCompleted && data.applyCompleted.length > 0) {
+          await storage.logDailyActivity(userId, 'apply');
+          await storage.updatePillarQuestProgress(userId, 'apply', examTrack, timezone);
+        }
+        if (data.reinforceCompleted && data.reinforceCompleted.length > 0) {
+          await storage.logDailyActivity(userId, 'reinforce');
+          await storage.updatePillarQuestProgress(userId, 'reinforce', examTrack, timezone);
+        }
       }
       
       res.json(progress);

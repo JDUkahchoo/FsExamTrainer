@@ -342,10 +342,11 @@ export default function FlashcardsPage() {
     mutationFn: ({ cardId, mode }: { cardId: string; mode: string }) =>
       apiRequest('POST', '/api/flashcards/progress', { cardId, mode, examTrack }),
     onSuccess: () => {
-      // Use predicate for partial matching on daily-quests (query key includes examTrack)
       queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });
+      queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
     }
   });
 
