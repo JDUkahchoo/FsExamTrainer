@@ -1079,7 +1079,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Award XP for challenge completion (10 XP base + bonus for accuracy)
       const xpAmount = accuracy >= 90 ? 25 : accuracy >= 70 ? 15 : 10;
       const activityKey = `challenge:flashcard:${session.id}`;
-      await storage.awardXP(userId, xpAmount, 'flashcard_challenge', activityKey);
+      await storage.awardXp(userId, xpAmount, activityKey);
 
       await storage.logDailyActivity(userId, 'flashcard_challenge');
 
