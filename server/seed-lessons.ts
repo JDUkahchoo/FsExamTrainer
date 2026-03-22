@@ -164,24 +164,6 @@ async function seedLessons() {
     {
       domainNumber: 0,
       domain: DOMAINS[0],
-      title: "Scientific Calculator Operations",
-      description: "Master calculator functions for surveying computations",
-      content: "Scientific calculators perform trigonometric, logarithmic, and statistical functions essential for surveying. Proper mode settings and function use prevent errors.",
-      difficulty: "easy",
-      orderIndex: 9,
-      estimatedMinutes: 15,
-      suggestedWeek: 3,
-      questions: [
-        { type: "multiple_choice", text: "For angle calculations in surveying, the calculator should be in which mode?", options: ["Radians", "Degrees", "Gradians", "Either A or B"], answer: "1", explanation: "Surveyors primarily use degrees for angle measurements", points: 10 },
-        { type: "multiple_choice", text: "The sin⁻¹ button calculates:", options: ["1 divided by sine", "Arcsine (inverse sine)", "Sine squared", "Negative sine"], answer: "1", explanation: "sin⁻¹ is the inverse sine function (arcsin), not 1/sin", points: 10 },
-        { type: "fill_in_blank", text: "To calculate 15², you enter 15 then press the ___ button (two characters).", answer: "x²", explanation: "The x² button squares the displayed value", points: 10 },
-        { type: "multiple_choice", text: "Memory functions (M+, MR, MC) are useful for:", options: ["Storing intermediate values", "Faster calculations", "Both A and B", "Neither"], answer: "2", explanation: "Memory stores values for multi-step calculations, speeding up work", points: 10 },
-        { type: "multiple_choice", text: "When entering coordinates, which mode preserves trailing zeros?", options: ["Fix mode", "Sci mode", "Norm mode", "All modes"], answer: "0", explanation: "Fix mode displays a fixed number of decimal places", points: 10 }
-      ]
-    },
-    {
-      domainNumber: 0,
-      domain: DOMAINS[0],
       title: "Significant Figures and Rounding",
       description: "Apply proper rounding and significant figure rules to measurements",
       content: "Precision matters in surveying. Understanding significant figures and proper rounding ensures measurements reflect actual accuracy and prevent false precision.",

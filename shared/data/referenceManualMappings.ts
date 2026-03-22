@@ -335,22 +335,6 @@ export const LESSON_MAPPINGS: LessonMapping[] = [
     ]
   },
   {
-    lessonId: "d0-lesson-09",
-    domainNumber: 0,
-    lessonTitle: "Scientific Calculator Operations",
-    references: [
-      {
-        bookId: "SRM",
-        bookTitle: "Surveyor Reference Manual",
-        bookAuthor: "George M. Cole",
-        edition: "7th Edition",
-        chapter: 8,
-        chapterTitle: "Trigonometry",
-        topics: ["Calculator functions", "Trig functions"]
-      }
-    ]
-  },
-  {
     lessonId: "d0-lesson-10",
     domainNumber: 0,
     lessonTitle: "Significant Figures and Rounding",
@@ -1546,7 +1530,6 @@ export const ES_LESSON_MAPPINGS: Record<string, { chapters: number[]; studyTips?
   "d0-lesson-06": { chapters: [7], studyTips: "Master DMS to decimal degree conversions" },
   "d0-lesson-07": { chapters: [12], studyTips: "Know area formulas for common shapes" },
   "d0-lesson-08": { chapters: [10], studyTips: "Linear equations model coordinate relationships" },
-  "d0-lesson-09": { chapters: [2], studyTips: "Know your calculator's degree mode settings" },
   "d0-lesson-10": { chapters: [2, 3], studyTips: "Significant figures affect measurement precision" },
   
   // Domain 1: Surveying Processes and Methods
