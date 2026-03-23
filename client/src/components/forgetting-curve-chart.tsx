@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Brain, AlertTriangle, Clock, TrendingDown, CheckCircle } from "lucide-react";
@@ -26,7 +27,7 @@ interface ForgettingCurveData {
   };
 }
 
-export function ForgettingCurveChart({ compact = false }: { compact?: boolean }) {
+export function ForgettingCurveChart({ compact = false, onItemClick }: { compact?: boolean; onItemClick?: (item: ForgettingCurveItem) => void }) {
   const { examTrack } = useExamTrack();
   const { data, isLoading } = useQuery<ForgettingCurveData>({
     queryKey: [`/api/forgetting-curve?examTrack=${examTrack}`],
@@ -174,6 +175,18 @@ export function ForgettingCurveChart({ compact = false }: { compact?: boolean })
                   <span className="text-xs text-muted-foreground whitespace-nowrap">
                     in {item.nextReviewIn}d
                   </span>
+                )}
+
+                {onItemClick && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs px-2 h-7"
+                    onClick={() => onItemClick(item)}
+                    data-testid={`button-retention-review-${item.itemId}`}
+                  >
+                    Review
+                  </Button>
                 )}
               </div>
             );

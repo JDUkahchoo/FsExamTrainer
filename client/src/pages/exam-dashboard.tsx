@@ -17,6 +17,7 @@ import { EXAM_TRACKS } from '@shared/schema';
 import { StudyCoachBriefing } from '@/components/study-coach-briefing';
 import { DailyQuestsPanel } from '@/components/daily-quests-panel';
 import { ReviewAlerts } from '@/components/review-alerts';
+import type { ReviewSchedule } from '@shared/schema';
 import { WeeklyLeaderboard } from '@/components/weekly-leaderboard';
 import { ForgettingCurveChart } from '@/components/forgetting-curve-chart';
 import type { UserPreferences } from '@shared/schema';
@@ -33,6 +34,21 @@ interface StudyStats {
 export default function ExamDashboard() {
   const [, setLocation] = useLocation();
   const { examTrack, examName, lessonCount, domainCount } = useExamTrack();
+
+  const handleReviewClick = (review: ReviewSchedule) => {
+    const domainParam = review.domain ? `?domains=${encodeURIComponent(review.domain)}` : '';
+    if (review.itemType === 'flashcard') {
+      setLocation(`/app/${examTrack}/flashcards${domainParam}`);
+    } else {
+      setLocation(`/app/${examTrack}/quiz${domainParam}`);
+    }
+  };
+
+  const handleRetentionItemClick = (item: { domain: string | null }) => {
+    const domainParam = item.domain ? `?domains=${encodeURIComponent(item.domain)}` : '';
+    setLocation(`/app/${examTrack}/flashcards${domainParam}`);
+  };
+
   const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);
 
   const { data: stats } = useQuery<StudyStats>({
@@ -456,7 +472,7 @@ export default function ExamDashboard() {
               <DailyQuestsPanel />
             </div>
             <div className="lg:col-span-1">
-              <ReviewAlerts />
+              <ReviewAlerts onReviewClick={handleReviewClick} />
             </div>
           </div>
 
@@ -554,7 +570,7 @@ export default function ExamDashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <WeeklyLeaderboard compact />
-            <ForgettingCurveChart compact />
+            <ForgettingCurveChart compact onItemClick={handleRetentionItemClick} />
           </div>
 
           {reviewWeekInfo && (
