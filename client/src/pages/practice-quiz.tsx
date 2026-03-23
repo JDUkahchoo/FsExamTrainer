@@ -288,8 +288,9 @@ export default function PracticeQuizPage() {
       const shuffled = shuffleArray(examQuestions);
       questionsForQuiz = shuffled.slice(0, Math.min(50, shuffled.length));
     } else {
-      // Domain-specific practice: show all questions from selected domain
-      questionsForQuiz = examQuestions.filter(q => q.domain === selectedDomain);
+      // Domain-specific practice: randomly select up to 20 questions, rotating each session
+      const filtered = examQuestions.filter(q => q.domain === selectedDomain);
+      questionsForQuiz = shuffleArray(filtered).slice(0, Math.min(20, filtered.length));
     }
     
     const questionsWithIds = questionsForQuiz.map(q => ({
