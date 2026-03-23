@@ -1,9 +1,10 @@
 import { useMemo } from "react";
-import { Link } from "wouter";
+import { Link, useSearch, useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ScrollText, Clock, BookOpen, ArrowRight, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ScrollText, Clock, BookOpen, ArrowRight, CheckCircle2, AlertTriangle, X } from "lucide-react";
 import { useExamTrack } from "@/contexts/exam-track-context";
 import { STUDY_READINGS } from "@shared/data/studyReadings";
 import { getDomainConfig } from "@/lib/domains";
@@ -11,6 +12,10 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function StudyReadingsPage() {
   const { examTrack, examName } = useExamTrack();
+  const [location] = useLocation();
+  const search = useSearch();
+  const params = new URLSearchParams(search);
+  const domainFilter = params.get('domain') ?? null;
 
   const { data: allProgress } = useQuery<Array<{ readingId: string; sectionId: string }>>({
     queryKey: ['/api/study-reading-progress'],
@@ -37,9 +42,13 @@ export default function StudyReadingsPage() {
     return acc;
   }, {});
 
-  const sortedDomainNumbers = Object.keys(readingsByDomain)
-    .map(Number)
-    .sort((a, b) => a - b);
+  const allDomainNumbers = Object.keys(readingsByDomain).map(Number).sort((a, b) => a - b);
+
+  const sortedDomainNumbers = domainFilter
+    ? allDomainNumbers.filter(n => readingsByDomain[n][0].domain === domainFilter)
+    : allDomainNumbers;
+
+  const filteredReadingCount = sortedDomainNumbers.reduce((sum, n) => sum + readingsByDomain[n].length, 0);
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
@@ -53,15 +62,39 @@ export default function StudyReadingsPage() {
         </p>
       </div>
 
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+      <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
         <ScrollText className="w-4 h-4" />
-        <span>{readings.length} readings available</span>
+        <span>{domainFilter ? filteredReadingCount : readings.length} readings {domainFilter ? 'in this domain' : 'available'}</span>
         <span className="text-border">|</span>
         <Clock className="w-4 h-4" />
         <span>{readings.reduce((sum, r) => sum + r.estimatedMinutes, 0)} min total</span>
+        {domainFilter && (
+          <>
+            <span className="text-border">|</span>
+            <Badge variant="secondary" className="gap-1" data-testid="badge-domain-filter">
+              {domainFilter}
+            </Badge>
+            <Link href={location.split('?')[0]}>
+              <Button variant="ghost" size="sm" className="h-6 px-2 text-xs gap-1" data-testid="button-clear-filter">
+                <X className="w-3 h-3" /> Show all
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
 
-      {sortedDomainNumbers.length === 0 && (
+      {domainFilter && sortedDomainNumbers.length === 0 && (
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">
+              No readings found for domain "{domainFilter}".{' '}
+              <Link href={location.split('?')[0]} className="underline">Show all readings</Link>
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {sortedDomainNumbers.length === 0 && !domainFilter && (
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground" data-testid="text-no-readings">

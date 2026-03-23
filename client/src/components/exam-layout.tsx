@@ -1,6 +1,6 @@
 import { type ReactNode, type CSSProperties } from 'react';
 import { useLocation } from 'wouter';
-import { BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, Library, ArrowLeft, Settings } from 'lucide-react';
+import { BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3, GraduationCap, BookMarked, Library, ArrowLeft, Settings, ScrollText } from 'lucide-react';
 import { Link } from 'wouter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import {
@@ -28,6 +28,7 @@ const getMenuItems = (examTrack: string) => {
     { id: `/app/${examTrack}/dashboard`, icon: GraduationCap, label: 'Dashboard', testId: 'nav-dashboard', tracks: ['fs', 'ps'] },
     { id: `/app/${examTrack}/study-plan`, icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan', tracks: ['fs', 'ps'] },
     { id: `/app/${examTrack}/lessons`, icon: BookOpen, label: 'Lessons', testId: 'nav-lessons', tracks: ['fs', 'ps'] },
+    { id: `/app/${examTrack}/readings`, icon: ScrollText, label: 'Interactive Readings', testId: 'nav-readings', tracks: ['fs', 'ps'] },
     { id: `/app/${examTrack}/quiz`, icon: Brain, label: 'Practice Quiz', testId: 'nav-quiz', tracks: ['fs', 'ps'] },
     { id: `/app/${examTrack}/flashcards`, icon: ClipboardCheck, label: 'Flashcards', testId: 'nav-flashcards', tracks: ['fs', 'ps'] },
     { id: `/app/${examTrack}/exam`, icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam', tracks: ['fs', 'ps'] },

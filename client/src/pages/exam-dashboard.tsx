@@ -36,17 +36,13 @@ export default function ExamDashboard() {
   const { examTrack, examName, lessonCount, domainCount } = useExamTrack();
 
   const handleReviewClick = (review: ReviewSchedule) => {
-    const domainParam = review.domain ? `?domains=${encodeURIComponent(review.domain)}` : '';
-    if (review.itemType === 'flashcard') {
-      setLocation(`/app/${examTrack}/flashcards${domainParam}`);
-    } else {
-      setLocation(`/app/${examTrack}/quiz${domainParam}`);
-    }
+    const domainParam = review.domain ? `?domain=${encodeURIComponent(review.domain)}` : '';
+    setLocation(`/app/${examTrack}/readings${domainParam}`);
   };
 
   const handleRetentionItemClick = (item: { domain: string | null }) => {
-    const domainParam = item.domain ? `?domains=${encodeURIComponent(item.domain)}` : '';
-    setLocation(`/app/${examTrack}/flashcards${domainParam}`);
+    const domainParam = item.domain ? `?domain=${encodeURIComponent(item.domain)}` : '';
+    setLocation(`/app/${examTrack}/readings${domainParam}`);
   };
 
   const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);
