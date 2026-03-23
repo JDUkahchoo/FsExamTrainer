@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Brain, AlertTriangle, Clock, TrendingDown, CheckCircle, Loader2 } from "lucide-react";
+import { Link } from 'wouter';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 
@@ -247,6 +248,18 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
             +{items.length - displayItems.length} more items tracked
           </p>
         )}
+
+        <div className="pt-3 border-t flex items-center justify-between gap-2">
+          <p className="text-xs text-muted-foreground">
+            Based on the Ebbinghaus forgetting curve
+          </p>
+          <Link
+            href={`/app/${examTrack}/readings/fs-strategy-spaced-rep`}
+            className="text-xs text-primary underline underline-offset-2 hover:opacity-80 whitespace-nowrap"
+          >
+            Learn the science →
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );

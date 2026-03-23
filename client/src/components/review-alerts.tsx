@@ -7,6 +7,7 @@ import { Bell, Clock, BookOpen, Brain, CheckCircle, AlertTriangle, Loader2 } fro
 import { useExamTrack } from '@/contexts/exam-track-context';
 import type { ReviewSchedule } from '@shared/schema';
 import { formatDistanceToNow } from 'date-fns';
+import { Link } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 
 const itemTypeIcons: Record<string, any> = {
@@ -216,10 +217,16 @@ export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
         </div>
       )}
 
-      <div className="mt-4 pt-3 border-t">
-        <p className="text-xs text-muted-foreground text-center">
+      <div className="mt-4 pt-3 border-t flex items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
           Reviewing at the optimal time improves long-term retention by up to 50%
         </p>
+        <Link
+          href={`/app/${examTrack}/readings/fs-strategy-spaced-rep`}
+          className="text-xs text-primary underline underline-offset-2 hover:opacity-80 whitespace-nowrap"
+        >
+          Learn the science →
+        </Link>
       </div>
     </Card>
   );
