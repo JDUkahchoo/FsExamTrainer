@@ -73,22 +73,6 @@ export const STUDY_READINGS_STRATEGY: ReadingModule[] = [
         },
       },
       {
-        id: 'fs-strategy-spaced-rep-s8',
-        type: 'knowledge_check',
-        title: 'Knowledge Check: Optimal Study Timing',
-        knowledgeCheck: {
-          question: 'You have a busy week and are deciding when to review a flashcard that is currently showing 65% retention (Fading, yellow). What does the spaced repetition science recommend?',
-          options: [
-            'Wait until it drops to 0% — reviewing at 65% wastes time since you still remember it',
-            'Review it now — the 50–89% Fading window is the optimal zone for maximum consolidation efficiency',
-            'Review it daily for the next week to make sure it stays at 100%',
-            'Skip it entirely — if you forget it, you can just relearn it from scratch',
-          ],
-          correctIndex: 1,
-          explanation: 'The Fading window (50–89% retention) is the optimal review zone. The memory has decayed enough that retrieval requires real effort (which drives consolidation) but has not been lost entirely. Reviewing now produces the largest stability gain per unit of time invested. Waiting until it drops further (At Risk or lower) means you will spend more effort relearning rather than reinforcing.',
-        },
-      },
-      {
         id: 'fs-strategy-spaced-rep-s9',
         type: 'further_reading',
         title: 'Further Reading',

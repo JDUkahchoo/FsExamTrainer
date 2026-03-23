@@ -223,7 +223,7 @@ export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
         </p>
         <Link
           href={`/app/${examTrack}/readings/fs-strategy-spaced-rep`}
-          className="text-xs text-primary underline underline-offset-2 hover:opacity-80 whitespace-nowrap"
+          className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground whitespace-nowrap"
         >
           Learn the science →
         </Link>
