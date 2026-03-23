@@ -44,7 +44,7 @@ export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
 
   const markDoneMutation = useMutation({
     mutationFn: async (reviewId: string) => {
-      return apiRequest('PATCH', `/api/retention/reviews/${reviewId}`, { quality: 3 });
+      return apiRequest('PATCH', `/api/reviews/${reviewId}`, { quality: 3 });
     },
     onSuccess: (_data, reviewId) => {
       setMarkedIds(prev => new Set(prev).add(reviewId));
@@ -115,30 +115,26 @@ export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
                   return (
                     <div
                       key={review.id}
-                      className={`flex items-center justify-between p-2 rounded-lg border transition-opacity ${
+                      className={`flex items-start gap-2 p-2 rounded-lg border transition-opacity ${
                         isMarked
                           ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800 opacity-70'
                           : 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
                       }`}
                       data-testid={`review-due-${review.itemId}`}
                     >
-                      <div className="flex items-center gap-2">
-                        <Icon className={`h-4 w-4 ${isMarked ? 'text-green-600' : 'text-orange-600'}`} />
-                        <div>
-                          <span className="text-sm font-medium">{review.itemTitle}</span>
-                          {review.domain && (
-                            <span className="text-xs text-muted-foreground ml-2">
-                              ({review.domain})
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {overdue && !isMarked && (
-                          <span className="text-xs text-orange-600">
-                            {formatDistanceToNow(new Date(review.nextReviewAt))} overdue
-                          </span>
+                      <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${isMarked ? 'text-green-600' : 'text-orange-600'}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium leading-snug">{review.itemTitle}</div>
+                        {review.domain && (
+                          <div className="text-xs text-muted-foreground">{review.domain}</div>
                         )}
+                        {overdue && !isMarked && (
+                          <div className="text-xs text-orange-600 mt-0.5">
+                            {formatDistanceToNow(new Date(review.nextReviewAt))} overdue
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
                         {isMarked ? (
                           <span className="text-xs text-green-600 font-medium flex items-center gap-1">
                             <CheckCircle className="h-3 w-3" />
@@ -157,7 +153,7 @@ export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="text-xs text-green-700 dark:text-green-400 hover:text-green-800 hover:bg-green-50 dark:hover:bg-green-950/30"
+                              className="text-xs text-green-700 dark:text-green-400 hover:text-green-800 hover:bg-green-50 dark:hover:bg-green-950/30 px-2"
                               onClick={() => markDoneMutation.mutate(review.id)}
                               disabled={isPending}
                               data-testid={`button-mark-done-${review.itemId}`}

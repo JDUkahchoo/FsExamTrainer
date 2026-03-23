@@ -789,6 +789,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/reviews/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reviewId = req.params.id;
+      const { quality = 3 } = req.body;
+
+      if (typeof quality !== 'number' || quality < 0 || quality > 5) {
+        return res.status(400).json({ error: "quality must be a number 0-5" });
+      }
+
+      const updated = await storage.updateReviewScheduleById(reviewId, userId, quality);
+      if (!updated) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating review schedule:", error);
+      res.status(500).json({ error: "Failed to update review" });
+    }
+  });
+
   app.post("/api/reviews", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;

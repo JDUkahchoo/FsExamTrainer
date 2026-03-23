@@ -291,6 +291,8 @@ export interface IStorage {
   updateRetentionReview(userId: string, reviewId: string, updates: Partial<InsertRetentionReview>): Promise<RetentionReview>;
   getRetentionStats(userId: string, week?: number, examTrack?: string): Promise<{ totalReviews: number; dueToday: number; averageMastery: number; retentionScore: number }>;
 
+  updateReviewScheduleById(id: string, userId: string, quality: number): Promise<ReviewSchedule | null>;
+
   // Daily Activity methods
   getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
   logDailyActivity(userId: string, activityType: string): Promise<void>;
@@ -3059,6 +3061,45 @@ export class DatabaseStorage implements IStorage {
         lte(reviewSchedule.nextReviewAt, now)
       ))
       .orderBy(reviewSchedule.nextReviewAt);
+  }
+
+  async updateReviewScheduleById(id: string, userId: string, quality: number): Promise<ReviewSchedule | null> {
+    const [existing] = await db
+      .select()
+      .from(reviewSchedule)
+      .where(and(eq(reviewSchedule.id, id), eq(reviewSchedule.userId, userId)))
+      .limit(1);
+
+    if (!existing) return null;
+
+    const now = new Date();
+    let { easeFactor, intervalDays, reviewCount } = existing;
+
+    easeFactor = Math.max(1.3, easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
+
+    if (quality < 3) {
+      intervalDays = 1;
+      reviewCount = 0;
+    } else {
+      if (reviewCount === 0) {
+        intervalDays = 1;
+      } else if (reviewCount === 1) {
+        intervalDays = 6;
+      } else {
+        intervalDays = Math.round(intervalDays * easeFactor);
+      }
+      reviewCount = reviewCount + 1;
+    }
+
+    const nextReviewAt = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000);
+
+    const [updated] = await db
+      .update(reviewSchedule)
+      .set({ easeFactor, intervalDays, reviewCount, lastReviewedAt: now, nextReviewAt })
+      .where(eq(reviewSchedule.id, id))
+      .returning();
+
+    return updated || null;
   }
 
   async createOrUpdateReviewItem(

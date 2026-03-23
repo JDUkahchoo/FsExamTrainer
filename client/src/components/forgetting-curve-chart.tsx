@@ -41,7 +41,7 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
 
   const markDoneMutation = useMutation({
     mutationFn: async (reviewId: string) => {
-      return apiRequest('PATCH', `/api/retention/reviews/${reviewId}`, { quality: 3 });
+      return apiRequest('PATCH', `/api/reviews/${reviewId}`, { quality: 3 });
     },
     onSuccess: (_data, reviewId) => {
       setMarkedIds(prev => new Set(prev).add(reviewId));
