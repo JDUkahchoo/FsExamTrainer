@@ -3478,6 +3478,7 @@ export class DatabaseStorage implements IStorage {
 
   async getForgettingCurveData(userId: string, examTrack: string = 'fs'): Promise<{
     items: Array<{
+      id: string;
       itemId: string;
       itemTitle: string;
       domain: string | null;
@@ -3529,6 +3530,7 @@ export class DatabaseStorage implements IStorage {
       const nextReviewIn = Math.max(0, Math.ceil((nextReviewDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
 
       return {
+        id: review.id,
         itemId: review.itemId,
         itemTitle: review.itemTitle,
         domain: review.domain,

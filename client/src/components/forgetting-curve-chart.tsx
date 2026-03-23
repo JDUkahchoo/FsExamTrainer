@@ -1,13 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Brain, AlertTriangle, Clock, TrendingDown, CheckCircle } from "lucide-react";
+import { Brain, AlertTriangle, Clock, TrendingDown, CheckCircle, Loader2 } from "lucide-react";
 import { useExamTrack } from '@/contexts/exam-track-context';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 
 interface ForgettingCurveItem {
+  id: string;
   itemId: string;
   itemTitle: string;
   domain: string | null;
@@ -29,8 +32,27 @@ interface ForgettingCurveData {
 
 export function ForgettingCurveChart({ compact = false, onItemClick }: { compact?: boolean; onItemClick?: (item: ForgettingCurveItem) => void }) {
   const { examTrack } = useExamTrack();
+  const [markedIds, setMarkedIds] = useState<Set<string>>(new Set());
+
   const { data, isLoading } = useQuery<ForgettingCurveData>({
     queryKey: [`/api/forgetting-curve?examTrack=${examTrack}`],
+  });
+
+  const markDoneMutation = useMutation({
+    mutationFn: async (reviewId: string) => {
+      return apiRequest('PATCH', `/api/retention/reviews/${reviewId}`, { quality: 3 });
+    },
+    onSuccess: (_data, reviewId) => {
+      setMarkedIds(prev => new Set(prev).add(reviewId));
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [`/api/forgetting-curve?examTrack=${examTrack}`] });
+        setMarkedIds(prev => {
+          const next = new Set(prev);
+          next.delete(reviewId);
+          return next;
+        });
+      }, 1500);
+    }
   });
 
   if (isLoading) {
@@ -77,12 +99,6 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
     if (percent >= 80) return 'text-green-600 dark:text-green-400';
     if (percent >= 50) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
-  };
-
-  const getRetentionBg = (percent: number) => {
-    if (percent >= 80) return 'bg-green-500';
-    if (percent >= 50) return 'bg-yellow-500';
-    return 'bg-red-500';
   };
 
   const getRetentionBadge = (percent: number) => {
@@ -133,13 +149,20 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
             <TrendingDown className="w-4 h-4 text-muted-foreground" />
             Concepts Needing Attention
           </h4>
-          
+
           {displayItems.map((item) => {
             const badge = getRetentionBadge(item.retentionPercent);
+            const isMarked = markedIds.has(item.id);
+            const isPending = markDoneMutation.isPending && markDoneMutation.variables === item.id;
+
             return (
-              <div 
+              <div
                 key={item.itemId}
-                className="flex items-center gap-3 p-2 rounded-lg border bg-card"
+                className={`flex items-center gap-3 p-2 rounded-lg border transition-opacity ${
+                  isMarked
+                    ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800 opacity-70'
+                    : 'bg-card'
+                }`}
                 data-testid={`retention-item-${item.itemId}`}
               >
                 <div className="flex-1 min-w-0">
@@ -156,8 +179,8 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
 
                 <div className="flex items-center gap-2">
                   <div className="w-16">
-                    <Progress 
-                      value={item.retentionPercent} 
+                    <Progress
+                      value={item.retentionPercent}
                       className="h-2"
                     />
                   </div>
@@ -177,16 +200,42 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
                   </span>
                 )}
 
-                {onItemClick && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-xs px-2 h-7"
-                    onClick={() => onItemClick(item)}
-                    data-testid={`button-retention-review-${item.itemId}`}
-                  >
-                    Review
-                  </Button>
+                {isMarked ? (
+                  <span className="text-xs text-green-600 font-medium flex items-center gap-1 whitespace-nowrap">
+                    <CheckCircle className="h-3 w-3" />
+                    Marked!
+                  </span>
+                ) : (
+                  <div className="flex items-center gap-1">
+                    {onItemClick && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs px-2 h-7"
+                        onClick={() => onItemClick(item)}
+                        data-testid={`button-retention-review-${item.itemId}`}
+                      >
+                        Review
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-xs px-2 h-7 text-green-700 dark:text-green-400 hover:text-green-800 hover:bg-green-50 dark:hover:bg-green-950/30"
+                      onClick={() => markDoneMutation.mutate(item.id)}
+                      disabled={isPending}
+                      data-testid={`button-mark-done-retention-${item.itemId}`}
+                    >
+                      {isPending ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <>
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Done
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 )}
               </div>
             );
