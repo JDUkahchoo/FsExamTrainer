@@ -231,7 +231,7 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
                       ) : (
                         <>
                           <CheckCircle className="h-3 w-3 mr-1" />
-                          Done
+                          Mark Done
                         </>
                       )}
                     </Button>

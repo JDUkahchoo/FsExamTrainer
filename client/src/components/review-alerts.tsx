@@ -166,7 +166,7 @@ export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
                               ) : (
                                 <>
                                   <CheckCircle className="h-3 w-3 mr-1" />
-                                  Done
+                                  Mark Done
                                 </>
                               )}
                             </Button>
