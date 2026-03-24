@@ -607,24 +607,27 @@ export default function StudyPlan() {
     const weekKey = `week-${week}`;
     const manualCompleted = completedItems[weekKey] || new Set();
     const autoCompleted = autoCompletedItems[weekKey] || new Set();
-
     const merged = new Set([...manualCompleted, ...autoCompleted]);
 
-    const weekLessons = weeklyLessonsMap.get(week) || [];
-    const completedLessons = weekLessons.filter((lesson: any) => 
-      lessonProgressData.some((p: any) => p.lessonId === lesson.id && p.completed)
-    );
-
-    let readApplyCompleted = 0;
+    // Count completed items per checklist category (matching what the user sees)
+    let readDone = 0, focusDone = 0, applyDone = 0, reinforceDone = 0;
     merged.forEach(item => {
-      if (item.startsWith('read-') || item.startsWith('apply-')) {
-        readApplyCompleted++;
-      }
+      if (item.startsWith('read-')) readDone++;
+      else if (item.startsWith('focus-')) focusDone++;
+      else if (item.startsWith('apply-')) applyDone++;
+      else if (item.startsWith('reinforce-')) reinforceDone++;
     });
 
-    const trackableTotal = plan.read.length + plan.apply.length + weekLessons.length;
-    const totalCompleted = readApplyCompleted + completedLessons.length;
-    
+    // Cap each category to the plan's count to avoid over-counting
+    const totalCompleted =
+      Math.min(readDone, plan.read.length) +
+      Math.min(focusDone, plan.focus.length) +
+      Math.min(applyDone, plan.apply.length) +
+      Math.min(reinforceDone, plan.reinforce.length);
+
+    // Denominator matches the checklist shown to the user
+    const trackableTotal = plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length;
+
     return trackableTotal > 0 ? Math.round((totalCompleted / trackableTotal) * 100) : 0;
   };
 
