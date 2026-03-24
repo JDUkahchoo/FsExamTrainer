@@ -15,6 +15,7 @@ import type { QuizResult, Domain, DOMAINS } from '@shared/schema';
 
 interface FocusWeaknessScannerProps {
   week: number;
+  domains?: string[];
   colorClass?: string;
   examTrack?: string;
 }
@@ -30,7 +31,7 @@ const DOMAIN_COLORS: Record<string, string> = {
   'Applied Mathematics & Statistics': 'bg-indigo-500',
 };
 
-export function FocusWeaknessScanner({ week, colorClass = "text-primary", examTrack = "fs" }: FocusWeaknessScannerProps) {
+export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary", examTrack = "fs" }: FocusWeaknessScannerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showDrillModal, setShowDrillModal] = useState(false);
 
@@ -63,9 +64,23 @@ export function FocusWeaknessScanner({ week, colorClass = "text-primary", examTr
 
   const isLoading = missesLoading || statsLoading || streakLoading;
 
-  const sortedStats = [...domainStats].sort((a, b) => a.accuracy - b.accuracy);
-  const weakestDomains = sortedStats.slice(0, 3);
   const hasData = domainStats.length > 0;
+
+  // Split stats into "this week's domains" and "other domains"
+  const thisWeekStats = domains && domains.length > 0
+    ? [...domainStats].filter(d => domains.includes(d.domain)).sort((a, b) => a.accuracy - b.accuracy)
+    : [];
+  const otherStats = domains && domains.length > 0
+    ? [...domainStats].filter(d => !domains.includes(d.domain)).sort((a, b) => a.accuracy - b.accuracy)
+    : [...domainStats].sort((a, b) => a.accuracy - b.accuracy);
+
+  // For the heatmap, show week's domains first, then others
+  const sortedStats = [...thisWeekStats, ...otherStats];
+
+  // Weak domains to drill: prefer this week's if weak, otherwise fall back to overall
+  const weekDomainsMissing = thisWeekStats.filter(d => d.accuracy < 70);
+  const allWeakSorted = [...domainStats].sort((a, b) => a.accuracy - b.accuracy).slice(0, 3).filter(d => d.accuracy < 70);
+  const weakestDomains = weekDomainsMissing.length > 0 ? weekDomainsMissing : allWeakSorted;
 
   const getAccuracyColor = (accuracy: number) => {
     if (accuracy >= 80) return 'text-green-600 dark:text-green-400';
@@ -134,34 +149,62 @@ export function FocusWeaknessScanner({ week, colorClass = "text-primary", examTr
                     <AlertTriangle className="w-4 h-4 text-amber-500" />
                     Domain Heatmap
                   </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    {sortedStats.map((stat) => (
-                      <div
-                        key={stat.domain}
-                        data-testid={`domain-stat-${stat.domain.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
-                        className="p-2 rounded-md bg-muted/30 space-y-1"
-                      >
-                        <div className="flex items-center gap-1">
-                          <div className={`w-2 h-2 rounded-full ${DOMAIN_COLORS[stat.domain] || 'bg-gray-500'}`} />
-                          <span className="text-xs font-medium truncate" title={stat.domain}>
-                            {stat.domain.split(' ').slice(0, 2).join(' ')}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Progress 
-                            value={stat.accuracy} 
-                            className="h-1.5 flex-1"
-                          />
-                          <span className={`text-xs font-bold ${getAccuracyColor(stat.accuracy)}`}>
-                            {stat.accuracy}%
-                          </span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {stat.correct}/{stat.total} correct
-                        </div>
+
+                  {thisWeekStats.length > 0 && (
+                    <div className="space-y-1.5">
+                      <p className="text-xs font-semibold text-primary uppercase tracking-wider">This Week's Domains</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {thisWeekStats.map((stat) => (
+                          <div
+                            key={stat.domain}
+                            data-testid={`domain-stat-${stat.domain.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                            className="p-2 rounded-md border border-primary/20 bg-primary/5 space-y-1"
+                          >
+                            <div className="flex items-center gap-1">
+                              <div className={`w-2 h-2 rounded-full ${DOMAIN_COLORS[stat.domain] || 'bg-gray-500'}`} />
+                              <span className="text-xs font-medium truncate" title={stat.domain}>
+                                {stat.domain.split(' ').slice(0, 3).join(' ')}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Progress value={stat.accuracy} className="h-1.5 flex-1" />
+                              <span className={`text-xs font-bold ${getAccuracyColor(stat.accuracy)}`}>{stat.accuracy}%</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground">{stat.correct}/{stat.total} correct</div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
+
+                  {otherStats.length > 0 && (
+                    <div className="space-y-1.5">
+                      {thisWeekStats.length > 0 && (
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">All Domains</p>
+                      )}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {otherStats.map((stat) => (
+                          <div
+                            key={stat.domain}
+                            data-testid={`domain-stat-${stat.domain.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                            className="p-2 rounded-md bg-muted/30 space-y-1"
+                          >
+                            <div className="flex items-center gap-1">
+                              <div className={`w-2 h-2 rounded-full ${DOMAIN_COLORS[stat.domain] || 'bg-gray-500'}`} />
+                              <span className="text-xs font-medium truncate" title={stat.domain}>
+                                {stat.domain.split(' ').slice(0, 2).join(' ')}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Progress value={stat.accuracy} className="h-1.5 flex-1" />
+                              <span className={`text-xs font-bold ${getAccuracyColor(stat.accuracy)}`}>{stat.accuracy}%</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground">{stat.correct}/{stat.total} correct</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {weakestDomains.length > 0 && weakestDomains[0].accuracy < 70 && (
