@@ -3091,6 +3091,9 @@ export class DatabaseStorage implements IStorage {
       reviewCount = reviewCount + 1;
     }
 
+    // Cap interval at 60 days to keep reviews practical
+    intervalDays = Math.min(intervalDays, 60);
+
     const nextReviewAt = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000);
 
     const [updated] = await db
