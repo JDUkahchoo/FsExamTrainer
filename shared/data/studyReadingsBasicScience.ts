@@ -96,6 +96,42 @@ export const STUDY_READINGS_BASIC_SCIENCE: ReadingModule[] = [
         },
       },
       {
+        id: 'fs-d14-bs-s9',
+        type: 'concept',
+        title: 'Environmental Sciences — Wetlands and Regulatory Authority',
+        content: 'Surveyors frequently encounter environmental constraints on land development, particularly those related to wetlands and floodplains. A working knowledge of the regulatory framework is essential for advising clients and scoping projects.\n\nWetland Delineation — The Three-Factor Test:\nA wetland is officially defined by the U.S. Army Corps of Engineers (USACE) and EPA as land that exhibits all THREE of the following characteristics:\n1. Hydrology — the area is inundated or saturated by surface or groundwater at a frequency and duration sufficient to support wetland vegetation. Indicators include standing water, water marks on trees, oxidized root channels, and drift lines.\n2. Hydric Soils — soils formed under conditions of saturation, flooding, or ponding long enough during the growing season to develop anaerobic conditions. Hydric soils are listed on the USDA National Hydric Soils List. Indicators include gleying, mottling, and reduced iron (dark gray colors at shallow depth).\n3. Hydrophytic Vegetation — plant communities adapted to living in saturated or inundated conditions. Plants are classified by obligate wetland (OBL), facultative wetland (FACW), facultative (FAC), facultative upland (FACU), and upland (UPL) designations.\n\nAll THREE factors must be present for an area to be jurisdictional wetland. Absence of any one factor means the area is NOT a regulated wetland.\n\nSection 404 of the Clean Water Act:\nSection 404 grants the U.S. Army Corps of Engineers authority to regulate the discharge of dredged or fill material into "waters of the United States," which includes wetlands. Any project that proposes to fill or excavate in a jurisdictional wetland must obtain a Section 404 permit from the USACE. Unpermitted fill can result in mandatory restoration orders and significant fines. The surveyor\'s role includes locating wetland boundaries on survey plats when required by the client or project scope.\n\nFEMA Flood Zones:\nFEMA designates flood zones through Flood Insurance Rate Maps (FIRMs). Key zone designations surveyors must know:\n- Zone AE: High-risk zone with 1% annual chance of flooding (the "100-year floodplain"). AE zones have a Base Flood Elevation (BFE) determined by detailed hydraulic analysis. Structures in Zone AE typically require flood insurance.\n- Zone A: High-risk zone with 1% annual chance of flooding, but NO Base Flood Elevation established (approximate study). Less detailed than AE.\n- Zone X (shaded): Moderate-risk zone with 0.2% annual chance of flooding (500-year floodplain).\n- Zone X (unshaded): Minimal flood hazard.\n- Zone VE: Coastal high-hazard area subject to wave action; most restrictive for construction.\n\nSurveyors often prepare Elevation Certificates (FEMA Form 086-0-33) to document the lowest floor elevation of structures in or near Zone AE for flood insurance rating purposes.',
+        bookRefs: [
+          { book: 'U.S. Army Corps of Engineers Wetland Delineation Manual (1987)', chapter: 'All', topic: 'Three-factor test for wetland delineation' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Environmental constraints, regulatory overview' },
+        ],
+      },
+      {
+        id: 'fs-d14-bs-s10',
+        type: 'concept',
+        title: 'Geology Basics for Surveyors — Rock Types and Soil Horizons',
+        content: 'Surveyors encounter geology and soils in the context of monument stability, earthwork, and land classification. A basic familiarity with rock types and soil horizons supports fieldwork and exam preparation.\n\nThe Rock Cycle — Three Rock Types:\nAll rocks belong to one of three categories based on their origin:\n1. Igneous Rocks — formed by cooling and solidification of magma or lava.\n   - Intrusive (plutonic): cooled slowly underground; coarse-grained. Example: granite, gabbro.\n   - Extrusive (volcanic): cooled rapidly at the surface; fine-grained or glassy. Example: basalt, obsidian.\n   Characteristics: typically very hard, good foundation material, difficult to excavate.\n\n2. Sedimentary Rocks — formed by the accumulation and cementation of sediment (particles of rock, shell, or organic material) deposited in layers (strata).\n   - Clastic: formed from rock fragments. Examples: sandstone (sand particles), shale (clay particles), conglomerate (gravel).\n   - Chemical/Biogenic: formed by precipitation or biological processes. Examples: limestone (calcium carbonate from shells/reefs), coal (organic matter).\n   Characteristics: layered structure, often contain fossils, variable strength. Limestone is susceptible to dissolution (karst), creating sinkholes.\n\n3. Metamorphic Rocks — formed when existing rocks are transformed by heat, pressure, or chemically active fluids deep in the Earth.\n   Examples: marble (from limestone), quartzite (from sandstone), slate and schist (from shale).\n   Characteristics: foliated or banded texture, generally harder than parent rock.\n\nSoil Horizons (Soil Profile):\nA soil profile is a vertical cross-section from the surface to bedrock, divided into horizons:\n- O Horizon: Organic layer at the surface (leaf litter, humus). Not present in many soils.\n- A Horizon: Topsoil — dark, organic-rich, supports plant growth. High biological activity.\n- B Horizon: Subsoil (illuviation zone) — where clay, iron, and aluminum compounds accumulate leached from the A horizon. Less organic matter, denser than A.\n- C Horizon: Parent material — partially weathered bedrock or transported sediment. Little biological activity.\n- R Horizon: Unweathered bedrock (regolith).\n\nFor surveyors: monument pits are typically dug through the A and B horizons into the C horizon or deeper. The B horizon\'s clay-rich composition can make excavation difficult and affects monument stability. Frost heave is most severe where the soil contains ice-segregation-prone soils (silts, fine sands) in the A and B horizons.',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Appendix', topic: 'Physical geography and soils overview' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 1', topic: 'Basic sciences background for FS exam' },
+        ],
+      },
+      {
+        id: 'fs-d14-bs-s11',
+        type: 'knowledge_check',
+        title: 'Environmental Sciences Knowledge Check',
+        knowledgeCheck: {
+          question: 'A surveyor is asked to stake property lines for a proposed subdivision. During the site inspection, the surveyor observes areas with standing water, gray mottled soils, and cattail vegetation. Under the Army Corps of Engineers\' wetland determination framework, which of the following statements is correct?',
+          options: [
+            'The area is a jurisdictional wetland only if it drains to a navigable waterway',
+            'All three factors (hydrology, hydric soils, and hydrophytic vegetation) must be present to designate the area as a jurisdictional wetland',
+            'The presence of hydric soils alone is sufficient to classify an area as a regulated wetland',
+            'Wetland determination is the sole responsibility of the EPA; the Army Corps of Engineers has no role'
+          ],
+          correctIndex: 1,
+          explanation: 'The U.S. Army Corps of Engineers (USACE) three-factor test requires that ALL three wetland indicators be present simultaneously: (1) wetland hydrology, (2) hydric soils, and (3) hydrophytic vegetation. In this scenario, standing water is a hydrology indicator, gray mottled soils indicate hydric soil conditions, and cattails are obligate wetland (OBL) plants — all three factors appear to be present. However, only a formal delineation by a qualified wetlands scientist can confirm jurisdictional status. The USACE administers Section 404 of the Clean Water Act for dredge-and-fill activities in waters of the United States, which includes wetlands.',
+        },
+      },
+      {
         id: 'fs-d14-bs-s8',
         type: 'further_reading',
         title: 'Basic Sciences and Historical Methods References',
@@ -103,6 +139,7 @@ export const STUDY_READINGS_BASIC_SCIENCE: ReadingModule[] = [
           { book: 'Elementary Surveying, 15th Edition (Ghilani & Wolf)', chapter: 'Chapters 1-6', topic: 'Error theory, atmospheric corrections, distance measurement' },
           { book: 'BLM Manual of Surveying Instructions (2009)', chapter: 'Chapter 3', topic: 'Witness trees, original evidence, and historical survey interpretation' },
           { book: 'Surveyor Reference Manual', chapter: 'Topic II, Ch 13-16', topic: 'Historical instruments, taping, leveling corrections' },
+          { book: 'USACE Wetland Delineation Manual (1987)', chapter: 'All', topic: 'Wetland three-factor test and Corps jurisdiction under Section 404' },
         ],
       },
     ],

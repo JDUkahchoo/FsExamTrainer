@@ -3381,4 +3381,135 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     explanation: 'Under a fixed fee (lump sum) arrangement, the surveyor receives the same total payment regardless of actual hours spent. If the work is completed quickly and efficiently, the surveyor earns a higher effective hourly rate. This creates a direct financial incentive for efficiency. Hourly and cost-plus arrangements pay based on actual time, reducing the incentive to work quickly.',
     difficulty: 'easy'
   },
+  // Task #14 — Basic Sciences, Dendrology & Historical Methods (10 exam questions)
+  {
+    domain: 'Math & Basic Science',
+    question: 'A line measured with a Gunter\'s chain is recorded as 17 chains and 65 links. How many square chains are contained in a rectangular parcel that is 17 ch 65 lks wide and 40 chains long?',
+    options: [
+      '706.00 square chains',
+      '705.65 square chains',
+      '695.00 square chains',
+      '714.00 square chains'
+    ],
+    correctAnswer: 0,
+    explanation: '17 chains + 65 links = 17.65 chains. Area = 17.65 ch × 40 ch = 706.00 square chains. To convert to acres: 706.00 ÷ 10 = 70.6 acres (since 10 square chains = 1 acre). Gunter\'s chain unit conversions are fundamental to PLSS parcel calculations: 1 chain = 66 ft, 100 links = 1 chain, 10 square chains = 1 acre, 640 acres = 1 section.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A GLO section corner post is described in original field notes with two witness trees: "Post Oak, 18 in dia, bears N 45° E, 35 lks" and "Elm, 10 in dia, bears S 70° W, 42 lks." A field crew finds a post oak with an 18-inch diameter at the recorded bearing and distance. No elm is found. What is the classification of the corner evidence found?',
+    options: [
+      'Lost corner — must be restored by proportionate measurement only',
+      'Existent corner — the original monument is still in place',
+      'Obliterated corner — the original position can be recovered from the remaining witness tree',
+      'Conflicting corner — the corner cannot be used because both witness trees must be found'
+    ],
+    correctAnswer: 2,
+    explanation: 'When a corner monument cannot be found but original monuments and accessories (witness trees) referenced in the original field notes can be recovered, the corner is classified as obliterated. An obliterated corner can be restored by reversing the recorded bearing and distance from the surviving witness tree to recover the original corner position. A lost corner has no remaining original evidence and requires proportionate measurement for restoration. Finding even one witness tree in its recorded position constitutes sufficient evidence to classify the corner as obliterated rather than lost.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor is staking a proposed subdivision. During fieldwork, the crew identifies a low-lying area with gray mottled soil, cattail plants, and water-saturated ground. Which regulatory agency and regulatory program most directly governs whether fill material may be placed in this area?',
+    options: [
+      'U.S. Environmental Protection Agency under the Clean Air Act',
+      'U.S. Army Corps of Engineers under Section 404 of the Clean Water Act',
+      'Federal Emergency Management Agency under the National Flood Insurance Program',
+      'State department of transportation under roadway right-of-way regulations'
+    ],
+    correctAnswer: 1,
+    explanation: 'Section 404 of the Clean Water Act authorizes the U.S. Army Corps of Engineers (USACE) to regulate the discharge of dredged or fill material into waters of the United States, which includes wetlands adjacent to navigable waterways. The three observable indicators (gray mottled soils suggesting hydric conditions, cattail vegetation as an obligate wetland plant, and saturated ground as a hydrology indicator) suggest that all three factors of the wetland three-factor test may be present. A formal wetland delineation would be required, and any fill activities in jurisdictional wetlands require a Section 404 permit.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The FEMA Flood Insurance Rate Map shows a parcel located within Zone AE with a Base Flood Elevation (BFE) of 412.5 ft (NAVD 88). The surveyor measures the lowest floor of the structure at elevation 413.8 ft (NAVD 88). What is the freeboard above the BFE, and what does this imply for flood insurance rating?',
+    options: [
+      '−1.3 ft below BFE; the structure is in the floodplain and requires mandatory flood insurance',
+      '+1.3 ft above BFE; the structure is elevated above the BFE, which may reduce flood insurance premiums',
+      '+0.5 ft above BFE; freeboard of less than 1 ft means insurance rates are not affected',
+      '+1.3 ft above BFE; the structure is no longer in the Special Flood Hazard Area'
+    ],
+    correctAnswer: 1,
+    explanation: 'Freeboard = Lowest Floor Elevation − BFE = 413.8 − 412.5 = +1.3 ft. A positive freeboard (lowest floor above BFE) generally results in lower flood insurance premiums, as the structure is less likely to be damaged in a base flood event. The parcel remains in Zone AE (it is still in the Special Flood Hazard Area), but structures elevated above the BFE qualify for reduced NFIP insurance rates. The Elevation Certificate documents this elevation for rating purposes.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Limestone is classified as what type of rock, and what geologic hazard is commonly associated with soluble limestone bedrock?',
+    options: [
+      'Igneous rock; volcanic eruption hazard',
+      'Metamorphic rock; shear zone failure hazard',
+      'Sedimentary rock; sinkhole (karst) hazard from dissolution of soluble rock',
+      'Clastic igneous rock; hydrothermal vent hazard'
+    ],
+    correctAnswer: 2,
+    explanation: 'Limestone is a sedimentary rock composed primarily of calcium carbonate (CaCO3), typically formed from accumulated shell, coral, and marine organism remains. Because CaCO3 is soluble in slightly acidic water (carbonic acid from dissolved CO2), limestone terrains are susceptible to dissolution over geologic time, forming cave systems, springs, and sinkholes — a landscape type called karst. Surveyors in karst areas must consider sinkhole risk when siting structures and should note limestone bedrock on soil boring logs and geotechnical reports.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'During a compass survey in 1870, the surveyor noted magnetic bearings that are now being used to retrace a property boundary. The surveyor\'s notes record "local attraction suspected" at one station. What does local attraction mean, and how should the retracing surveyor address it?',
+    options: [
+      'Local attraction is a term for the surveyor\'s personal bias; it has no technical meaning',
+      'Local attraction is a deflection of the compass needle from its correct direction caused by nearby magnetic materials (iron pipes, metal fences, ore deposits); the retracing surveyor must identify which stations were affected and apply corrections based on observed differences between forward and back bearings',
+      'Local attraction means the declination was measured locally at each station; no correction is needed if modern declination is used',
+      'Local attraction refers to tourist activity near the survey; the term indicates that the survey was conducted near an urban area'
+    ],
+    correctAnswer: 1,
+    explanation: 'Local attraction is the deflection of a magnetic compass needle from its true magnetic direction caused by proximity to magnetic materials — iron ore deposits, buried pipes, steel fences, railroad tracks, or even the surveyor\'s own equipment. At a station affected by local attraction, both the forward and back bearings to adjacent stations will be deflected by the same amount, so the difference between the forward and back bearing (which should be 180°00\') will reveal the magnitude of the attraction. The retracing surveyor identifies affected stations by checking forward/back bearing consistency and applies corrections by propagating bearings from unaffected (consistent) stations through the traverse.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A soil profile is described as having a thin O horizon, a dark A horizon, a reddish-brown B horizon with clay accumulation, a lighter C horizon with partially weathered rock fragments, and an R horizon of unweathered granite at depth. The R horizon in this profile represents:',
+    options: [
+      'The organic-rich topsoil layer supporting plant growth',
+      'The zone of illuviation where clay minerals have accumulated',
+      'Partially weathered parent material transitioning to bedrock',
+      'Unweathered bedrock at the base of the soil profile'
+    ],
+    correctAnswer: 3,
+    explanation: 'The R horizon designates unweathered bedrock at the base of the soil profile. In this description, the granite R horizon represents solid, unweathered rock underlying all the soil layers above it. The O horizon is the organic/litter layer. The A horizon is the topsoil. The B horizon (reddish-brown with clay accumulation) is the illuviation zone where leached materials from the A horizon have deposited. The C horizon is partially weathered parent material. For surveyors, the depth to the R horizon affects monument stability, excavation difficulty, and foundation suitability.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'In earthwork calculations, one bank cubic yard (BCY) of silty clay is excavated and loaded into a truck. The load factor for this material is 1.25. How many loose cubic yards (LCY) will the material occupy in the truck?',
+    options: [
+      '0.80 LCY',
+      '1.00 LCY',
+      '1.25 LCY',
+      '1.50 LCY'
+    ],
+    correctAnswer: 2,
+    explanation: 'The load factor (L) converts bank volume to loose volume: LCY = BCY × L = 1.00 × 1.25 = 1.25 LCY. Excavation disrupts the soil structure, introducing air voids and causing the material to expand (swell). A load factor of 1.25 means the material occupies 25% more volume after excavation than it did in its undisturbed bank state. This expansion factor is critical for estimating truck haul quantities and cut-fill balance. The shrinkage factor (S < 1) would be used to compute compacted cubic yards (CCY = BCY × S).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A Gunter\'s chain has 100 links. A field measurement of a boundary line reads 12 chains and 50 links. How many acres does a rectangular parcel contain if this width is paired with a length of 80 chains?',
+    options: [
+      '100.0 acres',
+      '125.0 acres',
+      '1,000.0 acres',
+      '1,250.0 acres'
+    ],
+    correctAnswer: 0,
+    explanation: 'Width = 12 chains + 50 links = 12.50 chains. Area = 12.50 ch × 80 ch = 1,000 square chains. Convert to acres: 1,000 ÷ 10 = 100.0 acres. The key conversion is 10 square chains = 1 acre (since 1 chain = 66 ft, 1 square chain = 66² = 4,356 sq ft, and 10 × 4,356 = 43,560 sq ft = 1 acre). This problem also illustrates the elegance of the Gunter\'s chain system — a section (1 square mile) = 80 ch × 80 ch = 6,400 square chains ÷ 10 = 640 acres.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'An alidade used in conjunction with a plane table differs from a standard ruler in what critical way?',
+    options: [
+      'An alidade has a scale graduated in links and chains, while a ruler uses feet and inches',
+      'An alidade incorporates a telescopic or peep-sight sighting system mounted above the straightedge, enabling the surveyor to sight a distant feature and simultaneously draw a direction line on the plane table sheet',
+      'An alidade is curved to follow the declination of the magnetic needle',
+      'An alidade is a digital instrument that records bearings electronically to a data collector'
+    ],
+    correctAnswer: 1,
+    explanation: 'An alidade is a sighting rule — a straightedge with a telescopic sight (or simple peep sights on older versions) mounted along its length. When placed on the plane table sheet, the surveyor sights through the telescope to a distant target and draws a ray along the straightedge edge directly on the paper at the instrument station. The fiducial edge of the alidade passes through the plotted instrument position, and the ray toward the target can then be plotted with no computation. Distances were measured separately (with a stadia arc or tape) and plotted along the ray. This graphical survey method avoided computations entirely, producing a map directly in the field.',
+    difficulty: 'medium'
+  },
 ];

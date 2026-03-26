@@ -2831,6 +2831,79 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'Digital Terrain Model (DTM):\n• Bare-earth surface with man-made structures and vegetation REMOVED\n• Represents the natural ground surface\n• Produced by filtering LiDAR ground returns (Class 2)\n• Used for: hydrology, floodplain mapping, contour generation\n\nDigital Elevation Model (DEM):\n• A general term for any raster elevation surface\n• In practice, often used interchangeably with DTM (bare-earth)\n• USGS DEMs are bare-earth products\n\nDigital Surface Model (DSM):\n• Represents the TOP of all surfaces including buildings, trees, and structures\n• Produced from first LiDAR returns (highest surfaces)\n• Shows canopy tops, rooftops, bridges\n• Used for: viewshed analysis, solar panel siting, building height extraction\n\nnDSM (Normalized DSM): DSM − DTM = height of objects above bare earth',
     category: 'concept'
   },
+  // Task #14 — Basic Sciences, Dendrology & Historical Methods (12 flashcards)
+  {
+    domain: 'Math & Basic Science',
+    front: 'Gunter\'s Chain — Key Dimensions',
+    back: 'Length: 66 feet (4 rods / 4 poles)\nLinks per chain: 100\nLength of 1 link: 0.66 ft (7.92 inches)\n\nKey conversions:\n• 80 chains = 1 statute mile\n• 10 square chains = 1 acre\n• 1 chain² = 4,356 sq ft\n• 640 acres = 1 section (80 ch × 80 ch)\n\nArea formula: Acres = (length in ch × width in ch) ÷ 10\n\nUsed in GLO surveys (1785–1900s); witness tree distances recorded in links (lks)',
+    category: 'formula'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Witness Tree vs. Bearing Tree — Distinction',
+    back: 'Both terms refer to trees used by GLO surveyors to reference corner locations:\n\nWitness Tree (more common term):\n• Any tree blazed, notched, and recorded near a survey corner\n• Recorded with: species, DBH, bearing and distance from corner\n• Example entry: "W. Oak, 18 in dia, bears N 45 E, 35 lks"\n\nBearing Tree:\n• Technically the same as a witness tree in BLM usage\n• Some jurisdictions use "bearing tree" interchangeably\n\nFor corner restoration:\n• Found witness tree → obliterated corner (can restore using inverse bearing/distance)\n• No witness tree found → may be lost corner (requires proportionate measurement)\n\nAbbreviations in GLO notes: "lks" = links, species coded (W. Oak = White Oak)',
+    category: 'concept'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Plane Table and Alidade — Historical Survey Instrument',
+    back: 'Plane Table:\n• A flat drawing board mounted on a tripod\n• Oriented over a known control point and leveled\n• The drawing paper is attached to the board; a map is drawn directly in the field\n\nAlidade:\n• A straightedge with a telescopic or peep-sight mounted along its length\n• Placed on the plane table to sight distant features\n• Surveyor draws a ray line along the alidade edge from the instrument position toward the target\n• Distances measured by stadia or separately; plotted along the ray\n\nAdvantage: Produces a graphic map in the field with no separate computation\nDisadvantage: Limited accuracy; dependent on good eyesight and level board\nEra: Widely used 1800s–mid 1900s; replaced by electronic total stations',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Section 404 of the Clean Water Act',
+    back: 'Authority: U.S. Army Corps of Engineers (USACE)\n\nWhat it regulates:\n• Discharge of dredged or fill material into "waters of the United States" (WOTUS)\n• Includes wetlands adjacent to navigable waters\n\nPermit types:\n• Nationwide Permit (NWP): pre-authorized for minor impacts (e.g., NWP 39 for residential fills)\n• Individual Permit (IP): required for larger or more significant impacts\n\nEPA role: Can veto a Section 404 permit under Section 404(c), but USACE issues permits\n\nSurveyor relevance:\n• Wetland boundary location on plats required for some permits\n• Fill without a permit = violation; mandatory restoration + civil penalties\n• Wetland delineation is performed by qualified biologists; surveyors locate the approved boundary',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'FEMA Flood Zone Designations — AE vs. A vs. X',
+    back: 'Zone AE:\n• 1% annual chance of flooding (100-year floodplain)\n• Base Flood Elevation (BFE) established by detailed hydraulic study\n• Mandatory flood insurance if federally backed mortgage\n• Elevation Certificate required for insurance rating\n\nZone A:\n• 1% annual chance of flooding (100-year floodplain)\n• NO BFE established (approximate study only)\n• Still a Special Flood Hazard Area (SFHA)\n\nZone VE:\n• Coastal high-hazard area with wave action\n• Most restrictive construction requirements\n\nZone X (shaded):\n• 0.2% annual chance of flooding (500-year floodplain)\n• Moderate risk; flood insurance not required but available\n\nZone X (unshaded):\n• Minimal flood hazard; outside 500-year floodplain',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Wetland Three-Factor Test',
+    back: 'Army Corps of Engineers / EPA standard for identifying jurisdictional wetlands:\n\nALL THREE factors must be present simultaneously:\n\n1. Wetland Hydrology\n   • Inundation or saturation at/near the surface during the growing season\n   • Indicators: standing water, water marks, oxidized root channels, drift lines\n\n2. Hydric Soils\n   • Anaerobic soils formed under prolonged saturation\n   • Indicators: gray mottling (gleying), dark organic colors, sulfuric odor\n   • Listed on USDA National Hydric Soils List\n\n3. Hydrophytic Vegetation\n   • Plants adapted to saturated conditions\n   • OBL (obligate wetland) > FACW > FAC > FACU > UPL (upland)\n   • Dominant species must score ≥ 50% OBL+FACW or area qualifies\n\nAbsence of ANY factor = NOT a jurisdictional wetland',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Three Rock Types — Formation and Examples',
+    back: '1. Igneous — formed by cooling of molten magma/lava\n   • Intrusive (plutonic): slow cooling underground → coarse crystals\n     Examples: granite, diorite, gabbro\n   • Extrusive (volcanic): rapid cooling at surface → fine-grained/glassy\n     Examples: basalt, rhyolite, obsidian\n\n2. Sedimentary — formed from accumulated sediment\n   • Clastic: rock fragments cemented together\n     Examples: sandstone (sand), shale (clay), conglomerate (gravel)\n   • Chemical/biogenic: precipitated from solution or organic material\n     Examples: limestone (CaCO3 from shells), coal (organic matter)\n   • Note: Limestone → karst/sinkhole hazard from dissolution\n\n3. Metamorphic — existing rocks transformed by heat/pressure\n   Examples: marble (from limestone), quartzite (from sandstone), slate/schist (from shale)\n\nRock Cycle: Rocks continuously transform between types through geologic processes',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Soil Horizons — Profile Layers O/A/B/C/R',
+    back: 'A soil profile from surface to bedrock:\n\nO Horizon — Organic layer\n• Leaf litter, humus, decomposing organic matter\n• Present in forested soils; absent in many cultivated soils\n\nA Horizon — Topsoil\n• Dark, organic-rich; highest biological activity\n• Zone of leaching (eluviation) — materials move downward\n\nB Horizon — Subsoil (Illuviation zone)\n• Accumulation of clay, iron oxides, aluminum from A horizon\n• Often reddish or brownish; denser than A horizon\n\nC Horizon — Parent material\n• Partially weathered rock fragments\n• Little biological activity; transitional to bedrock\n\nR Horizon — Bedrock\n• Unweathered solid rock (granite, limestone, sandstone, etc.)\n\nSurveyor note: Monument pits dug into C or R horizon for stability; B horizon clay = poor drainage/frost heave risk',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Earthwork Volume Units — BCY, LCY, CCY',
+    back: 'Bank Cubic Yard (BCY):\n• Volume of soil in undisturbed, in-place condition\n• Used for estimating excavation quantities\n• The "starting" unit for earthwork calculations\n\nLoose Cubic Yard (LCY):\n• Volume after excavation (soil loosens, air voids added)\n• LCY = BCY × Load Factor (L > 1)\n• Typical L values: sand/gravel ≈ 1.10–1.15; clay ≈ 1.25–1.35; rock ≈ 1.50+\n\nCompacted Cubic Yard (CCY):\n• Volume after placement and compaction (denser than bank)\n• CCY = BCY × Shrinkage Factor (S < 1)\n• Typical S values: sand ≈ 0.90–0.95; clay ≈ 0.80–0.85; organic ≈ 0.70\n\nPractical rule:\n• "Dirt shrinks when it goes in a fill, expands when it comes out of the ground"\n• Payment may be in BCY (excavation) or CCY (fill placement) — check contract',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Magnetic Declination — East vs. West and Correction',
+    back: 'Magnetic declination: angle between true (geographic) north and magnetic north\n\nEast Declination (compass needle east of true north):\n• Compass reads MORE than the true bearing\n• True Bearing = Magnetic Bearing − East Declination\n\nWest Declination (compass needle west of true north):\n• Compass reads LESS than the true bearing\n• True Bearing = Magnetic Bearing + West Declination\n\nMemory aid: "East is least, West is best"\n(East declination: subtract from compass; West declination: add to compass)\n\nSecular variation: slow, long-term change in declination over years/decades\nLocal attraction: short-range deflection from nearby iron/steel/ore\n\nFor historical survey retracement:\n1. Find declination at time of original survey\n2. Convert compass bearing → true bearing\n3. Use true bearing as the legal survey line direction',
+    category: 'concept'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Historical Survey Instrument Accuracy — Compass & Chain Era',
+    back: 'Compass & Chain Era (GLO surveys, approx. 1785–1890):\n\nInstruments: magnetic compass + Gunter\'s chain (66 ft)\n\nTypical accuracy limitations:\n• Compass bearing: ±15\' to ±2° (local attraction, declination uncertainty)\n• Chaining distance: 1:1,000 to 1:3,000 (slope, sag, temperature, alignment errors)\n• Positional error in early GLO surveys: commonly 20–100 ft\n\nSolar observation (sun shot):\n• Provided true (astronomic) meridian — far more accurate than compass\n• Required declination tables, time, and latitude\n• GLO required astronomic meridians at township corners\n\nTransit & Tape Era (1870s–1950s):\n• Repeating theodolite: ±30" angle accuracy\n• Steel tape: 1:10,000 to 1:30,000 distance accuracy\n• Trigonometric leveling over rough terrain\n\nModern context: When retracing historic surveys, expect larger positional uncertainty; monuments and calls control over calculated positions',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Common Tree Species for PLSS Witness Tree Identification',
+    back: 'Key witness tree species in PLSS areas and identification tips:\n\nWhite Oak (Quercus alba):\n• Light gray, plated/blocked bark\n• Leaves: rounded lobes (no bristle tips)\n• Acorn: shallow, saucer-shaped cap\n\nBlack Oak (Quercus velutina):\n• Dark, deeply furrowed bark\n• Leaves: pointed lobes with bristle tips\n• Inner bark: yellow-orange (tannin)\n\nBur Oak (Quercus macrocarpa):\n• Thick, fire-resistant bark; distinctive fringed acorn cap\n• Very large acorns; open savanna species\n\nBlack Walnut (Juglans nigra):\n• Dark, deeply ridged bark\n• Compound leaves; round, green-husked nuts\n\nSugar Maple (Acer saccharum):\n• Gray-brown, furrowed bark\n• 5-lobed leaf; brilliant fall color\n\nBasswood / Linden (Tilia americana):\n• Smooth gray bark with vertical ridges\n• Heart-shaped leaves; distinctive cluster fruit\n\nNote: Species commonality changes over time (disease, logging); diameter grows with age',
+    category: 'concept'
+  },
   {
     domain: 'Mapping, GIS, and CAD',
     front: 'NSSDA Accuracy Standards Summary',

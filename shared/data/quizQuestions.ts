@@ -4654,6 +4654,150 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'Surveyors must hold a valid license in each state where they practice. Performing surveying work in State B without a State B license constitutes unlicensed practice, which is a violation of state law and professional ethics. The appropriate approach is to associate with a State B-licensed surveyor or refer the State B portion to a licensed professional, ensuring proper coordination between the two surveyors for boundary work straddling the state line.',
     difficulty: 'medium'
   },
+  // Task #14 — Basic Sciences, Dendrology & Historical Methods (13 questions)
+  {
+    domain: 'Math & Basic Science',
+    question: 'A Gunter\'s chain is used to measure a line that is found to be 23 chains and 45 links long. What is this distance expressed in feet?',
+    options: [
+      '1,518.10 ft',
+      '1,547.70 ft',
+      '1,554.90 ft',
+      '1,523.00 ft'
+    ],
+    correctAnswer: 1,
+    explanation: 'One Gunter\'s chain = 66 ft. One link = 0.66 ft. Distance = 23 chains + 45 links = 23 chains + 0.45 chains = 23.45 chains. Convert: 23.45 × 66 ft/chain = 1,547.70 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'How many chains are in one statute mile?',
+    options: [
+      '40 chains',
+      '60 chains',
+      '80 chains',
+      '100 chains'
+    ],
+    correctAnswer: 2,
+    explanation: 'One statute mile = 5,280 ft. One Gunter\'s chain = 66 ft. 5,280 ÷ 66 = 80 chains per mile. This conversion is fundamental to PLSS surveying — township lines were established in chains, and sections contain 80 chains (one mile) on each side.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'In the context of GLO field notes, what does the abbreviation "lks" represent when describing a witness tree bearing and distance?',
+    options: [
+      'Locks — a reference to a nearby water control structure',
+      'Links — the unit of length equal to 1/100 of a Gunter\'s chain (0.66 ft)',
+      'Leagues — an older unit equal to 3 statute miles',
+      'Lots — a subdivision unit used in early township surveys'
+    ],
+    correctAnswer: 1,
+    explanation: '"lks" in GLO field notes stands for links, the subdivision unit of a Gunter\'s chain. Each chain contains 100 links; one link = 0.66 ft (7.92 inches). Witness tree distances recorded in links can be converted to feet by multiplying by 0.66. For example, "35 lks" = 35 × 0.66 = 23.1 ft from the corner.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'What was the primary purpose of the plane table and alidade combination in early surveying practice?',
+    options: [
+      'To measure vertical angles with high precision for trigonometric leveling',
+      'To produce a graphic map in the field by plotting observations directly on a drawing board while at the instrument station',
+      'To measure astronomic azimuths from the sun or stars',
+      'To determine the declination of the magnetic compass needle'
+    ],
+    correctAnswer: 1,
+    explanation: 'The plane table is a flat drawing board mounted on a tripod and oriented over a control point. The alidade — a sighting ruler with a telescopic sight — is placed on the board to sight features. The surveyor draws rays toward each feature directly on the drawing paper while standing at the instrument. This produces a topographic or detail map in the field without the need for separate computation. Plane table surveys were widely used from the 1800s through the mid-1900s before electronic data collection became practical.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A GLO field note records a witness tree entry as: "W. Oak, 12 in dia, bears S 45 W, 42 lks." A retracing surveyor finds a white oak at that bearing and approximate distance with a 14-inch diameter. What is the most likely explanation for the larger diameter?',
+    options: [
+      'The tree was incorrectly identified — this must be a different species',
+      'The tree has grown since the original survey was performed, increasing its diameter',
+      'The original surveyor made a systematic measurement error',
+      'The 12-inch dimension was recorded in links, not inches'
+    ],
+    correctAnswer: 1,
+    explanation: 'Trees continue to grow throughout their lives. A white oak recorded at 12 inches DBH in an 1840s GLO survey would be expected to have a much larger diameter today — 14 inches is entirely plausible and even conservative for a tree nearly 180 years old. Diameter growth alone is not evidence of a different tree. The retracing surveyor must evaluate all available evidence (species, location, bearing, distance) to determine whether the surviving tree is the original witness tree. Growth is expected and normal.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Which federal agency administers Section 404 of the Clean Water Act, which regulates the discharge of dredged or fill material into waters of the United States, including wetlands?',
+    options: [
+      'U.S. Fish and Wildlife Service (USFWS)',
+      'U.S. Army Corps of Engineers (USACE)',
+      'U.S. Environmental Protection Agency (EPA) acting alone',
+      'Federal Emergency Management Agency (FEMA)'
+    ],
+    correctAnswer: 1,
+    explanation: 'Section 404 of the Clean Water Act authorizes the U.S. Army Corps of Engineers to regulate the discharge of dredged or fill material into "waters of the United States," which includes wetlands adjacent to navigable waters. The EPA has a secondary role — it can veto permits — but the USACE is the primary permitting authority. Surveyors frequently encounter Section 404 requirements when locating wetland boundaries on plats or staking projects that impact wetland areas.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The FEMA flood zone designation "AE" on a Flood Insurance Rate Map (FIRM) indicates what flood risk condition?',
+    options: [
+      'A 0.2% annual chance of flooding (500-year flood) with no Base Flood Elevation established',
+      'A 1% annual chance of flooding (100-year flood) with a Base Flood Elevation determined by detailed hydraulic analysis',
+      'A coastal high-hazard area subject to wave action with the highest flood risk',
+      'A minimal flood hazard area outside the 500-year floodplain'
+    ],
+    correctAnswer: 1,
+    explanation: 'FEMA Zone AE designates a Special Flood Hazard Area (SFHA) with a 1% annual chance of flooding (commonly called the 100-year floodplain). The critical feature of Zone AE, compared to Zone A, is that a Base Flood Elevation (BFE) has been established through a detailed hydraulic engineering study. Zone VE is the coastal high-hazard zone. Zone X (shaded) is the 0.2% (500-year) zone. Surveyors prepare Elevation Certificates in Zone AE to document structure elevations relative to the BFE.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'The wetland three-factor test requires ALL of the following to be present EXCEPT:',
+    options: [
+      'Wetland hydrology',
+      'Hydric soils',
+      'Hydrophytic vegetation',
+      'Proximity to a navigable waterway'
+    ],
+    correctAnswer: 3,
+    explanation: 'The Army Corps of Engineers three-factor test for wetland delineation requires three co-occurring conditions: (1) wetland hydrology (inundation or saturation at the surface or root zone), (2) hydric soils (anaerobic soils formed under prolonged saturated conditions), and (3) hydrophytic vegetation (plants adapted to wet conditions). Proximity to a navigable waterway is NOT a required factor for the three-part wetland test, although it may be relevant to whether the wetland is "jurisdictional" under Section 404.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Which type of rock is formed exclusively by the cooling and solidification of molten magma?',
+    options: [
+      'Sedimentary',
+      'Metamorphic',
+      'Igneous',
+      'Clastic'
+    ],
+    correctAnswer: 2,
+    explanation: 'Igneous rocks form from the cooling and crystallization of magma (molten rock). Intrusive igneous rocks (e.g., granite) cool slowly underground, developing coarse crystals. Extrusive igneous rocks (e.g., basalt) cool rapidly at the surface, producing fine-grained or glassy textures. Sedimentary rocks form from accumulated sediment particles. Metamorphic rocks form when existing rocks are transformed by heat and pressure. "Clastic" is a category of sedimentary rock (composed of rock fragments), not a separate rock type.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'In a soil profile, the A horizon is best described as:',
+    options: [
+      'Unweathered bedrock at the base of the profile',
+      'The accumulation zone where clay and minerals leach downward from above',
+      'The topsoil layer — dark, organic-rich, and supporting plant growth',
+      'Partially weathered parent material with little biological activity'
+    ],
+    correctAnswer: 2,
+    explanation: 'The A horizon is the topsoil — the uppermost mineral soil layer. It is typically dark in color due to organic matter (humus), supports most root growth, and has the highest biological activity of any mineral horizon. The B horizon (subsoil) is the accumulation zone below it. The C horizon is the partially weathered parent material. The R horizon (if present) is unweathered bedrock at the bottom of the profile.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A GLO survey line was recorded with a magnetic compass bearing of N 35°00\' E in 1840. The magnetic declination in 1840 was 2°30\' E. What was the true (astronomic) bearing of this line?',
+    options: [
+      'N 32°30\' E',
+      'N 37°30\' E',
+      'N 35°00\' E',
+      'N 40°00\' E'
+    ],
+    correctAnswer: 0,
+    explanation: 'East declination means the compass needle points east of true north. Because the needle swings east, the compass reads a bearing that is larger than the true bearing by the declination amount. Therefore: True Bearing = Magnetic Bearing − East Declination. True = N 35°00\' E − 2°30\' = N 32°30\' E. Option B (N 37°30\') incorrectly adds rather than subtracts. When retracing historical compass surveys, the surveyor first converts the original compass bearing to true bearing (subtract E declination or add W declination), then uses the true bearing as the legal line direction.',
+    difficulty: 'medium'
+  },
   {
     domain: 'Math & Basic Science',
     question: 'Magnetic declination changes slowly over time due to gradual shifts in the Earth\'s magnetic field. This long-term, slow change is called:',
