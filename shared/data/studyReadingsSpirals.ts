@@ -4,7 +4,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
   {
     id: 'fs-d4-spirals',
     examTrack: 'fs',
-    domainNumber: 4,
+    domainNumber: 5,
     domain: 'Survey Computations & Applications',
     title: 'Spiral (Transition) Curves',
     description: 'Learn how spiral curves connect tangents to circular curves, compute all key spiral parameters (Ls, θs, Xs, Ys, LT, ST, k, p), and perform a complete spiral-curve-spiral layout computation. Spiral curves are an explicit NCEES FS exam topic under Survey Computations.',

@@ -3727,6 +3727,22 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     domain: 'Survey Computations & Applications',
+    question: 'A published spiral curve table for Ls = 200 ft, D = 4° shows: θs = 4°00\', Xs = 199.90 ft, Ys = 4.65 ft, p = 1.15 ft, k = 99.95 ft, R = 1432.39 ft. Using this table with a total deflection angle Δ = 40°00\', what is the spiral tangent length Ts?',
+    options: ['621.73 ft', '521.78 ft', '419.48 ft', '742.16 ft'],
+    correctAnswer: 0,
+    explanation: 'From the spiral table: p = 1.15 ft, k = 99.95 ft. Ts = (R + p) × tan(Δ/2) + k = (1432.39 + 1.15) × tan(20°) + 99.95 = 1433.54 × 0.36397 + 99.95 = 521.78 + 99.95 = 621.73 ft. The spiral table supplies p and k directly, so you only need to plug them into the Ts formula along with R and Δ/2. Without spirals, the simple tangent T = R × tan(20°) = 1432.39 × 0.36397 = 521.27 ft — the spirals add about 100 ft to the tangent length.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral curve table lists the following for Ls = 200 ft, D = 6° (R = 954.93 ft): θs = 6°00\', Xs = 199.45 ft, Ys = 6.98 ft. Using the short tangent formula ST = Ys / sin(θs), what is the short tangent?',
+    options: ['66.75 ft', '116.60 ft', '6.98 ft', '33.37 ft'],
+    correctAnswer: 0,
+    explanation: 'ST = Ys / sin(θs) = 6.98 / sin(6°) = 6.98 / 0.10453 = 66.77 ft ≈ 66.75 ft. The short tangent ST and long tangent LT are found directly in published spiral tables or computed from tabulated Xs, Ys values. ST is always less than LT and both are used to stake the SC from the TS in the field.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
     question: 'For a spiral curve, which statement about the SC point is correct?',
     options: [
       'At the SC, the spiral curvature is zero',
