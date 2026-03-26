@@ -3755,6 +3755,173 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
 
+  // Construction Surveying & Land Development (Task #11)
+  {
+    domain: 'Surveying Principles',
+    question: 'A leveling instrument has HI = 318.75 ft. The design grade elevation at a stake is 315.40 ft. What is the grade rod?',
+    options: ['3.35 ft', '634.15 ft', '315.40 ft', '318.75 ft'],
+    correctAnswer: 0,
+    explanation: 'Grade Rod = HI − Grade Elevation = 318.75 − 315.40 = 3.35 ft. The grade rod is the rod reading that would be observed if the ground surface were exactly at design grade elevation.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'At a construction stake, the grade rod is 6.80 ft and the actual rod reading on the ground is 5.10 ft. What is the cut or fill?',
+    options: ['Cut of 1.70 ft', 'Fill of 1.70 ft', 'Cut of 11.90 ft', 'Fill of 11.90 ft'],
+    correctAnswer: 0,
+    explanation: 'When the actual rod reading (5.10 ft) is LESS than the grade rod (6.80 ft), the ground is ABOVE the design grade — a CUT is needed. Cut = Grade Rod − Rod Reading = 6.80 − 5.10 = 1.70 ft.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'The actual rod reading at a construction stake is 9.20 ft and the grade rod is 7.60 ft. What is the situation at this stake?',
+    options: ['Cut of 1.60 ft', 'Fill of 1.60 ft', 'Cut of 16.80 ft', 'The ground is exactly at grade'],
+    correctAnswer: 1,
+    explanation: 'When the actual rod reading (9.20 ft) is GREATER than the grade rod (7.60 ft), the ground is BELOW the design grade — FILL is needed. Fill = Rod Reading − Grade Rod = 9.20 − 7.60 = 1.60 ft.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A backsight of 4.62 ft is taken on a benchmark with elevation 240.15 ft. The design grade at the next station is 242.80 ft. What is the grade rod?',
+    options: ['1.97 ft', '2.47 ft', '7.24 ft', '238.15 ft'],
+    correctAnswer: 0,
+    explanation: 'HI = 240.15 + 4.62 = 244.77 ft. Grade Rod = HI − Grade Elevation = 244.77 − 242.80 = 1.97 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'An offset stake is marked "C 2.15 / 15.0R / 8+75." What does this information indicate?',
+    options: [
+      'At station 8+75, set 15.0 ft to the right of centerline; the existing ground is 2.15 ft above design grade',
+      'At station 8+75, set 15.0 ft to the right of centerline; 2.15 ft of fill is needed',
+      'At station 8+75, cut 15.0 ft of material to reach a grade of 2.15 ft',
+      'At station 8+75, the distance to the right of the centerline is cut 2.15 ft per 15 ft'
+    ],
+    correctAnswer: 0,
+    explanation: '"C 2.15" means a CUT of 2.15 ft is needed (the ground is above design grade by 2.15 ft). "15.0R" means the stake is 15.0 ft to the right of centerline. "8+75" is the station (875 ft from the project beginning). The offset stake is set at a safe distance from the actual work area.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In blue-top staking, the HI is 504.20 ft and the design pad elevation is 500.00 ft. A rod placed on top of a stake reads 4.25 ft. What should the surveyor do to make the stake a true blue-top?',
+    options: [
+      'The stake is correct — drive it no further',
+      'Drive the stake deeper by 0.05 ft until the rod reads 4.20 ft',
+      'Raise the stake by 0.05 ft until the rod reads 4.20 ft',
+      'Drive the stake deeper until the rod reads 4.25 ft'
+    ],
+    correctAnswer: 2,
+    explanation: 'Grade Rod = HI − Grade Elevation = 504.20 − 500.00 = 4.20 ft. The rod reading on top of the stake is 4.25 ft, which is larger than 4.20 ft. Stake top elevation = HI − rod reading = 504.20 − 4.25 = 499.95 ft. Since 499.95 ft is below the design grade of 500.00 ft, the stake top must be RAISED by 0.05 ft until the rod reads 4.20 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A road has a half-width of 20 ft and a fill slope of 2:1 (H:V). The design fill at centerline is 3.00 ft. What is the approximate offset from centerline to the fill slope stake?',
+    options: ['23.00 ft', '26.00 ft', '40.00 ft', '14.00 ft'],
+    correctAnswer: 1,
+    explanation: 'For a fill slope: Offset = Half-Width + Slope Ratio × Fill Depth = 20 + 2 × 3.00 = 20 + 6 = 26.00 ft from centerline. This is the horizontal distance from centerline to the point where the constructed fill slope meets the existing ground.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Which of the following best describes an as-built survey?',
+    options: [
+      'A survey performed before construction begins to establish control',
+      'A survey that documents the actual locations and elevations of constructed improvements after construction',
+      'A survey that establishes design grades for earthwork operations',
+      'A survey that identifies existing utilities before excavation'
+    ],
+    correctAnswer: 1,
+    explanation: 'An as-built survey (also called a record survey) documents the actual, constructed locations and elevations of improvements, which may differ from the design plans. It is performed after construction and is used by agencies, engineers, and owners to verify compliance and maintain a permanent record.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In the subdivision platting process, what is the correct sequence of steps?',
+    options: [
+      'Final plat → Preliminary plat → Conceptual plan → Recording',
+      'Conceptual plan → Preliminary plat → Final plat → Recording',
+      'Recording → Final plat → Preliminary plat → Conceptual plan',
+      'Preliminary plat → Final plat → Conceptual plan → Recording'
+    ],
+    correctAnswer: 1,
+    explanation: 'The standard platting sequence moves from general to specific: Conceptual/Sketch Plan (rough layout, initial feedback) → Preliminary Plat (detailed drawing for agency review) → Final Plat (field-accurate document, signed and sealed by surveyor) → Recording (filed in public land records to create legal lot boundaries).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A subdivision plat includes the note: "All streets are hereby dedicated to the public." After the municipality accepts the plat, what is the legal status of the street right-of-way land?',
+    options: [
+      'The developer retains fee title; the public has only an easement',
+      'The municipality holds fee title to the right-of-way',
+      'Adjacent lot owners hold title to the centerline of each street',
+      'The homeowners association holds title in trust for the public'
+    ],
+    correctAnswer: 1,
+    explanation: 'A plat dedication, when accepted by the governmental entity, transfers fee simple title of the dedicated area to the municipality. This is different from an easement, where the grantor keeps fee title. Once dedicated and accepted, the city or county owns the street right-of-way outright.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A lot-and-block legal description reads: "Lot 22, Block 5, Sunrise Estates Addition, as recorded in Vol. 18, Pg. 44, Plat Records, Harris County, Texas." What document contains the actual dimensions of Lot 22?',
+    options: [
+      'The general warranty deed conveying Lot 22',
+      'The recorded subdivision plat at Vol. 18, Pg. 44',
+      'The county tax records',
+      'The zoning ordinance for the area'
+    ],
+    correctAnswer: 1,
+    explanation: 'A lot-and-block description conveys the parcel by reference to the recorded plat. The actual boundary dimensions, angles, and bearings are shown on the recorded plat itself (in this case, at Volume 18, Page 44 of the Plat Records). The deed simply references the plat; it does not repeat the survey data.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A rectangular lot is 75 ft wide and 110 ft deep. Zoning requires a 20 ft front setback, a 10 ft rear setback, and 5 ft side setbacks on each side. What is the maximum building footprint area allowed?',
+    options: ['4,250 sq ft', '5,200 sq ft', '3,900 sq ft', '8,250 sq ft'],
+    correctAnswer: 1,
+    explanation: 'Buildable width = 75 − 5 − 5 = 65 ft. Buildable depth = 110 − 20 − 10 = 80 ft. Maximum building footprint = 65 × 80 = 5,200 sq ft. The setbacks reduce the usable building envelope from all four sides.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'In a recorded subdivision, a 10-foot utility easement runs along the rear lot line of Lot 7. What right does the utility company have within this strip?',
+    options: [
+      'Fee title to the 10-foot strip',
+      'The right to install, maintain, and access utilities; the lot owner retains fee title',
+      'No right to cross the strip without owner permission each time',
+      'The right to build any structure needed to support the utilities'
+    ],
+    correctAnswer: 1,
+    explanation: 'A utility easement grants only the right to use the land for the specified purpose (installing and maintaining utilities). The property owner retains fee simple title to the land within the easement. The owner cannot build structures that interfere with the easement, but the utility company does not own the land.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'Which of the following is the BEST description of slope staking in construction surveying?',
+    options: [
+      'Setting stakes at the finished grade elevation across a paved area',
+      'Marking the intersection of the designed cut or fill slope with the existing natural ground',
+      'Setting offset stakes parallel to the centerline for structure layout',
+      'Documenting existing ground elevations before earthwork begins'
+    ],
+    correctAnswer: 1,
+    explanation: 'Slope stakes mark the point where the designed construction slope (cut or fill) intersects the existing natural ground surface. They define the outer limit of earthwork and guide equipment operators. Finding the slope intercept requires an iterative field process because the intersection depends on the existing ground elevation at each trial point.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Surveying Principles',
+    question: 'A construction surveyor sets hub stakes flush with the ground next to lath stakes. What is the purpose of the hub stake?',
+    options: [
+      'To display the cut/fill and station information for the equipment operator to read',
+      'To serve as a precise elevation reference point for grade control',
+      'To mark the outside edge of the pavement subgrade',
+      'To replace a lost benchmark when none is available'
+    ],
+    correctAnswer: 1,
+    explanation: 'Hub stakes are driven flush with or slightly below the ground surface and serve as precise elevation reference points. The adjacent lath stake (a thin wooden stake or flagging) displays the readable information (station, offset, cut/fill amount). This two-part system protects the precise hub from being read incorrectly while keeping station data visible.',
+    difficulty: 'medium'
+  },
+
   {
     domain: 'Professional Practice',
     question: 'Under the 2026 ALTA/NSPS standards, what new requirement applies to utility locate markings observed during fieldwork?',
@@ -3778,7 +3945,491 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 1,
     explanation: 'Section 6.B.xii of the 2026 standards adds a new requirement for a note on the face of the plat identifying the source of the title commitment or other title evidence provided pursuant to Section 4, the effective date, and the name of the insurer. This was not required in the 2021 standards and helps document the title information relied upon by the surveyor.',
     difficulty: 'easy'
-  }
+  },
+
+  // Least Squares & Positional Accuracy (Task #12)
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'What is the primary purpose of least squares adjustment in surveying?',
+    options: [
+      'To eliminate all measurement errors before data is used',
+      'To find the statistically optimal (most probable) solution when redundant observations are present',
+      'To average repeated measurements of the same quantity',
+      'To correct for systematic errors caused by instrument calibration'
+    ],
+    correctAnswer: 1,
+    explanation: 'Least squares adjustment finds the most probable values of unknown quantities when more observations than strictly necessary are collected (redundant observations). It minimizes the weighted sum of squared residuals, giving a statistically optimal solution and providing statistical information about the quality of the result.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A survey network has 10 observations and 7 unknowns. What is the redundancy (degrees of freedom)?',
+    options: ['17', '10', '7', '3'],
+    correctAnswer: 3,
+    explanation: 'Redundancy (r) = n − u = 10 − 7 = 3. Here n = number of observations and u = number of unknowns. The redundancy tells you how many "extra" observations you have beyond the minimum needed, and equals the degrees of freedom used in statistical testing.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In a least squares adjustment, what does a residual represent?',
+    options: [
+      'The total error remaining in the survey after adjustment',
+      'The correction applied to an observation: adjusted value minus observed value',
+      'The difference between two repeated measurements',
+      'The systematic error component of an observation'
+    ],
+    correctAnswer: 1,
+    explanation: 'A residual (v) is the correction applied to a specific observation: v = adjusted value − observed value. Residuals represent our best estimate of the random error in each measurement after adjustment. The sum of all squared weighted residuals (vᵀPv) is minimized in least squares.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'After a least squares adjustment, the standard error of unit weight (σ₀) is computed as 3.85. What does this most likely indicate?',
+    options: [
+      'The adjustment is excellent — σ₀ should be as large as possible',
+      'The a priori observation standard deviations were overestimated',
+      'There are larger errors than expected — possibly a blunder or underestimated measurement uncertainties',
+      'The network has insufficient redundancy to complete the adjustment'
+    ],
+    correctAnswer: 2,
+    explanation: 'The target value of σ₀ is 1.0. A value of 3.85 is much greater than 1.0, indicating that the actual residuals are much larger than the assumed observation uncertainties. This could mean: a blunder exists in the data, the measurement standard deviations were underestimated, or the network geometry is poor.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A leveling network has 8 observations and 5 unknowns. The weighted sum of squared residuals (vᵀPv) is 6.00. What is the standard error of unit weight?',
+    options: ['0.94', '1.41', '1.26', '2.00'],
+    correctAnswer: 1,
+    explanation: 'r = n − u = 8 − 5 = 3. σ₀ = √(vᵀPv / r) = √(6.00 / 3) = √2.00 = 1.414 ≈ 1.41. A value of 1.41 is somewhat greater than 1.0, indicating the residuals are slightly larger than the assumed measurement uncertainties, but this is not alarming. If the chi-squared test were applied, this result would likely fall within the acceptance region.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In least squares, observation weights are most appropriately assigned based on which principle?',
+    options: [
+      'Longer distances should always receive higher weight',
+      'Weight is inversely proportional to the variance (square of standard deviation) of each observation',
+      'All observations should receive equal weight to avoid bias',
+      'More recent observations always receive higher weight than older ones'
+    ],
+    correctAnswer: 1,
+    explanation: 'The weight of an observation is inversely proportional to its variance: p = σ₀² / σᵢ², where σ₀ is the reference standard deviation and σᵢ is the standard deviation of the specific observation. A more precise observation (smaller σᵢ) receives higher weight and will have a smaller residual in the adjusted solution.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'What does a positional error ellipse represent for a survey monument computed by least squares adjustment?',
+    options: [
+      'The maximum allowed displacement of the monument from its true position',
+      'The two-dimensional region within which the true position lies at a specified confidence level',
+      'The area of land that could be affected if the monument were set in error',
+      'The instrument pointing error at the time of observation'
+    ],
+    correctAnswer: 1,
+    explanation: 'An error ellipse describes the two-dimensional uncertainty of a computed position. It is centered on the adjusted position, and the true position has a specified probability (typically 95%) of lying within the ellipse. The shape (semi-major and semi-minor axes) and orientation describe how the uncertainty varies with direction — elongated ellipses indicate poor constraint in one direction.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'Two monuments are 800 ft apart. The ALTA/NSPS relative positional precision tolerance is 2 cm + 50 ppm × D. Converting to feet (2 cm ≈ 0.07 ft), what is the allowable RPP for this pair?',
+    options: ['0.07 ft', '0.11 ft', '0.10 ft', '0.14 ft'],
+    correctAnswer: 1,
+    explanation: 'RPP tolerance = 0.07 ft + 50 × 10⁻⁶ × 800 ft = 0.07 + 0.040 = 0.110 ft ≈ 0.11 ft. The 50 ppm component = 0.000050 × 800 = 0.040 ft. The total tolerance increases with distance, reflecting the proportionally larger uncertainty expected over longer baselines.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The chi-squared test in a least squares adjustment is used to:',
+    options: [
+      'Determine the number of observations needed for a given accuracy',
+      'Test whether the adjustment fits the data consistently with the assumed error model',
+      'Convert between different coordinate systems',
+      'Compute the azimuth of the error ellipse orientation'
+    ],
+    correctAnswer: 1,
+    explanation: 'The chi-squared test compares the weighted sum of squared residuals (vᵀPv) to a theoretical chi-squared distribution with (n−u) degrees of freedom. If the test statistic falls within the acceptance region, the adjustment is statistically consistent with the assumed observation variances. A failing test suggests blunders or incorrectly assumed error magnitudes.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'What is the minimum number of redundant observations (redundancy) required for any statistical testing to be possible in a least squares adjustment?',
+    options: ['0', '1', '3', '5'],
+    correctAnswer: 1,
+    explanation: 'At least 1 degree of freedom (redundancy = 1) is required for any statistical testing. With redundancy = 0, the system is exactly determined — there are no residuals and no basis for quality assessment. With redundancy ≥ 1, the standard error of unit weight can be computed and the chi-squared test applied. More redundancy improves the power of statistical testing.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In a weighted least squares adjustment, which observation will have the SMALLEST residual after adjustment?',
+    options: [
+      'The observation with the largest measured value',
+      'The observation with the highest weight (smallest standard deviation)',
+      'The observation measured most recently',
+      'The observation with the longest distance'
+    ],
+    correctAnswer: 1,
+    explanation: 'In weighted least squares, high-weight observations (those measured with high precision — small standard deviation) will receive smaller residuals because the solution is "pulled toward" the precise observations. Low-weight observations (imprecise measurements) receive larger residuals. This mathematically ensures that imprecise measurements are corrected more than precise ones.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'What term describes the overall quality indicator computed after a least squares adjustment that compares actual residuals to the assumed measurement uncertainties?',
+    options: [
+      'Relative Positional Precision',
+      'Standard error of unit weight',
+      'Root Mean Square Error',
+      'Coefficient of variation'
+    ],
+    correctAnswer: 1,
+    explanation: 'The standard error of unit weight (σ₀ or S₀) is the key overall quality indicator. It equals √(vᵀPv / r) and should be near 1.0 when the adjustment fits the data according to the assumed observation standard deviations. Values much greater than 1.0 suggest data quality problems; values much less than 1.0 suggest overly pessimistic a priori standard deviations.',
+    difficulty: 'easy'
+  },
+
+  // LiDAR, Remote Sensing & Graphical Communication (Task #13)
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'LiDAR is classified as which type of remote sensing system?',
+    options: [
+      'Passive — it records reflected sunlight in the visible and infrared spectrum',
+      'Active — it emits its own laser pulses and measures the time of flight',
+      'Passive — it detects thermal energy emitted by the ground surface',
+      'Active — it records radar echoes from a separate transmitter on the ground'
+    ],
+    correctAnswer: 1,
+    explanation: 'LiDAR (Light Detection And Ranging) is an active remote sensing system because it generates its own energy source — laser pulses — and measures the time it takes for the pulse to return after reflecting off a surface. Passive sensors (aerial cameras, multispectral imagers) only detect energy from external sources such as the sun.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A LiDAR-derived Digital Elevation Model (DEM) is created using which point classification?',
+    options: [
+      'All returns (first and last combined)',
+      'First returns only, representing the top of vegetation and structures',
+      'Ground-classified returns only (ASPRS Class 2)',
+      'Last returns only, regardless of surface type'
+    ],
+    correctAnswer: 2,
+    explanation: 'A DEM represents the bare-earth surface and uses only ground-classified returns (ASPRS Class 2). Vegetation, buildings, bridges, and other above-ground features are removed through ground filtering algorithms. A Digital Surface Model (DSM) uses first returns and includes all surfaces — buildings, tree canopy, etc.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What is the difference between a Digital Surface Model (DSM) and a Digital Elevation Model (DEM)?',
+    options: [
+      'DSM uses only last returns; DEM uses only first returns',
+      'DSM represents all surface features including buildings and trees; DEM represents the bare-earth surface only',
+      'DSM is produced by photogrammetry; DEM is produced only by LiDAR',
+      'DSM shows elevations above sea level; DEM shows elevations above the WGS84 ellipsoid'
+    ],
+    correctAnswer: 1,
+    explanation: 'A DSM (Digital Surface Model) represents the top surface of all features — including buildings, vegetation, and structures — typically using first returns. A DEM (Digital Elevation Model) represents the bare-earth surface only, using ground-classified returns after removing above-ground objects. The difference (nDSM = DSM − DEM) shows the heights of objects above the ground.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Which of the following is an example of a PASSIVE remote sensing system?',
+    options: [
+      'Airborne LiDAR scanning system',
+      'RADAR (Synthetic Aperture Radar)',
+      'Multispectral aerial camera recording reflected sunlight',
+      'Acoustic SONAR used in hydrographic surveying'
+    ],
+    correctAnswer: 2,
+    explanation: 'Passive remote sensing systems detect energy from external sources — primarily reflected sunlight. A multispectral camera records reflected solar energy in visible and near-infrared bands. Active systems (LiDAR, RADAR, SONAR) generate their own energy and measure the returned signal. Knowing active vs. passive is a common FS exam question.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What does the ASPRS LiDAR classification code "Class 6" represent?',
+    options: [
+      'Ground (bare earth)',
+      'High vegetation (trees)',
+      'Buildings',
+      'Water'
+    ],
+    correctAnswer: 2,
+    explanation: 'The ASPRS (American Society for Photogrammetry and Remote Sensing) standard LiDAR classification codes include: Class 2 = Ground, Class 3 = Low Vegetation, Class 4 = Medium Vegetation, Class 5 = High Vegetation, Class 6 = Buildings, Class 9 = Water. These codes are used to filter and analyze different feature types from the raw point cloud.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A survey drawing is printed at 1:2,000 and then reduced to 75% of its original size on a photocopier. Which map element remains accurate after the reduction?',
+    options: [
+      'The RF 1:2,000 stated in the title block',
+      'The verbal scale "1 inch = 166.7 feet" printed in the margin',
+      'The graphic scale bar drawn on the face of the map',
+      'The coordinate values printed at the sheet corners'
+    ],
+    correctAnswer: 2,
+    explanation: 'A graphic scale bar is drawn on the map and reduces proportionally with the drawing. Since both the map features and the bar shrink at the same ratio, the bar remains accurate regardless of print size. The RF, verbal scale, and absolute coordinate values are not affected by the drawing\'s physical size, but the RF and verbal scale become incorrect references for measuring distances on the reduced print.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A survey plat shows a north arrow labeled "Grid North — Texas State Plane (NAD 83)." What does this indicate?',
+    options: [
+      'The north arrow points to magnetic north, adjusted for declination',
+      'The north arrow shows the direction of the State Plane grid north, which may differ from true astronomic north by the convergence angle',
+      'The north arrow shows true astronomic north based on solar observations',
+      'Grid north and true north are always identical in Texas'
+    ],
+    correctAnswer: 1,
+    explanation: 'Grid north is the direction of the north-south grid lines in a State Plane Coordinate System. It differs from true (astronomic) north by the convergence angle, which varies depending on the survey\'s location within the State Plane zone. On large-scale surveys, the difference can be significant. A north arrow labeled "Grid North" specifically indicates the map is oriented to the State Plane grid, not to astronomic meridian.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In LiDAR acquisition, what is the purpose of the IMU (Inertial Measurement Unit) carried with the sensor?',
+    options: [
+      'To increase the pulse repetition rate of the laser',
+      'To record the precise position and orientation (roll, pitch, yaw) of the sensor at each laser pulse',
+      'To filter ground returns from vegetation returns in real time',
+      'To provide atomic clock timing for GPS signals'
+    ],
+    correctAnswer: 1,
+    explanation: 'The IMU continuously records the aircraft\'s attitude — roll, pitch, and yaw — at very high frequency (typically 200 Hz or more). Combined with the GNSS-determined position, the IMU data allows precise calculation of the 3D direction of each laser pulse. Without the IMU, aircraft tilt and vibration would make it impossible to accurately compute the 3D position of each laser return on the ground.',
+    difficulty: 'medium'
+  },
+
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In LiDAR data acquisition, what do "first return" and "last return" represent?',
+    options: [
+      'First return = the first flight line; last return = the final flight line',
+      'First return = the earliest reflection of a pulse (top of canopy or structure); last return = the final reflection (often the ground or lower canopy)',
+      'First return = highest intensity reflection; last return = lowest intensity reflection',
+      'First and last returns are identical — modern systems only record one return per pulse'
+    ],
+    correctAnswer: 1,
+    explanation: 'When a LiDAR pulse passes through vegetation, it may generate multiple returns as it reflects off different surfaces at different heights. The first return is the first reflection received — usually from the top of the canopy or roof of a building. The last return is the final reflection — often from the ground or lower canopy. Ground filtering uses last returns, and the DSM uses first returns. Modern systems can record 4 or more returns per pulse.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A legend (key) on a survey drawing serves which primary purpose?',
+    options: [
+      'It states the horizontal datum used for all coordinate values',
+      'It lists the names of crew members who performed the fieldwork',
+      'It explains all symbols, line types, and hatch patterns used on the drawing so the reader can correctly interpret every graphic element',
+      'It provides the legal certification of the professional surveyor'
+    ],
+    correctAnswer: 2,
+    explanation: 'The legend (or key) is an essential map element that decodes every graphical convention used on the drawing — monument symbols, line types (existing vs. proposed, easement lines, right-of-way lines), hatch patterns, and color codes. Without a legend, a map reader cannot reliably interpret symbols that are not universally standardized. The datum reference, certification, and crew information are separate components of the title block or notes.',
+    difficulty: 'easy'
+  },
+
+  // Basic Sciences, Dendrology & Historical Methods (Task #14)
+  {
+    domain: 'Math & Basic Science',
+    question: 'A GLO surveyor\'s original field notes describe a witness tree as "B. Walnut, 12 in dia, bears S 25 W, 50 lks." What does "lks" represent, and what is that distance in feet?',
+    options: [
+      'Links; 50 lks = 33.0 ft',
+      'Links; 50 lks = 50.0 ft',
+      'Links; 50 lks = 3.30 ft',
+      'Leagues; 50 lks = 138.0 ft'
+    ],
+    correctAnswer: 0,
+    explanation: 'In Gunter\'s chain measurement, 1 link = 0.66 ft (one-hundredth of a 66-ft chain). Therefore, 50 links = 50 × 0.66 = 33.0 ft. Gunter\'s chain (66 ft, 100 links) was the standard measuring instrument used in GLO surveys. One chain = 66 ft; 80 chains = 1 mile.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Which of the following is the correct equivalent relationship for a Gunter\'s chain?',
+    options: [
+      '1 chain = 100 ft; 10 square chains = 1 acre',
+      '1 chain = 66 ft; 10 square chains = 1 acre',
+      '1 chain = 66 ft; 640 square chains = 1 acre',
+      '1 chain = 100 ft; 640 chains = 1 mile'
+    ],
+    correctAnswer: 1,
+    explanation: 'Gunter\'s chain: 1 chain = 66 ft = 4 rods = 100 links. Area relationships: 10 square chains = 1 acre, so 1 acre = 10 × 66² / 43,560 = 43,560 sq ft / 43,560 = 1 acre. Also: 80 chains = 1 mile; 640 acres = 1 square mile (1 section). The 10-square-chains-per-acre relationship made area calculation easy with Gunter\'s chains.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'An EDM measurement is taken when the air temperature is 10°C higher than standard and the pressure is at standard. What is the approximate effect on the measured distance if no atmospheric correction is applied?',
+    options: [
+      'The measurement is approximately 10 ppm too long',
+      'The measurement is approximately 10 ppm too short',
+      'Temperature has no effect on EDM measurements',
+      'The measurement is exactly correct — only pressure affects EDM'
+    ],
+    correctAnswer: 1,
+    explanation: 'Higher temperature decreases air density and reduces the refractive index of air. A lower refractive index means electromagnetic waves travel faster, so the EDM computes a shorter travel time for a given physical distance. The result is a measured distance that is approximately 1 ppm too short per 1°C above standard temperature. At 10°C above standard, the measurement is approximately 10 ppm (0.01 ft per 1,000 ft) too short without correction.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'In the USCS soil classification system, which soil type presents the greatest compressibility and poorest suitability for foundation support?',
+    options: [
+      'GW — well-graded gravel',
+      'SW — well-graded sand',
+      'Pt — peat (highly organic)',
+      'CL — clay of low plasticity'
+    ],
+    correctAnswer: 2,
+    explanation: 'Peat (USCS symbol Pt) is highly organic and extremely compressible, making it completely unsuitable for foundation support or structural fill. It must be removed and replaced in construction. Well-graded gravel (GW) and sand (SW) are good foundation soils when properly compacted. Clay of low plasticity (CL) has moderate compressibility but can be used for fill with proper compaction control.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A witness tree in GLO records is described as "W. Oak, bears N 60 E, 35 lks." A retracing surveyor finds a white oak at that location. What procedure restores the original corner?',
+    options: [
+      'The oak tree IS the corner — set the monument at the tree\'s center',
+      'Measure N 60 E, 35 links (23.1 ft) from the witness tree to establish the corner location',
+      'Measure S 60 W, 35 links (23.1 ft) from the witness tree to establish the corner location',
+      'Proportionate measurement must be used; witness trees cannot restore corners'
+    ],
+    correctAnswer: 2,
+    explanation: 'The recorded bearing (N 60 E, 35 lks) is from the CORNER to the witness tree. To reverse-calculate the corner from the tree, apply the reverse bearing: S 60 W. Distance = 35 links × 0.66 ft/link = 23.1 ft. Measure S 60 W, 23.1 ft from the witness tree to establish the original corner location. This is the obliterated corner restoration procedure using a bearing tree.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'For leveling over long distances, why is balancing backsight and foresight lengths important?',
+    options: [
+      'Balanced sights ensure both rod readings are taken at the same time',
+      'Balanced sights eliminate the effects of curvature and refraction as well as instrument collimation error',
+      'Balanced sights prevent the rod from tilting due to wind',
+      'Balanced sights reduce the number of instrument setups required'
+    ],
+    correctAnswer: 1,
+    explanation: 'When backsight and foresight distances are equal, the combined curvature and refraction error (which depends on distance squared) cancels out because it affects the BS and FS rod readings equally. Similarly, if the instrument\'s line of sight is not perfectly horizontal (collimation error), equal BS and FS distances cause equal errors in opposite directions, which also cancel. This is why differential leveling specifications require balanced sights.',
+    difficulty: 'medium'
+  },
+
+  {
+    domain: 'Math & Basic Science',
+    question: 'Which historical surveying instrument used the sun\'s position to establish a true astronomic meridian — independent of magnetic north?',
+    options: [
+      'Gunter\'s chain',
+      'A solar transit (solar compass) or solar observation with a theodolite',
+      'A magnetic dipping needle compass',
+      'A vernier caliper'
+    ],
+    correctAnswer: 1,
+    explanation: 'A solar transit (Burt\'s solar compass) or a solar observation performed with a theodolite establishes true astronomic north by observing the sun\'s position and computing its azimuth from astronomical tables. This method is independent of local magnetic attraction and secular variation in declination. GLO surveyors used solar observations at regular intervals to establish reliable meridians; the magnetic compass was used between solar shots but was prone to local errors.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'During earthwork operations, 1,000 BCY of clay is excavated and placed as embankment fill. If the swell factor is 1.30 (LCY/BCY) and the compaction factor is 0.85 (CCY/BCY), how many compacted cubic yards (CCY) will the excavated material produce?',
+    options: [
+      '1,300 CCY',
+      '850 CCY',
+      '1,105 CCY',
+      '769 CCY'
+    ],
+    correctAnswer: 1,
+    explanation: 'Compacted cubic yards = BCY × compaction factor = 1,000 × 0.85 = 850 CCY. The swell factor (1.30) describes how much the soil expands when excavated (loose state), but the final compacted volume is determined by the compaction factor relative to bank measure. BCY × 0.85 = 850 CCY. The swell factor is used to estimate truck loads for hauling, not the final compacted volume.',
+    difficulty: 'medium'
+  },
+
+  // Business Concepts, Safety & Professional Communication (Task #15)
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor agrees to perform a boundary survey for a fixed fee of $2,500. During the survey, unexpected archival research reveals the project will take significantly more time than anticipated. What is the most appropriate course of action?',
+    options: [
+      'Complete the survey at the agreed price — the fixed fee contract covers all necessary work',
+      'Abandon the project without notice if the additional cost is too large',
+      'Contact the client immediately, explain the situation, and negotiate a written change order for the additional scope',
+      'Perform minimal work and deliver incomplete results to stay within budget'
+    ],
+    correctAnswer: 2,
+    explanation: 'When unforeseen conditions materially expand the scope of a fixed-fee engagement, the surveyor should promptly notify the client, explain the situation, and negotiate a written change order before incurring additional costs. Delivering incomplete work or abandoning the project without notice are unprofessional and may create legal liability. Open, honest communication is both ethical and good business practice.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Survey crews working in the right-of-way of a 65 mph highway must wear which minimum ANSI/ISEA safety vest classification per MUTCD guidelines?',
+    options: [
+      'Class 1 — any orange or yellow vest',
+      'Class 2 — required for all roadway work',
+      'Class 3 — required for high-speed highway environments',
+      'No vest required if crew stays outside travel lanes'
+    ],
+    correctAnswer: 2,
+    explanation: 'MUTCD and OSHA require ANSI/ISEA Class 3 high-visibility garments for workers in roadway environments where vehicle speeds exceed 50 mph. Class 3 has more retroreflective striping and a higher background material area than Class 2, providing maximum conspicuity at highway speeds. On 65 mph roads, Class 3 is mandatory regardless of distance from travel lanes.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Which of the following fee arrangements places the greatest cost risk on the SURVEYOR?',
+    options: [
+      'Hourly rate (time and materials)',
+      'Fixed fee (lump sum)',
+      'Cost plus fixed fee',
+      'Unit price per deliverable'
+    ],
+    correctAnswer: 1,
+    explanation: 'A fixed fee (lump sum) agreement sets a predetermined total cost. If the actual work costs more than estimated, the surveyor absorbs the loss. This arrangement rewards efficiency — if the work costs less, the surveyor profits — but the surveyor bears the risk of cost overruns. In hourly rate or cost-plus arrangements, actual costs are passed to the client, so the client bears cost risk.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'An excavation on a construction site is 6 feet deep and contains unstable soil. Under OSHA regulations, what protective system is required before workers may enter?',
+    options: [
+      'No protection required for excavations under 10 feet',
+      'A competent person must inspect the excavation but no protective system is required',
+      'Shoring, shielding, or sloping must be provided for excavations deeper than 5 feet in unstable material',
+      'Workers may enter only if wearing hard hats and safety vests'
+    ],
+    correctAnswer: 2,
+    explanation: 'OSHA 29 CFR 1926, Subpart P requires a protective system (shoring, shielding such as a trench box, or sloping) for any excavation 5 feet or deeper when the soil is unstable, or for any excavation 20 feet or deeper regardless of soil type. A 6-foot excavation in unstable soil exceeds the 5-foot threshold, so a protective system is mandatory before workers may enter.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The statute of limitations for surveying malpractice claims in most jurisdictions begins running when:',
+    options: [
+      'The survey fieldwork is completed',
+      'The final plat is recorded in the county deed records',
+      'The alleged error is discovered or should reasonably have been discovered (discovery rule)',
+      'The contract between the surveyor and client is terminated'
+    ],
+    correctAnswer: 2,
+    explanation: 'Most states apply the "discovery rule" to professional liability claims, meaning the statute of limitations begins when the claimant discovers the error, or when a reasonable person should have discovered it — not when the work was performed. For buried survey errors (such as a mislocated boundary that is only found during a later sale), this can expose surveyors to claims many years after the original work was done.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Which of the following best describes the "standard of care" in a professional negligence claim against a surveyor?',
+    options: [
+      'The highest possible accuracy achievable with modern equipment',
+      'The level of skill and diligence that a reasonably competent surveyor would exercise under similar circumstances',
+      'Strict adherence to the specifications stated in the original contract',
+      'The opinion of the client about whether the work met their expectations'
+    ],
+    correctAnswer: 1,
+    explanation: 'The standard of care is not perfection, nor is it based solely on contract specifications or client satisfaction. It is defined as the skill, knowledge, and diligence that a reasonably competent professional would exercise under similar circumstances. Courts evaluate whether the surveyor\'s conduct measured up to what a peer professional would have done — not whether the result was perfect or even whether the client was satisfied.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Which OSHA document governs temporary traffic control (TTC) for survey crews working in highway rights-of-way?',
+    options: [
+      'OSHA 29 CFR Part 1910 — General Industry Standards',
+      'MUTCD Part 6 — Temporary Traffic Control',
+      'AASHTO Policy on Geometric Design of Highways and Streets',
+      'FHWA Standard Plans for Construction of Local Roads'
+    ],
+    correctAnswer: 1,
+    explanation: 'The MUTCD (Manual on Uniform Traffic Control Devices), Part 6, governs Temporary Traffic Control (TTC) zones, including work zone setups for survey crews in highway rights-of-way. It specifies advance warning sign placement, channelizing device sequences, flagger positioning, and required personal protective equipment (including Class 3 vests for high-speed roads). OSHA references the MUTCD for roadway work zone safety compliance.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveying firm\'s professional liability (E&O) insurance policy has a retroactive date of January 1, 2020. A claim is filed in 2026 for a survey performed in 2019. Is the claim covered?',
+    options: [
+      'Yes — E&O policies always cover any claim filed while the policy is active',
+      'No — the work was performed before the retroactive date, so the claim is excluded',
+      'Yes, but only if the client can prove the surveyor acted with gross negligence',
+      'Coverage depends on whether the error was discovered before or after the policy was purchased'
+    ],
+    correctAnswer: 1,
+    explanation: 'Claims-made E&O policies cover claims made during the policy period only for work performed on or after the retroactive date. Because the survey was performed in 2019, before the January 1, 2020 retroactive date, that claim is NOT covered by this policy. To ensure coverage for past work, surveyors should maintain continuous E&O coverage without gaps and obtain prior acts coverage or tail coverage when switching insurers.',
+    difficulty: 'hard'
+  },
 ];
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [...FS_QUIZ_QUESTIONS, ...PS_QUIZ_QUESTIONS];

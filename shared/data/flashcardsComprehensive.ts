@@ -2444,4 +2444,274 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'Simple curve: T = R × tan(Δ/2)\n\nSpiral-curve-spiral: Ts = (R + p) × tan(Δ/2) + k\n\nAs Ls → 0: p → 0, k → 0, Ts → T\nSpiral always increases tangent length',
     category: 'concept'
   },
+
+  // Construction Surveying & Land Development (Task #11)
+  {
+    domain: 'Surveying Principles',
+    front: 'Grade Rod Formula',
+    back: 'Grade Rod = HI − Grade Elevation\n\nWhere:\n• HI = Bench Mark Elevation + Backsight\n• Grade Elevation = design finish elevation from plans\n\nGrade rod = rod reading that would exist if ground were exactly at grade',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Cut vs. Fill Determination',
+    back: 'Rod Reading < Grade Rod → Ground ABOVE grade → CUT needed\n  Cut = Grade Rod − Rod Reading\n\nRod Reading > Grade Rod → Ground BELOW grade → FILL needed\n  Fill = Rod Reading − Grade Rod\n\nMemory tip: Higher rod reading = deeper hole = fill needed',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Offset Stake Notation',
+    back: 'Example: C 2.35 / 12.0R / 12+50\n\n• C 2.35 = Cut of 2.35 ft at the design point\n• 12.0R = stake is 12.0 ft to the RIGHT of centerline\n• 12+50 = station 1,250 ft from project origin\n\nF = Fill; L = Left; R = Right',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Slope Stake Offset Formula',
+    back: 'Offset = Half-Width (HW) + Slope Ratio (z) × Cut or Fill depth\n\nOffset = HW + z × d\n\nExample: HW=20 ft, z=2:1, cut=4 ft\nOffset = 20 + 2 × 4 = 28 ft from centerline\n\nRequires iterative field checking on variable terrain',
+    category: 'formula'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Blue-Top Staking',
+    back: 'Stakes driven so their TOPS are exactly at design finish grade\n\nCheck: Grade Rod = HI − Design Elevation\nRod on stake top should equal grade rod\n\nRod reading > grade rod → stake top is below grade → RAISE stake\nRod reading < grade rod → stake top is above grade → DRIVE DEEPER\n\nUsed for parking lots, pads, athletic fields',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Hub Stake vs. Lath Stake',
+    back: 'Hub stake: wooden stake driven flush with ground\n• Purpose: precise elevation reference point\n• Not marked with text (protected surface)\n\nLath stake: thin stake or flagging next to hub\n• Purpose: displays readable info for operators\n• Shows: station, offset, cut/fill amount',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'As-Built Survey',
+    back: 'Documents actual constructed locations and elevations after construction is complete\n\nAlso called: record survey, red-line survey\n\nCaptures: alignment deviations, utility inverts/rims, structure locations, finish grades\n\nUses same control network as original layout for direct comparison to design',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Subdivision Platting Sequence',
+    back: '1. Conceptual/Sketch Plan (rough layout, initial feedback)\n2. Preliminary Plat (detailed drawing for agency review)\n3. Final Plat (field-accurate; signed & sealed by licensed surveyor)\n4. Recording (filed in deed records; creates legal lot boundaries)',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Dedication vs. Easement in Subdivisions',
+    back: 'Dedication: transfers FEE SIMPLE title to governmental entity\n• Public owns the right-of-way\n• Common for streets, parks\n• Created by plat note: "hereby dedicated to the public"\n\nEasement: grants a USE RIGHT only\n• Grantor retains fee title\n• Common for utilities, drainage\n• Owner cannot block the easement purpose',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Lot-and-Block Legal Description',
+    back: 'Three required parts:\n1. Lot number\n2. Block number\n3. Subdivision name + recorded plat reference (Vol., Pg., County)\n\nExample:\n"Lot 14, Block 3, Meadow Ridge Subdivision, Vol. 42, Pg. 18-21, Plat Records, Travis County, Texas"\n\nActual dimensions found on the recorded plat — not in the deed',
+    category: 'concept'
+  },
+  {
+    domain: 'Surveying Principles',
+    front: 'Setback / Building Lines',
+    back: 'Minimum distances from property lines within which no structure may be built\n\n• Front setback: from street-side lot line\n• Rear setback: from rear lot line\n• Side setbacks: from each side lot line\n\nBuildable width = lot width − (left side + right side setbacks)\nBuildable depth = lot depth − (front + rear setbacks)',
+    category: 'concept'
+  },
+
+  // LiDAR, Remote Sensing & Graphical Communication (Task #13)
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'LiDAR — Active vs. Passive',
+    back: 'LiDAR is ACTIVE remote sensing\n\nActive: generates its own energy (laser pulses); measures time of flight\nPassive: records energy from external sources (sun) — cameras, multispectral scanners\n\nOther active systems: RADAR (microwaves), SONAR (acoustics)\nOther passive systems: aerial photography, thermal IR, multispectral imaging\n\nKey advantage of active: can operate day or night; independent of sunlight',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'ASPRS LiDAR Classification Codes',
+    back: 'Standard classification codes:\n• Class 0: Unclassified\n• Class 2: Ground (bare earth)\n• Class 3: Low vegetation\n• Class 4: Medium vegetation\n• Class 5: High vegetation\n• Class 6: Buildings\n• Class 7: Low noise\n• Class 9: Water\n• Class 17: Bridge deck\n\nClass 2 (Ground) → DEM\nClass 5 + 6 → DSM',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'DEM vs. DSM vs. nDSM',
+    back: 'DEM (Digital Elevation Model):\n• Bare-earth surface only\n• Built from Class 2 ground returns\n• Used for hydrology, earthwork, slope analysis\n\nDSM (Digital Surface Model):\n• All surfaces: buildings, trees, structures\n• Built from first returns\n\nnDSM = DSM − DEM\n• Height of objects above bare earth\n• Used to measure tree/building heights',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'LiDAR IMU — Purpose',
+    back: 'IMU = Inertial Measurement Unit\n\nRecords aircraft attitude (roll, pitch, yaw) at high frequency (≥200 Hz)\n\nCombined with GNSS position, the IMU allows precise calculation of the 3D direction of each laser pulse at the moment of emission\n\nWithout IMU: aircraft tilt and vibration make it impossible to geolocate individual laser returns\n\nResult: accurate X, Y, Z coordinates for every point in the cloud',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Required Survey Map Elements',
+    back: 'Every survey plat/drawing must include:\n1. Title block — project, client, surveyor info, date, scale, sheet #\n2. North arrow — type labeled (True, Grid, Magnetic)\n3. Scale — graphic bar scale + RF or verbal scale\n4. Legend — all symbols, line types, hatching explained\n5. Datum reference — horizontal (NAD83) and vertical (NAVD88)\n6. Certification — surveyor\'s seal, signature, and professional statement\n7. Coordinate grid or tick marks\n\nGraphic bar scale is the only element that remains accurate if drawing is enlarged or reduced',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Graphic Scale vs. Representative Fraction',
+    back: 'Graphic Scale Bar:\n• Drawn on the map face\n• Proportionally correct at any print size (shrinks/enlarges with the drawing)\n• Survives photocopying, resizing, PDF scaling\n\nRepresentative Fraction (RF): e.g., 1:24,000\n• Becomes incorrect if print size changes\n• "1 inch = 2,000 feet" → true only at original print size\n\nFor exam: graphic scale remains accurate after reduction; RF and verbal scale do NOT',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Grid North vs. True North vs. Magnetic North',
+    back: 'True (Astronomic) North:\n• Direction of Earth\'s geographic north pole\n• Based on astronomic observations or GNSS\n\nGrid North:\n• Direction of State Plane grid lines (north-south)\n• Differs from true north by the convergence angle (varies with location)\n\nMagnetic North:\n• Direction a compass needle points\n• Differs from true north by magnetic declination\n• Changes over time (secular variation)\n\nConvergence angle: true N to grid N\nDeclination: true N to magnetic N',
+    category: 'concept'
+  },
+
+  // Basic Sciences, Dendrology & Historical Methods (Task #14)
+  {
+    domain: 'Math & Basic Science',
+    front: 'Gunter\'s Chain — Key Relationships',
+    back: '1 chain = 66 ft = 4 rods = 100 links\n1 link = 0.66 ft = 7.92 inches\n80 chains = 1 mile\n10 square chains = 1 acre\n\nArea (acres) = (L × W in chains) ÷ 10\n\nGLO distances recorded in chains and links\ne.g., "42 lks" = 42 × 0.66 = 27.72 ft',
+    category: 'formula'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Witness Tree / Bearing Tree — Restoration',
+    back: 'GLO field notes record FROM the corner TO the tree:\n"W. Oak, 18 in dia, bears N 45 E, 35 lks"\n\nTo restore the corner:\n• Reverse the bearing: S 45 W\n• Convert distance: 35 × 0.66 = 23.1 ft\n• Measure S 45 W, 23.1 ft from the tree\n\nSurviving witness tree = obliterated corner evidence\nCorner can be restored without proportionate measurement',
+    category: 'procedure'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Common Witness Tree Species (PLSS)',
+    back: 'White Oak (Quercus alba): light gray plated bark, rounded leaf lobes\nBlack Oak (Quercus velutina): dark furrowed bark, pointed leaf lobes\nBur Oak (Quercus macrocarpa): fringed acorn cap, fire-resistant bark\nSugar Maple (Acer saccharum): gray-brown flaky bark, 5-lobed leaf\nBlack Walnut (Juglans nigra): dark ridged bark, compound leaf, round green fruit\nBasswood (Tilia americana): smooth gray bark, heart-shaped leaf\n\nUsed to verify species matches GLO description during PLSS retracement',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Combined Curvature & Refraction Correction',
+    back: 'C + R = 0.0675 × K² (meters, K in km)\nC + R ≈ 0.574 × M² (feet, M in miles)\n\nSubtract from long rod readings\n\nExample: 2 km distance:\n0.0675 × (2)² = 0.270 m\n\nEliminated by balancing BS and FS distances in differential leveling\n(correction cancels when equal sights are used)',
+    category: 'formula'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'EDM Atmospheric Correction',
+    back: 'EDM measures velocity of electromagnetic waves in air\nVelocity depends on: temperature, pressure, humidity\n\nHigher temp → lower density → lower refractive index → waves travel faster → distance reads SHORT\nLower pressure → same direction\n\nCorrection (ppm):\n• +1°C above standard → −1 ppm (too short)\n• +1 mm Hg pressure → +0.37 ppm\n\nMust enter field temp/pressure into instrument to apply meteorological correction',
+    category: 'formula'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Steel Tape Thermal Correction',
+    back: 'C_t = α × L × ΔT\n\nα = 6.45 × 10⁻⁶ per °F (or 1.16 × 10⁻⁵ per °C)\nL = tape length measured\nΔT = field temperature − standard temperature\n\nPositive ΔT (hot): tape is longer than standard → correction is POSITIVE\nNegative ΔT (cold): tape is shorter → correction is NEGATIVE\n\nExample: 500 ft at +27°F above standard:\nC = 6.45×10⁻⁶ × 500 × 27 = +0.087 ft',
+    category: 'formula'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'USCS Soil Classification — Key Symbols',
+    back: 'G = Gravel, S = Sand, M = Silt, C = Clay, O = Organic, Pt = Peat\nW = Well-graded, P = Poorly-graded, L = Low plasticity, H = High plasticity\n\nGood foundation soils: GW, GP, SW, SP\nModerate: GM, GC, SM, SC, ML, CL\nPoor: MH, CH (expansive), OL, OH (organic)\nUnsuitable: Pt (peat)\n\nCH = high-plasticity clay — most problematic for foundations (shrink-swell)',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Solar Observation / Sun Shot',
+    back: 'Historical method used by GLO surveyors to establish astronomic (true) north\n\nProcess: Observe the sun\'s position, record time, apply sun\'s declination and hour angle, observer\'s latitude → compute azimuth to sun → establish true meridian\n\nAdvantage over magnetic compass: independent of local magnetic attraction and secular variation\n\nGLO instructions: required astronomic meridian at intervals; more reliable meridian than compass alone',
+    category: 'concept'
+  },
+
+  // Business Concepts, Safety & Professional Communication (Task #15)
+  {
+    domain: 'Professional Practice',
+    front: 'Business Structures for Survey Firms',
+    back: 'Sole Proprietorship: owner = business; full personal liability\nPartnership (General): all partners personally liable\nLLP: limits partner liability for other partners\' acts\nPC / PLLC: protects from general business debts; each licensee still personally liable for own negligence\n\nE&O insurance remains essential in all structures\nNo business form eliminates professional liability for your own negligent work',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Fee Arrangement Types',
+    back: 'Fixed Fee (Lump Sum): set total price; surveyor bears cost risk; rewards efficiency\nHourly (Time & Materials): actual time + materials; client bears cost risk\nCost Plus Fixed Fee: actual costs reimbursed + fixed professional fee\nUnit Price: fee per deliverable (per lot, per monument); repetitive work\nRetainer: recurring fee for ongoing availability\n\nRisk allocation:\nFixed fee → surveyor risk\nT&M / Cost Plus → client risk',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Essential Contract Elements for Survey Services',
+    back: '1. Scope of Services — precise description of work and exclusions\n2. Standards / Specifications — ALTA/NSPS, state MTS, etc.\n3. Compensation — fee, schedule, extra services process\n4. Timeline — milestones, delivery, delay provisions\n5. Ownership of Documents — who owns drawings and data\n6. Limitation of Liability — cap on damages (varies by state)\n7. Dispute Resolution — mediation, arbitration, or litigation\n\nAll scope changes → written change order before additional work begins',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'OSHA Excavation Safety (29 CFR 1926 Subpart P)',
+    back: 'Protective system required for:\n• Any excavation ≥ 5 ft deep in UNSTABLE soil\n• Any excavation ≥ 20 ft deep regardless of soil type\n\nProtective systems: shoring, shielding (trench box), or sloping\nCompetent person must inspect daily before workers enter\nDesigns for ≥ 20 ft require a registered PE\n\nSurveying relevance: survey crews encounter trenches on construction sites',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'ANSI/ISEA Safety Vest Classes for Roadway Work',
+    back: 'Class 1: basic visibility — off-road, low traffic environments\nClass 2: required for roadway work where speeds ≤ 50 mph\nClass 3: required for roadway work where speeds > 50 mph (highways)\n\nMUTCD compliance required for all survey crews in rights-of-way\nHighway work → Class 3 mandatory\n\nAlso required: shadow vehicle (truck with arrow board/attenuator) behind survey crew on active lanes',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Standard of Care & Professional Negligence',
+    back: 'Standard of care: level of skill and diligence that a reasonably competent surveyor would exercise under similar circumstances\n\nNOT perfection — errors alone do not equal negligence\nNOT based solely on contract specs or client satisfaction\n\nNegligence = falling below the standard of care\nE&O insurance covers professional negligence claims\nStatute of limitations: usually begins at DISCOVERY of error (discovery rule), not date of work',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Surveyor\'s Report / Letter of Opinion',
+    back: 'Narrative document explaining the basis for a boundary determination\n\nContents:\n• Record evidence reviewed (deeds, plats, prior surveys)\n• Physical evidence found (monuments, occupation, fences)\n• Conflicts in the record and how they were resolved\n• Professional judgment applied\n\nDistinct from the plat — provides context that cannot be shown graphically\nCritical in boundary dispute litigation\nSurveyor\'s certification on plat ≠ surveyor\'s report',
+    category: 'concept'
+  },
+
+  // Least Squares & Positional Accuracy (Task #12)
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Least Squares Adjustment — Purpose',
+    back: 'Finds the most probable values of unknowns when redundant observations exist\n\nMinimizes: Σ(p·v²) = vᵀPv (weighted sum of squared residuals)\n\nProvides:\n• Optimal adjusted values\n• Statistical quality measures\n• Basis for blunder detection\n\nRequired for ALTA/NSPS, geodetic control, and all rigorous network adjustments',
+    category: 'concept'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Redundancy (Degrees of Freedom)',
+    back: 'r = n − u\n\nn = number of observations\nu = number of unknowns\n\nInterpretation:\n• r = 0: exactly determined, no quality check possible\n• r ≥ 1: over-determined, adjustment possible\n• Higher r = more statistical power to detect blunders\n\nExample: 15 observations, 10 unknowns → r = 5',
+    category: 'formula'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Residual (v)',
+    back: 'v = adjusted value − observed value\n\nResiduals represent the best estimate of random error in each measurement\n\nIn least squares, Σ(p·v²) is MINIMIZED\n\nLarge residuals → suspect observation for blunder\nAll residuals should be random, not systematic',
+    category: 'concept'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Standard Error of Unit Weight (σ₀)',
+    back: 'σ₀ = √(vᵀPv / r)\n\nTarget value: 1.0\n\n• σ₀ ≈ 1.0 → good fit\n• σ₀ >> 1.0 → residuals too large → blunder or underestimated variances\n• σ₀ << 1.0 → residuals too small → overestimated (too pessimistic) variances\n\nAlso written: S₀, SEUW',
+    category: 'formula'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Observation Weight (p)',
+    back: 'p = σ₀² / σᵢ²\n\np is inversely proportional to variance\n\nHigher precision (smaller σ) → higher weight → smaller residual after adjustment\nLower precision (larger σ) → lower weight → larger residual\n\nEqual-weight adjustment: all pᵢ = 1',
+    category: 'formula'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Chi-Squared Test (Goodness of Fit)',
+    back: 'Test statistic: χ² = vᵀPv / σ₀²(apriori)\n\nAcceptance: χ²_lower ≤ vᵀPv ≤ χ²_upper\n\n• Reject H₀ if too high → errors larger than expected (possible blunder)\n• Reject H₀ if too low → errors smaller than expected (over-pessimistic weights)\n\nDegrees of freedom: r = n − u',
+    category: 'concept'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Positional Error Ellipse',
+    back: 'Describes 2D uncertainty of an adjusted position\n\nParameters:\n• Semi-major axis (a): largest uncertainty direction\n• Semi-minor axis (b): smallest uncertainty direction\n• Orientation angle (θ): direction of semi-major axis from north\n\nCircular ellipse (a ≈ b) → equal constraint all directions\nElongated ellipse → poor constraint in one direction\n\n95% ellipse contains true position at 95% confidence',
+    category: 'concept'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'ALTA/NSPS Relative Positional Precision (RPP)',
+    back: 'RPP = √(σ_ΔN² + σ_ΔE²)\n\nALTA/NSPS 2026 Tolerance:\nRPP ≤ 2 cm (0.07 ft) + 50 ppm × D\n\nExample: D = 1,000 ft\nTolerance = 0.07 + (50×10⁻⁶ × 1,000) = 0.07 + 0.05 = 0.12 ft\n\nDerived from least squares covariance matrix — requires formal adjustment',
+    category: 'formula'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Relative Positional Precision vs. Closure Ratio',
+    back: 'Closure ratio (traverse): linear misclosure / total length\n• Simple check, but not rigorous\n• Does not give positional uncertainty of each monument pair\n\nRPP (ALTA/NSPS): derived from least squares covariance matrix\n• Rigorous — accounts for network geometry and observation weights\n• Required for ALTA/NSPS compliance\n• Different monument pairs can have different RPP values',
+    category: 'concept'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Minimum Redundancy for Statistical Testing',
+    back: 'r = n − u ≥ 1 required for any quality testing\n\nr = 0: exactly determined (unique solution, no residuals, no quality check)\nr = 1: one redundant observation; σ₀ computable, but limited blunder detection\nr ≥ 5: sufficient for meaningful chi-squared testing\n\nMore redundancy = stronger blunder detection capability',
+    category: 'concept'
+  },
 ];
+
+
