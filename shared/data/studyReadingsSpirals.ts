@@ -2,16 +2,16 @@ import type { ReadingModule } from '../schema';
 
 export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
   {
-    id: 'fs-d5-spirals',
+    id: 'fs-d4-spirals',
     examTrack: 'fs',
-    domainNumber: 5,
+    domainNumber: 4,
     domain: 'Survey Computations & Applications',
     title: 'Spiral (Transition) Curves',
     description: 'Learn how spiral curves connect tangents to circular curves, compute all key spiral parameters (Ls, θs, Xs, Ys, LT, ST, k, p), and perform a complete spiral-curve-spiral layout computation. Spiral curves are an explicit NCEES FS exam topic under Survey Computations.',
     estimatedMinutes: 30,
     sections: [
       {
-        id: 'fs-d5-spirals-s1',
+        id: 'fs-d4-spirals-s1',
         type: 'concept',
         title: 'Why Spiral Curves Are Used',
         content: 'A simple circular curve transitions abruptly from a tangent (straight alignment) to a constant-radius arc. At high speeds, this abrupt change forces drivers to steer instantaneously from zero curvature to full curve curvature, which can cause vehicle instability and skidding. Highway designers solve this problem with a spiral curve (also called a transition curve or clothoid curve) inserted between each tangent and the circular curve.\n\nThe spiral\'s defining property is that its curvature increases linearly from zero at the tangent end (the TS point — Tangent to Spiral) to the full circular curve curvature at the spiral-to-curve end (the SC point — Spiral to Curve). This gradual curvature increase allows vehicles to smoothly roll into and out of the circular arc while superelevation (road banking) is also applied gradually.\n\nOn the FS exam, spiral curves appear as computation problems: you are given the spiral length Ls and either the degree of circular curve D or the radius R, and you must compute the spiral\'s geometric elements. A spiral-curve-spiral (SCS) layout is the standard arrangement: tangent → spiral (TS to SC) → circular arc (SC to CS) → spiral (CS to ST) → tangent.',
@@ -21,7 +21,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         ],
       },
       {
-        id: 'fs-d5-spirals-s2',
+        id: 'fs-d4-spirals-s2',
         type: 'concept',
         title: 'Key Spiral Parameters and Definitions',
         content: 'Every spiral curve is described by a set of geometric parameters. Understanding these definitions is the foundation for all spiral computations:\n\n**Ls** — Spiral length. The arc length of the spiral, measured from the TS to the SC point. This is given by the designer or computed from design speed and superelevation requirements.\n\n**D** — Degree of the connecting circular curve (arc definition). R = 5729.578 / D.\n\n**θs** — Spiral angle. The total central angle subtended by the spiral arc. This is the key derived quantity: θs = Ls × D / 200 (degrees), or equivalently θs = Ls / (2R) (radians).\n\n**Xs** — Tangent distance. The x-coordinate (along the initial tangent) of the SC point, measured from the TS. Xs ≈ Ls × (1 – θs² / 10) for small angles, or exactly by the Fresnel integral series.\n\n**Ys** — Offset distance. The y-coordinate (perpendicular to the initial tangent) of the SC point, measured from the TS. Ys ≈ Ls × θs / 3 for small angles.\n\n**k** — Throw (also called the x-shift). The distance the circular curve center is shifted inward relative to the original tangent intersection. k ≈ Xs – R × sin(θs).\n\n**p** — Shift (also called the y-shift or offset). The perpendicular offset of the shifted circular curve center from the original tangent. p ≈ Ys – R × (1 – cos(θs)).\n\n**LT** — Long tangent. The distance from the TS to the projection of the SC onto the initial tangent (measured along the tangent direction).\n\n**ST** — Short tangent. The distance from the SC to the tangent point of the back-extended spiral tangent (perpendicular to the chord direction at the SC).',
@@ -31,7 +31,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         ],
       },
       {
-        id: 'fs-d5-spirals-s3',
+        id: 'fs-d4-spirals-s3',
         type: 'formula',
         title: 'Spiral Curve Formulas',
         formula: {
@@ -59,7 +59,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         ],
       },
       {
-        id: 'fs-d5-spirals-s4',
+        id: 'fs-d4-spirals-s4',
         type: 'worked_example',
         title: 'Complete Spiral-Curve-Spiral Layout',
         workedExample: {
@@ -83,7 +83,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         },
       },
       {
-        id: 'fs-d5-spirals-s5',
+        id: 'fs-d4-spirals-s5',
         type: 'concept',
         title: 'Long Tangent and Short Tangent',
         content: 'The long tangent (LT) and short tangent (ST) are the two legs of the chord triangle formed between the TS, the SC point, and the foot of the perpendicular dropped from SC to the initial tangent.\n\nLT is the longer leg, running from the TS along the initial tangent to the foot of the perpendicular from the SC. It equals approximately 2/3 of Ls for typical highway spirals.\n\nST is the shorter leg, running from the foot of the perpendicular up to the SC point, perpendicular to the initial tangent. It equals approximately 1/3 of Ls.\n\nFormulas:\n- LT = Xs – Ys / tan(θs)\n- ST = Ys / sin(θs)\n\nThese quantities are used when staking the spiral by the tangent-offset method in the field: from the TS, you measure LT along the tangent, then turn 90° and measure ST to set the SC point.\n\nFor the worked example above:\n- LT = 199.90 – 4.65 / tan(4°) = 199.90 – 4.65/0.06993 = 199.90 – 66.50 = 133.40 ft\n- ST = 4.65 / sin(4°) = 4.65 / 0.06976 = 66.66 ft\n\nNote that LT + ST > Ls because they are legs of a triangle, not arc lengths.',
@@ -92,7 +92,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         ],
       },
       {
-        id: 'fs-d5-spirals-s6',
+        id: 'fs-d4-spirals-s6',
         type: 'knowledge_check',
         title: 'Spiral Angle Check',
         knowledgeCheck: {
@@ -108,7 +108,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         },
       },
       {
-        id: 'fs-d5-spirals-s7',
+        id: 'fs-d4-spirals-s7',
         type: 'knowledge_check',
         title: 'Spiral Tangent Length',
         knowledgeCheck: {
@@ -124,7 +124,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         },
       },
       {
-        id: 'fs-d5-spirals-s8',
+        id: 'fs-d4-spirals-s8',
         type: 'further_reading',
         title: 'Spiral Curve References',
         furtherReading: [
