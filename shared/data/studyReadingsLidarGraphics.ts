@@ -2,6 +2,98 @@ import type { ReadingModule } from '../schema';
 
 export const STUDY_READINGS_LIDAR_GRAPHICS: ReadingModule[] = [
   {
+    id: 'fs-d8-lidar',
+    examTrack: 'fs',
+    domainNumber: 2,
+    domain: 'Mapping, GIS, and CAD',
+    title: 'LiDAR: Ground Control, QA/QC & Photogrammetry Comparison',
+    description: 'Go beyond LiDAR basics to understand the QA/QC workflow, ground control requirements, accuracy specifications (ASPRS/USGS quality levels), and how LiDAR compares with photogrammetry for topographic data collection.',
+    estimatedMinutes: 18,
+    prerequisites: ['fs-d13-lidar'],
+    sections: [
+      {
+        id: 'fs-d8-lidar-s1',
+        type: 'concept',
+        title: 'Ground Control for LiDAR Projects',
+        content: 'Although a LiDAR system uses its own on-board GNSS and IMU to geolocate each laser return, independent ground control is required to verify (and sometimes improve) the accuracy of the final point cloud and elevation products.\n\nTwo types of ground-based reference data are collected for LiDAR QA/QC:\n\n1. Ground Control Points (GCPs): Precisely surveyed horizontal and vertical positions placed in open areas free of vegetation and overhead obstructions. GCPs are used to apply boresight calibration corrections to the raw data if significant systematic offsets are found. They are established with differential or RTK GNSS surveying and tied to the project datum.\n\n2. Check Points (CPs): Independent positions NOT used in the calibration or adjustment of the LiDAR data — used only for accuracy assessment. ASPRS and FEMA standards require a minimum number of check points distributed across the project area to support statistical accuracy reporting. Check points must be measured with higher accuracy than the required product accuracy (typically surveyed at 2–3× the required RMSEZ).\n\nKey principle: GCPs calibrate; check points verify. A project with only GCPs and no independent check points cannot make a valid NSSDA accuracy statement.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 37', topic: 'LiDAR ground control and accuracy assessment' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 28', topic: 'LiDAR QA/QC and ground control' },
+        ],
+      },
+      {
+        id: 'fs-d8-lidar-s2',
+        type: 'concept',
+        title: 'LiDAR QA/QC Workflow',
+        content: 'A rigorous LiDAR production workflow includes multiple quality control steps:\n\n1. Raw Data Review: Inspect flight trajectory files (GNSS + IMU), ensure all planned flight lines were collected, check for trajectory gaps or periods of poor GNSS geometry.\n\n2. Boresight Calibration: Fly over flat, well-defined calibration surfaces (often paved airport runways) in multiple directions. Systematic offsets in the IMU boresight angles (roll, pitch, yaw) cause swath-to-swath mismatches. Calibration corrects for these offsets.\n\n3. Swath-to-Swath Overlap Check: Adjacent flight lines should agree within the project\'s required accuracy. Large systematic differences between overlapping swaths indicate boresight error or poor trajectory data.\n\n4. Point Cloud Classification: Automated ground filtering followed by manual review of classification results. Inspect for classification errors especially on building edges, bridge decks, and dense vegetation.\n\n5. Accuracy Assessment Against Check Points: Compute RMSEZ from differences between LiDAR-derived elevations and surveyed check point elevations. Compare to required ASPRS quality level and NSSDA thresholds.\n\n6. Deliverable Generation: Produce classified point cloud (LAS/LAZ), DEM, DSM, and intensity images. Document all processing steps in metadata reports.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 37', topic: 'LiDAR processing workflow and deliverables' },
+        ],
+      },
+      {
+        id: 'fs-d8-lidar-s3',
+        type: 'concept',
+        title: 'ASPRS/USGS LiDAR Quality Levels',
+        content: 'ASPRS (American Society for Photogrammetry and Remote Sensing) and the USGS 3DEP program define standardized quality levels for LiDAR data:\n\nUSGS Quality Level 3 (QL3):\n- Minimum point density: 1 point/m²\n- Maximum aggregate nominal pulse spacing (ANPS): 1.0 m\n- Vertical RMSEZ ≤ 20 cm (non-vegetated)\n\nUSGS Quality Level 2 (QL2) — current 3DEP standard:\n- Minimum point density: 2 points/m²\n- ANPS ≤ 0.71 m\n- Vertical RMSEZ ≤ 10 cm (non-vegetated)\n\nUSGS Quality Level 1 (QL1) — highest standard:\n- Minimum point density: 8 points/m²\n- ANPS ≤ 0.35 m\n- Vertical RMSEZ ≤ 9.25 cm (non-vegetated)\n\nFEMA Flood Map standard (for new DFIRM mapping): generally requires at least QL2 vertical accuracy.\n\nOn the FS exam: know the RMSEZ thresholds (QL1 ≈ 9–10 cm, QL2 = 10 cm, QL3 = 20 cm) and that higher QL numbers = lower quality (QL1 is the best, QL3 is the minimum).',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 37', topic: 'LiDAR quality levels and accuracy specifications' },
+        ],
+      },
+      {
+        id: 'fs-d8-lidar-s4',
+        type: 'concept',
+        title: 'LiDAR vs. Photogrammetry for Topographic Mapping',
+        content: 'Both LiDAR and photogrammetry (aerial imagery-based) are used to produce topographic data, but they have different strengths and limitations:\n\nLiDAR Advantages:\n- Can penetrate gaps in vegetation canopy to measure bare-earth elevation (using last returns and ground filtering)\n- Operates in low-light conditions (active sensor; does not depend on sunlight)\n- Higher vertical accuracy in vegetated areas (photogrammetry cannot "see through" canopy)\n- Direct elevation measurement per point (no reconstruction from stereo imagery)\n\nPhotogrammetry Advantages:\n- Produces natural-color orthophotography automatically from the same flight\n- Lower equipment cost for simple projects\n- Better at capturing planimetric detail (roads, buildings, utility poles) with high-resolution imagery\n- Suitable for surface modeling where canopy penetration is not needed\n\nLimitations of LiDAR:\n- Higher equipment cost; specialized operators required\n- Does not inherently produce color imagery (only intensity and range)\n- Reflective surfaces (water, highly polished metal) produce unreliable returns\n\nFor the FS exam: LiDAR is the preferred method when bare-earth elevation is needed under vegetation; photogrammetry is preferred when natural-color imagery and planimetric mapping are the primary deliverables.',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 27', topic: 'Photogrammetry vs. LiDAR for topographic mapping' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 36-37', topic: 'Aerial photogrammetry and LiDAR comparison' },
+        ],
+      },
+      {
+        id: 'fs-d8-lidar-s5',
+        type: 'knowledge_check',
+        title: 'LiDAR QA/QC Check',
+        knowledgeCheck: {
+          question: 'A LiDAR project requires ASPRS Quality Level 2 (QL2). A check point analysis yields RMSEZ = 0.082 m. Does the dataset meet the QL2 specification?',
+          options: [
+            'No — QL2 requires RMSEZ ≤ 0.05 m and the result is too high',
+            'Yes — QL2 requires RMSEZ ≤ 0.10 m (10 cm) and 0.082 m satisfies this threshold',
+            'No — QL2 requires RMSEZ ≤ 0.075 m and 0.082 m exceeds the limit',
+            'Yes — but only after applying the NSSDA 95% multiplier (1.9600 × 0.082 = 0.161 m)',
+          ],
+          correctIndex: 1,
+          explanation: 'ASPRS/USGS QL2 requires a vertical RMSEZ of 10 cm (0.10 m) or less in non-vegetated areas. Since 0.082 m < 0.10 m, the dataset meets the QL2 specification. The RMSEZ is compared directly to the quality level threshold, not multiplied by the NSSDA 95% factor for this compliance check.',
+        },
+      },
+      {
+        id: 'fs-d8-lidar-s6',
+        type: 'knowledge_check',
+        title: 'LiDAR vs. Photogrammetry Check',
+        knowledgeCheck: {
+          question: 'A forested watershed study requires accurate bare-earth elevation data beneath a dense tree canopy. Which data collection method is most suitable?',
+          options: [
+            'Aerial photogrammetry using a high-resolution camera — it provides better vertical accuracy',
+            'Airborne LiDAR — laser pulses can penetrate gaps in the canopy to reach the ground',
+            'Thermal infrared imagery — it shows ground temperature variations through the canopy',
+            'Satellite multispectral imagery — it has adequate resolution for watershed modeling',
+          ],
+          correctIndex: 1,
+          explanation: 'Airborne LiDAR is the preferred choice for bare-earth mapping under vegetation. LiDAR laser pulses can pass through gaps in the tree canopy and generate last returns from the ground. Ground-filtering algorithms then separate ground returns from vegetation returns. Aerial photogrammetry cannot see through dense canopy — the camera records the top of the vegetation, not the terrain beneath. Thermal and multispectral imagery measure reflected energy from surfaces and do not penetrate canopy.',
+        },
+      },
+      {
+        id: 'fs-d8-lidar-s7',
+        type: 'further_reading',
+        title: 'LiDAR QA/QC and Standards References',
+        furtherReading: [
+          { book: 'USGS LiDAR Base Specification (current edition)', chapter: 'Sections 2–5', topic: 'Quality levels, ground control, check points, and accuracy requirements' },
+          { book: 'ASPRS Positional Accuracy Standards for Digital Geospatial Data', chapter: 'Section 7', topic: 'LiDAR-specific accuracy classes and QA/QC procedures' },
+          { book: 'Elementary Surveying, 15th Edition (Ghilani & Wolf)', chapter: 'Chapter 27', topic: 'Aerial photogrammetry and comparison with LiDAR' },
+        ],
+      },
+    ],
+  },
+  {
     id: 'fs-d11-graphics',
     examTrack: 'fs',
     domainNumber: 2,
@@ -116,7 +208,7 @@ export const STUDY_READINGS_LIDAR_GRAPHICS: ReadingModule[] = [
             { step: 1, description: 'RMSEZ combines the standard deviation (precision) and the mean error (systematic bias).', calculation: 'RMSEZ = sqrt(σ² + mean²) = sqrt(0.08² + 0.02²) = sqrt(0.0064 + 0.0004) = sqrt(0.0068) = 0.0825 m' },
             { step: 2, description: 'Compute NSSDA vertical accuracy at 95%.', calculation: 'Vertical Accuracy (95%) = 1.9600 × RMSEZ = 1.9600 × 0.0825 = 0.162 m' },
           ],
-          answer: 'RMSEZ = 0.083 m; NSSDA Vertical Accuracy at 95% = 0.16 m. The DEM meets ASPRS QL2 requirements (RMSEZ ≤ 10 cm is not met here — 0.083 m > 0.10 m — this DEM would qualify as QL3 with RMSEZ ≤ 20 cm).',
+          answer: 'RMSEZ = 0.083 m; NSSDA Vertical Accuracy at 95% = 0.16 m. The DEM meets ASPRS QL2 requirements because 0.083 m < 0.10 m (QL2 threshold). With RMSEZ = 0.083 m, the dataset qualifies as QL2 (RMSEZ ≤ 10 cm). The mean error of 0.02 m (2 cm systematic bias) is included in the RMSEZ calculation, which is why RMSEZ (0.083 m) is slightly larger than the standard deviation (0.08 m).',
         },
       },
       {
