@@ -2416,8 +2416,8 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
   },
   {
     domain: 'Survey Computations & Applications',
-    front: 'Long Tangent (LT) and Short Tangent (ST)',
-    back: 'LT = Xs – Ys / tan(θs)\n(along tangent, from TS to foot of ⊥ from SC)\n\nST = Ys / sin(θs)\n(from foot of ⊥ up to SC point)\n\nUsed to stake SC from TS',
+    front: 'Long Tangent (LT) and Short Tangent (STg)',
+    back: 'Note: "STg" = Short Tangent (geometric leg); "ST" = Spiral-to-Tangent station point\n\nLT = Xs – Ys / tan(θs)\n(along tangent, from TS to foot of ⊥ from SC)\n\nSTg = Ys / sin(θs)\n(from foot of ⊥ up to SC point)\n\nUsed to stake SC from TS in field',
     category: 'formula'
   },
   {
