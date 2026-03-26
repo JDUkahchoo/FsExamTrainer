@@ -43,7 +43,7 @@ function BookRefChips({ refs }: { refs?: ReadingFurtherRef[] }) {
           data-testid={`chip-book-ref-${i}`}
         >
           <BookMarked className="h-3 w-3 shrink-0" />
-          <span className="truncate max-w-[220px]">{ref.book} — {ref.chapter}</span>
+          <span>{ref.book} — {ref.chapter}</span>
         </span>
       ))}
     </div>

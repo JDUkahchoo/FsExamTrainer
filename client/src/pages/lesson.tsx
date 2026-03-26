@@ -525,7 +525,7 @@ export default function LessonPage() {
                     <Badge 
                       key={idx} 
                       variant="outline" 
-                      className="text-xs"
+                      className="text-xs whitespace-normal"
                       data-testid={`badge-reference-${idx}`}
                     >
                       {ref.bookId === "SRM" ? "SRM" : "ES"} Ch. {ref.chapter}: {ref.chapterTitle}
