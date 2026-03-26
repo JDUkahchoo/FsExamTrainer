@@ -4824,6 +4824,32 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'Total change = difference between old and new declination. Old: 4°00\' E (positive). New: 2°00\' W (negative). Total change = 4°00\' + 2°00\' = 6°00\'. The declination shifted from 4° east of true north to 2° west of true north, a total swing of 6°. When retracing a historical compass survey, bearing corrections must account for this full change to convert original compass bearings to their equivalent true bearings.',
     difficulty: 'medium'
   },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A plane table survey uses the "intersection method" to locate an inaccessible feature. What does this method involve?',
+    options: [
+      'Setting up the plane table AT the feature and shooting back to two control points',
+      'Drawing rays toward the same feature from two different instrument setups, and locating the feature where the rays intersect on the map',
+      'Measuring the distance to the feature by EDM and plotting it along a single ray',
+      'Locating the feature by GPS and transferring coordinates to the plane table sheet'
+    ],
+    correctAnswer: 1,
+    explanation: 'In the plane table intersection method, the surveyor sets up the plane table at two known control stations and sights the same inaccessible feature from each station, drawing a direction ray toward the feature on the map paper from each setup. The feature plots where the two rays cross (intersect) on the paper. No distance measurement to the feature is required. This technique is ideal for features across rivers, cliffs, or other obstacles. It differs from radiation (shooting from one station with distance) and resection (locating the instrument from known points).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Which of the following correctly distinguishes a witness tree from a "lost corner" in PLSS terminology?',
+    options: [
+      'A witness tree establishes the position of an existent corner; a lost corner has no remaining original evidence',
+      'A witness tree is found only in eastern states; a lost corner applies only west of the Mississippi',
+      'A lost corner is any corner marked by a tree blaze instead of a monument',
+      'A witness tree is a legal term for the corner monument itself when trees are used as stakes'
+    ],
+    correctAnswer: 0,
+    explanation: 'A witness tree (bearing tree) is an original monument accessory — a tree identified in the GLO field notes by species, diameter, bearing, and distance from the corner. When a witness tree is found in the position described in the original notes, the corner can be classified as obliterated and restored. A lost corner is one where no original evidence (monuments or accessories such as witness trees) can be found; restoration requires proportionate measurement from adjacent found corners. Witness trees appear in all PLSS states, not just eastern ones.',
+    difficulty: 'medium'
+  },
 ];
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [...FS_QUIZ_QUESTIONS, ...PS_QUIZ_QUESTIONS];
