@@ -4850,6 +4850,203 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'A witness tree (bearing tree) is an original monument accessory — a tree identified in the GLO field notes by species, diameter, bearing, and distance from the corner. When a witness tree is found in the position described in the original notes, the corner can be classified as obliterated and restored. A lost corner is one where no original evidence (monuments or accessories such as witness trees) can be found; restoration requires proportionate measurement from adjacent found corners. Witness trees appear in all PLSS states, not just eastern ones.',
     difficulty: 'medium'
   },
+
+  // Professional Practice — Business, Safety & Communication (Task #15)
+  {
+    domain: 'Professional Practice',
+    question: 'Which OSHA regulation part specifically governs safety at construction sites, including survey crews performing construction staking?',
+    options: [
+      '29 CFR Part 1910 — General Industry Standards',
+      '29 CFR Part 1926 — Construction Standards',
+      '29 CFR Part 1915 — Shipyard Employment',
+      '29 CFR Part 1904 — Recording and Reporting'
+    ],
+    correctAnswer: 1,
+    explanation: '29 CFR Part 1926 covers construction safety and applies to workers at active construction sites, including survey crews performing staking, as-built surveys, and control work. Part 1910 applies to general industry workplaces (offices, shops, factories). When a survey crew is working on a construction site — even just setting control points — they fall under the Part 1926 construction safety standards, not the Part 1910 general industry rules.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A survey crew is about to hand-dig a 12-inch-diameter hole to set a monument in a residential front yard. What must they do before breaking ground?',
+    options: [
+      'Obtain a building permit from the local municipality',
+      'Call 811 to request underground utility locates',
+      'Check the county GIS for utility layers',
+      'Nothing — a 12-inch-diameter hole is too shallow to require a locate'
+    ],
+    correctAnswer: 1,
+    explanation: 'State damage prevention laws require calling 811 (One Call) before any excavation regardless of depth. The 811 center notifies all member utilities to locate and mark their facilities within the work area. GIS utility layers are often incomplete and are not a substitute for an official 811 locate. Checking only visual markers or GIS does not satisfy the legal requirement and does not protect the crew from liability if a utility is struck.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor makes a mistake writing an angle in the field book, recording "92°14\'" instead of the correct "29°14\'". What is the correct procedure?',
+    options: [
+      'Erase the incorrect entry and write the correct value in the same space',
+      'Use white correction fluid to cover the error, then write the correct value',
+      'Draw a single line through "92°14\'", write "29°14\'" nearby, and initial the change',
+      'Tear out the page and re-record all observations on a fresh sheet'
+    ],
+    correctAnswer: 2,
+    explanation: 'Survey field notes are legal records. The proper error correction is a single line through the incorrect entry so it remains legible, the correct value written nearby, and the initials of the person making the correction. Erasure, correction fluid, or destroying pages obliterates the original record and makes the notes appear falsified — this is unacceptable because field notes can be subpoenaed as evidence in boundary disputes and construction claims.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Under the ANSI/ISEA high-visibility garment standard referenced in the MUTCD, what minimum vest class is required for survey crew members working on a roadway with a posted speed of 55 mph?',
+    options: [
+      'Class 1 — reflective tape on arms and legs is sufficient',
+      'Class 2 — required for all roadway work regardless of speed',
+      'Class 3 — required for high-speed environments above 50 mph',
+      'No specific class is mandated; any bright color is acceptable'
+    ],
+    correctAnswer: 2,
+    explanation: 'MUTCD Part 6 requires workers in the right-of-way on highways with speeds above 50 mph to wear ANSI/ISEA Class 3 high-visibility garments. Class 3 provides the greatest area of retroreflective and background material, maximizing visibility to approaching drivers at high speeds. Class 2 is the minimum for lower-speed roads (typically up to 50 mph). Class 1 provides only minimal visibility and is not appropriate for roadway work.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'What is a lump-sum (fixed-fee) contract arrangement, and who bears the primary cost risk?',
+    options: [
+      'The client pays for actual hours plus expenses; the surveyor bears no cost risk',
+      'A predetermined total price for a defined scope; the surveyor bears cost risk if the scope takes longer than estimated',
+      'A fee per deliverable unit (per corner set); risk is shared equally',
+      'The surveyor is reimbursed for all costs plus a fixed profit amount; the client bears all cost risk'
+    ],
+    correctAnswer: 1,
+    explanation: 'In a lump-sum (fixed-fee) contract, the surveyor agrees to perform a specifically defined scope of work for a single total price. If the job takes more time or resources than estimated, the surveyor absorbs the additional cost — the fee does not change. The client benefits from budget certainty. Lump-sum contracts are best suited to well-defined scopes where the surveyor can accurately estimate the effort required. Time-and-materials contracts shift cost risk to the client.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A change order is required when:',
+    options: [
+      'The surveyor has a different crew member lead the field work than originally planned',
+      'The client requests work beyond the original contract scope, or field conditions make the original scope significantly more complex',
+      'The project is completed within the original budget',
+      'The surveyor uses a different instrument than specified in the contract'
+    ],
+    correctAnswer: 1,
+    explanation: 'A change order is a written amendment to the original contract documenting modifications to scope, schedule, or cost. Triggers include: client requests for additional work not in the original scope, discovery of unexpected field conditions that increase complexity, changes in deliverable requirements, or regulatory changes. A change order must be agreed to in writing by both parties before additional work begins. Using a different crew or instrument (when equivalent) does not require a change order.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveying firm\'s annual overhead costs are $300,000 and direct labor costs are $500,000. What is the overhead rate?',
+    options: [
+      '40%',
+      '50%',
+      '60%',
+      '167%'
+    ],
+    correctAnswer: 2,
+    explanation: 'Overhead Rate = Total Overhead / Total Direct Labor × 100% = $300,000 / $500,000 = 0.60 = 60%. This means for every dollar of direct labor cost, the firm incurs $0.60 in overhead costs. Overhead includes rent, administrative salaries, utilities, insurance, equipment depreciation, and software — all costs not directly attributable to a single project. The overhead rate is essential for calculating billing rates that recover all costs and generate profit.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'What is the difference between professional liability (E&O) insurance and general liability insurance for a surveying firm?',
+    options: [
+      'Professional liability covers bodily injury on the job site; general liability covers boundary errors',
+      'Professional liability covers claims from negligent professional acts (boundary errors, elevation mistakes); general liability covers bodily injury and property damage from field operations',
+      'They are the same product sold under different names by different insurers',
+      'Professional liability is required by law; general liability is optional'
+    ],
+    correctAnswer: 1,
+    explanation: 'Professional liability (Errors and Omissions, E&O) insurance covers claims arising from negligent professional acts — boundary location errors, missed easements, incorrect elevations causing construction re-work. General liability insurance covers bodily injury and property damage from field operations — a crew member\'s vehicle accident, a worker injured on a client\'s property, or equipment that damages a utility. A surveying firm needs both types of insurance because professional negligence and general field accidents represent separate categories of risk.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'What is the primary purpose of a Gantt chart in project management?',
+    options: [
+      'To identify the sequence of tasks that controls the minimum project duration',
+      'To show project tasks as horizontal bars on a time axis, illustrating planned start dates, end dates, and durations',
+      'To calculate the overhead rate for each project phase',
+      'To document change orders and scope modifications during a project'
+    ],
+    correctAnswer: 1,
+    explanation: 'A Gantt chart is a bar chart used in project scheduling where each project task is shown as a horizontal bar spanning its planned start-to-end duration on a time axis. Gantt charts are excellent for communicating timelines to clients, tracking progress, and managing multiple concurrent tasks. They do not explicitly show task dependencies or the critical path — those functions require network-based scheduling methods such as the Critical Path Method (CPM).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'In project scheduling, the critical path is:',
+    options: [
+      'The path through the project network that has the most available float',
+      'The sequence of tasks that determines the minimum project duration, where any delay extends the project end date',
+      'The shortest possible route from the first task to the last task regardless of dependencies',
+      'A list of high-priority deliverables identified by the client'
+    ],
+    correctAnswer: 1,
+    explanation: 'The critical path is the longest sequence of dependent tasks from project start to finish; it determines the minimum total project duration. Any delay to a task on the critical path directly delays the project end date. Tasks not on the critical path have float — they can be delayed by the float amount without affecting the end date. Critical Path Method (CPM) scheduling identifies which tasks are critical so project managers can allocate resources and attention to prevent schedule overruns.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Survey field notes must be retained for a minimum period because:',
+    options: [
+      'OSHA requires all job-site documents to be kept for seven years',
+      'They are professional records that may be the only evidence of field observations in boundary disputes or legal proceedings, and state licensing boards mandate retention periods',
+      'The IRS requires all business records to be kept for five years',
+      'Clients can request refunds for work not documented in retained notes'
+    ],
+    correctAnswer: 1,
+    explanation: 'Survey field notes are professional legal records that document exactly what was observed and measured in the field. They can be subpoenaed as evidence in boundary disputes, construction defect claims, and environmental cases. Most state surveying licensing boards require surveyors to retain field notes, calculations, and drawings for a minimum period — typically 5 to 15 years, with some states requiring permanent retention. The notes cannot be recreated after the fact, making their preservation essential to professional practice.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Which type of contract is most appropriate when the full scope of a complex boundary research project cannot be defined in advance?',
+    options: [
+      'Lump sum (fixed fee) — provides budget certainty for the client',
+      'Unit price — best for well-defined, repetitive tasks',
+      'Time and materials (T&M) — client pays for actual hours and expenses as work progresses',
+      'Cost plus fixed fee — only suitable for government contracts'
+    ],
+    correctAnswer: 2,
+    explanation: 'A time-and-materials (T&M) contract is best when the scope cannot be fully defined at the outset. The client pays for actual hours worked at agreed billing rates plus direct costs. This protects the surveyor from cost overruns due to unknown complexity while giving the client visibility into what the work actually requires. The client bears the cost risk in a T&M contract. Lump-sum contracts work best for well-defined scopes where the surveyor can accurately estimate effort.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'What does MUTCD stand for, and which agency publishes it?',
+    options: [
+      'Manual of Universal Traffic Control Documents — published by OSHA',
+      'Manual on Uniform Traffic Control Devices — published by the Federal Highway Administration (FHWA)',
+      'Minimum Uniform Traffic and Construction Directives — published by the Army Corps of Engineers',
+      'Municipal Uniform Traffic Control Documentation — published by each state DOT independently'
+    ],
+    correctAnswer: 1,
+    explanation: 'MUTCD stands for Manual on Uniform Traffic Control Devices. It is published by the Federal Highway Administration (FHWA) and establishes national standards for all traffic control devices, including signs, signals, pavement markings, and temporary work zone controls. Part 6 of the MUTCD covers temporary traffic control (TTC) and governs how survey crews, construction workers, and utilities must set up work zones on public roadways to protect both workers and the traveling public.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor\'s report (letter of opinion) serves which primary purpose that a plat or map cannot?',
+    options: [
+      'It establishes the legal description of the property for recording purposes',
+      'It provides narrative context explaining the basis for boundary decisions, monument conditions, and resolution of conflicts in the record that cannot be shown graphically',
+      'It replaces the surveyor\'s seal and certification on the plat',
+      'It satisfies the minimum technical standards in place of field notes'
+    ],
+    correctAnswer: 1,
+    explanation: 'A plat is a graphic document — it shows locations, dimensions, and directions, but has limited space for explanatory text. A surveyor\'s report (sometimes called a letter of opinion) provides the narrative explanation of the boundary determination: which deeds and plats were researched, what monuments were found and their condition, how conflicts in the record were resolved, and the professional judgment applied. This context is essential for clients, title companies, and attorneys to understand complex boundary situations that cannot be fully communicated graphically.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'The OSHA 10-Hour construction safety training card is primarily designed for:',
+    options: [
+      'Licensed surveyors who need to satisfy their continuing education requirements',
+      'Field workers to receive basic hazard awareness training for construction site safety',
+      'Safety officers and supervisors who manage workplace safety programs',
+      'Employers to avoid liability for construction accidents'
+    ],
+    correctAnswer: 1,
+    explanation: 'The OSHA 10-Hour construction outreach training course is designed to provide basic hazard recognition and avoidance training for field workers. It covers common construction hazards including falls, electrical hazards, struck-by incidents, and excavation safety. The 30-Hour course is designed for supervisors and safety personnel with greater safety responsibility. Many general contractors require survey subcontractors\' field personnel to hold a valid 10-Hour OSHA card before entering the job site. Neither course confers "competent person" status — that requires specific technical expertise in the relevant hazard type.',
+    difficulty: 'medium'
+  },
 ];
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [...FS_QUIZ_QUESTIONS, ...PS_QUIZ_QUESTIONS];

@@ -2910,6 +2910,80 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'National Standard for Spatial Data Accuracy (NSSDA):\n\nHorizontal Accuracy (95% confidence):\n= 1.7308 × RMSEr\nwhere RMSEr = √(RMSEx² + RMSEy²) / √2 (or combined RMSE of horizontal residuals)\n\nVertical Accuracy (95% confidence):\n= 1.9600 × RMSEZ\n\nRMSEZ when mean error ≠ 0:\nRMSEZ = √(σ² + mean²)\n\nCheck point requirements:\n• Minimum 20 well-distributed check points per landcover class (open, urban, forest)\n• Check points must be independent from calibration control\n• Higher accuracy standard than required product (2–3× better)\n\nReport example: "Tested 2.5 m horizontal accuracy at 95% confidence level per NSSDA"',
     category: 'formula'
   },
+
+  // Professional Practice — Business, Safety & Communication (Task #15)
+  {
+    domain: 'Professional Practice',
+    front: '811 — Call Before You Dig',
+    back: 'National One Call number: dial 811 before ANY excavation regardless of depth\n\nProcess:\n1. Call 811 (or submit online locate request)\n2. One Call center notifies all member utilities\n3. Utilities locate and mark their lines within ~2–3 business days\n4. Then you can dig safely\n\nAPWA Underground Utility Color Codes:\n• Red — Electric power\n• Orange — Telecommunications\n• Yellow — Gas/oil/petroleum\n• Green — Sewer/drain\n• Blue — Potable water\n• Purple — Reclaimed water\n• Pink — Temporary SURVEY markings\n• White — Proposed excavation limits\n\nLegal requirement in ALL 50 states\nPenalties for skipping: civil fines + criminal liability if injury/death results',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'MUTCD — Definition and Purpose',
+    back: 'Manual on Uniform Traffic Control Devices\n\nPublished by: Federal Highway Administration (FHWA)\nApplies to: all public roadways in the United States\n\nPart 6 — Temporary Traffic Control (TTC):\nGoverns work zone setup for survey crews, construction, utilities\n\nWork zone sequence (approaching from traffic):\n1. Advance Warning Area — warning signs\n2. Transition Area — taper with cones/drums\n3. Activity Area — crew work space + buffer\n4. Termination Area — end of work zone\n\nHigh-visibility garment requirements:\n• ≤ 50 mph posted speed → ANSI/ISEA Class 2 minimum\n• > 50 mph posted speed → ANSI/ISEA Class 3 required\n• Complex traffic patterns at any speed → Class 3\n\nFlaggers must use MUTCD-approved Stop/Slow paddle',
+    category: 'definition'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Lump Sum vs. Time-and-Materials Contract',
+    back: 'Lump Sum (Fixed Fee):\n• Single predetermined price for a defined scope\n• Surveyor bears all cost risk\n• Client has budget certainty\n• Best for: well-defined scopes (ALTA survey, platting from complete plans)\n\nTime and Materials (T&M):\n• Client pays actual hours × billing rate + direct costs\n• Client bears cost risk\n• Best for: unknown scope (complex boundary research, title disputes)\n• Surveyor must track and invoice all time carefully\n\nUnit Price:\n• Fixed fee per unit (per corner, per lot staked)\n• Risk shared — quantity may vary but unit price is fixed\n• Best for: repetitive, quantifiable tasks\n\nKey exam point: risk allocation differs — Lump Sum = surveyor risk; T&M = client risk',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Change Order — Definition and Triggers',
+    back: 'A change order is a written amendment to the original contract documenting scope, schedule, or cost modifications.\n\nTriggers for a change order:\n• Client requests work beyond original scope\n• Field conditions significantly more complex than anticipated\n• Client changes deliverable format or location\n• Regulatory requirements unknown at contract signing\n• Additional research required (e.g., missing deed records)\n\nProcedure:\n1. Document additional scope in writing\n2. Estimate cost and time impact\n3. Client signs change order BEFORE additional work begins\n\nKey rule: NO work beyond original scope should begin without a signed change order. Verbal agreements create payment disputes.\n\nFixed-fee contracts require change orders when scope changes — the original fee does NOT automatically expand.',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Overhead Rate Formula',
+    back: 'Overhead Rate = Total Annual Overhead Costs / Total Annual Direct Labor Costs × 100%\n\nOverhead costs (indirect): rent, admin salaries, utilities, insurance, software, equipment depreciation, marketing\n\nDirect labor costs: wages for time directly attributed to client projects\n\nExample:\n• Overhead = $400,000; Direct Labor = $500,000\n• Overhead Rate = $400,000 / $500,000 = 80%\n• For every $1.00 of direct labor → $0.80 overhead incurred\n\nBilling Rate Formula:\nBilling Rate = Direct Wage Rate × (1 + Overhead Rate) × (1 + Profit Margin)\n\nExample: $30/hr wage, 80% overhead, 15% profit\n→ $30 × 1.80 × 1.15 = $62.10/hr billing rate\n\nTypical survey firm overhead rates: 50–150%',
+    category: 'formula'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Field Note Error Correction Procedure',
+    back: 'CORRECT METHOD:\n1. Draw a SINGLE horizontal line through the incorrect entry\n2. Original value must remain LEGIBLE (do not obscure it)\n3. Write correct value above or beside the crossed-out entry\n4. Initial the correction (some firms require date also)\n\nNEVER DO:\n• Erase the original entry\n• Use white-out / correction fluid\n• Scribble over or obliterate the error\n• Tear out pages\n\nWhy: Field notes are legal records that may be subpoenaed. Erased or obscured entries appear falsified and destroy credibility in court or licensing proceedings.\n\nInk required (no pencil for legal records)\nPage numbering recommended so missing pages are detected\n\nMnemonic: "Strike, don\'t strike out" — one clean line, stays readable',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Survey Records Retention Requirements',
+    back: 'Survey records that must be retained:\n• Original field notes\n• Calculation sheets and adjustment computations\n• Survey plat/drawing office copies\n• Correspondence (email, letters) related to scope and decisions\n• Electronic data files and data collector downloads\n\nTypical minimum retention periods (varies by state):\n• Most states: 5–10 years minimum\n• Many states: 10–15 years\n• Some states: Indefinite / permanent for original field notes\n\nKey principle: Original field notes are the ONLY contemporaneous evidence of field conditions. They cannot be recreated after the fact.\n\nBest practices:\n• Never loan original field books to clients (provide copies)\n• Store paper records in fireproof/off-site storage\n• Back up digital records in multiple locations\n• Migrate old digital formats periodically to remain readable',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Professional Liability vs. General Liability Insurance',
+    back: 'Professional Liability (Errors & Omissions — E&O):\n• Covers: claims from NEGLIGENT PROFESSIONAL ACTS\n• Examples: boundary error, missed easement, wrong elevation causing rework\n• Pays for: defense costs + damages\n• Note: Policy must be active (or have retroactive date) when claim is made\n• Does NOT cover bodily injury or property damage from physical operations\n\nGeneral Liability:\n• Covers: BODILY INJURY and PROPERTY DAMAGE from field operations\n• Examples: crew vehicle accident, worker injures third party, equipment damages utility\n• Does NOT cover professional negligence (boundary errors, etc.)\n\nWhy both are needed:\n• General liability explicitly EXCLUDES professional services\n• E&O explicitly EXCLUDES physical accidents\n• A surveying firm faces BOTH risk categories on every project\n\nStatute of limitations: typically runs from date of discovery of error (discovery rule), not date of survey',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Gantt Chart vs. Critical Path Method (CPM)',
+    back: 'Gantt Chart:\n• Bar chart: tasks shown as horizontal bars on a time axis\n• Shows: planned start date, end date, duration of each task\n• Good for: communicating timelines to clients, tracking progress\n• Limitation: does NOT explicitly show task dependencies or float\n• Best for: simpler projects with sequential tasks\n\nCritical Path Method (CPM):\n• Network diagram showing task dependencies\n• Critical Path: longest sequence from start to finish = minimum project duration\n• Any delay to a critical-path task delays project completion\n• Float: time a non-critical task can slip without delaying the end date\n• Best for: complex projects with many interdependent tasks\n\nMilestone Schedule:\n• List of key deliverable dates (simpler)\n• Good for client communication on small projects\n\nKey exam distinction: Gantt = visual/timeline; CPM = controls schedule; float exists only in CPM',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'OSHA 10-Hour vs. 30-Hour Construction Training',
+    back: 'OSHA Outreach Training Program (Construction — 29 CFR 1926):\n\nOSHA 10-Hour:\n• Target audience: Entry-level construction field workers\n• Content: Basic hazard recognition — falls, electrocution, struck-by, caught-in/between, excavation\n• Many GCs require survey subcontractor crews to hold 10-Hour cards\n• Does NOT confer "competent person" status\n\nOSHA 30-Hour:\n• Target audience: Supervisors, safety officers, project managers\n• Content: All 10-Hour topics plus management responsibility, safety programs, regulations\n• More detailed regulation review\n• Does NOT confer "competent person" status\n\nCompetent Person:\n• OSHA requires a "competent person" (not a training card holder) to:\n  - Inspect excavations before workers enter\n  - Classify soil type\n  - Identify and correct hazardous conditions\n• Requires specific knowledge AND authority to stop work\n\nKey exam note: 10-Hour ≠ supervisor qualification; 30-Hour ≠ competent person',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Surveyor\'s Report (Letter of Opinion)',
+    back: 'A Surveyor\'s Report is a professional narrative document that accompanies or supplements the survey plat.\n\nPurpose:\nProvides context a plat cannot show graphically:\n• Deeds/plats researched and how interpreted\n• Monuments found — type, condition, position\n• Conflicts in record documents and how resolved\n• Basis for boundary determination\n• Encroachments, overlaps, gaps, or abnormal conditions found\n\nDistinguished from:\n• Survey Plat — graphic representation (dimensions, directions, areas)\n• Field Notes — primary field observation record\n• Legal Description — deed language describing the parcel\n• Title Insurance — underwriter\'s risk analysis (done by title company)\n\nKey writing rules:\n• Separate facts from professional opinions\n• Avoid legal conclusions (say "fence crosses the boundary" not "fence is a trespass")\n• Use precise, unambiguous technical language\n• Signed and sealed by the licensed surveyor',
+    category: 'definition'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Heat Illness Prevention — OSHA Water/Rest/Shade Framework',
+    back: 'Heat Illness Spectrum (increasing severity):\n1. Heat Cramps — muscle spasms; salt/fluid loss\n   Treatment: rest, shade, water, light stretch\n2. Heat Exhaustion — heavy sweating, weakness, cold/pale skin, weak pulse\n   Treatment: cool environment, loosen clothing, cool cloths, hydrate\n3. Heat Stroke — body temp > 103°F, hot/red/dry skin, no sweating, confusion\n   MEDICAL EMERGENCY → Call 911; ice packs/cold immersion immediately\n\nOSHA Prevention Framework ("Water. Rest. Shade."):\n• 1 quart of cool water per hour during heat + heavy exertion\n• Rest breaks in shade or air-conditioned area\n• Acclimatization: 80% of heat illness occurs in first 5 days of heat exposure\n• Never leave an ill worker alone in heat\n\nCold Stress:\n• Hypothermia signs: shivering, slurred speech, drowsiness\n• Prevention: layered clothing, warm-up breaks, dry change of clothes\n• Wind chill accelerates heat loss even at moderate temperatures',
+    category: 'concept'
+  },
 ];
 
 

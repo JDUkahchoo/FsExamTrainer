@@ -3512,4 +3512,123 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     explanation: 'An alidade is a sighting rule — a straightedge with a telescopic sight (or simple peep sights on older versions) mounted along its length. When placed on the plane table sheet, the surveyor sights through the telescope to a distant target and draws a ray along the straightedge edge directly on the paper at the instrument station. The fiducial edge of the alidade passes through the plotted instrument position, and the ray toward the target can then be plotted with no computation. Distances were measured separately (with a stadia arc or tape) and plotted along the ray. This graphical survey method avoided computations entirely, producing a map directly in the field.',
     difficulty: 'medium'
   },
+
+  // Professional Practice — Business, Safety & Communication (Task #15)
+  {
+    domain: 'Professional Practice',
+    question: 'A surveying firm has annual overhead costs of $450,000 and annual direct labor costs of $750,000. A licensed surveyor on staff earns a direct wage of $50/hour. Using the firm\'s overhead rate and a 20% profit margin, what is the billing rate for the licensed surveyor?',
+    options: [
+      '$50.00 per hour',
+      '$80.00 per hour',
+      '$96.00 per hour',
+      '$120.00 per hour'
+    ],
+    correctAnswer: 2,
+    explanation: 'Step 1 — Overhead rate = $450,000 / $750,000 = 60% = 0.60. Step 2 — Billing rate = Direct Rate × (1 + Overhead Rate) × (1 + Profit Margin) = $50 × 1.60 × 1.20 = $80.00 × 1.20 = $96.00 per hour. The formula recovers the direct wage ($50), the overhead burden ($50 × 0.60 = $30 → total $80), and then adds the profit margin ($80 × 0.20 = $16 → total $96). The $80 option is the pre-profit billing rate; the correct final billing rate including 20% profit margin is $96.00.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A survey crew discovers that a competitor\'s survey crew previously set pink survey stakes throughout a parcel they are now locating. When the field crew encounters pink-flagged stakes at a proposed monument location, what does the pink color indicate?',
+    options: [
+      'Proposed excavation limits per the APWA color coding standard',
+      'Temporary survey markings set by a surveyor',
+      'Reclaimed water or irrigation lines',
+      'Electric power cables'
+    ],
+    correctAnswer: 1,
+    explanation: 'Under the American Public Works Association (APWA) uniform color code for underground utilities and excavation markings, pink is reserved for temporary survey markings. This allows surveyors to clearly distinguish their own stakes and marks from utility locate markings placed by utility companies in response to an 811 call. Red = electric power; orange = telecommunications; yellow = gas/oil/petroleum; green = sewer/drains; blue = potable water; purple = reclaimed water; white = proposed excavation limits. Pink = temporary survey markings.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Under OSHA\'s excavation safety standard (29 CFR 1926, Subpart P), what is the minimum depth at which a protective system (sloping, shoring, or shielding) is required in Type C (least stable) soil?',
+    options: [
+      'Any depth greater than 2 feet',
+      'Any depth greater than 4 feet',
+      'Any depth greater than 5 feet',
+      'Any depth greater than 8 feet'
+    ],
+    correctAnswer: 2,
+    explanation: 'OSHA 29 CFR 1926, Subpart P requires that all excavations 5 feet or more in depth in unstable material (Type C soil — the least stable category, including gravel, loamy sand, and soils subject to vibration) must have a protective system in place before workers enter. Even at depths less than 5 feet, a protective system is required if there is potential for cave-in. Surveying crews who dig test pits, probe for monuments, or set deep benchmarks must comply with this requirement. A competent person must classify the soil type and inspect the excavation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A client requests that a surveyor re-stake property corners under an existing fixed-fee boundary survey contract. Upon arriving in the field, the surveyor discovers that 40% of the corners are in locations substantially different from the deed description — requiring extensive boundary analysis and additional title research beyond the original scope. What is the most professionally appropriate action?',
+    options: [
+      'Complete the full additional research and re-staking at no additional charge to honor the original contract',
+      'Stop all field work immediately and decline to continue without written authorization to proceed',
+      'Prepare and execute a written change order documenting the additional scope, estimated cost, and timeline, then proceed with client approval',
+      'Perform the extra work and add costs to the final invoice without advance notice to the client'
+    ],
+    correctAnswer: 2,
+    explanation: 'Discovering field conditions substantially beyond the original contract scope (in this case, extensive boundary conflicts requiring additional research) is a classic change order trigger. The surveyor should prepare a written change order describing the additional scope, estimated time, and cost, and obtain the client\'s written agreement before proceeding. Starting work without authorization and adding costs later creates payment disputes and undermines professional accountability. Declining to continue without any communication is not professionally appropriate when a constructive path forward (a change order) is available.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Which of the following best describes the "critical path" in a project network schedule?',
+    options: [
+      'The most expensive sequence of tasks in the project budget',
+      'The sequence of tasks with the most available schedule float',
+      'The longest duration path from project start to finish, where any delay extends the project completion date',
+      'The list of highest-priority deliverables as ranked by the client'
+    ],
+    correctAnswer: 2,
+    explanation: 'The critical path is the longest sequence of dependent tasks from project start to project finish, and it determines the minimum possible project duration. Any delay to a task on the critical path delays the final project completion date by the same amount. Tasks not on the critical path have float (slack) — they can be delayed by the float amount without extending the project end date. Identifying the critical path allows project managers to focus resources on tasks that directly control the schedule.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'Under what circumstances must a surveyor retain original field notes, and what happens if they are destroyed?',
+    options: [
+      'Field notes may be destroyed after the deliverables are provided to the client, since the plat is the only legally significant document',
+      'Field notes must be retained for the minimum period specified by the state licensing board (typically 5–15 years); destroying them prematurely may violate licensing regulations and eliminates the only primary evidence of field observations',
+      'Field notes are the client\'s property and may be destroyed by the client at any time after acceptance',
+      'OSHA requires all job-site safety records to be retained for 30 years; field notes fall under this rule'
+    ],
+    correctAnswer: 1,
+    explanation: 'Field notes are professional records that document exactly what was observed and measured in the field. State surveying licensing regulations typically mandate minimum retention periods (commonly 5 to 15 years; some states require indefinite retention). Premature destruction can result in disciplinary action by the licensing board. More importantly, field notes are often the only primary evidence of field conditions at the time of the survey — if a boundary is later disputed or a construction defect claimed, destroyed notes remove the surveyor\'s ability to defend the work. Original field books should never be loaned to clients; provide copies.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A survey crew member working alone in a remote area with no cell phone coverage becomes injured. Which of the following lone worker safety measures would best enable the worker to summon emergency help?',
+    options: [
+      'Wearing a Class 3 high-visibility vest so that search aircraft can spot the worker',
+      'Carrying a GPS satellite communicator (e.g., Garmin inReach) that works without cellular coverage',
+      'Calling 811 before beginning work in the remote area',
+      'Completing OSHA 10-Hour training before the assignment'
+    ],
+    correctAnswer: 1,
+    explanation: 'In remote areas without cell coverage, a GPS satellite communicator (such as a Garmin inReach or SPOT device) uses the Iridium or other satellite network to send emergency SOS messages and two-way text messages anywhere on Earth regardless of cellular infrastructure. A high-visibility vest aids rescue but does not enable communication. Calling 811 addresses underground utility hazards, not remote injury response. OSHA 10-Hour training provides hazard awareness but does not solve the communication problem. Satellite communicators are the key lone-worker safety tool for surveyors in remote terrain.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor\'s report (letter of opinion) is best described as:',
+    options: [
+      'The legal description of the property, written in metes-and-bounds format for recording',
+      'A narrative document explaining the research performed, monuments found, conflicts in the record, and the professional judgment applied in making the boundary determination',
+      'A substitute for the field notes when original notes are unavailable',
+      'The title company\'s analysis of the chain of title for the subject property'
+    ],
+    correctAnswer: 1,
+    explanation: 'A surveyor\'s report (letter of opinion) is a professional narrative document that accompanies or supplements the survey plat, providing the context and explanation that cannot be shown graphically. It describes which records were researched, what monuments were found and their condition, how conflicts in the record were resolved, and the professional judgment applied to reach the boundary determination. It is authored and signed by the surveyor, not the title company. It does not replace field notes, which are the primary record of field observations, and it is not the legal description (though it may reference one).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'What is the key difference between professional liability (E&O) insurance and general liability insurance that makes it necessary for a surveying firm to carry both?',
+    options: [
+      'Professional liability has higher premiums; general liability is more affordable',
+      'Professional liability covers claims arising from negligent professional acts (errors in judgment or execution); general liability covers bodily injury and property damage from physical operations — two different risk categories that require separate coverage',
+      'They are interchangeable; one policy can cover both categories of risk',
+      'General liability is required by state law; professional liability is optional'
+    ],
+    correctAnswer: 1,
+    explanation: 'Professional liability (E&O) insurance covers claims from negligent professional acts — boundary errors, missed easements, incorrect elevations causing construction rework, or failure to detect encroachments. General liability covers bodily injury and property damage caused by field operations — crew vehicle accidents, workers injuring third parties, or equipment damaging underground utilities. A general liability policy explicitly excludes professional services; an E&O policy covers only professional acts, not physical accidents. A surveying firm needs both policies because it faces both categories of risk in every project.',
+    difficulty: 'hard'
+  },
 ];
