@@ -1749,10 +1749,10 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
   },
   {
     domain: 'Survey Computations & Applications',
-    question: 'A vertical aerial photo at scale 1:20,000 shows a rectangular field measuring 1.5 in × 2.0 in on the photo. What is the ground area in acres?',
-    options: ['57.4 acres', '28.7 acres', '114.8 acres', '45.9 acres'],
+    question: 'A vertical aerial photo at scale 1:4,800 shows a rectangular lot measuring 1.5 in × 2.0 in on the photo. What is the ground area in acres?',
+    options: ['11.0 acres', '1.10 acres', '110 acres', '0.11 acres'],
     correctAnswer: 0,
-    explanation: 'Ground dimensions: 1.5 × 20,000 = 30,000 in = 2,500 ft; 2.0 × 20,000 = 40,000 in = 3,333 ft. Area = 2,500 × 3,333 = 8,332,500 sq ft / 43,560 = 191.3... Wait: 30,000in/12=2500ft, 40,000in/12=3333.3ft. Area = 2500×3333.3 = 8,333,250 sqft ÷ 43,560 ≈ 191 acres. Let me recalculate: Actually using correct conversion: 1.5in × 20000 = 30,000 in ground = 2,500 ft. 2.0 × 20000 = 40,000 in = 3,333 ft. Area = 2,500 × 3,333 = 8,333,333 sqft / 43,560 = 191.3 acres. But the answer should match. Correcting: At 1:20,000 scale, 1 inch = 1,667 ft. Field = 1.5×1667 = 2,500 ft by 2.0×1667 = 3,333 ft. Area = 8,333,333/43,560 ≈ 191 acres.',
+    explanation: 'Ground width = 1.5 in × 4,800 = 7,200 in ÷ 12 = 600 ft. Ground length = 2.0 in × 4,800 = 9,600 in ÷ 12 = 800 ft. Area = 600 × 800 = 480,000 sq ft ÷ 43,560 sq ft/acre = 11.02 acres ≈ 11.0 acres. Procedure: multiply map dimension by scale denominator, convert inches to feet, compute area in sq ft, then divide by 43,560 for acres.',
     difficulty: 'medium'
   },
   {
@@ -1775,10 +1775,10 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
   },
   {
     domain: 'Survey Computations & Applications',
-    question: 'For a vertical curve with PVI elevation 520 ft, g1 = +4%, g2 = -2%, and L = 600 ft, what is the elevation at the midpoint of the curve?',
-    options: ['524.5 ft', '520.0 ft', '526.0 ft', '522.0 ft'],
+    question: 'For a vertical curve with PVI elevation 520 ft, g1 = +4%, g2 = −2%, and L = 600 ft, what is the elevation at the midpoint of the curve (x = L/2 = 300 ft from BVC)?',
+    options: ['515.5 ft', '520.0 ft', '526.0 ft', '522.0 ft'],
     correctAnswer: 0,
-    explanation: 'Elevation at mid = PVI elevation + (L/8)(g1-g2)/100... Actually: y_mid = elevation of PVI + correction. BVC elev = 520 - (300×0.04) = 508. EVC elev = 520 - (300×0.02) = 514. Mid of chord = (508+514)/2 = 511. Mid of curve = (511+520)/2 = 515.5. Using standard formula: BVC = 520-(300×0.04)=508, at x=300: elev = 508 + 0.04×300 + [(-0.02-0.04)/(2×600)]×300² = 508+12+(-0.0001×90000) = 508+12-4.5 = 515.5 ft. Hmm let me recheck. Using: elev = BVC_elev + g1·x + [(g2-g1)/(2L)]·x². BVC = 520 - 0.04×300 = 508. At x=300: 508 + 0.04×300 + [(-0.02-0.04)/(2×600)]×90000 = 508 + 12 + (-0.06/1200)×90000 = 508+12-4.5 = 515.5. Correcting answer to 515.5 ft.',
+    explanation: 'BVC elevation = PVI − g1 × (L/2) = 520 − 0.04 × 300 = 508 ft. Using the parabolic formula: y = BVC_elev + g1·x + [(g2 − g1)/(2L)]·x². At x = 300 ft: y = 508 + 0.04 × 300 + [(−0.02 − 0.04)/(2 × 600)] × 300² = 508 + 12 + (−0.06/1200) × 90,000 = 508 + 12 − 4.5 = 515.5 ft.',
     difficulty: 'hard'
   },
   {
@@ -1963,10 +1963,10 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
   },
   {
     domain: 'Field Data Acquisition',
-    question: 'Curvature correction alone (without refraction) at 3,000 ft distance is:',
+    question: 'Curvature correction alone (without refraction) at 3,000 ft distance is approximately:',
     options: ['0.21 ft', '0.07 ft', '0.63 ft', '0.024 ft'],
     correctAnswer: 0,
-    explanation: 'Curvature only: C = 0.0239 × M² where M in thousands of feet. Wait—pure curvature C = 0.667M² × 0.0239... Actually C (curvature) = 0.0239F² for combined C&R. Pure curvature = 0.0206×3² = 0.186. More precisely: h_c = D²/(2R) where R = 20,906,000 ft. h_c = 9,000,000/41,812,000 = 0.215 ft ≈ 0.21 ft.',
+    explanation: 'Pure curvature correction: h_c = D² / (2R) where R = 20,906,000 ft (mean radius of Earth). h_c = 3,000² / (2 × 20,906,000) = 9,000,000 / 41,812,000 = 0.215 ft ≈ 0.21 ft. This is the curvature-only term; the combined curvature and refraction correction (C + R) is approximately 0.0239 × M² where M is distance in thousands of feet, giving 0.0239 × 3² = 0.215 ft, which confirms the result (refraction approximately cancels one-seventh of curvature).',
     difficulty: 'hard'
   },
   {
@@ -3038,15 +3038,15 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
   },
   {
     domain: 'Mapping, GIS, and CAD',
-    question: 'An airborne LiDAR system has a pulse repetition rate (PRR) of 200,000 Hz and flies at 80 m/s. The scanner covers a 200-m wide swath. What is the approximate along-track point spacing?',
+    question: 'An airborne LiDAR system flies at 80 m/s with a scan rate of 200 scan lines per second and collects 100 pulses per scan line. A 200-m wide swath is covered. What is the approximate point density (points per square meter)?',
     options: [
-      '0.04 m (4 cm)',
-      '0.40 m (40 cm)',
-      '2.50 m',
-      '0.001 m (1 mm)'
+      '0.13 pts/m²',
+      '1.25 pts/m²',
+      '25 pts/m²',
+      '2,000 pts/m²'
     ],
     correctAnswer: 1,
-    explanation: 'Along-track spacing = aircraft speed / PRR = 80 m/s ÷ 200,000 pulses/s = 0.0004 m per pulse along track. Wait — that is too small. Note the pulse rate contributes to total points; the spacing across the swath also depends on scan rate, not PRR alone. The simplest along-track spacing estimate uses: spacing = speed / (PRR / points_per_scan_line). For a rough estimate treating each pulse as a single point: 80 / 200,000 = 0.0004 m. However, if only every 200th pulse is along-track (one scan line per 200 pulses), spacing = 0.0004 × 200 = 0.08 m. In practice, typical QL2 LiDAR (2 pts/m²) yields spacing ≈ √(1/2) ≈ 0.71 m. The closest realistic answer for a 200 kHz system at 80 m/s with standard scan rates is approximately 0.40 m along-track, giving 2+ pts/m².',
+    explanation: 'Along-track scan line spacing = speed ÷ scan rate = 80 m/s ÷ 200 lines/s = 0.40 m between scan lines. Each scan line covers the 200-m swath with 100 pulses, giving an across-track pulse spacing = 200 m ÷ 100 = 2.0 m. Average ground area per point = 0.40 m × 2.0 m = 0.80 m². Point density = 1 ÷ 0.80 = 1.25 pts/m², which meets USGS QL2 standards (minimum 2 pts/m² nominal; QL2 is commonly cited as 2 pts/m² but values near 1–2 are typical for this system configuration).',
     difficulty: 'hard'
   },
   {
@@ -3077,16 +3077,16 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
   },
   {
     domain: 'Mapping, GIS, and CAD',
-    question: 'A topographic map has a horizontal scale of 1:24,000 and a contour interval of 10 feet. Two contour lines are 8 mm apart on the map. What is the approximate ground slope between those two contours?',
+    question: 'A topographic map has a scale of 1:4,800 and a contour interval of 10 feet. Two adjacent contour lines are measured 13 mm apart on the map. What is the approximate ground slope?',
     options: [
-      'Approximately 0.5%',
-      'Approximately 5.2%',
-      'Approximately 52%',
-      'Approximately 0.052%'
+      'Approximately 0.49%',
+      'Approximately 4.9%',
+      'Approximately 49%',
+      'Approximately 0.049%'
     ],
     correctAnswer: 1,
-    explanation: 'Horizontal distance on ground = 8 mm × 24,000 = 192,000 mm = 192 m = 629.9 ft. Vertical rise = one contour interval = 10 ft. Slope = rise / run = 10 / 629.9 ≈ 0.0159 = 1.59%. Hmm — let me check: 8mm × 24,000 = 192,000 mm = 192 m; 192 m × 3.2808 = 629.9 ft. Slope = 10 / 629.9 = 0.0159. For a 5.2% slope: run = 10/0.052 = 192.3 ft. 192.3 ft / 3.2808 = 58.6 m; 58.6 m / 24,000 = 0.00244 m = 2.44 mm. That does not match 8 mm. Rechecking option B: 5.2%: run = 192 m = 629 ft; slope = 10/629 = 1.59%. The answer is approximately 1.6% which is closest to option B (5.2%) — wait, none match cleanly. The best approximate answer in exam context using 10 ft rise over ~630 ft run = 1.6%, but rounding to "approximately 5.2%" is incorrect. The correct answer is ~1.6%, which in exam context is represented by option B as the closest reasonable answer. Students should compute: horizontal distance = 8 × 24,000 mm = 192 m; slope = (10 ft) / (630 ft) ≈ 1.6%.',
-    difficulty: 'hard'
+    explanation: 'Ground distance = map distance × scale denominator = 13 mm × 4,800 = 62,400 mm = 62.4 m × 3.281 ft/m = 204.7 ft. Vertical rise = one contour interval = 10 ft. Slope = rise ÷ run = 10 ÷ 204.7 = 0.0489 = 4.9%. The procedure: (1) multiply map measurement by the scale denominator to get ground distance; (2) divide the contour interval by that ground distance; (3) multiply by 100 for percent slope.',
+    difficulty: 'medium'
   },
   {
     domain: 'Mapping, GIS, and CAD',
@@ -3144,16 +3144,16 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
   },
   {
     domain: 'Math & Basic Science',
-    question: 'A steel tape is standardized at 68°F (20°C). During a field measurement, the temperature is 95°F (35°C). The measured distance is 500.000 ft. Using the thermal expansion coefficient of 6.45 × 10⁻⁶ per °F, what is the temperature correction?',
+    question: 'A steel tape is standardized at 68°F. During a field measurement, the temperature is 95°F and the measured distance is 500.000 ft. Using α = 6.45 × 10⁻⁶ per °F, what temperature correction should be applied to the measured distance?',
     options: [
-      '+0.110 ft',
-      '−0.110 ft',
-      '+0.022 ft',
-      '+1.100 ft'
+      '+0.087 ft (add to measured distance)',
+      '−0.087 ft (subtract from measured distance)',
+      '+0.870 ft (add to measured distance)',
+      'No correction — temperature changes only affect EDM, not steel tapes'
     ],
     correctAnswer: 0,
-    explanation: 'ΔT = 95 − 68 = +27°F. Correction = 6.45 × 10⁻⁶ × 500 × 27 = 6.45 × 10⁻⁶ × 13,500 = 0.087 ft. Hmm — let me recalculate: 6.45 × 10⁻⁶ × 500 × 27 = 6.45 × 13,500 × 10⁻⁶ = 87,075 × 10⁻⁶ = 0.087 ft ≈ +0.087 ft. The tape is longer in the heat, so the actual distance is longer than the tape reads. Correction is positive. The closest answer is +0.110 ft. Note: exact coefficient and rounding choices affect the decimal. The exam intends +0.087 ≈ +0.110 ft range, confirming the sign (tape too long → measured distance too short → add correction). Answer A is the correct sign and order of magnitude.',
-    difficulty: 'hard'
+    explanation: 'ΔT = 95 − 68 = +27°F. C_t = α × L × ΔT = 6.45 × 10⁻⁶ × 500 × 27 = 0.087 ft. Because the temperature is above standard, the tape is longer than its nominal length. A longer tape reads shorter distances — each tape length spans more ground than the tape shows. Therefore the true distance is longer than the measured distance, and the correction is positive (+0.087 ft is added). True distance = 500.000 + 0.087 = 500.087 ft.',
+    difficulty: 'medium'
   },
   {
     domain: 'Math & Basic Science',
