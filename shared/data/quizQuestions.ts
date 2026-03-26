@@ -3572,6 +3572,173 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'Section 5.F of the 2026 ALTA/NSPS standards requires the surveyor to locate the perimeter of cemeteries and burial grounds, and the location of isolated gravesites not within a cemetery or burial ground, whether disclosed in documents provided to the surveyor or observed during fieldwork. This was not explicitly addressed in the 2021 standards.',
     difficulty: 'medium'
   },
+  // Survey Computations & Applications — Spiral Curves
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'What is the formula for the spiral angle θs given spiral length Ls and degree of circular curve D?',
+    options: ['θs = Ls / D', 'θs = Ls × D / 200', 'θs = D / (2 × Ls)', 'θs = 200 / (Ls × D)'],
+    correctAnswer: 1,
+    explanation: 'θs = Ls × D / 200 (degrees). This formula is derived from the arc definition of degree of curve. A spiral of 200 ft joined to a 1° curve has θs = 1°; doubling either Ls or D doubles θs.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral curve of length Ls = 250 ft is used with a circular curve of D = 4°. What is the spiral angle θs?',
+    options: ['2.50°', '5.00°', '1.00°', '10.00°'],
+    correctAnswer: 1,
+    explanation: 'θs = Ls × D / 200 = 250 × 4 / 200 = 1000 / 200 = 5.00°.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a spiral-curve-spiral layout, which point marks the transition from the first spiral to the circular arc?',
+    options: ['TS (Tangent to Spiral)', 'SC (Spiral to Curve)', 'CS (Curve to Spiral)', 'ST (Spiral to Tangent)'],
+    correctAnswer: 1,
+    explanation: 'The four key points in order along the alignment are: TS (start of first spiral), SC (end of first spiral / start of circular arc), CS (end of circular arc / start of second spiral), ST (end of second spiral). SC marks the transition from spiral to circular arc.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The "shift" (p) in a spiral curve layout refers to:',
+    options: [
+      'The spiral length divided by the radius',
+      'The perpendicular offset of the shifted circular arc from the original tangent',
+      'The along-tangent distance from the TS to the center of the spiral',
+      'The difference between the long tangent and short tangent'
+    ],
+    correctAnswer: 1,
+    explanation: 'The shift p is the perpendicular distance the circular arc is moved inward (toward the center of curvature) from the original tangent line to accommodate the spiral. p ≈ Ys – R(1 – cos θs). A larger spiral produces a larger shift.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The "throw" (k) in a spiral curve layout is measured:',
+    options: [
+      'Perpendicular to the tangent, from the TS to the SC',
+      'Along the initial tangent, from the TS to the shifted circular arc center projection',
+      'From the PI to the TS',
+      'From the SC to the CS along the arc'
+    ],
+    correctAnswer: 1,
+    explanation: 'The throw k is measured along the initial tangent direction from the TS to the point directly opposite the shifted circular arc center. k ≈ Xs – R sin(θs). Together with the shift p, it defines the position of the shifted circular arc.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The spiral tangent length Ts for a spiral-curve-spiral layout is measured from:',
+    options: [
+      'The TS to the SC',
+      'The PI to the TS (or PI to the ST)',
+      'The SC to the CS',
+      'The TS to the midpoint of the circular arc'
+    ],
+    correctAnswer: 1,
+    explanation: 'Ts is the distance from the PI (Point of Intersection) to either the TS or the ST. It replaces the simple tangent distance T used for a plain circular curve. The TS station is found by subtracting Ts from the PI station.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a highway spiral curve, Xs represents:',
+    options: [
+      'The perpendicular offset from the tangent to the SC point',
+      'The distance along the initial tangent from the TS to the SC projected point',
+      'The spiral length',
+      'The shift of the circular curve'
+    ],
+    correctAnswer: 1,
+    explanation: 'Xs is the x-coordinate of the SC point measured along the initial tangent direction from the TS. For small spiral angles, Xs ≈ Ls (nearly equal to the full spiral length, since the curve is nearly straight). Xs is always slightly less than Ls.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a highway spiral curve, Ys represents:',
+    options: [
+      'The distance along the initial tangent from the TS to the PI',
+      'The perpendicular offset from the initial tangent to the SC point',
+      'The spiral angle in radians',
+      'The radius of the connecting circular curve'
+    ],
+    correctAnswer: 1,
+    explanation: 'Ys is the y-coordinate of the SC point, measured perpendicular to the initial tangent direction from the TS. For small spiral angles, Ys ≈ Ls × θs / 3 (in radians). Ys represents how far the SC has been offset from the tangent line.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The length of the circular arc between the SC and CS points in a spiral-curve-spiral layout equals:',
+    options: [
+      'R × Δ × π/180',
+      'R × (Δ – 2θs) × π/180',
+      'R × θs × π/180',
+      'Ls × (Δ – θs) / 100'
+    ],
+    correctAnswer: 1,
+    explanation: 'The circular arc must subtend an angle of Δ – 2θs, since each of the two spirals already uses θs of the total deflection angle Δ. Arc = R × (Δ – 2θs) × π/180. If 2θs > Δ, the spirals overlap and a circular arc cannot be inserted.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Why is a spiral (transition) curve used instead of connecting a tangent directly to a circular curve?',
+    options: [
+      'Spiral curves are shorter than circular curves',
+      'A spiral provides a gradual increase in curvature, allowing vehicles to smoothly roll into the circular arc while superelevation is applied',
+      'Spiral curves have a constant radius throughout',
+      'A spiral eliminates the need for a PI station'
+    ],
+    correctAnswer: 1,
+    explanation: 'A circular curve has a sudden change from zero curvature (tangent) to constant curvature at the PC. A spiral curve starts at zero curvature at the TS and increases linearly to the full circular curve curvature at the SC, providing a smooth transition that improves driver comfort, vehicle stability, and allows superelevation (banking) to be applied gradually.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral with Ls = 400 ft is connected to a D = 2° circular curve (R = 2864.79 ft). What is the spiral angle θs?',
+    options: ['2.00°', '4.00°', '8.00°', '1.00°'],
+    correctAnswer: 1,
+    explanation: 'θs = Ls × D / 200 = 400 × 2 / 200 = 800 / 200 = 4.00°. Alternatively, θs (radians) = Ls / (2R) = 400 / (2 × 2864.79) = 400 / 5729.58 = 0.0698 rad = 4.00°.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The long tangent (LT) of a spiral curve is defined as:',
+    options: [
+      'The full length of the spiral arc',
+      'The distance from the TS along the initial tangent to the foot of the perpendicular dropped from the SC to the tangent',
+      'The distance from the PI to the TS',
+      'The chord length from TS to SC'
+    ],
+    correctAnswer: 1,
+    explanation: 'LT is the projection of the spiral chord onto the initial tangent line: LT = Xs – Ys / tan(θs). It is the longer of the two legs of the tangent-offset triangle used to stake the SC from the TS. The short tangent ST = Ys / sin(θs) is perpendicular to the chord.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a spiral-curve-spiral layout with Δ = 30° and θs = 6°, what angle does the circular arc subtend?',
+    options: ['30°', '24°', '18°', '36°'],
+    correctAnswer: 2,
+    explanation: 'The circular arc angle = Δ – 2θs = 30° – 2(6°) = 30° – 12° = 18°. Each spiral uses θs of the total deflection angle, so the remaining central angle for the circular arc is Δ – 2θs.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'If the PI is at station 40+00.00 and the spiral tangent length Ts = 485.30 ft, what is the TS station?',
+    options: ['Station 35+14.70', 'Station 44+85.30', 'Station 34+85.30', 'Station 45+14.70'],
+    correctAnswer: 0,
+    explanation: 'TS station = PI station – Ts = 4000.00 – 485.30 = 3514.70 ft = station 35+14.70. The TS is always located Ts feet before the PI along the incoming tangent.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'For a spiral curve, which statement about the SC point is correct?',
+    options: [
+      'At the SC, the spiral curvature is zero',
+      'At the SC, the curvature of the spiral equals the curvature of the connecting circular curve',
+      'The SC is located at the PI',
+      'At the SC, the spiral and circular arc have the same tangent direction as the original alignment'
+    ],
+    correctAnswer: 1,
+    explanation: 'The defining property of a spiral is that curvature increases linearly from zero at the TS to the full circular curve curvature at the SC. At the SC point, the spiral curvature exactly matches 1/R (the circular curve curvature), ensuring a smooth, tangent connection between the spiral and the circular arc.',
+    difficulty: 'medium'
+  },
+
   {
     domain: 'Professional Practice',
     question: 'Under the 2026 ALTA/NSPS standards, what new requirement applies to utility locate markings observed during fieldwork?',

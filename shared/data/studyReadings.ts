@@ -16,6 +16,7 @@ import { STUDY_READINGS_D4_NEW } from './studyReadingsD4New';
 import { STUDY_READINGS_D6_NEW } from './studyReadingsD6New';
 import { STUDY_READINGS_D7_NEW } from './studyReadingsD7New';
 import { STUDY_READINGS_STRATEGY } from './studyReadingsStrategy';
+import { STUDY_READINGS_SPIRALS } from './studyReadingsSpirals';
 
 const STUDY_READINGS_BASE: ReadingModule[] = [
   {
@@ -723,4 +724,5 @@ export const STUDY_READINGS: ReadingModule[] = [
   ...STUDY_READINGS_D6_NEW,
   ...STUDY_READINGS_D7_NEW,
   ...STUDY_READINGS_STRATEGY,
+  ...STUDY_READINGS_SPIRALS,
 ];

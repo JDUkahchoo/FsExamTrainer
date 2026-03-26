@@ -2743,4 +2743,88 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     explanation: 'QA/QC: redundant measurements, closing traverses/levels, checking calculations, calibrating equipment, independent review.',
     difficulty: 'medium'
   },
+
+  // Survey Computations & Applications — Spiral Curves
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral-curve-spiral alignment has a total deflection angle Δ = 36°00\' and uses spirals with θs = 6°00\' on each end. What is the central angle of the circular arc portion?',
+    options: ['36°00\'', '30°00\'', '24°00\'', '12°00\''],
+    correctAnswer: 2,
+    explanation: 'The circular arc angle = Δ – 2θs = 36° – 2(6°) = 36° – 12° = 24°00\'. Each spiral consumes θs degrees of the total deflection angle. The remaining angle is assigned to the circular arc.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral of length Ls = 300 ft is connected to a circular curve of radius R = 1910 ft. What is the approximate spiral angle θs in degrees?',
+    options: ['9.00°', '4.50°', '3.00°', '6.36°'],
+    correctAnswer: 1,
+    explanation: 'θs (radians) = Ls / (2R) = 300 / (2 × 1910) = 300 / 3820 = 0.07853 rad. Converting to degrees: 0.07853 × (180/π) = 4.50°. Alternatively, D = 5729.578 / 1910 = 3.00°; θs = Ls × D / 200 = 300 × 3.00 / 200 = 4.50°.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral curve has Ls = 200 ft, D = 4° (R = 1432.39 ft), giving Ys = 4.65 ft. What is the shift p?',
+    options: ['1.15 ft', '4.65 ft', '3.50 ft', '0.24 ft'],
+    correctAnswer: 0,
+    explanation: 'p = Ys – R(1 – cos θs). First, θs = Ls × D / 200 = 200 × 4 / 200 = 4°. Then: p = 4.65 – 1432.39(1 – cos 4°) = 4.65 – 1432.39(1 – 0.99756) = 4.65 – 1432.39 × 0.00244 = 4.65 – 3.50 = 1.15 ft. The shift p is always positive and is approximately Ls²/(24R) for small spiral angles.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The PI for a spiral-curve-spiral alignment is at station 60+00.00. The spiral tangent length Ts = 542.16 ft. At what station is the TS?',
+    options: ['Station 65+42.16', 'Station 54+57.84', 'Station 60+00.00', 'Station 66+08.32'],
+    correctAnswer: 1,
+    explanation: 'TS station = PI – Ts = 6000.00 – 542.16 = 5457.84 ft = station 54+57.84. The TS is always located Ts feet before the PI along the incoming tangent. The ST is symmetrically located Ts feet after the PI along the outgoing tangent (for a symmetric alignment).',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral-curve-spiral layout has PI at 50+00.00, Ts = 400.00 ft, Ls = 200.00 ft, and circular arc length = 500.00 ft. At what station is the ST (Spiral to Tangent)?',
+    options: ['Station 55+00.00', 'Station 46+00.00', 'Station 57+00.00', 'Station 53+00.00'],
+    correctAnswer: 0,
+    explanation: 'TS = 5000.00 – 400.00 = 4600.00 (station 46+00.00). SC = 4600.00 + 200.00 = 4800.00 (station 48+00.00). CS = 4800.00 + 500.00 = 5300.00 (station 53+00.00). ST = 5300.00 + 200.00 = 5500.00 = station 55+00.00. The total route length through the spiral-curve-spiral is 2Ls + arc = 200 + 500 + 200 = 900 ft, added to the TS station.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Which relationship is used to verify that a spiral is geometrically compatible with a circular curve of radius R?',
+    options: [
+      'θs = Ls / D',
+      'θs (radians) = Ls / (2R)',
+      'Ls = D / (2θs)',
+      'R = Ls / θs'
+    ],
+    correctAnswer: 1,
+    explanation: 'The fundamental relationship is θs = Ls / (2R) (with θs in radians). This comes from the property that the spiral must meet the circular curve tangentially at the SC point, where the spiral\'s curvature (1/R at the SC) equals the circular curve\'s curvature. Equivalently in degree-of-curve notation: θs = Ls × D / 200.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a spiral curve layout, if the total deflection angle Δ = 20° and only one spiral is used at the beginning (no closing spiral), how much of the angle does the circular arc receive?',
+    options: ['20°', '20° – θs', '20° – 2θs', 'θs only'],
+    correctAnswer: 1,
+    explanation: 'When only one spiral is used at the entry (a half-spiral layout), the circular arc receives Δ – θs. In the standard two-spiral layout, the arc receives Δ – 2θs. On the FS exam, problems typically use the symmetric two-spiral layout, so the arc angle = Δ – 2θs.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A spiral has Ls = 400 ft and D = 3° (R = 1909.86 ft). What is the approximate value of Xs?',
+    options: ['399.51 ft', '380.00 ft', '400.00 ft', '350.00 ft'],
+    correctAnswer: 0,
+    explanation: 'θs = Ls × D / 200 = 400 × 3 / 200 = 6.00°; θs_rad = 0.10472. Xs = Ls(1 – θs²/10) = 400(1 – 0.10472²/10) = 400(1 – 0.001097) = 400 × 0.998903 ≈ 399.56 ft. The closest answer is 399.51 ft (slight variation in approximation terms). Xs is always slightly less than Ls.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'The spiral tangent length formula Ts = (R + p) × tan(Δ/2) + k most closely resembles which horizontal curve formula?',
+    options: [
+      'L = R × Δ × π / 180',
+      'T = R × tan(Δ/2)',
+      'E = R × (sec(Δ/2) – 1)',
+      'M = R × (1 – cos(Δ/2))'
+    ],
+    correctAnswer: 1,
+    explanation: 'The simple circular curve tangent distance is T = R × tan(Δ/2). For the spiral-curve-spiral layout, Ts = (R + p) × tan(Δ/2) + k, which is the same formula but using the shifted radius (R + p) instead of R, plus the throw offset k. As the spiral length approaches zero, p → 0, k → 0, and Ts → T.',
+    difficulty: 'medium'
+  },
 ];

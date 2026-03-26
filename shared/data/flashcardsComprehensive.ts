@@ -2370,4 +2370,78 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'Field check for level collimation error\nCompare readings at equal and unequal distances\n\nCalibration check',
     category: 'concept'
   },
+
+  // Survey Computations & Applications — Spiral Curves
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral (Transition) Curve — Purpose',
+    back: 'Connects a tangent to a circular curve with gradually increasing curvature\n\nAllows smooth vehicle steering and gradual superelevation application\n\nCurvature increases linearly from 0 at TS to 1/R at SC',
+    category: 'concept'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral Angle (θs) Formula',
+    back: 'θs = Ls × D / 200 (degrees)\n\nOr: θs (radians) = Ls / (2R)\n\nWhere:\n• Ls = spiral length (ft)\n• D = degree of circular curve\n• R = radius of circular curve',
+    category: 'formula'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral Layout Points (in order)',
+    back: 'TS → SC → CS → ST\n\n• TS: Tangent to Spiral (start of first spiral)\n• SC: Spiral to Curve (start of circular arc)\n• CS: Curve to Spiral (end of circular arc)\n• ST: Spiral to Tangent (end of second spiral)',
+    category: 'definition'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Xs and Ys (Spiral Coordinates)',
+    back: 'Xs = distance from TS to SC along initial tangent\nYs = perpendicular offset from tangent to SC\n\nApprox:\nXs ≈ Ls(1 – θs²/10)\nYs ≈ Ls × θs_rad / 3\n\nθs must be in radians for series',
+    category: 'formula'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Shift (p) and Throw (k)',
+    back: 'p = Ys – R(1 – cos θs)\n(shift = perpendicular offset of circular arc from tangent)\n\nk = Xs – R sin θs\n(throw = along-tangent offset)\n\nBoth locate the shifted circular curve center',
+    category: 'formula'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral Tangent Length (Ts)',
+    back: 'Ts = (R + p) × tan(Δ/2) + k\n\nWhere:\n• R = radius, p = shift, k = throw\n• Δ = total deflection angle\n\nTS station = PI station – Ts',
+    category: 'formula'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Circular Arc Angle in SCS Layout',
+    back: 'Circular arc angle = Δ – 2θs\n\nCircular arc length = R × (Δ – 2θs) × π/180\n\nEach spiral uses θs of the total deflection angle Δ',
+    category: 'formula'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Long Tangent (LT) and Short Tangent (ST)',
+    back: 'LT = Xs – Ys / tan(θs)\n(along tangent, from TS to foot of ⊥ from SC)\n\nST = Ys / sin(θs)\n(from foot of ⊥ up to SC point)\n\nUsed to stake SC from TS',
+    category: 'formula'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral Stationing Sequence',
+    back: 'TS station: PI – Ts\nSC station: TS + Ls\nCS station: SC + (arc length)\nST station: CS + Ls\n\nArc length = R × (Δ – 2θs) × π/180',
+    category: 'concept'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral Clothoid Property',
+    back: 'Radius × arc length = constant (= Ls × R)\n\nAt TS: radius = ∞ (tangent, zero curvature)\nAt SC: radius = R (full circular curvature)\n\nCurvature increases linearly along the spiral',
+    category: 'concept'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral Angle Quick Check',
+    back: 'θs = Ls × D / 200\n\nExample checks:\n• Ls=200, D=4° → θs = 4°\n• Ls=300, D=6° → θs = 9°\n• Ls=400, D=3° → θs = 6°\n\nLarger Ls or sharper D → larger θs',
+    category: 'concept'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Spiral vs Simple Circular Curve Tangent',
+    back: 'Simple curve: T = R × tan(Δ/2)\n\nSpiral-curve-spiral: Ts = (R + p) × tan(Δ/2) + k\n\nAs Ls → 0: p → 0, k → 0, Ts → T\nSpiral always increases tangent length',
+    category: 'concept'
+  },
 ];
