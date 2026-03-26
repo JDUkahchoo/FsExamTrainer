@@ -2557,6 +2557,31 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     category: 'concept'
   },
 
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Contour Line Rules',
+    back: '1. Every point on a contour = same elevation\n2. Contours never cross or branch\n3. Every contour eventually closes\n4. Close spacing = steep slope; wide spacing = gentle slope\n5. V shape pointing UPHILL → valley/stream\n6. V shape pointing DOWNHILL → ridge/divide\n7. Closed loop with hachures = depression\n8. Contours cross streams perpendicularly (V points upstream)\n\nIndex contours (every 5th line) = labeled and drawn heavier',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Planimetric vs. Topographic Map',
+    back: 'Planimetric Map:\n• Shows horizontal positions only (roads, buildings, water)\n• NO elevation data\n• 2D top-view representation\n\nTopographic Map:\n• Planimetric features PLUS terrain shape\n• Shown via contour lines, spot elevations, or shading\n• Provides both horizontal and vertical information\n\nFor engineering: topographic map → base for design plans',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'DTM vs. DEM vs. TIN',
+    back: 'DTM (Digital Terrain Model):\n• Bare-earth surface\n• May include break lines (ridge tops, road edges, stream banks)\n• Best for representing abrupt surface changes\n\nDEM (Digital Elevation Model):\n• Bare-earth raster grid from LiDAR ground returns (Class 2)\n• Uniform grid spacing; no break lines\n\nTIN (Triangulated Irregular Network):\n• Vector surface connecting irregularly spaced points\n• Triangular facets; can honor break lines\n• Efficient for variable-density survey data',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'NSSDA Map Accuracy Standards',
+    back: 'NSSDA = National Standard for Spatial Data Accuracy (FGDC)\n\nReports accuracy at 95% confidence:\n• Horizontal: 1.7308 × RMSEr\n• Vertical: 1.9600 × RMSEZ\n\nRMSEZ = sqrt(σ² + mean²)\n\nUSGS LiDAR Quality Levels:\n• QL3: RMSEZ ≤ 20 cm, ≥1 pt/m²\n• QL2: RMSEZ ≤ 10 cm, ≥2 pts/m²\n• QL1: RMSEZ ≤ 9.25 cm, ≥8 pts/m²\n\nAccuracy tested against independent check points',
+    category: 'concept'
+  },
+
   // Basic Sciences, Dendrology & Historical Methods (Task #14)
   {
     domain: 'Math & Basic Science',
@@ -2607,6 +2632,25 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     category: 'concept'
   },
 
+  {
+    domain: 'Math & Basic Science',
+    front: 'Magnetic Declination — Secular Variation',
+    back: 'Secular variation: slow, long-term change in magnetic declination\nCaused by: gradual movement of Earth\'s magnetic poles\nRate: varies by location; typically a few minutes per year\n\nImpact on historical surveys:\n• 1850 declination 4° E + modern 2° W = 6° total change\n• Must correct original compass bearings by total secular change\n\nContrast with local attraction: short-range deflection from nearby metallic objects or geology\nSolution: use NOAA historical declination calculator for retracement surveys',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Historical Surveying Instruments',
+    back: 'Gunter\'s Chain (1620): 66-ft chain; standard for GLO surveys\nCompass (Brunton/transit): magnetic direction; subject to declination and local attraction\nVernier Transit: measures horizontal and vertical angles to arc-minute precision\nSolar Compass / Burt\'s Solar Transit: establishes true north from sun observations; independent of magnetic\nRod and Level: optical leveling instrument for differential leveling\nAstrolabe / Sextant: early astronomic direction/latitude instruments\nStadia Rod: distance measurement by vertical intercept × 100 (stadia ratio)',
+    category: 'concept'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Earthwork Volume — Bank / Loose / Compacted',
+    back: 'BCY (Bank Cubic Yards): in-situ volume before excavation\nLCY (Loose CY): expanded volume after digging; BCY × swell factor\nCCY (Compacted CY): final placed/compacted volume; BCY × compaction factor\n\nConversions:\nLCY = BCY × (1 + % swell / 100)\nCCY = BCY × compaction factor\n\nExample:\n1,000 BCY clay, swell 30%, compaction 0.85:\nLCY = 1,300 (for trucking)\nCCY = 850 (final fill volume)',
+    category: 'formula'
+  },
+
   // Business Concepts, Safety & Professional Communication (Task #15)
   {
     domain: 'Professional Practice',
@@ -2649,6 +2693,25 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     front: 'Surveyor\'s Report / Letter of Opinion',
     back: 'Narrative document explaining the basis for a boundary determination\n\nContents:\n• Record evidence reviewed (deeds, plats, prior surveys)\n• Physical evidence found (monuments, occupation, fences)\n• Conflicts in the record and how they were resolved\n• Professional judgment applied\n\nDistinct from the plat — provides context that cannot be shown graphically\nCritical in boundary dispute litigation\nSurveyor\'s certification on plat ≠ surveyor\'s report',
     category: 'concept'
+  },
+
+  {
+    domain: 'Professional Practice',
+    front: 'E&O Insurance — Claims-Made vs. Occurrence',
+    back: 'Claims-Made Policy (most common for surveyors):\n• Covers claims FILED during the policy period\n• Work must have occurred AFTER the retroactive date\n• Gaps in coverage = uninsured claims from that gap period\n• Need TAIL COVERAGE (extended reporting endorsement) when policy lapses\n\nOccurrence Policy:\n• Covers incidents that OCCURRED during the policy period\n• No need for tail coverage after cancellation\n• More expensive; rare for professional liability\n\nRetroactive date: earliest date prior work is covered',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Tail Coverage / Prior Acts Coverage',
+    back: 'Tail Coverage (Extended Reporting Endorsement):\n• Extends the REPORTING period after a claims-made policy expires\n• Typically purchased when: retiring, switching insurers, closing firm\n• Claims filed after policy expiration for prior work are still covered\n• Usually costs 150–300% of annual premium\n\nPrior Acts Coverage:\n• New policy retroactive date set BEFORE the new policy\'s effective date\n• Fills gap when switching from one insurer to another\n\nWithout either: prior work can be uninsured even years after policy lapse',
+    category: 'concept'
+  },
+  {
+    domain: 'Professional Practice',
+    front: 'Change Order Process',
+    back: 'Triggered when: scope of work changes beyond original contract\n\nProcess:\n1. Discover changed scope or unforeseen conditions\n2. STOP work on changed items (or flag the additional effort)\n3. Notify client immediately — in writing\n4. Prepare written change order describing: scope, cost, schedule impact\n5. Obtain signed client approval BEFORE proceeding\n6. Never perform out-of-scope work on verbal agreement alone\n\nKey principle: all scope changes → written change order\nRisk of skipping: no legal basis for additional compensation',
+    category: 'procedure'
   },
 
   // Least Squares & Positional Accuracy (Task #12)

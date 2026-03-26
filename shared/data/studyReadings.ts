@@ -20,6 +20,7 @@ import { STUDY_READINGS_SPIRALS } from './studyReadingsSpirals';
 import { STUDY_READINGS_CONSTRUCTION } from './studyReadingsConstruction';
 import { STUDY_READINGS_LEAST_SQUARES } from './studyReadingsLeastSquares';
 import { STUDY_READINGS_LIDAR } from './studyReadingsLidar';
+import { STUDY_READINGS_LIDAR_GRAPHICS } from './studyReadingsLidarGraphics';
 import { STUDY_READINGS_BASIC_SCIENCE } from './studyReadingsBasicScience';
 import { STUDY_READINGS_BUSINESS_SAFETY } from './studyReadingsBusinessSafety';
 
@@ -733,6 +734,7 @@ export const STUDY_READINGS: ReadingModule[] = [
   ...STUDY_READINGS_CONSTRUCTION,
   ...STUDY_READINGS_LEAST_SQUARES,
   ...STUDY_READINGS_LIDAR,
+  ...STUDY_READINGS_LIDAR_GRAPHICS,
   ...STUDY_READINGS_BASIC_SCIENCE,
   ...STUDY_READINGS_BUSINESS_SAFETY,
 ];

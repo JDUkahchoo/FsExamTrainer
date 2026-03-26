@@ -4217,6 +4217,45 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'The legend (or key) is an essential map element that decodes every graphical convention used on the drawing — monument symbols, line types (existing vs. proposed, easement lines, right-of-way lines), hatch patterns, and color codes. Without a legend, a map reader cannot reliably interpret symbols that are not universally standardized. The datum reference, certification, and crew information are separate components of the title block or notes.',
     difficulty: 'easy'
   },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On a topographic map, contour lines that are very closely spaced together indicate:',
+    options: [
+      'Gentle, nearly flat terrain',
+      'A depression in the ground surface',
+      'Steep terrain where elevation changes rapidly over short distances',
+      'A ridge line that runs parallel to the contours'
+    ],
+    correctAnswer: 2,
+    explanation: 'Closely spaced contour lines indicate steep terrain. Since each contour line represents a fixed vertical interval (the contour interval), closely spaced lines mean the same vertical rise occurs over a shorter horizontal distance — a steeper slope. Widely spaced contours represent gentle slopes. Depressions are shown by closed contour loops with hachure marks (tick marks pointing inward).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On a 1:12,000 scale topographic map, a surveyor measures 2.5 inches between two control points. What is the ground distance between those points?',
+    options: [
+      '30,000 ft',
+      '2,500 ft',
+      '2.78 miles',
+      '416.7 ft'
+    ],
+    correctAnswer: 1,
+    explanation: 'Ground distance = map measurement × scale denominator = 2.5 in × 12,000 = 30,000 in. Convert to feet: 30,000 ÷ 12 = 2,500 ft. The procedure is straightforward: multiply the map distance by the scale denominator to get the ground distance in the same units, then convert as needed. A 1:12,000 scale means one unit on the map represents 12,000 of the same units on the ground.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'NSSDA defines horizontal accuracy of geospatial data at which confidence level?',
+    options: [
+      '50% (median)',
+      '68% (one standard deviation)',
+      '90%',
+      '95%'
+    ],
+    correctAnswer: 3,
+    explanation: 'The National Standard for Spatial Data Accuracy (NSSDA) defines and reports horizontal accuracy at the 95% confidence level. The horizontal accuracy value equals 1.7308 × RMSEr (the radial root mean square error). Vertical accuracy is also reported at 95% as 1.9600 × RMSEZ. This 95% confidence reporting allows geospatial products from different sources to be compared on a common basis.',
+    difficulty: 'medium'
+  },
 
   // Basic Sciences, Dendrology & Historical Methods (Task #14)
   {
@@ -4429,6 +4468,58 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 1,
     explanation: 'Claims-made E&O policies cover claims made during the policy period only for work performed on or after the retroactive date. Because the survey was performed in 2019, before the January 1, 2020 retroactive date, that claim is NOT covered by this policy. To ensure coverage for past work, surveyors should maintain continuous E&O coverage without gaps and obtain prior acts coverage or tail coverage when switching insurers.',
     difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A surveyor switches E&O insurance companies and obtains a new claims-made policy but does NOT purchase tail coverage from the prior insurer. Which risk does this create?',
+    options: [
+      'No risk — the new policy covers all past work once issued',
+      'Claims filed after the prior policy expired for work done during the prior coverage period may be uninsured',
+      'The state licensing board will automatically suspend the surveyor\'s license',
+      'The new insurer must honor prior acts as a condition of new policy issuance'
+    ],
+    correctAnswer: 1,
+    explanation: 'A claims-made policy covers claims made during the policy period, for work performed after the retroactive date. If the prior policy lapses and no tail coverage (extended reporting endorsement) is purchased, any claim filed after the lapse for work done during the prior period is NOT covered by either policy. Tail coverage extends the reporting period of the prior policy and fills this gap. This is a critical risk management issue for surveying firms switching insurers.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Practice',
+    question: 'A land surveyor licensed in State A performs a boundary survey on property that straddles the border between State A and State B. The surveyor is NOT licensed in State B. What should the surveyor do?',
+    options: [
+      'Complete the entire survey — a single license is sufficient for boundary surveys near state lines',
+      'Associate with or refer the State B portion to a surveyor licensed in State B',
+      'Apply for an emergency temporary license from State B after completing the fieldwork',
+      'Contact the client and recommend they retain two separate surveyors with no coordination'
+    ],
+    correctAnswer: 1,
+    explanation: 'Surveyors must hold a valid license in each state where they practice. Performing surveying work in State B without a State B license constitutes unlicensed practice, which is a violation of state law and professional ethics. The appropriate approach is to associate with a State B-licensed surveyor or refer the State B portion to a licensed professional, ensuring proper coordination between the two surveyors for boundary work straddling the state line.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'Magnetic declination changes slowly over time due to gradual shifts in the Earth\'s magnetic field. This long-term, slow change is called:',
+    options: [
+      'Local attraction',
+      'Magnetic anomaly',
+      'Secular variation',
+      'Dip angle'
+    ],
+    correctAnswer: 2,
+    explanation: 'Secular variation is the slow, long-term change in magnetic declination caused by gradual shifts in the Earth\'s magnetic field over years and decades. When retracing historical compass surveys, surveyors must determine the declination at the time of the original survey and compare it to the current declination. Local attraction is a short-range deflection from nearby metallic objects or geological features. Dip angle is the inclination of the compass needle from horizontal.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Math & Basic Science',
+    question: 'A GLO original survey was performed in 1850 when the magnetic declination was 4°00\' E. Modern measurements show the current declination at the same location is 2°00\' W. What is the total secular change in declination?',
+    options: [
+      '2°00\' total change',
+      '4°00\' total change',
+      '6°00\' total change',
+      '8°00\' total change'
+    ],
+    correctAnswer: 2,
+    explanation: 'Total change = difference between old and new declination. Old: 4°00\' E (positive). New: 2°00\' W (negative). Total change = 4°00\' + 2°00\' = 6°00\'. The declination shifted from 4° east of true north to 2° west of true north, a total swing of 6°. When retracing a historical compass survey, bearing corrections must account for this full change to convert original compass bearings to their equivalent true bearings.',
+    difficulty: 'medium'
   },
 ];
 

@@ -3115,6 +3115,33 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'medium'
   },
 
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A topographic map at scale 1:10,000 uses a 5-meter contour interval. Two adjacent contour lines measure 20 mm apart on the map. What is the approximate ground slope between these contours?',
+    options: [
+      '0.25%',
+      '2.5%',
+      '25%',
+      '0.025%'
+    ],
+    correctAnswer: 1,
+    explanation: 'Step 1 — compute ground distance: 20 mm × 10,000 = 200,000 mm = 200 m. Step 2 — the vertical rise equals the contour interval: 5 m. Step 3 — slope = rise ÷ run = 5 m ÷ 200 m = 0.025 = 2.5%. This is a three-step process: (1) multiply map measurement by scale denominator to get ground distance in the same units; (2) use the contour interval as the vertical rise; (3) divide rise by run and multiply by 100 for percent slope.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A LiDAR survey is checked against 30 independent GPS check points. The differences (LiDAR elevation minus GPS elevation) are: mean = −0.04 m, standard deviation = 0.07 m. What is the NSSDA Vertical Accuracy at the 95% confidence level?',
+    options: [
+      '0.07 m',
+      '0.14 m',
+      '0.157 m',
+      '0.137 m'
+    ],
+    correctAnswer: 2,
+    explanation: 'RMSEZ = sqrt(σ² + mean²) = sqrt(0.07² + 0.04²) = sqrt(0.0049 + 0.0016) = sqrt(0.0065) = 0.0806 m. NSSDA Vertical Accuracy (95%) = 1.9600 × RMSEZ = 1.9600 × 0.0806 = 0.158 m ≈ 0.157 m. The RMSEZ combines both the random variability (σ) and the systematic bias (mean). Always include the mean error when computing RMSEZ for NSSDA reporting.',
+    difficulty: 'hard'
+  },
+
   // Basic Sciences, Dendrology & Historical Methods (Task #14)
   {
     domain: 'Math & Basic Science',
