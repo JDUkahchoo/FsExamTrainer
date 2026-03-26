@@ -4217,9 +4217,101 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'The legend (or key) is an essential map element that decodes every graphical convention used on the drawing — monument symbols, line types (existing vs. proposed, easement lines, right-of-way lines), hatch patterns, and color codes. Without a legend, a map reader cannot reliably interpret symbols that are not universally standardized. The datum reference, certification, and crew information are separate components of the title block or notes.',
     difficulty: 'easy'
   },
+  // Additional LiDAR, Remote Sensing & Graphical Communication Quiz Questions (Task #13)
   {
     domain: 'Mapping, GIS, and CAD',
-    question: 'On a topographic map, contour lines that are very closely spaced together indicate:',
+    question: 'What is the minimum required point density (points per square meter) for USGS Quality Level 2 (QL2) LiDAR data?',
+    options: [
+      '1 pt/m²',
+      '2 pts/m²',
+      '8 pts/m²',
+      '0.5 pts/m²'
+    ],
+    correctAnswer: 1,
+    explanation: 'USGS Quality Level 2 (QL2) requires a minimum nominal pulse density of 2 points per square meter (pts/m²). QL3 requires at least 1 pt/m², and QL1 requires at least 8 pts/m². Higher density improves the ability to detect smaller features and produce more accurate bare-earth DEMs, especially in vegetated terrain.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Which LiDAR boresight calibration procedure corrects for misalignment between the laser scanner and the IMU reference frame?',
+    options: [
+      'Flying repeatedly over ground control points and adjusting the GNSS solution',
+      'Flying over flat surfaces in multiple directions to detect and remove systematic swath-to-swath offsets',
+      'Reclassifying all point returns from Class 0 to Class 2',
+      'Adjusting the pulse repetition rate to achieve uniform point density'
+    ],
+    correctAnswer: 1,
+    explanation: 'Boresight calibration corrects the angular misalignment (roll, pitch, and yaw offsets) between the laser scanner and the IMU coordinate frame. By flying over flat, well-defined surfaces (such as airport runways or buildings) in multiple directions, systematic elevation differences between overlapping swaths reveal the boresight error. The calibration parameters are then applied to all raw data.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In an airborne LiDAR system, what is the role of the GNSS receiver?',
+    options: [
+      'To determine the precise 3D position of the aircraft at each laser pulse',
+      'To measure the roll, pitch, and yaw of the aircraft',
+      'To count the number of laser returns per scan line',
+      'To control the laser pulse repetition rate'
+    ],
+    correctAnswer: 0,
+    explanation: 'The GNSS receiver determines the precise 3D position (X, Y, Z) of the aircraft at each moment. Combined with IMU data (which records attitude — roll, pitch, yaw), the system can calculate the exact 3D position of every laser return on the ground. The GNSS provides position; the IMU provides orientation. Both are required to geolocate individual LiDAR returns.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What map element must be labeled to indicate whether a north arrow shows True North, Grid North, or Magnetic North?',
+    options: [
+      'The title block',
+      'The legend',
+      'The north arrow itself (with an explicit label)',
+      'A separate datum reference note'
+    ],
+    correctAnswer: 2,
+    explanation: 'The north arrow must be explicitly labeled to show which type of north it represents: True (Astronomic) North, Grid North (State Plane), or Magnetic North. Without a label, the map reader cannot know the reference meridian. On ALTA/NSPS surveys, the type of north and basis of bearing must be shown. A map showing "magnetic north" without a date and declination value provides incomplete information.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A survey plat must include a "basis of bearings" statement. What information does this typically provide?',
+    options: [
+      'The name of the licensed surveyor who performed the survey',
+      'The reference line or meridian used to establish the bearing system for all survey lines',
+      'The horizontal and vertical datums used for coordinates and elevations',
+      'The closure ratio achieved for the boundary traverse'
+    ],
+    correctAnswer: 1,
+    explanation: 'The basis of bearings statement identifies the reference meridian (e.g., "bearings are based on the NAD83 State Plane Grid North for Zone X," or "bearings are referenced to the bearing of record between found monuments A and B") used to orient all bearing calls on the plat. Without this, bearings on a survey cannot be reproduced or compared with other surveys. It is a required element on most state standards and ALTA/NSPS surveys.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'The GIS concept of "topology" in a vector dataset refers to:',
+    options: [
+      'The projection or coordinate system used for the dataset',
+      'The spatial relationships between features (adjacency, connectivity, containment)',
+      'The accuracy of individual feature positions',
+      'The number of vertices per feature'
+    ],
+    correctAnswer: 1,
+    explanation: 'Topology in GIS defines the spatial relationships between geographic features — such as which polygons share a boundary, which lines connect at nodes (connectivity), and which points fall within which polygons (containment). A topologically correct dataset ensures that polygons do not overlap where they should share boundaries, and that all line segments form connected networks. Topology is distinct from positional accuracy or projection.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Which ground control point (GCP) procedure provides the most rigorous LiDAR vertical accuracy assessment?',
+    options: [
+      'Using the same GCPs for both boresight calibration and accuracy assessment',
+      'Using check points surveyed independently from GCPs, in open terrain free of vegetation',
+      'Comparing LiDAR elevations to USGS topographic map contours',
+      'Visual inspection of point cloud density in the project area'
+    ],
+    correctAnswer: 1,
+    explanation: 'Rigorous accuracy assessment requires independent check points that were NOT used in the boresight calibration or any data adjustment. These check points must be surveyed to higher accuracy than the required LiDAR product accuracy (typically 2–3× better RMSEZ). They should be located in open, non-vegetated terrain where LiDAR ground returns are reliable. Using the same points for calibration and assessment creates circular validation.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On a topographic map, contour lines that form a V shape pointing uphill (toward higher elevations) most likely indicate which terrain feature?',
     options: [
       'Gentle, nearly flat terrain',
       'A depression in the ground surface',

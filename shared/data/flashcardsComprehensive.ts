@@ -2775,6 +2775,69 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'r = n − u ≥ 1 required for any quality testing\n\nr = 0: exactly determined (unique solution, no residuals, no quality check)\nr = 1: one redundant observation; σ₀ computable, but limited blunder detection\nr ≥ 5: sufficient for meaningful chi-squared testing\n\nMore redundancy = stronger blunder detection capability',
     category: 'concept'
   },
+
+  // Additional Mapping, GIS, and CAD Flashcards (Task #13 supplemental)
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Active vs. Passive Remote Sensing',
+    back: 'Active Sensors: Generate and emit their own electromagnetic energy; detect the return\n• LiDAR: emits laser pulses; measures time of flight → range\n• RADAR/SAR: emits microwave radiation\n• Can operate day or night; independent of sunlight\n\nPassive Sensors: Detect naturally occurring energy (sunlight or thermal emission)\n• Aerial photography, multispectral scanners, thermal IR cameras\n• Require adequate illumination (except thermal IR, which detects emitted heat)\n• Cannot penetrate cloud cover or operate in darkness (except thermal)\n\nKey FS exam rule: LiDAR = active; aerial photo = passive',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'LiDAR Pulse Return Types',
+    back: 'Single pulse may produce multiple returns as laser strikes surfaces at different heights:\n\nFirst Return:\n• Earliest reflected signal\n• Top of canopy, rooftop, or highest surface hit\n• Used to build Digital Surface Model (DSM)\n\nLast Return:\n• Final reflected signal (deepest penetration)\n• Often ground surface or bare earth in canopy gaps\n• Basis for ground filtering → Digital Elevation Model (DEM)\n\nIntermediate Returns:\n• Mid-canopy layers, branches\n• Used for vegetation structure analysis (forestry)\n\nModern systems: up to 4–7+ discrete returns per pulse, or full-waveform capture',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'USGS LiDAR Quality Levels (QL1 / QL2 / QL3)',
+    back: 'Quality Level 3 (QL3) — Basic:\n• Nominal pulse density: ≥ 1 pt/m²\n• RMSEZ ≤ 20 cm (non-vegetated)\n• Standard topographic mapping, flood plains\n\nQuality Level 2 (QL2) — Standard (most common):\n• Nominal pulse density: ≥ 2 pts/m²\n• RMSEZ ≤ 10 cm\n• Statewide programs, floodplain mapping, infrastructure\n\nQuality Level 1 (QL1) — High Resolution:\n• Nominal pulse density: ≥ 8 pts/m²\n• RMSEZ ≤ 10 cm\n• Engineering design, bridge/dam inspection, corridor mapping\n\nHigher QL = more points + better accuracy = more cost',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Standard Required Elements on a Survey Plat',
+    back: 'Every survey plat must contain:\n1. Title Block — project name, location, client, surveyor name/license, firm, date, revision history, sheet number\n2. North Arrow — labeled with type: True North, Grid North, or Magnetic North\n3. Scale — graphic (bar) scale + verbal or RF scale\n4. Legend — all symbols, line types, hatch patterns, monument types decoded\n5. Basis of Bearings — reference meridian or deed line used for all bearings\n6. Datum Reference — horizontal (NAD83, WGS84) and vertical (NAVD88) datums\n7. Certificate/Seal Block — surveyor\'s certification statement, seal, signature\n8. Notes — methods, instruments, closure, monument descriptions, disclaimers\n\nALTA/NSPS also requires encroachments, easements, improvements, and utilities (per Table A/B items)',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Graphic Scale vs. Representative Fraction (RF)',
+    back: 'Graphic (Bar) Scale:\n• A drawn line on the map labeled with ground distances\n• Automatically scales correctly when the drawing is copied at a different size\n• Always remains accurate relative to the drawing\n• Required whenever drawings may be reproduced\n\nRepresentative Fraction (RF):\n• Expressed as 1:X (e.g., 1:10,000 means 1 unit on map = 10,000 units on ground)\n• Only accurate at the original drawing size\n• Becomes WRONG if plan is enlarged or reduced during copying\n\nVerbal Scale (e.g., "1 in = 100 ft"):\n• Same problem as RF — only accurate at original size\n\nBest practice: Always include BOTH a graphic scale and an RF/verbal scale',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'GIS Data Models: Vector vs. Raster',
+    back: 'Vector Data Model:\n• Represents features as points, lines, and polygons with precise coordinates\n• Points: wells, monuments, trees\n• Lines: roads, streams, pipelines\n• Polygons: parcels, lakes, building footprints\n• Supports topology (adjacency, connectivity, containment)\n• Best for discrete features with defined boundaries\n\nRaster Data Model:\n• Divides space into a grid of equal-sized cells (pixels)\n• Each cell stores one value (elevation, land cover code, image intensity)\n• Resolution = cell size (smaller cell = finer resolution)\n• Best for continuous surfaces (DEMs, orthophotos, temperature grids)\n• File size grows rapidly with finer resolution\n\nHybrid: GIS projects typically use both models together',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Common Geospatial File Formats',
+    back: 'Raster formats:\n• GeoTIFF (.tif): standard for georeferenced imagery and DEMs; projection embedded in file header\n• IMG (.img): ERDAS IMAGINE raster format\n• JPEG2000 (.jp2): compressed imagery with georeferencing\n\nVector formats:\n• Shapefile (.shp): industry standard; requires .shp + .dbf + .shx + .prj files\n• GeoJSON (.geojson): web-friendly; stores geometries and attributes in JSON\n• File Geodatabase (.gdb): Esri format; supports topology and relationships\n\nPoint Cloud formats:\n• LAS (.las): binary; stores XYZ + intensity + classification + return info\n• LAZ (.laz): compressed LAS; widely used for storage and transfer\n\nCAD formats:\n• DXF: AutoCAD exchange format; used for interoperability\n• DWG: native AutoCAD format',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'LiDAR Boresight Calibration',
+    back: 'Purpose: corrects the angular misalignment between the laser scanner and the IMU (roll, pitch, and yaw offsets)\n\nProcedure:\n1. Fly calibration strip(s) over flat, well-defined surfaces (airports, rooftops, or known-flat terrain) in multiple directions (e.g., opposing flight lines)\n2. Compare LiDAR returns from overlapping swaths — systematic offsets indicate boresight error\n3. Derive correction angles for scanner-to-IMU mounting misalignment\n4. Apply corrections to raw data before generating point cloud\n\nWithout proper calibration: DEM shows swath-to-swath offsets (steps or ridges along flight line boundaries)\n\nFlight strip overlap: typically 20–30% to enable boresight calibration and gap detection',
+    category: 'procedure'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'DTM vs. DEM vs. DSM — Definitions',
+    back: 'Digital Terrain Model (DTM):\n• Bare-earth surface with man-made structures and vegetation REMOVED\n• Represents the natural ground surface\n• Produced by filtering LiDAR ground returns (Class 2)\n• Used for: hydrology, floodplain mapping, contour generation\n\nDigital Elevation Model (DEM):\n• A general term for any raster elevation surface\n• In practice, often used interchangeably with DTM (bare-earth)\n• USGS DEMs are bare-earth products\n\nDigital Surface Model (DSM):\n• Represents the TOP of all surfaces including buildings, trees, and structures\n• Produced from first LiDAR returns (highest surfaces)\n• Shows canopy tops, rooftops, bridges\n• Used for: viewshed analysis, solar panel siting, building height extraction\n\nnDSM (Normalized DSM): DSM − DTM = height of objects above bare earth',
+    category: 'concept'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'NSSDA Accuracy Standards Summary',
+    back: 'National Standard for Spatial Data Accuracy (NSSDA):\n\nHorizontal Accuracy (95% confidence):\n= 1.7308 × RMSEr\nwhere RMSEr = √(RMSEx² + RMSEy²) / √2 (or combined RMSE of horizontal residuals)\n\nVertical Accuracy (95% confidence):\n= 1.9600 × RMSEZ\n\nRMSEZ when mean error ≠ 0:\nRMSEZ = √(σ² + mean²)\n\nCheck point requirements:\n• Minimum 20 well-distributed check points per landcover class (open, urban, forest)\n• Check points must be independent from calibration control\n• Higher accuracy standard than required product (2–3× better)\n\nReport example: "Tested 2.5 m horizontal accuracy at 95% confidence level per NSSDA"',
+    category: 'formula'
+  },
 ];
+
 
 

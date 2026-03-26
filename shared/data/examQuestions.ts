@@ -3142,6 +3142,86 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     difficulty: 'hard'
   },
 
+  // Additional Mapping, GIS, and CAD Exam Questions (Task #13 supplemental)
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'An airborne LiDAR mission collects data at a flight altitude of 1,000 m AGL with a scan angle of ±20°. Which statement correctly describes the primary effect of increasing the scan angle to ±30° while keeping all other parameters constant?',
+    options: [
+      'The swath width decreases, reducing coverage per flight line',
+      'The swath width increases, but range to the edge of swath increases, reducing point density and accuracy at swath edges',
+      'Point density increases uniformly across the swath',
+      'The IMU errors are reduced because the aircraft attitude changes less'
+    ],
+    correctAnswer: 1,
+    explanation: 'Swath width ≈ 2 × altitude × tan(scan angle). At 1,000 m AGL and ±30°: swath ≈ 2 × 1,000 × tan(30°) ≈ 1,155 m. At ±20°: swath ≈ 2 × 1,000 × tan(20°) ≈ 728 m. Increasing scan angle widens coverage per flight line, reducing flight lines needed. However, the range to edge-of-swath points is longer (1,000/cos(30°) ≈ 1,155 m vs 1,000/cos(20°) ≈ 1,064 m), so edge points have lower density and larger position errors. Accuracy degrades toward swath edges with wider scan angles.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A thermal infrared (TIR) imaging sensor is used in a remote sensing survey at night. What thermal property is it primarily measuring?',
+    options: [
+      'Reflected solar shortwave radiation from surface features',
+      'Emitted longwave thermal radiation from the surface based on its temperature',
+      'Backscattered microwave radiation from surface roughness',
+      'Transmitted visible light through atmospheric windows'
+    ],
+    correctAnswer: 1,
+    explanation: 'Thermal infrared sensors are passive sensors that detect longwave infrared radiation (roughly 8–14 µm) emitted by objects due to their own temperature (blackbody radiation). All objects above absolute zero emit thermal energy. TIR imaging does NOT rely on reflected sunlight — it works at night and can detect temperature differences of fractions of a degree Celsius. Applications include detecting utility pipe leaks, identifying heat loss from buildings, and locating subsurface utilities. TIR is passive (detects emitted radiation), while LiDAR and RADAR are active.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A CAD drawing uses two scale bars: one labeled "Graphic Scale" and another labeled "1 in = 100 ft." The plan set is reproduced by a contractor on a larger paper format. Which statement is correct?',
+    options: [
+      'Both the graphic scale and the RF scale remain accurate after reproduction',
+      'The graphic scale remains accurate; the verbal/RF scale becomes incorrect',
+      'The verbal scale remains accurate; the graphic scale becomes incorrect',
+      'Both become inaccurate after reproduction on a different paper size'
+    ],
+    correctAnswer: 1,
+    explanation: 'A graphic (bar) scale is a physical drawing element that scales with the drawing itself when it is copied at a different size — it always remains correct relative to the drawing. A verbal scale (1 in = 100 ft) or representative fraction (RF) expresses a fixed relationship between drawing units and ground units that was true only for the original drawing size. When reproduced at a different size, the verbal and RF scales become inaccurate. For this reason, plans that may be reproduced should always include a graphic scale.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A Digital Elevation Model (DEM) is created from LiDAR bare-earth returns over a forest. The surveyor notices that the DEM shows an anomalous ridge-like artifact running parallel to the flight lines in a heavily vegetated area. What is the most likely cause?',
+    options: [
+      'Incorrect GNSS ephemeris used during post-processing',
+      'Incomplete ground filtering — some low-vegetation returns were classified as ground',
+      'Flying at an altitude too high for the required quality level',
+      'The IMU was not properly synchronized with the scanner'
+    ],
+    correctAnswer: 1,
+    explanation: 'Linear artifacts running parallel to flight lines in a LiDAR DEM are a classic symptom of incomplete ground filtering (classification errors). When low-vegetation returns (shrubs, low canopy) are misclassified as Class 2 (Ground), they create elevated artifacts in the bare-earth DEM along the scan paths. The solution is to refine the ground classification algorithm parameters or perform manual editing of the point cloud classification. GNSS or IMU errors would produce different artifact patterns.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On an ALTA/NSPS Land Title Survey, a surveyor discovers that the neighbor\'s driveway encroaches 0.4 feet into the subject property. This encroachment is visible on the ground. Which table item must be included in the survey, and where must it be shown?',
+    options: [
+      'Table Item 6(b) — evidence of encroachments from adjoining land must be shown on the survey and noted with a dimension',
+      'Table Item 11(a) — only utility lines and buried infrastructure need notation',
+      'Table Item 18 — environmental conditions must be shown if they affect title',
+      'Encroachments are not required to be shown unless specifically requested by the client'
+    ],
+    correctAnswer: 0,
+    explanation: 'ALTA/NSPS 2021 Minimum Standard Detail Requirements, Table B, Item 6(b) requires that visible evidence of encroachments from or onto adjoining land be shown on the face of the survey with dimensions. Encroachments are a fundamental boundary and title concern — the title company uses this information to evaluate coverage. Showing the driveway encroachment with a dimension is required; omitting it would be a professional deficiency.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Which file format is commonly used to store georeferenced raster datasets (such as orthophotos and DEMs) with embedded coordinate system and projection information?',
+    options: [
+      'Shapefile (.shp)',
+      'GeoTIFF (.tif)',
+      'DXF (.dxf)',
+      'LAS (.las)'
+    ],
+    correctAnswer: 1,
+    explanation: 'GeoTIFF is the standard raster format for georeferenced imagery and elevation data. It stores all the necessary spatial reference information (datum, projection, coordinate system, pixel size, and origin) directly inside the TIFF file header, allowing GIS software to automatically place the raster in the correct geographic location. Shapefiles store vector data; DXF is a CAD exchange format; LAS stores LiDAR point cloud data.',
+    difficulty: 'easy'
+  },
+
   // Basic Sciences, Dendrology & Historical Methods (Task #14)
   {
     domain: 'Math & Basic Science',

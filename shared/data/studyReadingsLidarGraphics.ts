@@ -40,6 +40,16 @@ export const STUDY_READINGS_LIDAR_GRAPHICS: ReadingModule[] = [
         ],
       },
       {
+        id: 'fs-d8-lidar-s3b',
+        type: 'concept',
+        title: 'Active vs. Passive Sensors and Pulse Return Types (Review)',
+        content: 'Active remote sensing sensors generate their own electromagnetic energy, emit it toward the target, and detect the returning signal. LiDAR is the primary active sensor in modern surveying. Because it generates its own laser pulses, LiDAR operates independently of sunlight — day or night, and in conditions where reflected sunlight would be insufficient.\n\nPassive remote sensing sensors detect energy emitted or reflected from natural sources (primarily the sun). Aerial photography, multispectral scanners, and thermal infrared sensors are all passive. They depend on adequate illumination and cannot penetrate cloud cover or darkness.\n\nLiDAR Pulse Returns:\nWhen a single laser pulse is emitted, it may strike multiple surfaces at different heights — particularly when passing through vegetation. Modern LiDAR systems record multiple returns per pulse:\n\n- First Return: The earliest reflected signal, usually from the top of the canopy, a rooftop, or any other high-standing surface. Used to build Digital Surface Models (DSM).\n- Last Return: The final reflected signal, often from the ground surface or lower canopy gaps. The basis for ground filtering and Digital Elevation Model (DEM) production.\n- Intermediate Returns: Any reflections between first and last (from mid-canopy layers, branches, etc.).\n\nSingle-return systems record only one reflection per pulse, while advanced systems record 4–7 or more discrete returns, plus full-waveform data that captures the entire shape of the returned energy pulse.\n\nFor the FS exam: LiDAR and RADAR are active; aerial photography and multispectral imaging are passive. First returns → DSM; last returns → DEM filtering.',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 28', topic: 'Active and passive remote sensing; LiDAR pulse returns' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 37', topic: 'LiDAR sensor types and return classification' },
+        ],
+      },
+      {
         id: 'fs-d8-lidar-s4',
         type: 'concept',
         title: 'LiDAR vs. Photogrammetry for Topographic Mapping',
@@ -160,6 +170,16 @@ export const STUDY_READINGS_LIDAR_GRAPHICS: ReadingModule[] = [
           correctIndex: 2,
           explanation: 'Contour lines cross streams and valleys with a V pointing uphill (toward higher ground). Water flows in the direction opposite to the V point. Ridges also produce V-shaped contours, but the V on a ridge points downhill. A depression is shown by closed contours with hachure marks. A cliff face shows contours that nearly coincide.',
         },
+      },
+      {
+        id: 'fs-d11-graphics-s4b',
+        type: 'concept',
+        title: 'Required Plat and Map Elements',
+        content: 'Every survey plat, boundary map, and engineering drawing must contain specific elements to be legally sufficient and professionally complete. ALTA/NSPS standards, state minimum technical standards, and local recording requirements all specify required map content.\n\nStandard Required Elements:\n\n1. Title Block: Contains the project name, location (legal description or address), client/owner name, surveyor\'s name and license number, firm name, state of licensure, preparation date, revision history, sheet number, and file reference number.\n\n2. North Arrow: Must clearly label the type of north shown (True/Astronomic North, Grid North, or Magnetic North). If magnetic north is shown, include the magnetic declination and the date it was determined. ALTA/NSPS requires noting the basis of bearing.\n\n3. Scale: Show both a graphic (bar) scale AND a representative fraction (RF) or verbal scale. The graphic bar scale survives copying and resizing; the RF becomes inaccurate if the drawing is reproduced at a different size.\n\n4. Legend (Key): Explains all symbols, line types (solid, dashed, dot-dash), hatching patterns, and color conventions used on the drawing. Monument symbols (found iron pin, set concrete monument, etc.) must appear in the legend.\n\n5. Basis of Bearings: States the reference meridian (e.g., "based on NAD83 grid north for State Plane Zone X") or the specific deed call used to establish the bearing system.\n\n6. Datum Reference: States both the horizontal datum (e.g., NAD83, WGS84) and the vertical datum (e.g., NAVD88) for all coordinate and elevation values.\n\n7. Certificate/Seal Block: The licensed surveyor\'s certification statement, professional seal, and signature. On an ALTA/NSPS survey, the certification must use the exact language required by the standards. The seal and signature constitute the surveyor\'s professional attestation.\n\n8. USGS/ASPRS Planimetric Symbol Standards: Standard symbols for roads, buildings, water features, vegetation boundaries, and utility lines follow USGS or state conventions. CAD layer standards (ASPRS or client-specified) define line weights, colors, and naming conventions for each feature type.\n\nNotes Area: General notes explain surveying methods, instruments used, closure achieved, monument descriptions, and any conditions or disclaimers (e.g., easements visible on the ground not of record, evidence of encroachments).',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Plat elements, certification, and map standards' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 16', topic: 'Required plat and map elements' },
+        ],
       },
       {
         id: 'fs-d11-graphics-s5',
