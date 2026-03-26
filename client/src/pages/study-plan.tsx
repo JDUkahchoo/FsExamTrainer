@@ -1186,6 +1186,8 @@ export default function StudyPlan() {
                     week={plan.week}
                     domains={plan.domains as string[]}
                     examTrack={examTrack}
+                    studyMode={preferences?.studyMode}
+                    examDate={preferences?.examDate}
                   />
                   <FlashcardWeekPreview
                     week={plan.week}

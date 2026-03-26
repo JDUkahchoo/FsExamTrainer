@@ -22,6 +22,39 @@ interface ReinforceRetentionBoosterProps {
   week: number;
   domains?: string[];
   examTrack?: string;
+  studyMode?: string;
+  examDate?: string | null;
+}
+
+// Returns the daily review cap based on the user's study mode and exam proximity.
+// Caps are intentionally modest — exhausting review queues leads to burnout.
+function getDailySessionCap(studyMode: string | undefined, examDate: string | null | undefined, week: number): number {
+  let cap: number;
+
+  if (studyMode === 'working-professional') {
+    cap = 7;
+  } else if (studyMode === 'result-driven') {
+    cap = 15;
+  } else if (studyMode === 'long-term') {
+    // Ramp up across the four phases of the 24-month pathway
+    if (week <= 24) cap = 5;
+    else if (week <= 48) cap = 8;
+    else if (week <= 72) cap = 12;
+    else cap = 15;
+  } else {
+    // standard, custom, personalized, fallback
+    cap = 10;
+  }
+
+  // Exam proximity boost: final 4 weeks (28 days) before the exam, increase by 50%
+  if (examDate) {
+    const daysLeft = Math.ceil((new Date(examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    if (daysLeft > 0 && daysLeft <= 28) {
+      cap = Math.ceil(cap * 1.5);
+    }
+  }
+
+  return cap;
 }
 
 type ConceptEntry = { id: string; type: 'formula' | 'procedure' | 'definition'; text: string; domain: number };
@@ -243,7 +276,7 @@ function markSessionCompletedToday(userId: string | undefined, week: number): vo
   }
 }
 
-export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs" }: ReinforceRetentionBoosterProps) {
+export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -256,6 +289,9 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
   const [sessionCards, setSessionCards] = useState<RetentionReview[]>([]);
   const [activeRating, setActiveRating] = useState<number | null>(null);
   const [isCreatingReviews, setIsCreatingReviews] = useState(false);
+  const [remainingAfterBatch, setRemainingAfterBatch] = useState(0);
+
+  const dailyCap = getDailySessionCap(studyMode, examDate, week);
 
   const { data: stats, isLoading: statsLoading } = useQuery<RetentionStats>({
     queryKey: ['/api/retention/stats', week, examTrack],
@@ -419,16 +455,29 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
       });
       return;
     }
-    
-    console.log('[Retention] Starting session with reviews:', reviewsToUse.map(r => ({ id: r.id, conceptId: r.conceptId, userId: r.userId })));
-    
-    setSessionCards([...reviewsToUse]);
+
+    // Sort by priority: lowest mastery first, then most overdue
+    const prioritized = [...reviewsToUse].sort((a, b) => {
+      if (a.masteryLevel !== b.masteryLevel) return a.masteryLevel - b.masteryLevel;
+      const aTime = a.nextReviewAt ? new Date(a.nextReviewAt).getTime() : 0;
+      const bTime = b.nextReviewAt ? new Date(b.nextReviewAt).getTime() : 0;
+      return aTime - bTime;
+    });
+
+    // Apply daily cap — take the most urgent items up to the cap
+    const batch = prioritized.slice(0, dailyCap);
+    const remaining = Math.max(0, prioritized.length - dailyCap);
+
+    console.log('[Retention] Starting session with reviews:', batch.map(r => ({ id: r.id, conceptId: r.conceptId, userId: r.userId })));
+
+    setRemainingAfterBatch(remaining);
+    setSessionCards(batch);
     setReviewedCardIds(new Set());
     setCurrentCardIndex(0);
     setIsFlipped(false);
     setSessionCompleted(false);
     setSessionActive(true);
-  }, [dueReviews, refetchDue, toast, userId, createFreshReviews]);
+  }, [dueReviews, refetchDue, toast, userId, createFreshReviews, dailyCap]);
 
   const awardXpMutation = useMutation({
     mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
@@ -616,15 +665,43 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
         {!sessionActive ? (
           <div className="space-y-3">
             {sessionCompleted ? (
-              <div className="flex items-center gap-2 p-3 rounded-md bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
-                <CheckCircle className="h-4 w-4" />
-                <span className="text-sm">Session complete! All concepts reviewed. Check back later.</span>
-              </div>
+              <>
+                <div className="flex items-center gap-2 p-3 rounded-md bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
+                  <CheckCircle className="h-4 w-4 shrink-0" />
+                  <span className="text-sm">
+                    {remainingAfterBatch > 0
+                      ? `Batch complete! ${remainingAfterBatch} more card${remainingAfterBatch > 1 ? 's' : ''} remain in your queue.`
+                      : "Session complete! All concepts reviewed. Check back later."}
+                  </span>
+                </div>
+                {remainingAfterBatch > 0 && (
+                  <Button
+                    onClick={() => { setSessionCompleted(false); startSession(); }}
+                    className="w-full"
+                    variant="outline"
+                    data-testid="button-do-more"
+                  >
+                    <Zap className="h-4 w-4 mr-2" />
+                    Do More ({remainingAfterBatch} remaining)
+                  </Button>
+                )}
+              </>
             ) : dueCount > 0 ? (
               <>
-                <div className="flex items-center gap-2 p-3 rounded-md bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span className="text-sm">{dueCount} concept{dueCount > 1 ? 's' : ''} need review</span>
+                <div className="flex flex-col gap-1 p-3 rounded-md bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    <span className="text-sm font-medium">
+                      {dueCount > dailyCap
+                        ? `Reviewing ${dailyCap} of ${dueCount} due today`
+                        : `${dueCount} concept${dueCount > 1 ? 's' : ''} ready for review`}
+                    </span>
+                  </div>
+                  {dueCount > dailyCap && (
+                    <p className="text-xs ml-6 opacity-80">
+                      Paced for your study mode — the rest carry over to your next session.
+                    </p>
+                  )}
                 </div>
                 <Button 
                   onClick={startSession}
@@ -632,7 +709,7 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
                   data-testid="button-start-review"
                 >
                   <Brain className="h-4 w-4 mr-2" />
-                  Start Review Session
+                  Start Review Session ({Math.min(dueCount, dailyCap)} cards)
                 </Button>
               </>
             ) : totalReviews === 0 ? (
