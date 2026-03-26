@@ -4314,12 +4314,12 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'On a topographic map, contour lines that form a V shape pointing uphill (toward higher elevations) most likely indicate which terrain feature?',
     options: [
       'A ridge line (high ground between two valleys)',
-      'A stream valley or drainage channel (water flows in the direction the V points)',
+      'A stream valley or drainage channel (the V tip points upstream/uphill; water flows downhill in the opposite direction)',
       'A depression shown with hachure marks',
       'Steep terrain with a uniform slope'
     ],
     correctAnswer: 1,
-    explanation: 'Contour lines form a V that points uphill (toward higher elevations) when they cross a stream valley or drainage channel. Water flows in the direction the V points — downhill, opposite to the direction the V tip aims. By contrast, ridges produce V-shaped contours that point downhill. Depressions are shown by closed contour loops with hachure marks (tick marks pointing inward). Steep slopes produce closely-spaced contours but do not necessarily form a V pattern.',
+    explanation: 'Contour lines form a V that points uphill (toward higher elevations) when they cross a stream valley or drainage channel. The V tip points toward the head of the stream (upstream, uphill). Water flows downhill — in the opposite direction from where the V tip aims — draining away from the V. By contrast, ridges produce V-shaped contours that point downhill. Depressions are shown by closed contour loops with hachure marks pointing inward. Closely spaced contours indicate steep slopes, but that is a different pattern from the V shape of a valley.',
     difficulty: 'easy'
   },
   {
@@ -4367,13 +4367,13 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     domain: 'Mapping, GIS, and CAD',
     question: 'A surveyor reads a note on a construction plan set: "Grid bearing from Control Point A to Control Point B: N 45°30\'00\" E, Grid distance: 1,234.56 ft." To use this distance in a field survey with a total station, which conversion must be applied?',
     options: [
-      'Multiply by the combined scale factor to convert from grid distance to ground distance',
+      'Divide by the combined scale factor (CSF) to convert from grid distance to ground distance',
       'Divide by the ellipsoid height to convert to sea-level distance',
       'No conversion needed — grid and ground distances are always identical',
       'Multiply by the geoid undulation'
     ],
     correctAnswer: 0,
-    explanation: 'State Plane coordinates use grid distances, which differ from ground (geodetic) distances by the combined scale factor (CSF = map scale factor × elevation factor). To convert from grid distance to ground distance: Ground distance = Grid distance ÷ CSF (or × inverse CSF). For most projects, the CSF is close to 1.0, but in mountainous or low-elevation areas it can differ significantly. Reading a plan set requires recognizing whether distances are ground or grid.',
+    explanation: 'State Plane coordinates use grid distances, which differ from ground (geodetic) distances by the combined scale factor (CSF = map scale factor × elevation factor). To convert: Ground distance = Grid distance ÷ CSF. For most projects, the CSF is close to 1.0, but in mountainous or high-elevation areas it can differ significantly. Reading a plan set requires recognizing whether distances are grid or ground before using them for layout.',
     difficulty: 'medium'
   },
   {
