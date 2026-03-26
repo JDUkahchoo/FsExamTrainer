@@ -4313,13 +4313,13 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     domain: 'Mapping, GIS, and CAD',
     question: 'On a topographic map, contour lines that form a V shape pointing uphill (toward higher elevations) most likely indicate which terrain feature?',
     options: [
-      'Gentle, nearly flat terrain',
-      'A depression in the ground surface',
-      'Steep terrain where elevation changes rapidly over short distances',
-      'A ridge line that runs parallel to the contours'
+      'A ridge line (high ground between two valleys)',
+      'A stream valley or drainage channel (water flows in the direction the V points)',
+      'A depression shown with hachure marks',
+      'Steep terrain with a uniform slope'
     ],
-    correctAnswer: 2,
-    explanation: 'Closely spaced contour lines indicate steep terrain. Since each contour line represents a fixed vertical interval (the contour interval), closely spaced lines mean the same vertical rise occurs over a shorter horizontal distance — a steeper slope. Widely spaced contours represent gentle slopes. Depressions are shown by closed contour loops with hachure marks (tick marks pointing inward).',
+    correctAnswer: 1,
+    explanation: 'Contour lines form a V that points uphill (toward higher elevations) when they cross a stream valley or drainage channel. Water flows in the direction the V points — downhill, opposite to the direction the V tip aims. By contrast, ridges produce V-shaped contours that point downhill. Depressions are shown by closed contour loops with hachure marks (tick marks pointing inward). Steep slopes produce closely-spaced contours but do not necessarily form a V pattern.',
     difficulty: 'easy'
   },
   {
@@ -4347,6 +4347,73 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 3,
     explanation: 'The National Standard for Spatial Data Accuracy (NSSDA) defines and reports horizontal accuracy at the 95% confidence level. The horizontal accuracy value equals 1.7308 × RMSEr (the radial root mean square error). Vertical accuracy is also reported at 95% as 1.9600 × RMSEZ. This 95% confidence reporting allows geospatial products from different sources to be compared on a common basis.',
     difficulty: 'medium'
+  },
+
+  // Additional Mapping/GIS/CAD quiz questions — explicit topic coverage (Task #13 further supplemental)
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In a LiDAR survey over a forested area, which return type is primarily used to produce a bare-earth Digital Elevation Model (DEM)?',
+    options: [
+      'First returns, because they are reflected from the tallest surfaces',
+      'Last returns, because they most often represent the ground surface beneath the canopy',
+      'Intermediate returns, because they capture mid-canopy vegetation structure',
+      'All returns equally, because they are averaged together'
+    ],
+    correctAnswer: 1,
+    explanation: 'Last (or final) returns penetrate furthest through gaps in the vegetation canopy and most frequently reflect off the ground surface. Ground-filtering algorithms classify these last returns as Class 2 (Ground) per ASPRS standards, and the resulting bare-earth surface is the Digital Elevation Model (DEM). First returns produce the Digital Surface Model (DSM), which includes vegetation tops and building rooftops.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A surveyor reads a note on a construction plan set: "Grid bearing from Control Point A to Control Point B: N 45°30\'00\" E, Grid distance: 1,234.56 ft." To use this distance in a field survey with a total station, which conversion must be applied?',
+    options: [
+      'Multiply by the combined scale factor to convert from grid distance to ground distance',
+      'Divide by the ellipsoid height to convert to sea-level distance',
+      'No conversion needed — grid and ground distances are always identical',
+      'Multiply by the geoid undulation'
+    ],
+    correctAnswer: 0,
+    explanation: 'State Plane coordinates use grid distances, which differ from ground (geodetic) distances by the combined scale factor (CSF = map scale factor × elevation factor). To convert from grid distance to ground distance: Ground distance = Grid distance ÷ CSF (or × inverse CSF). For most projects, the CSF is close to 1.0, but in mountainous or low-elevation areas it can differ significantly. Reading a plan set requires recognizing whether distances are ground or grid.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On a USGS topographic map, a feature shown with a blue dashed line typically represents:',
+    options: [
+      'An intermittent stream (flows only part of the year)',
+      'A perennial stream (flows year-round)',
+      'A county or municipal boundary',
+      'An underground drainage culvert'
+    ],
+    correctAnswer: 0,
+    explanation: 'On USGS topographic maps, water features use blue as the standard color. A solid blue line represents a perennial stream (flows year-round). A blue dashed or dotted line represents an intermittent stream (flows only seasonally, during wet periods). Boundaries are shown in different colors (black or red for political boundaries). These USGS planimetric symbol conventions are standardized for national mapping.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A surveyor is establishing ground control for an aerial LiDAR survey. The project specification requires QL2 accuracy with RMSEZ ≤ 10 cm. At what accuracy level must the ground check points be surveyed?',
+    options: [
+      'At the same RMSEZ tolerance as the product (≤ 10 cm)',
+      'To a higher accuracy, typically 2–3 times better than the required product accuracy (RMSEZ ≤ 3–5 cm)',
+      'GPS check points have no accuracy requirement — any GNSS receiver is acceptable',
+      'At a lower accuracy — the check points only need to be within ±0.5 m'
+    ],
+    correctAnswer: 1,
+    explanation: 'Ground check points must be surveyed to significantly higher accuracy than the required LiDAR product. Industry practice (ASPRS and USGS 3DEP guidelines) requires check points to be 2–3 times more accurate than the specified product RMSEZ. For QL2 with RMSEZ ≤ 10 cm, check points should typically be ≤ 3–5 cm RMSEZ. Otherwise, the check points themselves introduce more uncertainty than they detect in the LiDAR data.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A Digital Terrain Model (DTM) differs from a Digital Surface Model (DSM) in which fundamental way?',
+    options: [
+      'A DTM is always in raster format, while a DSM is stored as a point cloud',
+      'A DTM represents bare-earth ground elevation with vegetation and structures removed; a DSM represents the top surface of all features including trees and buildings',
+      'A DTM uses the WGS84 datum, while a DSM uses NAVD88',
+      'A DTM covers terrain, while a DSM covers only urban areas with dense structures'
+    ],
+    correctAnswer: 1,
+    explanation: 'A DTM (Digital Terrain Model) or bare-earth DEM represents the natural ground surface after removing all above-ground features — buildings, trees, bridges, and other structures. It is produced from LiDAR Class 2 (Ground) returns. A DSM (Digital Surface Model) represents the top of all surfaces, including vegetation canopies and building rooftops, using primarily first returns. The normalized DSM (nDSM = DSM − DTM) gives the height of features above the ground. Both can be stored as raster grids.',
+    difficulty: 'easy'
   },
 
   // Basic Sciences, Dendrology & Historical Methods (Task #14)
