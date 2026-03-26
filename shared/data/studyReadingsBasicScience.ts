@@ -1,8 +1,8 @@
 import type { ReadingModule } from '../schema';
 
-export const STUDY_READINGS_BASIC_SCIENCE: ReadingModule[] = [
+export const STUDY_READINGS_BASIC_SCIENCES: ReadingModule[] = [
   {
-    id: 'fs-d14-basic-science',
+    id: 'fs-d2-basic-sciences',
     examTrack: 'fs',
     domainNumber: 0,
     domain: 'Math & Basic Science',
