@@ -166,6 +166,8 @@ export function ProcedurePracticeMode({ procedure, onBack }: ProcedurePracticeMo
   const handleCheck = () => setPhase('checked');
 
   const handleReveal = () => {
+    // Fill inputs with correct answers but do NOT submit — phase stays 'revealed'
+    // so answers show without being counted as a scored attempt.
     setAnswers(Object.fromEntries(slots.map(s => [s.globalIdx, s.answer])));
     setPhase('revealed');
   };
@@ -175,8 +177,10 @@ export function ProcedurePracticeMode({ procedure, onBack }: ProcedurePracticeMo
     setPhase('input');
   };
 
+  // Score is only computed after an explicit "Check Answers" submission.
+  // Revealed phase shows answers inline but does not produce a score.
   const score = useMemo(() => {
-    if (phase === 'input') return null;
+    if (phase !== 'checked') return null;
     const correct = slots.filter(s => isCorrect(answers[s.globalIdx] ?? '', s.answer)).length;
     return { correct, total: slots.length };
   }, [phase, slots, answers]);
@@ -219,7 +223,22 @@ export function ProcedurePracticeMode({ procedure, onBack }: ProcedurePracticeMo
                     const userVal = answers[slot.globalIdx] ?? '';
                     const correct = isCorrect(userVal, slot.answer);
 
-                    if (phase === 'checked' || phase === 'revealed') {
+                    if (phase === 'revealed') {
+                      // Revealed phase: show the correct answer in a neutral style
+                      // (not color-coded green/red — user didn't submit their own answer)
+                      return (
+                        <span
+                          key={fIdx}
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                          data-testid={`blank-revealed-${procedure.id}-${slot.globalIdx}`}
+                        >
+                          <Eye className="h-3 w-3" />
+                          {slot.answer}
+                        </span>
+                      );
+                    }
+
+                    if (phase === 'checked') {
                       return (
                         <span
                           key={fIdx}
