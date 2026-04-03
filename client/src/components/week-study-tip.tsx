@@ -6,121 +6,109 @@ interface Tip {
   title: string;
   text: string;
   tab: 'memory' | 'exam' | 'strategies';
-  linkLabel: string;
 }
 
+/**
+ * All 16 tips are derived strictly from content already present in the
+ * Resources page (Memory / Exam / Strategies tabs). No new techniques and
+ * no domain-specific examples are introduced.
+ */
 const TIPS: Tip[] = [
   {
     icon: Repeat2,
     title: 'Spaced Repetition: 1–3–7–14–30',
-    text: 'After learning new concepts today, schedule reviews on days 3, 7, 14, and 30. Each review should be a quick recall test with your notes closed. Tracking this schedule prevents the forgetting curve from wiping out your progress.',
+    text: 'After learning a concept today, schedule review sessions on days 3, 7, 14, and 30. Each review should be a closed-book recall test. This graduated spacing fights the forgetting curve and builds durable long-term memory.',
     tab: 'memory',
-    linkLabel: 'Spaced Repetition details',
   },
   {
-    icon: Brain,
-    title: 'Active Recall Beats Re-Reading',
-    text: 'Close your textbook and write down everything you remember from the chapter before checking. This retrieval practice is far more effective than re-reading and builds the kind of recall speed you\'ll need on exam day.',
-    tab: 'strategies',
-    linkLabel: 'Active Recall strategies',
+    icon: Star,
+    title: 'Track Your Spaced Repetition',
+    text: 'Use a notebook column or digital tag labeled "1–3–7–14–30" to track which flashcards you have reviewed at each interval. Cards that clear all five checkpoints can be moved to a "Mastered" pile.',
+    tab: 'memory',
   },
   {
     icon: Pencil,
     title: 'Triad Drill: Concept → Application → Check',
-    text: 'For each formula this week: state it aloud, work a practice problem, then verify your units and signs. This three-step drill converts passive recognition into reliable working memory. Aim for 3 triad cycles per core formula.',
+    text: 'For each key concept this week: state it aloud (Concept), work a practice problem using it (Application), then confirm your units and signs are correct (Check). Three cycles of this drill convert recognition into working recall.',
     tab: 'memory',
-    linkLabel: 'Triad Drill method',
-  },
-  {
-    icon: Moon,
-    title: 'Nightly Brain-Dump',
-    text: 'At the end of each study session, close everything and list 10 items you recall from today. Then reopen your notes and fill in the gaps. This 5-minute habit converts short-term exposure into long-term storage overnight.',
-    tab: 'strategies',
-    linkLabel: 'Nightly Routine details',
   },
   {
     icon: BookOpen,
     title: 'Feynman Technique',
-    text: 'Pick one concept per session and explain it in plain English as if teaching a first-year tech. Where you stumble is exactly where your understanding is shallow. Write a simplified 2-sentence version in your notes as a "recall hook."',
+    text: 'Explain a concept in plain English, as if teaching a first-year tech. Where you stumble is exactly where your understanding is thin. Write a simplified 2-sentence version in the margin — that becomes your personal recall hook.',
     tab: 'memory',
-    linkLabel: 'Feynman Technique guide',
+  },
+  {
+    icon: Lightbulb,
+    title: 'Chunking: Group Related Items',
+    text: 'Before studying a dense topic, break it into mini-sets of 3–5 related items and learn each set as a single chunk. Chunked information is much easier to retrieve under time pressure than a long undifferentiated list.',
+    tab: 'memory',
   },
   {
     icon: Target,
-    title: 'Chunking for Dense Material',
-    text: 'Group related items into mini-sets of 3–5 before studying them. Example: for leveling, chunk "BS → HI → FS" as a single unit. Chunked information is easier to retrieve under time pressure than a long itemized list.',
-    tab: 'memory',
-    linkLabel: 'Chunking examples',
+    title: 'Exam First-Pass Strategy',
+    text: 'On exam day, do a fast first pass — answer what you know immediately and mark harder questions for a second pass. This ensures you never run out of time on questions you could answer. Never spend more than 2 minutes on a single problem before moving on.',
+    tab: 'exam',
   },
   {
-    icon: Timer,
-    title: 'Pomodoro for Focus Sessions',
-    text: 'Work in 25-minute focused blocks, then take a 5-minute break. After four blocks, take a longer 20-minute break. This rhythm prevents mental fatigue and keeps your concentration sharp across multi-hour study sessions.',
+    icon: Clock,
+    title: 'Skip Time-Traps',
+    text: 'If a problem takes more than 2 minutes, move on and return later. Time-traps cost you points on questions you could have answered. Trust your marks and revisit flagged problems during any remaining time.',
+    tab: 'exam',
+  },
+  {
+    icon: Zap,
+    title: 'Reference Book Navigation',
+    text: 'Tab each section of your reference book beforehand for quick access during the exam. Knowing exactly where to find each table or formula is just as important as knowing the formula itself.',
+    tab: 'exam',
+  },
+  {
+    icon: Moon,
+    title: 'Exam Break: Reset, Don\'t Review',
+    text: 'During the exam break, stand up, stretch, and hydrate. Do not review your answers — your goal is a mental reset, not more analysis. A calm break often improves second-half performance.',
+    tab: 'exam',
+  },
+  {
+    icon: Sun,
+    title: 'Daily Recall Habit',
+    text: 'Write 5 key items from memory each morning before opening any notes. Recite definitions aloud once per week. Mark a flashcard as "Mastered" only after you recall it correctly on three separate occasions.',
     tab: 'strategies',
-    linkLabel: 'Study Strategies tab',
-  },
-  {
-    icon: Star,
-    title: 'Mnemonic Anchors for Key Rules',
-    text: '"Sine South, Cosine East" — use phrase-anchors like this to lock in traverse component rules. Create your own mnemonics for the 3–4 formulas you keep forgetting; your brain retains personalized associations better than generic ones.',
-    tab: 'memory',
-    linkLabel: 'Mnemonic examples',
   },
   {
     icon: CheckSquare,
-    title: 'Mark Cards by Confidence, Not Correctness',
-    text: 'When reviewing flashcards, tag each one as Easy / Hesitant / Hard instead of just right/wrong. Prioritize "Hesitant" cards in your next session — these are the ones most likely to slip on exam day under time pressure.',
+    title: 'Mark Cards by Confidence',
+    text: 'After three correct, unprompted recalls of a flashcard, mark it "Mastered" and rotate it to a lower-frequency review pile. This frees up study time for the cards you still need — and gives you an accurate picture of genuine mastery.',
     tab: 'strategies',
-    linkLabel: 'Flashcard rotation guide',
   },
   {
     icon: Dumbbell,
     title: 'Active Recall Under Time Pressure',
-    text: 'Set a 30-second timer per flashcard. Read the question and answer aloud before time runs out, then mark if you hesitated. By mid-plan, aim to recall core formulas within 20 seconds — the same speed you\'ll need in the exam.',
+    text: 'Use a 30-second timer for each flashcard. Read the question and answer aloud within the countdown, then mark whether you hesitated. By mid-plan, aim to recall core material within 20 seconds — the speed you\'ll need on exam day.',
     tab: 'strategies',
-    linkLabel: 'Timed Recall details',
   },
   {
     icon: TrendingUp,
-    title: 'Weekly Retention Audit',
-    text: 'At the start of each week, spend 10 minutes reviewing last week\'s topics without looking at notes. Track how many key points you can recall. This surfaces forgotten material before it compounds into larger gaps.',
+    title: 'Nightly Brain-Dump',
+    text: 'At the end of each study session, close everything and list 10 items you recall from today. Then reopen your notes and fill in what you missed. This short habit converts short-term exposure into long-term storage.',
     tab: 'strategies',
-    linkLabel: 'Retention Audit guide',
-  },
-  {
-    icon: Sun,
-    title: 'Morning Formula Writing',
-    text: 'Each morning, write 5 key formulas from memory before opening any notes or apps. This daily warm-up builds procedural fluency and reveals which formulas still need reinforcement. Keep a list of which ones you consistently miss.',
-    tab: 'strategies',
-    linkLabel: 'Daily Routine details',
-  },
-  {
-    icon: Lightbulb,
-    title: 'Exam-Day: First Pass Strategy',
-    text: 'On exam day, do a fast first pass — answer what you know instantly and mark harder questions for return. This guarantees you don\'t run out of time on questions you can answer. Never spend more than 2 minutes on a single question before moving on.',
-    tab: 'exam',
-    linkLabel: 'Exam Mindset guide',
   },
   {
     icon: BarChart2,
-    title: 'Reference Handbook Navigation',
-    text: 'Tab your NCEES Reference Handbook by section before exam day. Knowing exactly where to find each table and formula is as important as knowing the formula itself. Practice locating 5 random items in the handbook each week.',
-    tab: 'exam',
-    linkLabel: 'Exam Prep checklist',
-  },
-  {
-    icon: Zap,
-    title: 'Interleaved Practice Beats Block Study',
-    text: 'Instead of studying one topic for an hour, alternate between two or three topics in the same session. Interleaving feels harder but produces better long-term retention and mirrors the mixed-question format of the actual exam.',
+    title: 'Weekly Retention Audit',
+    text: 'At the end of each study week, pull 10 random flashcards from different topics and test yourself. If you miss more than 3, revisit that week\'s notes before moving on. Log your retention score to track improvement over time.',
     tab: 'strategies',
-    linkLabel: 'Study Strategies tab',
   },
   {
-    icon: Clock,
-    title: 'Exam Break Reset',
-    text: 'During the exam break, stand up, stretch, and hydrate — do not review your answers. Mental reset is the goal. Your brain consolidates information during these rest windows, so a calm break often improves second-half performance.',
+    icon: Brain,
+    title: 'Weekly Flashcard Rotation',
+    text: 'Focus your daily flashcard sessions on a different subject area each day of the week instead of studying every topic every day. This interleaved approach mirrors the mixed-question format of the real exam.',
+    tab: 'strategies',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Post-Exam Reflection',
+    text: 'After each practice exam or quiz, record which topics felt strong and which felt uncertain. Use that list to adjust your next week\'s focus. Honest self-assessment is more valuable than simply logging your score.',
     tab: 'exam',
-    linkLabel: 'Break & Mindset guide',
   },
 ];
 
@@ -160,14 +148,14 @@ export function WeekStudyTip({ week, examTrack }: WeekStudyTipProps) {
         {tip.text}
       </p>
 
-      {/* Deep-link to Resources */}
+      {/* Standardized deep-link to Resources */}
       <div className="pl-9">
         <Link href={resourcesPath}>
           <span
             className="text-xs font-medium text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 hover:underline cursor-pointer transition-colors"
             data-testid={`link-study-tip-resources-${week}`}
           >
-            {tip.linkLabel} →
+            More in Resources →
           </span>
         </Link>
       </div>
