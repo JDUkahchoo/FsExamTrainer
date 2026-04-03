@@ -52,6 +52,7 @@ import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
 import { ApplyScenarioLab } from '@/components/apply-scenario-lab';
 import { ReinforceRetentionBooster } from '@/components/reinforce-retention-booster';
 import { FlashcardWeekPreview } from '@/components/flashcard-week-preview';
+import { WeekStudyTip } from '@/components/week-study-tip';
 import { 
   getESWeeklyChapters, 
   getSRMWeeklyChapters,
@@ -1195,6 +1196,8 @@ export default function StudyPlan() {
                     examTrack={examTrack}
                     allWeeks={allWeeks.map(w => ({ week: w.week, domains: w.domains as string[] }))}
                   />
+
+                  <WeekStudyTip week={plan.week} examTrack={examTrack} />
 
                   {isCheckpointWeek && plan.domains.length > 0 && (
                     <div className="md:col-span-2 mt-2 p-3 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 flex items-center gap-3" data-testid={`checkpoint-cta-${plan.week}`}>

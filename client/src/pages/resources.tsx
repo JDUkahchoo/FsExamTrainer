@@ -1,9 +1,24 @@
+import { useState } from "react";
+import { useSearch } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Book, Brain, Calculator, CheckCircle, Clock, Target, GraduationCap, BookOpen, FileText } from "lucide-react";
 
+const VALID_TABS = ['formulas', 'memory', 'exam', 'strategies', 'problems', 'math', 'reference'] as const;
+type TabValue = typeof VALID_TABS[number];
+
+function parseTabParam(search: string): TabValue {
+  const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
+  const tab = params.get('tab') as TabValue | null;
+  return tab && VALID_TABS.includes(tab) ? tab : 'formulas';
+}
+
 export default function Resources() {
+  const search = useSearch();
+  const initialTab = parseTabParam(search);
+  const [activeTab, setActiveTab] = useState<TabValue>(initialTab);
+
   return (
     <div className="h-full flex flex-col">
       <div className="border-b p-6">
@@ -18,7 +33,7 @@ export default function Resources() {
 
       <ScrollArea className="flex-1">
         <div className="p-6">
-          <Tabs defaultValue="formulas" className="w-full">
+          <Tabs value={activeTab} onValueChange={v => setActiveTab(v as TabValue)} className="w-full">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-1 mb-6 h-auto">
               <TabsTrigger value="formulas" data-testid="tab-formulas" className="flex-col sm:flex-row py-2 sm:py-3">
                 <Calculator className="w-4 h-4 sm:mr-2" />
