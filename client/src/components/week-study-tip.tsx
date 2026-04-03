@@ -1,5 +1,5 @@
 import { Link } from 'wouter';
-import { Brain, Clock, BookOpen, Repeat2, Pencil, Star, Target, Lightbulb, CheckSquare, Dumbbell, Timer, Moon, Sun, TrendingUp, Zap, BarChart2 } from 'lucide-react';
+import { Brain, Clock, BookOpen, Repeat2, Pencil, Star, Target, Lightbulb, CheckSquare, Dumbbell, Moon, Sun, TrendingUp, Zap, BarChart2 } from 'lucide-react';
 
 interface Tip {
   icon: typeof Brain;

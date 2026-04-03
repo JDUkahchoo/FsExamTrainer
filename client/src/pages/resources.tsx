@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearch } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,8 +16,12 @@ function parseTabParam(search: string): TabValue {
 
 export default function Resources() {
   const search = useSearch();
-  const initialTab = parseTabParam(search);
-  const [activeTab, setActiveTab] = useState<TabValue>(initialTab);
+  const [activeTab, setActiveTab] = useState<TabValue>(() => parseTabParam(search));
+
+  useEffect(() => {
+    const next = parseTabParam(search);
+    setActiveTab(next);
+  }, [search]);
 
   return (
     <div className="h-full flex flex-col">
