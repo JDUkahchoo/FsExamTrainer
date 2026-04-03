@@ -1193,6 +1193,7 @@ export default function StudyPlan() {
                     week={plan.week}
                     domains={plan.domains as string[]}
                     examTrack={examTrack}
+                    allWeeks={allWeeks.map(w => ({ week: w.week, domains: w.domains as string[] }))}
                   />
 
                   {isCheckpointWeek && plan.domains.length > 0 && (
