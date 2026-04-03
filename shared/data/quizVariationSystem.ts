@@ -652,6 +652,20 @@ export function getVariedQuizQuestions(
   });
 }
 
+// Build a date string like "20260403" for the current local calendar day.
+function getTodayDateKey(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}${m}${d}`;
+}
+
+// sessionStorage key is date-scoped so the counter auto-resets each new day.
+function getDailyCounterKey(): string {
+  return `quiz-daily-session-count-${getTodayDateKey()}`;
+}
+
 export function getSessionSeed(): number {
   const now = new Date();
   // Date-based seed: YYYYMMDD so the question pool rotates each calendar day
@@ -660,11 +674,11 @@ export function getSessionSeed(): number {
     (now.getMonth() + 1) * 100 +
     now.getDate();
 
-  // Within-day session counter so two quizzes on the same day still differ
+  // Within-day session counter (date-scoped, so it resets automatically each day)
   let sessionCount = 0;
   try {
     sessionCount = parseInt(
-      sessionStorage.getItem('quiz-daily-session-count') || '0',
+      sessionStorage.getItem(getDailyCounterKey()) || '0',
       10
     );
     if (isNaN(sessionCount)) sessionCount = 0;
@@ -678,17 +692,14 @@ export function getSessionSeed(): number {
 /**
  * Increment the within-day session counter. Call once when a new quiz starts
  * so consecutive quizzes on the same day get different question sets.
+ * The counter key is date-scoped (YYYY-MM-DD), so it resets automatically
+ * the next calendar day without any explicit cleanup.
  */
 export function incrementDailySessionCount(): void {
   try {
-    const prev = parseInt(
-      sessionStorage.getItem('quiz-daily-session-count') || '0',
-      10
-    );
-    sessionStorage.setItem(
-      'quiz-daily-session-count',
-      String(isNaN(prev) ? 1 : prev + 1)
-    );
+    const key = getDailyCounterKey();
+    const prev = parseInt(sessionStorage.getItem(key) || '0', 10);
+    sessionStorage.setItem(key, String(isNaN(prev) ? 1 : prev + 1));
   } catch {
     // sessionStorage unavailable
   }

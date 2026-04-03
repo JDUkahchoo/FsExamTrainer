@@ -101,7 +101,8 @@ export default function PracticeQuizPage() {
     mutationFn: () => apiRequest('DELETE', `/api/quiz/draft?examTrack=${examTrack}`, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/draft', examTrack] });
-    }
+    },
+    onError: (err) => handleMutationError(err),
   });
 
   // Mutation to save individual quiz result (for stats/analytics) with retry
