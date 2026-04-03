@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useParams } from "wouter";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,6 @@ import {
   CircleDot,
   Lightbulb,
   Trophy,
-  Loader2,
   AlertTriangle,
   Star,
   ListOrdered,
@@ -612,9 +611,8 @@ export default function StudyReadingPage() {
   const reading = STUDY_READINGS.find((r) => r.id === readingId);
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const { data: progressData, isLoading: progressLoading } = useQuery<Array<{ sectionId: string }>>({
+  const { data: progressData } = useQuery<Array<{ sectionId: string }>>({
     queryKey: ['/api/study-reading-progress', readingId],
     enabled: !!readingId,
   });
@@ -653,12 +651,9 @@ export default function StudyReadingPage() {
     [markSectionMutation]
   );
 
-  const scrollToSection = useCallback((index: number) => {
+  const goToSection = useCallback((index: number) => {
     setActiveSectionIndex(index);
-    sectionRefs.current[index]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   if (!reading) {
@@ -764,17 +759,38 @@ export default function StudyReadingPage() {
     }
   };
 
+  const currentSection = sections[activeSectionIndex];
+  const isFirst = activeSectionIndex === 0;
+  const isLast = activeSectionIndex === sections.length - 1;
+
+  const SECTION_TYPE_LABELS: Record<string, string> = {
+    concept: 'Concept',
+    formula: 'Formula',
+    worked_example: 'Worked Example',
+    knowledge_check: 'Knowledge Check',
+    further_reading: 'Further Reading',
+    common_mistakes: 'Common Mistakes',
+    exam_tips: 'Exam Tips',
+    procedure: 'Procedure',
+  };
+
   return (
     <div className="container mx-auto p-6 max-w-3xl">
-      <div className="mb-6 space-y-4">
-        <Link href={backPath}>
-          <Button variant="ghost" size="sm" data-testid="button-back-to-readings">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {backLabel}
-          </Button>
-        </Link>
+      {/* Header */}
+      <div className="mb-5 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <Link href={backPath}>
+            <Button variant="ghost" size="sm" data-testid="button-back-to-readings">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {backLabel}
+            </Button>
+          </Link>
+          <span className="text-sm text-muted-foreground tabular-nums" data-testid="text-section-count">
+            {activeSectionIndex + 1} / {totalSections}
+          </span>
+        </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge
               variant="outline"
@@ -788,10 +804,9 @@ export default function StudyReadingPage() {
               {reading.estimatedMinutes} min
             </span>
           </div>
-          <h1 className="text-2xl font-bold" data-testid="text-reading-title">
+          <h1 className="text-xl font-bold leading-snug" data-testid="text-reading-title">
             {reading.title}
           </h1>
-          <p className="text-muted-foreground text-sm">{reading.description}</p>
         </div>
 
         <PrerequisiteBanner
@@ -800,63 +815,93 @@ export default function StudyReadingPage() {
           allProgress={allProgressData}
         />
 
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {completedCount} / {totalSections} sections completed
-            </span>
-            <span className="text-muted-foreground">{progressPercent}%</span>
+        {/* Progress bar + dot trail */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>{completedCount} / {totalSections} sections completed</span>
+            <span>{progressPercent}%</span>
           </div>
-          <Progress value={progressPercent} className="h-2" data-testid="progress-sections" />
+          <Progress value={progressPercent} className="h-1.5" data-testid="progress-sections" />
+
+          {/* Section dots — click to jump */}
+          <div className="flex flex-wrap gap-1.5 pt-0.5" data-testid="section-dots">
+            {sections.map((s, i) => {
+              const done = completedSections.has(s.id);
+              const active = i === activeSectionIndex;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => goToSection(i)}
+                  title={s.title || SECTION_TYPE_LABELS[s.type] || s.type}
+                  data-testid={`dot-section-${i}`}
+                  className={[
+                    'w-2.5 h-2.5 rounded-full transition-all',
+                    active
+                      ? `${domainConfig.bgColor.replace('/30', '')} ring-2 ring-offset-1 ring-current scale-125`
+                      : done
+                        ? 'bg-green-500 dark:bg-green-400'
+                        : 'bg-muted-foreground/25 hover:bg-muted-foreground/50',
+                  ].join(' ')}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <div className="space-y-6">
-        {sections.map((section, index) => (
-          <div
-            key={section.id}
-            ref={(el) => {
-              sectionRefs.current[index] = el;
-            }}
-          >
-            {renderSection(section, index)}
-          </div>
-        ))}
+      {/* Current section label */}
+      <div className="flex items-center gap-2 mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground" data-testid="text-section-type">
+        <span className={`w-1.5 h-1.5 rounded-full inline-block ${domainConfig.bgColor.replace('/30', '')}`} />
+        {SECTION_TYPE_LABELS[currentSection.type] || currentSection.type}
       </div>
 
-      <div className="mt-8 flex items-center justify-between gap-4">
+      {/* Active section */}
+      <div key={currentSection.id} data-testid="section-content">
+        {renderSection(currentSection, activeSectionIndex)}
+      </div>
+
+      {/* Navigation */}
+      <div className="mt-6 flex items-center justify-between gap-4">
         <Button
           variant="outline"
-          onClick={() => scrollToSection(Math.max(0, activeSectionIndex - 1))}
-          disabled={activeSectionIndex === 0}
+          onClick={() => goToSection(activeSectionIndex - 1)}
+          disabled={isFirst}
           data-testid="button-previous-section"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Previous Section
+          Previous
         </Button>
-        <Button
-          variant="outline"
-          onClick={() =>
-            scrollToSection(Math.min(sections.length - 1, activeSectionIndex + 1))
-          }
-          disabled={activeSectionIndex === sections.length - 1}
-          data-testid="button-next-section"
-        >
-          Next Section
-          <ArrowRight className="h-4 w-4 ml-2" />
-        </Button>
+
+        {isLast && allCompleted ? (
+          <Link href={backPath}>
+            <Button className="gap-2" data-testid="button-back-after-complete">
+              <Trophy className="h-4 w-4 text-yellow-400" />
+              All Done!
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            onClick={() => goToSection(activeSectionIndex + 1)}
+            disabled={isLast}
+            data-testid="button-next-section"
+          >
+            Next
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        )}
       </div>
 
-      {allCompleted && (
-        <Card className="mt-8 border-green-300 dark:border-green-700 bg-green-50/50 dark:bg-green-950/20" data-testid="card-completion-summary">
+      {/* Completion banner — shown after last section when all done */}
+      {isLast && allCompleted && (
+        <Card className="mt-6 border-green-300 dark:border-green-700 bg-green-50/50 dark:bg-green-950/20" data-testid="card-completion-summary">
           <CardContent className="pt-6 text-center space-y-3">
             <Trophy className="h-10 w-10 text-green-600 dark:text-green-400 mx-auto" />
-            <h2 className="text-lg font-semibold">Reading Complete</h2>
+            <h2 className="text-lg font-semibold">Reading Complete!</h2>
             <p className="text-sm text-muted-foreground">
-              You have completed all {totalSections} sections of this reading.
+              You've completed all {totalSections} sections of this reading.
             </p>
             <Link href={backPath}>
-              <Button data-testid="button-back-after-complete">
+              <Button data-testid="button-back-to-readings-complete">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {backLabel}
               </Button>
