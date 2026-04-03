@@ -17,7 +17,7 @@ import type { Domain, QuizDraft } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { shuffleQuestionOptions, type ShuffledQuestion } from '@/lib/shuffleOptions';
 import { ProblemSolvingLoop } from '@/components/problem-solving-loop';
-import { getVariedQuizQuestions, getSessionSeed } from '@shared/data/quizVariationSystem';
+import { getVariedQuizQuestions, getSessionSeed, incrementDailySessionCount } from '@shared/data/quizVariationSystem';
 
 type QuizState = 'setup' | 'active' | 'completed';
 
@@ -58,6 +58,10 @@ export default function PracticeQuizPage() {
   const [shuffleSeedBase, setShuffleSeedBase] = useState<number>(0);
   const { logActivity } = useActivityLogger();
   const resumeInProgressRef = useRef(false);
+  // Refs for pause-aware elapsed time (tab visibility tracking)
+  const hiddenSinceRef = useRef<number | null>(null);
+  const accumulatedHiddenMsRef = useRef<number>(0);
+  const [draftSaveWarning, setDraftSaveWarning] = useState(false);
 
   const { data: draftData, isLoading: isDraftLoading } = useQuery<QuizDraft | null>({
     queryKey: ['/api/quiz/draft', examTrack],
@@ -75,8 +79,10 @@ export default function PracticeQuizPage() {
   const saveDraftMutation = useMutation({
     mutationFn: (draft: { domain: string; examTrack: string; sessionId: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number; shuffleSeed: number }) =>
       apiRequest('POST', '/api/quiz/draft', draft),
-    retry: 1,
-    retryDelay: 1000,
+    retry: 2,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    onSuccess: () => setDraftSaveWarning(false),
+    onError: () => setDraftSaveWarning(true),
   });
 
   const deleteDraftMutation = useMutation({
@@ -112,12 +118,33 @@ export default function PracticeQuizPage() {
     }
   }, [draftData, quizState, isDraftLoading]);
 
-  // Timer effect
+  // Pause-aware timer: track time spent with tab hidden so elapsed = active time only
+  useEffect(() => {
+    if (quizState !== 'active') return;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        hiddenSinceRef.current = Date.now();
+      } else if (hiddenSinceRef.current !== null) {
+        accumulatedHiddenMsRef.current += Date.now() - hiddenSinceRef.current;
+        hiddenSinceRef.current = null;
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [quizState]);
+
+  // Timer effect: counts only active (non-hidden) time
   useEffect(() => {
     if (quizState !== 'active' || !startTime) return;
-    
+
     const interval = setInterval(() => {
-      setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000));
+      const hiddenNow = hiddenSinceRef.current !== null
+        ? Date.now() - hiddenSinceRef.current
+        : 0;
+      const activeMs = Date.now() - startTime - accumulatedHiddenMsRef.current - hiddenNow;
+      setElapsedSeconds(Math.max(0, Math.floor(activeMs / 1000)));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -254,6 +281,11 @@ export default function PracticeQuizPage() {
       setShowExplanation(false);
     }
 
+    // Reset pause-tracking refs for the resumed session
+    hiddenSinceRef.current = null;
+    accumulatedHiddenMsRef.current = 0;
+    setDraftSaveWarning(false);
+
     const resumedSessionId = draftData.sessionId || crypto.randomUUID();
     setQuizSessionId(resumedSessionId);
     setActiveSession(resumedSessionId);
@@ -298,6 +330,8 @@ export default function PracticeQuizPage() {
       id: `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
     }));
     
+    // Increment the within-day counter so this session gets a unique variation
+    incrementDailySessionCount();
     const sessionSeed = getSessionSeed();
     const variedQuestions = getVariedQuizQuestions(questionsWithIds, sessionSeed);
     
@@ -312,6 +346,11 @@ export default function PracticeQuizPage() {
       };
     });
     
+    // Reset pause-tracking refs for this new session
+    hiddenSinceRef.current = null;
+    accumulatedHiddenMsRef.current = 0;
+    setDraftSaveWarning(false);
+
     const newSessionId = crypto.randomUUID();
     setQuizSessionId(newSessionId);
     setActiveSession(newSessionId);
@@ -663,6 +702,14 @@ export default function PracticeQuizPage() {
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
+      {draftSaveWarning && (
+        <Alert className="mb-4 border-yellow-400 bg-yellow-50 dark:bg-yellow-950/30" data-testid="alert-draft-save-warning">
+          <AlertDescription className="text-yellow-800 dark:text-yellow-200 flex items-center justify-between">
+            <span>Progress auto-save failed. Your answers are safe in this tab — avoid closing it until the quiz is complete.</span>
+            <Button variant="ghost" size="sm" className="ml-4 text-yellow-800 dark:text-yellow-200" onClick={() => setDraftSaveWarning(false)}>Dismiss</Button>
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-foreground" data-testid="heading-practice-quiz">Practice Quiz</h1>

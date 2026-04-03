@@ -653,5 +653,43 @@ export function getVariedQuizQuestions(
 }
 
 export function getSessionSeed(): number {
-  return Math.floor(Date.now() / 1000);
+  const now = new Date();
+  // Date-based seed: YYYYMMDD so the question pool rotates each calendar day
+  const dateSeed =
+    now.getFullYear() * 10000 +
+    (now.getMonth() + 1) * 100 +
+    now.getDate();
+
+  // Within-day session counter so two quizzes on the same day still differ
+  let sessionCount = 0;
+  try {
+    sessionCount = parseInt(
+      sessionStorage.getItem('quiz-daily-session-count') || '0',
+      10
+    );
+    if (isNaN(sessionCount)) sessionCount = 0;
+  } catch {
+    // sessionStorage unavailable (SSR / strict private mode)
+  }
+
+  return dateSeed * 100 + (sessionCount % 100);
+}
+
+/**
+ * Increment the within-day session counter. Call once when a new quiz starts
+ * so consecutive quizzes on the same day get different question sets.
+ */
+export function incrementDailySessionCount(): void {
+  try {
+    const prev = parseInt(
+      sessionStorage.getItem('quiz-daily-session-count') || '0',
+      10
+    );
+    sessionStorage.setItem(
+      'quiz-daily-session-count',
+      String(isNaN(prev) ? 1 : prev + 1)
+    );
+  } catch {
+    // sessionStorage unavailable
+  }
 }
