@@ -152,7 +152,7 @@ export function FlashcardWeekPreview({ week, domains, examTrack, allWeeks }: Fla
 
     // For each domain in this week, compute which occurrence this week is
     // and get the corresponding card slice (up to WEEK_SLOT_SIZE per domain).
-    const combinedCards: Card[] = [];
+    const domainSlices: Card[][] = [];
 
     for (const domain of normalizedDomains) {
       const domainCards = pool.filter(
@@ -174,11 +174,27 @@ export function FlashcardWeekPreview({ week, domains, examTrack, allWeeks }: Fla
       // Each occurrence gets a non-overlapping slice of up to WEEK_SLOT_SIZE cards
       const start = occurrenceIdx * WEEK_SLOT_SIZE;
       const slice = shuffled.slice(start, start + WEEK_SLOT_SIZE);
-      combinedCards.push(...slice);
+      if (slice.length > 0) domainSlices.push(slice);
     }
 
-    // Cap combined cards at WEEK_SLOT_SIZE total for the week
-    const weekCards = combinedCards.slice(0, WEEK_SLOT_SIZE);
+    // Round-robin interleave slices so all domains are represented fairly when
+    // multiple domains share a week (prevents earlier domains crowding out later ones).
+    const weekCards: Card[] = [];
+    if (domainSlices.length <= 1) {
+      weekCards.push(...(domainSlices[0] ?? []));
+    } else {
+      const indices = domainSlices.map(() => 0);
+      while (weekCards.length < WEEK_SLOT_SIZE) {
+        let added = 0;
+        for (let d = 0; d < domainSlices.length && weekCards.length < WEEK_SLOT_SIZE; d++) {
+          if (indices[d] < domainSlices[d].length) {
+            weekCards.push(domainSlices[d][indices[d]++]);
+            added++;
+          }
+        }
+        if (added === 0) break; // all domain slices exhausted
+      }
+    }
 
     // Split into Morning / Afternoon / Evening sessions of up to SESSION_SIZE each
     const rawSessions = SESSION_META.map((meta, i) => ({
