@@ -15,6 +15,7 @@ interface MicroDrillModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   focusDomains: string[];
+  examTrack?: string;
 }
 
 interface QuizQuestion {
@@ -30,7 +31,7 @@ type DrillState = 'ready' | 'active' | 'completed';
 
 const DRILL_QUESTION_COUNT = 10;
 
-export function MicroDrillModal({ open, onOpenChange, focusDomains }: MicroDrillModalProps) {
+export function MicroDrillModal({ open, onOpenChange, focusDomains, examTrack = 'fs' }: MicroDrillModalProps) {
   const [drillState, setDrillState] = useState<DrillState>('ready');
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -52,6 +53,16 @@ export function MicroDrillModal({ open, onOpenChange, focusDomains }: MicroDrill
       queryClient.invalidateQueries({ queryKey: ['/api/focus/recent-misses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
       queryClient.invalidateQueries({ predicate: (query) => 
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
+    }
+  });
+
+  const questProgressMutation = useMutation({
+    mutationFn: (data: { questType: string; increment: number; examTrack: string; pillar: string }) =>
+      apiRequest('POST', '/api/daily-quests/progress', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ predicate: (query) =>
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });
     }
@@ -129,6 +140,12 @@ export function MicroDrillModal({ open, onOpenChange, focusDomains }: MicroDrill
       setShowFeedback(false);
     } else {
       setDrillState('completed');
+      questProgressMutation.mutate({
+        questType: 'complete_quiz',
+        increment: 1,
+        examTrack,
+        pillar: 'focus',
+      });
     }
   };
 

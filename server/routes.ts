@@ -729,7 +729,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/daily-quests/progress", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { questType, increment = 1, examTrack } = req.body;
+      const { questType, increment = 1, examTrack, pillar } = req.body;
       
       if (!questType) {
         return res.status(400).json({ error: "questType is required" });
@@ -743,6 +743,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const timezone = prefs?.timezone || 'America/Chicago';
       
       const updated = await storage.updateQuestProgress(userId, questType, increment, examTrack, timezone);
+      
+      // Also update the pillar (Daily Discipline) quest if specified
+      if (pillar && ['read', 'focus', 'apply', 'reinforce'].includes(pillar)) {
+        await storage.updatePillarQuestProgress(userId, pillar as 'read' | 'focus' | 'apply' | 'reinforce', examTrack, timezone);
+      }
       
       // Log daily activity for streak tracking when quest is completed
       if (updated?.isCompleted) {

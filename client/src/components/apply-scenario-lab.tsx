@@ -324,6 +324,16 @@ export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", e
     },
   });
 
+  const questProgressMutation = useMutation({
+    mutationFn: (data: { questType: string; increment: number; examTrack: string; pillar: string }) =>
+      apiRequest('POST', '/api/daily-quests/progress', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ predicate: (query) =>
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
+    }
+  });
+
   const awardXpMutation = useMutation({
     mutationFn: async (data: { amount: number; reason: string; activityKey: string }) => {
       const res = await apiRequest('POST', '/api/xp/award', data);
@@ -393,6 +403,14 @@ export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", e
           userAnswer,
         });
         
+        // Count as a quiz completion for the daily quest (apply pillar)
+        questProgressMutation.mutate({
+          questType: 'complete_quiz',
+          increment: 1,
+          examTrack,
+          pillar: 'apply',
+        });
+
         // Award XP with backend idempotency (activity key prevents duplicate awards)
         awardXpMutation.mutate({ 
           amount: XP_AWARDS.APPLY_CHALLENGE, 
@@ -419,7 +437,7 @@ export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", e
       setSelfGrade([]);
       setStartTime(null);
     }
-  }, [activeChallenge, activeAttemptId, startTime, selfGrade, userAnswer, updateAttemptMutation, awardXpMutation, toast]);
+  }, [activeChallenge, activeAttemptId, startTime, selfGrade, userAnswer, updateAttemptMutation, questProgressMutation, awardXpMutation, toast, examTrack]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

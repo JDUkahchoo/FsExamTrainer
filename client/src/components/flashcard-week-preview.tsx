@@ -1,10 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LayersIcon, ChevronLeft, ChevronRight, ExternalLink, Sun, Sunset, Moon } from 'lucide-react';
 import { COMPREHENSIVE_FLASHCARDS } from '@shared/data/flashcardsComprehensive';
 import { PS_FLASHCARDS } from '@shared/data/ps-flashcards';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 
 const SESSION_SIZE = 15; // cards per session slot
 const WEEK_SLOT_SIZE = SESSION_SIZE * 3; // 45 cards per week occurrence per domain
@@ -70,14 +72,45 @@ const SESSION_META: Array<{ label: string; icon: typeof Sun }> = [
   { label: 'Evening', icon: Moon },
 ];
 
-function CardNavigator({ cards, weekKey }: { cards: Card[]; weekKey: string }) {
+/** Generate a stable short ID from a card's front text for progress tracking */
+function cardIdFromFront(front: string): string {
+  return 'preview-' + front.slice(0, 32).replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+}
+
+function CardNavigator({ cards, weekKey, examTrack }: { cards: Card[]; weekKey: string; examTrack: string }) {
   const [index, setIndex] = useState(0);
   const total = cards.length;
   const card = cards[Math.min(index, total - 1)];
   const { definition, example } = parseBack(card.back);
 
-  const prev = () => setIndex(i => (i - 1 + total) % total);
-  const next = () => setIndex(i => (i + 1) % total);
+  const flashcardProgressMutation = useMutation({
+    mutationFn: (data: { cardId: string; mode: string; examTrack: string }) =>
+      apiRequest('POST', '/api/flashcards/progress', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ predicate: (query) =>
+        Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
+      });
+    },
+  });
+
+  const recordView = useCallback((cardFront: string) => {
+    flashcardProgressMutation.mutate({
+      cardId: cardIdFromFront(cardFront),
+      mode: 'study-plan-preview',
+      examTrack,
+    });
+  }, [examTrack]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const prev = () => {
+    const newIdx = (index - 1 + total) % total;
+    setIndex(newIdx);
+    recordView(cards[newIdx].front);
+  };
+  const next = () => {
+    const newIdx = (index + 1) % total;
+    setIndex(newIdx);
+    recordView(cards[newIdx].front);
+  };
 
   return (
     <div className="space-y-2">
@@ -284,6 +317,7 @@ export function FlashcardWeekPreview({ week, domains, examTrack, allWeeks }: Fla
         key={`${week}-${safeSession}`}
         cards={currentSession.cards}
         weekKey={`${week}-${currentSession.label.toLowerCase()}`}
+        examTrack={examTrack}
       />
 
       <p className="text-xs text-muted-foreground text-center">

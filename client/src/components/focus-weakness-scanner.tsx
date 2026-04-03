@@ -279,6 +279,7 @@ export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary
                   open={showDrillModal}
                   onOpenChange={setShowDrillModal}
                   focusDomains={weakestDomains.filter(d => d.accuracy < 70).map(d => d.domain)}
+                  examTrack={examTrack}
                 />
               </>
             )}
