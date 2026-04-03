@@ -2,9 +2,28 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 let sessionExpiredCallback: (() => void) | null = null;
 let sessionExpiredTriggered = false;
+let sessionExpiredRedirectSuppressed = false;
 
 export function setSessionExpiredCallback(cb: () => void) {
   sessionExpiredCallback = cb;
+}
+
+/**
+ * Suppress the automatic redirect-to-login that fires on 401.
+ * Use this when a page (e.g. an active quiz) needs to handle auth
+ * expiry in-context rather than losing the user's work.
+ * Always call enableSessionExpiredRedirect() on unmount.
+ */
+export function suppressSessionExpiredRedirect() {
+  sessionExpiredRedirectSuppressed = true;
+}
+
+export function enableSessionExpiredRedirect() {
+  sessionExpiredRedirectSuppressed = false;
+}
+
+export function isSessionExpiredRedirectSuppressed() {
+  return sessionExpiredRedirectSuppressed;
 }
 
 function handle401() {

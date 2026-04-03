@@ -1,6 +1,6 @@
 import { ReactNode, ComponentType, useEffect, useCallback } from "react";
 import { Switch, Route, useLocation } from "wouter";
-import { queryClient, setSessionExpiredCallback } from "./lib/queryClient";
+import { queryClient, setSessionExpiredCallback, isSessionExpiredRedirectSuppressed } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -158,6 +158,17 @@ function AppContent() {
 
   const handleSessionExpired = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    // If a page has suppressed the redirect (e.g. active quiz), only show the
+    // toast — the page is responsible for its own re-auth prompt.
+    if (isSessionExpiredRedirectSuppressed()) {
+      toast({
+        title: "Session expired",
+        description: "Your session expired. Please re-authenticate to continue saving progress.",
+        variant: "destructive",
+        duration: 8000,
+      });
+      return;
+    }
     toast({
       title: "Session expired",
       description: "Your login session has expired. Please log in again to continue.",

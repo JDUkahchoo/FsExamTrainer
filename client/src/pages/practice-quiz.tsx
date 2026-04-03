@@ -10,7 +10,7 @@ import { CheckCircle2, XCircle, RotateCcw, Lightbulb, Clock, Play, Trophy, Const
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { apiRequest, queryClient } from '@/lib/queryClient';
+import { apiRequest, queryClient, suppressSessionExpiredRedirect, enableSessionExpiredRedirect } from '@/lib/queryClient';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { DOMAINS, FS_DOMAINS, PS_DOMAINS } from '@shared/schema';
 import type { Domain, QuizDraft } from '@shared/schema';
@@ -62,6 +62,8 @@ export default function PracticeQuizPage() {
   const hiddenSinceRef = useRef<number | null>(null);
   const accumulatedHiddenMsRef = useRef<number>(0);
   const [draftSaveWarning, setDraftSaveWarning] = useState(false);
+  // Auth-expiry: true when a quiz API call returns 401 mid-session
+  const [authExpired, setAuthExpired] = useState(false);
 
   const { data: draftData, isLoading: isDraftLoading } = useQuery<QuizDraft | null>({
     queryKey: ['/api/quiz/draft', examTrack],
@@ -76,13 +78,23 @@ export default function PracticeQuizPage() {
     refetchOnMount: true,
   });
 
+  // Helper: determine whether a mutation error was caused by an expired session
+  const handleMutationError = (err: unknown, isAuthSensitive = true) => {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (isAuthSensitive && msg.startsWith('401')) {
+      setAuthExpired(true);
+    } else {
+      setDraftSaveWarning(true);
+    }
+  };
+
   const saveDraftMutation = useMutation({
     mutationFn: (draft: { domain: string; examTrack: string; sessionId: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number; shuffleSeed: number }) =>
       apiRequest('POST', '/api/quiz/draft', draft),
     retry: 2,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
     onSuccess: () => setDraftSaveWarning(false),
-    onError: () => setDraftSaveWarning(true),
+    onError: (err) => handleMutationError(err),
   });
 
   const deleteDraftMutation = useMutation({
@@ -102,7 +114,8 @@ export default function PracticeQuizPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/results'] });
       queryClient.invalidateQueries({ queryKey: ['/api/quiz/stats'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });
-    }
+    },
+    onError: (err) => handleMutationError(err),
   });
 
   useEffect(() => {
@@ -117,6 +130,17 @@ export default function PracticeQuizPage() {
       setShowResumeDialog(true);
     }
   }, [draftData, quizState, isDraftLoading]);
+
+  // While the quiz is active, suppress the global auth-expiry redirect so we can
+  // show our own in-quiz re-auth prompt without losing the user's answers.
+  useEffect(() => {
+    if (quizState === 'active') {
+      suppressSessionExpiredRedirect();
+    } else {
+      enableSessionExpiredRedirect();
+    }
+    return () => enableSessionExpiredRedirect();
+  }, [quizState]);
 
   // Pause-aware timer: track time spent with tab hidden so elapsed = active time only
   useEffect(() => {
@@ -216,7 +240,8 @@ export default function PracticeQuizPage() {
       queryClient.invalidateQueries({ predicate: (query) => 
         Array.isArray(query.queryKey) && query.queryKey[0] === '/api/daily-quests'
       });
-    }
+    },
+    onError: (err) => handleMutationError(err),
   });
 
   const handleResumeDraft = () => {
@@ -702,7 +727,38 @@ export default function PracticeQuizPage() {
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
-      {draftSaveWarning && (
+      {authExpired && (
+        <Alert className="mb-4 border-red-400 bg-red-50 dark:bg-red-950/30" data-testid="alert-auth-expired">
+          <AlertDescription className="text-red-800 dark:text-red-200">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <span className="flex-1">
+                <strong>Session expired.</strong> Your answers are still here — open a new tab to log in again, then return to finish your quiz.
+              </span>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-red-400 text-red-800 dark:text-red-200 hover:bg-red-100 dark:hover:bg-red-900/40"
+                  onClick={() => window.open('/api/login', '_blank', 'noopener')}
+                  data-testid="button-reauth"
+                >
+                  Log in again
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-800 dark:text-red-200"
+                  onClick={() => setAuthExpired(false)}
+                  data-testid="button-dismiss-auth-expired"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+      {draftSaveWarning && !authExpired && (
         <Alert className="mb-4 border-yellow-400 bg-yellow-50 dark:bg-yellow-950/30" data-testid="alert-draft-save-warning">
           <AlertDescription className="text-yellow-800 dark:text-yellow-200 flex items-center justify-between">
             <span>Progress auto-save failed. Your answers are safe in this tab — avoid closing it until the quiz is complete.</span>
