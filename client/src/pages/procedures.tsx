@@ -30,8 +30,10 @@ import {
   CheckCircle2,
   XCircle,
   ArrowRight,
-  Lightbulb
+  Lightbulb,
+  Pencil
 } from 'lucide-react';
+import { ProcedurePracticeMode } from '@/components/procedure-practice-mode';
 
 const categoryIcons: Record<string, typeof MapPin> = {
   'corner-restoration': MapPin,
@@ -44,6 +46,7 @@ const categoryIcons: Record<string, typeof MapPin> = {
 };
 
 function ProcedureCard({ procedure }: { procedure: Procedure }) {
+  const [practiceMode, setPracticeMode] = useState(false);
   const Icon = categoryIcons[procedure.category] || BookOpen;
   
   return (
@@ -54,82 +57,101 @@ function ProcedureCard({ procedure }: { procedure: Procedure }) {
             <Icon className="h-5 w-5 text-muted-foreground" />
             <CardTitle className="text-lg">{procedure.title}</CardTitle>
           </div>
-          <div className="flex gap-1">
+          <div className="flex items-center gap-2">
             <Badge variant="outline">
               {procedure.examTrack === 'both' ? 'FS & PS' : procedure.examTrack.toUpperCase()}
             </Badge>
+            <Button
+              size="sm"
+              variant={practiceMode ? 'secondary' : 'outline'}
+              className="gap-1.5 text-xs h-7"
+              onClick={() => setPracticeMode(m => !m)}
+              data-testid={`button-practice-${procedure.id}`}
+            >
+              <Pencil className="h-3 w-3" />
+              {practiceMode ? 'Reading' : 'Practice'}
+            </Button>
           </div>
         </div>
         <CardDescription>{procedure.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <h4 className="font-medium mb-2 flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-            Step-by-Step Procedure
-          </h4>
-          <ol className="list-none space-y-2 ml-1">
-            {procedure.steps.map((step, idx) => (
-              <li key={idx} className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-sm flex items-center justify-center font-medium">
-                  {step.step}
-                </span>
-                <div>
-                  <p className="font-medium text-sm">{step.action}</p>
-                  {step.detail && (
-                    <p className="text-sm text-muted-foreground">{step.detail}</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
+        {practiceMode ? (
+          <ProcedurePracticeMode
+            procedure={procedure}
+            onBack={() => setPracticeMode(false)}
+          />
+        ) : (
+          <>
+            <div>
+              <h4 className="font-medium mb-2 flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+                Step-by-Step Procedure
+              </h4>
+              <ol className="list-none space-y-2 ml-1">
+                {procedure.steps.map((step, idx) => (
+                  <li key={idx} className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-sm flex items-center justify-center font-medium">
+                      {step.step}
+                    </span>
+                    <div>
+                      <p className="font-medium text-sm">{step.action}</p>
+                      {step.detail && (
+                        <p className="text-sm text-muted-foreground">{step.detail}</p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-        <div>
-          <h4 className="font-medium mb-2 flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-            Key Points to Remember
-          </h4>
-          <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-            {procedure.keyPoints.map((point, idx) => (
-              <li key={idx}>{point}</li>
-            ))}
-          </ul>
-        </div>
+            <div>
+              <h4 className="font-medium mb-2 flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                Key Points to Remember
+              </h4>
+              <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                {procedure.keyPoints.map((point, idx) => (
+                  <li key={idx}>{point}</li>
+                ))}
+              </ul>
+            </div>
 
-        {procedure.examTrap && (
-          <Alert className="border-amber-500/50 bg-amber-50 dark:bg-amber-950/20">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
-            <AlertTitle className="text-amber-700 dark:text-amber-400">Exam Trap</AlertTitle>
-            <AlertDescription>
-              <div className="space-y-2 mt-2">
-                <div className="flex items-start gap-2">
-                  <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium text-red-700 dark:text-red-400">Field Practice: </span>
-                    <span className="text-muted-foreground">{procedure.examTrap.fieldPractice}</span>
+            {procedure.examTrap && (
+              <Alert className="border-amber-500/50 bg-amber-50 dark:bg-amber-950/20">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                <AlertTitle className="text-amber-700 dark:text-amber-400">Exam Trap</AlertTitle>
+                <AlertDescription>
+                  <div className="space-y-2 mt-2">
+                    <div className="flex items-start gap-2">
+                      <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <span className="font-medium text-red-700 dark:text-red-400">Field Practice: </span>
+                        <span className="text-muted-foreground">{procedure.examTrap.fieldPractice}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <span className="font-medium text-green-700 dark:text-green-400">Correct Answer: </span>
+                        <span className="text-muted-foreground">{procedure.examTrap.correctAnswer}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2 mt-2 pt-2 border-t border-amber-200 dark:border-amber-800">
+                      <ArrowRight className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-amber-800 dark:text-amber-300">{procedure.examTrap.explanation}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-medium text-green-700 dark:text-green-400">Correct Answer: </span>
-                    <span className="text-muted-foreground">{procedure.examTrap.correctAnswer}</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 mt-2 pt-2 border-t border-amber-200 dark:border-amber-800">
-                  <ArrowRight className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-amber-800 dark:text-amber-300">{procedure.examTrap.explanation}</p>
-                </div>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
+                </AlertDescription>
+              </Alert>
+            )}
 
-        {procedure.reference && (
-          <p className="text-xs text-muted-foreground italic">
-            Reference: {procedure.reference}
-          </p>
+            {procedure.reference && (
+              <p className="text-xs text-muted-foreground italic">
+                Reference: {procedure.reference}
+              </p>
+            )}
+          </>
         )}
       </CardContent>
     </Card>
