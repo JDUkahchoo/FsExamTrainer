@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useParams } from "wouter";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -611,6 +611,7 @@ export default function StudyReadingPage() {
   const reading = STUDY_READINGS.find((r) => r.id === readingId);
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: progressData } = useQuery<Array<{ sectionId: string }>>({
     queryKey: ['/api/study-reading-progress', readingId],
@@ -651,7 +652,17 @@ export default function StudyReadingPage() {
     [markSectionMutation]
   );
 
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+    };
+  }, []);
+
   const goToSection = useCallback((index: number) => {
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
     setActiveSectionIndex(index);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -692,7 +703,7 @@ export default function StudyReadingPage() {
       markSectionRead(section.id);
       if (index < sections.length - 1) {
         const delay = isKnowledgeCheck ? 1200 : 400;
-        setTimeout(() => goToSection(index + 1), delay);
+        advanceTimerRef.current = setTimeout(() => goToSection(index + 1), delay);
       }
     };
 
