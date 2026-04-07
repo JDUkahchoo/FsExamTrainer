@@ -3528,6 +3528,7 @@ export class DatabaseStorage implements IStorage {
       id: string;
       itemId: string;
       itemTitle: string;
+      itemType: string;
       domain: string | null;
       daysSinceReview: number;
       retentionPercent: number;
@@ -3580,6 +3581,7 @@ export class DatabaseStorage implements IStorage {
         id: review.id,
         itemId: review.itemId,
         itemTitle: review.itemTitle,
+        itemType: review.itemType,
         domain: review.domain,
         daysSinceReview,
         retentionPercent,

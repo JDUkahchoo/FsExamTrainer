@@ -35,42 +35,31 @@ export default function ExamDashboard() {
   const [, setLocation] = useLocation();
   const { examTrack, examName, lessonCount, domainCount } = useExamTrack();
 
-  const handleReviewClick = (review: ReviewSchedule) => {
-    const domainParam = review.domain ? `?domain=${encodeURIComponent(review.domain)}` : '';
-    switch (review.itemType) {
+  const navigateByItemType = (itemType: string, domain: string | null) => {
+    const domainParam = domain ? `?domains=${encodeURIComponent(domain)}` : '';
+    switch (itemType) {
       case 'flashcard':
         setLocation(`/app/${examTrack}/flashcards${domainParam}`);
         break;
       case 'lesson':
-        setLocation(`/app/${examTrack}/lessons${domainParam}`);
+        setLocation(`/app/${examTrack}/lessons`);
         break;
       case 'quiz':
         setLocation(`/app/${examTrack}/quiz${domainParam}`);
         break;
       case 'concept':
       default:
-        setLocation(`/app/${examTrack}/readings${domainParam}`);
+        setLocation(`/app/${examTrack}/readings${domain ? `?domain=${encodeURIComponent(domain)}` : ''}`);
         break;
     }
   };
 
-  const handleRetentionItemClick = (item: { domain: string | null; itemType?: string }) => {
-    const domainParam = item.domain ? `?domain=${encodeURIComponent(item.domain)}` : '';
-    switch (item.itemType) {
-      case 'flashcard':
-        setLocation(`/app/${examTrack}/flashcards${domainParam}`);
-        break;
-      case 'lesson':
-        setLocation(`/app/${examTrack}/lessons${domainParam}`);
-        break;
-      case 'quiz':
-        setLocation(`/app/${examTrack}/quiz${domainParam}`);
-        break;
-      case 'concept':
-      default:
-        setLocation(`/app/${examTrack}/readings${domainParam}`);
-        break;
-    }
+  const handleReviewClick = (review: ReviewSchedule) => {
+    navigateByItemType(review.itemType, review.domain);
+  };
+
+  const handleRetentionItemClick = (item: { domain: string | null; itemType: string }) => {
+    navigateByItemType(item.itemType, item.domain);
   };
 
   const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);

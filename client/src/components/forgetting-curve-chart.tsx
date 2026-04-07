@@ -14,6 +14,7 @@ interface ForgettingCurveItem {
   id: string;
   itemId: string;
   itemTitle: string;
+  itemType: string;
   domain: string | null;
   daysSinceReview: number;
   retentionPercent: number;
