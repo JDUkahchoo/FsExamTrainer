@@ -8,8 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   BookOpen, Brain, ClipboardCheck, GraduationCap, BarChart3, Flame, Target, Trophy,
-  Clock, TrendingUp, Zap, CheckCircle2, Lightbulb, FileText, BookMarked, CalendarDays,
-  RefreshCw, Activity
+  Clock, TrendingUp, Zap, CheckCircle2, Lightbulb, CalendarDays,
+  RefreshCw, Activity, ArrowRight, Sparkles
 } from 'lucide-react';
 import { WeekReviewModal } from '@/components/week-review-modal';
 import { useExamTrack } from '@/contexts/exam-track-context';
@@ -100,8 +100,69 @@ export default function ExamDashboard() {
     }
   });
 
+  const { data: pretestResult } = useQuery<{ id: string } | null>({
+    queryKey: ['/api/pretest/latest', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/pretest/latest?examTrack=${examTrack}`);
+      if (!res.ok) return null;
+      return res.json();
+    }
+  });
+
   const completedLessons = lessonsProgress?.completed || 0;
   const progressPercent = lessonCount > 0 ? Math.round((completedLessons / lessonCount) * 100) : 0;
+
+  const nextStep = (() => {
+    const pretestDone = pretestResult && (pretestResult as any)?.id;
+    if (!pretestDone) {
+      return {
+        label: 'Start with the diagnostic pretest',
+        description: 'A 28-question assessment that personalises your study plan to your strengths and weak areas.',
+        href: `/app/${examTrack}/pretest`,
+        cta: 'Take the Pretest',
+        icon: Target,
+        color: 'border-primary/30 bg-primary/5',
+      };
+    }
+    if (completedLessons === 0) {
+      return {
+        label: 'Begin your first study week',
+        description: 'Your personalised study plan is ready. Open it and complete your first lesson.',
+        href: `/app/${examTrack}/study-plan`,
+        cta: 'Open Study Plan',
+        icon: BookOpen,
+        color: 'border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/40',
+      };
+    }
+    if (progressPercent < 50) {
+      return {
+        label: `Keep going — you're ${progressPercent}% through`,
+        description: 'Stay consistent with your weekly lessons and quizzes. Every session builds momentum.',
+        href: `/app/${examTrack}/study-plan`,
+        cta: 'Continue Study Plan',
+        icon: TrendingUp,
+        color: 'border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40',
+      };
+    }
+    if (progressPercent < 100) {
+      return {
+        label: `Almost there — ${progressPercent}% complete`,
+        description: "Focus on your weak areas and reinforce what you've learned before the finish line.",
+        href: `/app/${examTrack}/drill`,
+        cta: 'Drill Weak Areas',
+        icon: Zap,
+        color: 'border-yellow-300 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/40',
+      };
+    }
+    return {
+      label: "You've covered it all — time to test yourself",
+      description: "Take a full-length practice exam to simulate the real thing and confirm you're ready.",
+      href: `/app/${examTrack}/exam`,
+      cta: 'Take Practice Exam',
+      icon: GraduationCap,
+      color: 'border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/40',
+    };
+  })();
 
   const daysUntilExam = (() => {
     if (!preferences?.examDate) return null;
@@ -219,51 +280,6 @@ export default function ExamDashboard() {
     }
   ];
 
-  const tools = [
-    {
-      icon: BookOpen,
-      name: 'Study Plan',
-      description: 'Your weekly roadmap with interactive lessons following the READ → FOCUS → APPLY → REINFORCE framework.',
-      link: `/app/${examTrack}/study-plan`
-    },
-    {
-      icon: Brain,
-      name: 'Practice Quiz',
-      description: 'Test your knowledge with domain-specific or exam-style quizzes with instant feedback.',
-      link: `/app/${examTrack}/quiz`
-    },
-    {
-      icon: ClipboardCheck,
-      name: 'Flashcards',
-      description: 'Master key concepts with spaced repetition and multiple study modes.',
-      link: `/app/${examTrack}/flashcards`
-    },
-    {
-      icon: GraduationCap,
-      name: 'Practice Exam',
-      description: 'Full exam simulator with timer and detailed score breakdown by domain.',
-      link: `/app/${examTrack}/exam`
-    },
-    {
-      icon: FileText,
-      name: 'Study Notes',
-      description: 'Rich text editor for taking notes each week with auto-save.',
-      link: `/app/${examTrack}/notes`
-    },
-    {
-      icon: BarChart3,
-      name: 'Progress Dashboard',
-      description: 'Track improvement with visual analytics and domain mastery insights.',
-      link: `/app/${examTrack}/progress`
-    },
-    ...(examTrack === 'fs' ? [{
-      icon: BookMarked,
-      name: 'Resources',
-      description: 'Access formula sheets, memory techniques, and professional references.',
-      link: `/app/${examTrack}/resources`
-    }] : [])
-  ];
-
   const quickTips = [
     {
       title: 'Start with the Pretest',
@@ -302,11 +318,10 @@ export default function ExamDashboard() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4" data-testid="dashboard-tabs">
+        <TabsList className="grid w-full grid-cols-3" data-testid="dashboard-tabs">
           <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
-          <TabsTrigger value="coaching" data-testid="tab-coaching">AI Coaching</TabsTrigger>
-          <TabsTrigger value="tools" data-testid="tab-tools">Study Tools</TabsTrigger>
-          <TabsTrigger value="planner" data-testid="tab-planner">Planner</TabsTrigger>
+          <TabsTrigger value="coaching" data-testid="tab-coaching">Daily Coaching</TabsTrigger>
+          <TabsTrigger value="planner" data-testid="tab-planner">Study Strategy</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -382,6 +397,33 @@ export default function ExamDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Next Step card */}
+          {nextStep && (
+            <Card className={`border-2 ${nextStep.color}`} data-testid="card-next-step">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <nextStep.icon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                      <span className="text-xs font-semibold uppercase tracking-wider text-primary">Your Next Step</span>
+                    </div>
+                    <p className="font-semibold text-base leading-snug">{nextStep.label}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{nextStep.description}</p>
+                  </div>
+                  <Link href={nextStep.href}>
+                    <Button size="sm" className="shrink-0 gap-1.5" data-testid="button-next-step">
+                      {nextStep.cta}
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <div>
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
@@ -596,42 +638,6 @@ export default function ExamDashboard() {
               onClose={() => setReviewWeekInfo(null)}
             />
           )}
-        </TabsContent>
-
-        <TabsContent value="tools" className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Your Study Tools</h2>
-            <p className="text-muted-foreground">
-              Each tool is designed to support different parts of your learning journey. Use them together for maximum effectiveness.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tools.map((tool, i) => {
-              const Icon = tool.icon;
-              return (
-                <Card key={i} className="p-4 space-y-3 flex flex-col hover-elevate" data-testid={`tool-card-${tool.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <h3 className="font-semibold">{tool.name}</h3>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground flex-1">{tool.description}</p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setLocation(tool.link)}
-                    data-testid={`button-open-${tool.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    Open {tool.name}
-                  </Button>
-                </Card>
-              );
-            })}
-          </div>
         </TabsContent>
 
         <TabsContent value="planner" className="space-y-6">

@@ -97,6 +97,17 @@ export default function LessonsPage() {
             <p className="text-xs text-muted-foreground mt-1">{progressPercent}% complete</p>
           </CardContent>
         </Card>
+
+        <div className="flex items-start gap-3 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 px-4 py-3 mb-2" data-testid="banner-study-plan-tip">
+          <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+          <p className="text-sm text-blue-700 dark:text-blue-300">
+            <span className="font-semibold">Tip:</span> Lessons are organised into weekly sessions in your{' '}
+            <Link href={`/app/${examTrack}/study-plan`} className="underline underline-offset-2 hover:text-blue-900 dark:hover:text-blue-100">
+              Study Plan
+            </Link>
+            . Follow the plan for a structured, week-by-week path — or browse any lesson below.
+          </p>
+        </div>
       </div>
 
       <div className="space-y-8">
