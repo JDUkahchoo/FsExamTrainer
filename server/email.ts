@@ -106,8 +106,8 @@ export async function checkAndSendReminder(
 
     let streakDays = 0;
     try {
-      const stats = await storage.getStudyStats(userId);
-      streakDays = stats?.currentStreak || 0;
+      const streak = await storage.calculateStreak(userId);
+      streakDays = streak?.currentStreak || 0;
     } catch {
       streakDays = 0;
     }

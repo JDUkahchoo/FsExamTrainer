@@ -687,7 +687,14 @@ export default function StudyReadingPage() {
 
   const renderSection = (section: ReadingSection, index: number) => {
     const isCompleted = completedSections.has(section.id);
-    const handleMarkRead = () => markSectionRead(section.id);
+    const isKnowledgeCheck = section.type === 'knowledge_check';
+    const handleMarkRead = () => {
+      markSectionRead(section.id);
+      if (index < sections.length - 1) {
+        const delay = isKnowledgeCheck ? 1200 : 400;
+        setTimeout(() => goToSection(index + 1), delay);
+      }
+    };
 
     switch (section.type) {
       case "concept":

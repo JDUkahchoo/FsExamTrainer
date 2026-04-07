@@ -218,7 +218,7 @@ export function ReviewAlerts({ onReviewClick }: ReviewAlertsProps) {
           Reviewing at the optimal time improves long-term retention by up to 50%
         </p>
         <Link
-          href={`/app/${examTrack}/readings/fs-strategy-spaced-rep`}
+          href="/app/fs/readings/fs-strategy-spaced-rep"
           className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground whitespace-nowrap"
         >
           Learn the science →

@@ -267,7 +267,7 @@ export function ForgettingCurveChart({ compact = false, onItemClick }: { compact
             Based on the Ebbinghaus forgetting curve
           </p>
           <Link
-            href={`/app/${examTrack}/readings/fs-strategy-spaced-rep`}
+            href="/app/fs/readings/fs-strategy-spaced-rep"
             className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground whitespace-nowrap"
           >
             Learn more about memory science →
