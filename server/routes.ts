@@ -2869,6 +2869,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/plan/week-restart/:weekNumber", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const weekNumber = parseInt(req.params.weekNumber);
+      const { examTrack = 'fs' } = req.body;
+
+      if (isNaN(weekNumber) || weekNumber < 1) {
+        return res.status(400).json({ error: "Invalid week number" });
+      }
+
+      await storage.resetWeekProgress(userId, weekNumber, examTrack);
+      res.json({ success: true, week: weekNumber });
+    } catch (error) {
+      console.error("Error restarting week:", error);
+      res.status(500).json({ error: "Failed to restart week" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -20,6 +20,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -449,6 +459,27 @@ export default function StudyPlan() {
         description: "The custom study week has been removed.",
       });
     }
+  });
+
+  // Restart week state + mutation
+  const [weekToRestart, setWeekToRestart] = useState<number | null>(null);
+  const restartWeekMutation = useMutation({
+    mutationFn: async (weekNumber: number) =>
+      apiRequest('POST', `/api/plan/week-restart/${weekNumber}`, { examTrack }),
+    onSuccess: (_, weekNumber) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks', examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/plan/memory-health', examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
+      setWeekToRestart(null);
+      toast({
+        title: `Week ${weekNumber} restarted`,
+        description: "All pillar progress has been cleared. XP and quiz results are kept.",
+      });
+    },
+    onError: () => {
+      toast({ title: "Failed to restart week", variant: "destructive" });
+      setWeekToRestart(null);
+    },
   });
 
   // Mutation to save study mode preference
@@ -1741,6 +1772,21 @@ export default function StudyPlan() {
                       </div>
                     )}
                   </div>
+
+                  {/* Restart Week */}
+                  <div className="md:col-span-2 mt-4 pt-4 border-t border-border flex justify-end">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-destructive gap-1.5 text-xs"
+                      onClick={() => setWeekToRestart(plan.week)}
+                      disabled={restartWeekMutation.isPending}
+                      data-testid={`button-restart-week-${plan.week}`}
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Restart Week
+                    </Button>
+                  </div>
                 </div>
               )}
             </Card>
@@ -1759,6 +1805,28 @@ export default function StudyPlan() {
           onClose={() => setReviewWeekInfo(null)}
         />
       )}
+
+      <AlertDialog open={weekToRestart !== null} onOpenChange={(open) => { if (!open) setWeekToRestart(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restart Week {weekToRestart}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will clear all completed items for Week {weekToRestart} (Read, Focus, Apply, Reinforce). Your XP, quiz results, flashcard mastery, and reading progress are not affected.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-restart-cancel">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => weekToRestart !== null && restartWeekMutation.mutate(weekToRestart)}
+              disabled={restartWeekMutation.isPending}
+              className="bg-destructive hover:bg-destructive/90"
+              data-testid="button-restart-confirm"
+            >
+              {restartWeekMutation.isPending ? 'Restarting…' : 'Yes, Restart Week'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

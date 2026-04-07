@@ -375,6 +375,9 @@ export interface IStorage {
   getWeekMemoryHealth(userId: string, examTrack: string): Promise<WeekMemoryHealth[]>;
   upsertWeekCompletion(userId: string, examTrack: string, weekNumber: number, domains: string[]): Promise<WeekMemoryHealth>;
   recordWeekReview(userId: string, examTrack: string, weekNumber: number): Promise<WeekMemoryHealth>;
+
+  // Week restart
+  resetWeekProgress(userId: string, weekNumber: number, examTrack: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -4146,6 +4149,35 @@ export class DatabaseStorage implements IStorage {
       )
       .returning();
     return updated;
+  }
+
+  async resetWeekProgress(userId: string, weekNumber: number, examTrack: string): Promise<void> {
+    await db
+      .update(weekProgress)
+      .set({
+        readCompleted: [],
+        focusCompleted: [],
+        applyCompleted: [],
+        reinforceCompleted: [],
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(weekProgress.userId, userId),
+          eq(weekProgress.week, weekNumber),
+          eq(weekProgress.examTrack, examTrack)
+        )
+      );
+
+    await db
+      .delete(weekMemoryHealth)
+      .where(
+        and(
+          eq(weekMemoryHealth.userId, userId),
+          eq(weekMemoryHealth.examTrack, examTrack),
+          eq(weekMemoryHealth.weekNumber, weekNumber)
+        )
+      );
   }
 }
 
