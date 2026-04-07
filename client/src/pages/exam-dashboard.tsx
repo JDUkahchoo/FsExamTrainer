@@ -37,12 +37,40 @@ export default function ExamDashboard() {
 
   const handleReviewClick = (review: ReviewSchedule) => {
     const domainParam = review.domain ? `?domain=${encodeURIComponent(review.domain)}` : '';
-    setLocation(`/app/${examTrack}/readings${domainParam}`);
+    switch (review.itemType) {
+      case 'flashcard':
+        setLocation(`/app/${examTrack}/flashcards${domainParam}`);
+        break;
+      case 'lesson':
+        setLocation(`/app/${examTrack}/lessons${domainParam}`);
+        break;
+      case 'quiz':
+        setLocation(`/app/${examTrack}/quiz${domainParam}`);
+        break;
+      case 'concept':
+      default:
+        setLocation(`/app/${examTrack}/readings${domainParam}`);
+        break;
+    }
   };
 
-  const handleRetentionItemClick = (item: { domain: string | null }) => {
+  const handleRetentionItemClick = (item: { domain: string | null; itemType?: string }) => {
     const domainParam = item.domain ? `?domain=${encodeURIComponent(item.domain)}` : '';
-    setLocation(`/app/${examTrack}/readings${domainParam}`);
+    switch (item.itemType) {
+      case 'flashcard':
+        setLocation(`/app/${examTrack}/flashcards${domainParam}`);
+        break;
+      case 'lesson':
+        setLocation(`/app/${examTrack}/lessons${domainParam}`);
+        break;
+      case 'quiz':
+        setLocation(`/app/${examTrack}/quiz${domainParam}`);
+        break;
+      case 'concept':
+      default:
+        setLocation(`/app/${examTrack}/readings${domainParam}`);
+        break;
+    }
   };
 
   const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);
