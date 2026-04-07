@@ -1,4 +1,5 @@
-import { Link } from 'wouter';
+import { useEffect } from 'react';
+import { Link, useSearch } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,8 @@ interface LessonProgress {
 
 export default function LessonsPage() {
   const { examTrack, domains, examName } = useExamTrack();
+  const searchString = useSearch();
+  const targetDomain = new URLSearchParams(searchString).get('domain');
 
   const { data: lessons = [], isLoading } = useQuery<Lesson[]>({
     queryKey: ['/api/lessons', examTrack],
@@ -61,6 +64,13 @@ export default function LessonsPage() {
   const totalLessons = lessons.length;
   const progressPercent = totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) : 0;
 
+  useEffect(() => {
+    if (!targetDomain || lessons.length === 0) return;
+    const id = `domain-section-${targetDomain.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '')}`;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [targetDomain, lessons]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -93,9 +103,15 @@ export default function LessonsPage() {
         {lessonsByDomain.map(({ domain, lessons, completedCount, totalCount }) => {
           const domainConfig = getDomainConfig(domain.name);
           const domainProgress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+          const sectionId = `domain-section-${domain.name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '')}`;
+          const isHighlighted = targetDomain === domain.name;
           
           return (
-            <div key={domain.number} className="space-y-4">
+            <div
+              key={domain.number}
+              id={sectionId}
+              className={`space-y-4 scroll-mt-6 rounded-lg transition-colors duration-700 ${isHighlighted ? 'ring-2 ring-primary/40 p-3' : ''}`}
+            >
               <div className="flex items-center gap-3">
                 <div 
                   className={`w-10 h-10 rounded-lg flex items-center justify-center ${domainConfig.bgColor}`}

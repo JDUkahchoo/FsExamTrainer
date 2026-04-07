@@ -42,7 +42,7 @@ export default function ExamDashboard() {
         setLocation(`/app/${examTrack}/flashcards${domainParam}`);
         break;
       case 'lesson':
-        setLocation(`/app/${examTrack}/lessons`);
+        setLocation(`/app/${examTrack}/lessons${domain ? `?domain=${encodeURIComponent(domain)}` : ''}`);
         break;
       case 'quiz':
         setLocation(`/app/${examTrack}/quiz${domainParam}`);
