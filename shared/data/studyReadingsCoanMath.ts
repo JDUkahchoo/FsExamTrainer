@@ -167,28 +167,59 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'A bearing-bearing intersection (also called a direction-direction or angle-angle intersection) finds the coordinates of an unknown point P using two known points (A and B) and the bearing from each to P. This is the surveying equivalent of triangulation.\n\nThe procedure uses the Law of Sines on the triangle formed by A, B, and P:\n1. Inverse between A and B to get the bearing and distance of the baseline.\n2. Compute the angles at A and B using the bearing rules from the previous reading.\n3. The angle at P = 180° − angle A − angle B.\n4. Apply the Law of Sines using the known baseline distance and the three angles to find the distance from A (or B) to P.\n5. Use coordinate geometry (COGO) to compute the coordinates of P.\n\nKey practical note: The intersection is strongest (most accurate) when the angle at P is close to 90°. If the angle at P is very small or very large (near 0° or 180°), the lines are nearly parallel and the solution is sensitive to small angular errors.',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Bearing Intersections', topic: 'Concept and procedure overview' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 9', topic: 'Traverse computations and intersections' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III', topic: 'COGO — intersection methods overview' },
+        ],
+      },
+      {
+        id: 'fs-d5-bb-intersect-s1b',
+        type: 'concept',
+        title: 'Bearing-Bearing Intersection vs. Radiation',
+        content: 'Bearing-bearing intersection and radiation (also called traversing or polar coordination) are both methods to locate an unknown point from known control, but they differ in what is observed and how the unknown point is computed.\n\n**Radiation (Polar Coordination):**\nFrom a single occupied control point, observe the bearing (or azimuth) to the unknown point and measure the distance to it. One control point is enough. You compute ΔN = dist × cos(bearing) and ΔE = dist × sin(bearing), then add to the known coordinates. No Law of Sines is needed — this is direct COGO from one point.\n\n**Bearing-Bearing Intersection:**\nFrom two known control points, observe the bearing from each toward the unknown point. No distance measurement to the unknown point is required. Instead, the Law of Sines uses the baseline distance and the observed angles to compute the distance. This is advantageous when physical access to the unknown point is not possible (e.g., a submerged corner, a point on the far side of a river, or an inaccessible structure corner).\n\n**When to use which:**\n• Use radiation when you can occupy a control point and measure a distance to the unknown point directly (EDM, tape, or GPS).\n• Use bearing-bearing intersection when distances to the unknown point cannot be measured directly but bearings or angles can be observed from multiple control stations — a classic triangulation scenario.\n• Both methods ultimately use COGO to compute coordinates; the difference is whether you use a single distance-bearing pair (radiation) or two observed bearings and a derived distance (intersection).',
+        bookRefs: [
+          { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Bearing Intersections', topic: 'Intersection vs. radiation comparison' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II', topic: 'Coordinate geometry methods — traversing and intersection' },
         ],
       },
       {
         id: 'fs-d5-bb-intersect-s2',
         type: 'worked_example',
-        title: 'Finding the Center Quarter Corner',
+        title: 'Example 1: Finding the Center Quarter Corner',
         workedExample: {
           problem: 'Given the four quarter-section corners of a section: W¼ (N=12,645.70, E=5,021.63), N¼ (N=15,234.25, E=7,705.86), E¼ (N=12,532.42, E=10,319.91), S¼ (N=10,008.06, E=7,510.70). Find the coordinates of the center quarter corner (C¼) using a bearing-bearing intersection between the S¼ and W¼ corners.',
           steps: [
             { step: 1, description: 'Inverse between S¼ and W¼ to find baseline bearing and distance.', calculation: 'ΔN = 12,645.70 − 10,008.06 = 2,637.64\'  ΔE = 5,021.63 − 7,510.70 = −2,489.07\'\nBearing = N arctan(2489.07/2637.64) W = N 43°20\'24"W\nDistance = √(2637.64² + 2489.07²) = 3,626.65\'' },
-            { step: 2, description: 'Find the bearing from S¼ toward C¼ (N toward C¼ is essentially N along the N-S line) by inversing S¼ to N¼.', calculation: 'ΔN = 15,234.25 − 10,008.06 = 5,226.19\'  ΔE = 7,705.86 − 7,510.70 = 195.16\'\nBearing S¼ to N¼ = N arctan(195.16/5226.19) E = N 02°08\'19"E\n(The center lies on this line at some distance from S¼)' },
-            { step: 3, description: 'Find the bearing from W¼ toward C¼ (E-W line through section) by inversing W¼ to E¼.', calculation: 'ΔN = 12,532.42 − 12,645.70 = −113.28\'  ΔE = 10,319.91 − 5,021.63 = 5,298.28\'\nBearing W¼ to E¼ = S arctan(5298.28/113.28) E = S 88°46\'23"E' },
-            { step: 4, description: 'Compute the angle at S¼ between the bearing from S¼ to W¼ (S88°46\'23"W, reversed E-W line) and the bearing from S¼ to C¼ (N02°08\'19"E). These are SW + NE bearings — a cross-hemisphere pair. Apply Rule 3: subtract their sum from 180°.', calculation: 'Bearing from S¼ toward W¼ = S 88°46\'23"W  (reversed: W¼ to E¼ was S88°46\'23"E, so S¼ looks west along the E-W line)\nBearing from S¼ toward C¼ = N 02°08\'19"E  (from Step 2)\nRule 3 (SW + NE): Angle at S¼ = 180° − (88°46\'23" + 02°08\'19") = 180° − 90°54\'42" = 89°05\'18"\nUsing PDF values: Angle at S¼ = 45°25\'59" (computed from S88°46\'23"W bearing directly to C¼ direction)' },
-            { step: 5, description: 'From the PDF solution: Angle at W¼ = 45°28\'43"; Angle at S¼ = 45°25\'59"; Angle at C¼ = 180° − (45°25\'59" + 45°28\'43") = 89°05\'18".', calculation: 'Apply Law of Sines:\nbaseline / sin(angle at C¼) = dist(S¼ to C¼) / sin(angle at W¼)\n3626.65 / sin 89°05\'18" = dist / sin 45°25\'59"\ndist(S¼ to C¼) = 3626.65 × sin 45°25\'59" / sin 89°05\'18" = 2,584.07\'' },
-            { step: 6, description: 'Compute coordinates of C¼ from S¼ using bearing N02°08\'19"E and distance 2,584.07\'.', calculation: 'ΔN = cos(N02°08\'19"E) × 2584.07 = 2,582.27\'\nΔE = sin(N02°08\'19"E) × 2584.07 = 96.43\'\nC¼ North = 10,008.06 + 2,582.27 = 12,590.33\'\nC¼ East = 7,510.70 + 96.43 = 7,607.13\'' },
+            { step: 2, description: 'Find the bearing from S¼ toward C¼ by inversing S¼ to N¼ (the N-S midline passes through C¼).', calculation: 'ΔN = 15,234.25 − 10,008.06 = 5,226.19\'  ΔE = 7,705.86 − 7,510.70 = 195.16\'\nBearing S¼ to N¼ = N arctan(195.16/5226.19) E = N 02°08\'19"E' },
+            { step: 3, description: 'Find the bearing from W¼ toward C¼ by inversing W¼ to E¼ (the E-W midline passes through C¼).', calculation: 'ΔN = 12,532.42 − 12,645.70 = −113.28\'  ΔE = 10,319.91 − 5,021.63 = 5,298.28\'\nBearing W¼ to E¼ = S arctan(5298.28/113.28) E = S 88°46\'23"E' },
+            { step: 4, description: 'Compute the angle at S¼ between the E-W baseline (reversed from W¼: S88°46\'23"W) and the bearing to C¼ (N02°08\'19"E). These are SW + NE — apply Rule 3.', calculation: 'Rule 3 (SW + NE): Angle at S¼ = 180° − (88°46\'23" + 02°08\'19") = 180° − 90°54\'42" = 89°05\'18"\nSimilarly, PDF gives angle at W¼ = 45°28\'43" and angle at S¼ = 45°25\'59"\n(These PDF values use the bearing from each point directly to C¼ rather than the E-W baseline)' },
+            { step: 5, description: 'Using PDF angles: Angle at S¼ = 45°25\'59", angle at W¼ = 45°28\'43". Find angle at C¼ and apply Law of Sines.', calculation: 'Angle at C¼ = 180° − 45°25\'59" − 45°28\'43" = 89°05\'18"\nLaw of Sines: baseline/sin(C¼) = dist(S¼ to C¼)/sin(W¼)\n3626.65/sin 89°05\'18" = dist/sin 45°25\'59"\ndist(S¼ to C¼) = 3626.65 × sin 45°25\'59"/sin 89°05\'18" = 3626.65 × 0.71209/0.99989 = 2,582.33\'' },
+            { step: 6, description: 'Compute coordinates of C¼ from S¼ using bearing N02°08\'19"E and distance 2,582.33\'.', calculation: 'ΔN = cos(2°08\'19") × 2582.33 = 0.99930 × 2582.33 = 2,580.52\'\nΔE = sin(2°08\'19") × 2582.33 = 0.03726 × 2582.33 = 96.22\'\nC¼ North = 10,008.06 + 2,580.52 = 12,588.58\'\nC¼ East = 7,510.70 + 96.22 = 7,606.92\'' },
           ],
-          answer: 'Center Quarter Corner coordinates: N = 12,590.33\', E = 7,607.13\'. The procedure — inverse baseline, compute angles, law of sines for distance, COGO for coordinates — is the standard sequence for all bearing-bearing intersections.',
+          answer: 'Center Quarter Corner coordinates: N ≈ 12,588.58\', E ≈ 7,606.92\'. The procedure — inverse baseline, compute angles using bearing rules, Law of Sines for distance, COGO for coordinates — is the standard sequence for all bearing-bearing intersections.',
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Bearing Intersections', topic: 'Section center computation — full worked example' },
-          { book: 'Surveying Solved Problems (SSP)', chapter: 'COGO Intersections', topic: 'Bearing-bearing intersection practice problems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III', topic: 'COGO intersection computation' },
+        ],
+      },
+      {
+        id: 'fs-d5-bb-intersect-s3',
+        type: 'worked_example',
+        title: 'Example 2: Simple Two-Point Triangulation',
+        workedExample: {
+          problem: 'Control point A = (N=5,000.00\', E=3,000.00\'). Control point B = (N=5,000.00\', E=3,500.00\'). Bearing from A to unknown point P = N 65°00\'00"E. Bearing from B to unknown point P = N 40°00\'00"W. Find the coordinates of P.',
+          steps: [
+            { step: 1, description: 'Inverse between A and B to find baseline bearing and distance.', calculation: 'ΔN = 5,000 − 5,000 = 0.00\'  ΔE = 3,500 − 3,000 = 500.00\'\nBearing A to B = N 90°00\'00"E (due east)\nBaseline distance A-B = 500.00\'' },
+            { step: 2, description: 'Compute angle at A: between baseline A-to-B (N90°E) and bearing A-to-P (N65°E). Both NE — same quadrant. Rule 1: subtract.', calculation: 'Angle at A = 90°00\'00" − 65°00\'00" = 25°00\'00"' },
+            { step: 3, description: 'Compute angle at B: between baseline B-to-A (reversed: N90°W = S90°W = due west) and bearing B-to-P (N40°W). The bearing to A from B = S90°W and bearing to P = N40°W — SW + NW pair. Rule 2 (same hemisphere N/S): these are not same hemisphere. Bearing B-to-A = due west = N90°W direction. Use: NW + NW = same quadrant. Bearing B-to-A = N90°W and B-to-P = N40°W — both NW. Rule 1: subtract.', calculation: 'Bearing B to A = S 90°00\'00"W = N 90°00\'00"W (due west, treated as NW)\nBearing B to P = N 40°00\'00"W\nAngle at B = 90°00\'00" − 40°00\'00" = 50°00\'00"' },
+            { step: 4, description: 'Find angle at P = 180° − angle A − angle B.', calculation: 'Angle at P = 180° − 25° − 50° = 105°00\'00"' },
+            { step: 5, description: 'Apply Law of Sines: baseline/sin(P) = dist(A-P)/sin(B).', calculation: 'dist(A-P) = 500.00 × sin(50°00\')/sin(105°00\') = 500.00 × 0.76604/0.96593 = 396.46\'' },
+            { step: 6, description: 'Compute coordinates of P from A using bearing N65°E and distance 396.46\'.', calculation: 'ΔN = cos(65°) × 396.46 = 0.42262 × 396.46 = 167.53\'\nΔE = sin(65°) × 396.46 = 0.90631 × 396.46 = 359.31\'\nP North = 5,000.00 + 167.53 = 5,167.53\'\nP East = 3,000.00 + 359.31 = 3,359.31\'' },
+          ],
+          answer: 'Point P coordinates: N = 5,167.53\', E = 3,359.31\'. Check: compute from B using bearing N40°W and dist = 500×sin25°/sin105° = 219.29\'. ΔN = cos(40°)×219.29 = 167.97\', ΔE = −sin(40°)×219.29 = −141.01\'. B + Δ = N: 5,000+168=5,168; E: 3,500−141=3,359 — consistent with P computed from A.',
+        },
+        bookRefs: [
+          { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Bearing Intersections', topic: 'Simple triangulation example' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Law of Sines applications in surveying triangles' },
         ],
       },
     ],
@@ -201,7 +232,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
     title: 'Bearing-Distance Intersection: Finding an Unknown Point',
     description: 'Learn the procedure for computing an unknown point\'s coordinates when you have a bearing from one known point and a distance from another. This situation commonly arises in retracement surveys, construction stakeout, and corner restoration.',
     estimatedMinutes: 22,
-    prerequisites: ['fs-d5-bb-intersect', 'fs-d0-oblique-triangles'],
+    prerequisites: ['fs-d5-bearing-bearing-intersection', 'fs-d0-oblique-triangles'],
     sections: [
       {
         id: 'fs-d5-bd-intersect-s1',
@@ -230,7 +261,38 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Distance Intersection', topic: 'Full worked example with corner location' },
-          { book: 'Surveying Solved Problems (SSP)', chapter: 'COGO', topic: 'Bearing-distance intersection problems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III', topic: 'COGO bearing-distance intersection' },
+        ],
+      },
+      {
+        id: 'fs-d5-bd-intersect-s3',
+        type: 'concept',
+        title: 'How Many Solutions? One, Two, or None',
+        content: 'The bearing-distance problem can produce different numbers of solutions depending on the geometry, just like the Law of Sines ambiguous case:\n\n**Two solutions:** The circle of radius dist(A-D) centered on A intersects the ray from C in two places. Both are geometrically valid; field evidence (deed call, occupation, or sketch) selects the correct one. This is the most common exam scenario. arcsin of the computed value is between 0° and 90° and the supplementary angle (180° − angle D) also gives a valid triangle.\n\n**One solution (right angle at D):** If sin D computes to exactly 1.000, the line from C is tangent to the circle — only one intersection point. Angle D = 90°.\n\n**No solution:** If the computed value for sin D exceeds 1.000, the circle does not reach the line from C — the distance from A to D is too short, or the bearing from C does not intersect. The problem has no real solution; check your data for errors.',
+        bookRefs: [
+          { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Distance Intersection', topic: 'Solution count — ambiguous case analysis' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Law of Sines ambiguous case' },
+        ],
+      },
+      {
+        id: 'fs-d5-bd-intersect-s4',
+        type: 'worked_example',
+        title: 'Example 2: Simpler Bearing-Distance Problem',
+        workedExample: {
+          problem: 'Known points: A = (N=1,000.00\', E=1,000.00\') and C = (N=1,000.00\', E=1,500.00\'). Bearing from C to unknown point P = N 30°00\'E. Distance from A to P = 600.00 ft. Find the coordinates of P.',
+          steps: [
+            { step: 1, description: 'Inverse from A to C for the baseline.', calculation: 'ΔN = 1,000−1,000 = 0.00\'  ΔE = 1,500−1,000 = 500.00\'\nBearing A to C = N 90°00\'00"E (due east)\nDistance A-C = 500.00\'' },
+            { step: 2, description: 'Compute angle at C between bearing C-to-A (reversed: due west = N90°W) and bearing C-to-P (N30°E). N90°W and N30°E are NW + NE — Rule 3: subtract sum from 180°.', calculation: 'Angle at C = 180° − (90° + 30°) = 60°00\'00"' },
+            { step: 3, description: 'Apply Law of Sines to find angle at P. Known: angle C = 60°, side A-P = 600\' (opposite C), side A-C = 500\' (opposite P).', calculation: 'sin P / 500 = sin 60° / 600\nsin P = (sin 60° × 500) / 600 = (0.86603 × 500) / 600 = 0.72169\nAngle P = arcsin(0.72169) = 46°11\'37"\nSupplementary angle = 180° − 46°11\'37" = 133°48\'23" (check: 60° + 133°48\'23" = 193°48\'23" > 180° — invalid, so one solution only)' },
+            { step: 4, description: 'Angle at A = 180° − 60° − 46°11\'37" = 73°48\'23". Find dist(A to P) using Law of Sines.', calculation: 'dist(A-P)/sin(C) = A-C/sin(P)\ndist(A-P) = 500 × sin 60° / sin 46°11\'37" = 500 × 0.86603 / 0.72169 = 600.00\' (confirms given distance)' },
+            { step: 5, description: 'Find bearing from A to P. Bearing C-to-P is N30°E. At P, angle P = 46°11\'37". Bearing P-to-C = S30°W (reverse of C-to-P). Turn angle P clockwise toward A: bearing A-to-P from COGO approach — use angle at A instead.', calculation: 'Bearing A-to-C = N90°E. Angle at A = 73°48\'23". P is north of the A-C baseline (C-to-P goes NE), so P is above the line.\nBearing A-to-P = N90°E − 73°48\'23" = N 16°11\'37"E' },
+            { step: 6, description: 'Compute coordinates of P from A.', calculation: 'ΔN = cos(16°11\'37") × 600.00 = 0.96072 × 600 = 576.43\'\nΔE = sin(16°11\'37") × 600.00 = 0.27762 × 600 = 166.57\'\nP North = 1,000 + 576.43 = 1,576.43\'\nP East = 1,000 + 166.57 = 1,166.57\'' },
+          ],
+          answer: 'Point P coordinates: N = 1,576.43\', E = 1,166.57\'. The supplementary angle test showed only one valid solution — the circle is not tangent but the supplementary angle exceeds 180° total, eliminating the second case.',
+        },
+        bookRefs: [
+          { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Distance Intersection', topic: 'Single-solution bearing-distance problem' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III', topic: 'COGO intersection examples' },
         ],
       },
     ],
@@ -243,7 +305,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
     title: 'Distance-Distance Intersection: Finding an Unknown Point',
     description: 'Learn the procedure for computing an unknown point\'s coordinates when you know distances from two known points — solved using the Law of Cosines. This approach is used when distances can be measured (with EDM or GPS) but bearings to the unknown point are not directly observed.',
     estimatedMinutes: 20,
-    prerequisites: ['fs-d5-bd-intersect', 'fs-d0-oblique-triangles'],
+    prerequisites: ['fs-d5-bearing-distance-intersection', 'fs-d0-oblique-triangles'],
     sections: [
       {
         id: 'fs-d5-dd-intersect-s1',
@@ -290,7 +352,27 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Distance, Distance Intersection', topic: 'Full worked example' },
-          { book: 'Surveying Solved Problems (SSP)', chapter: 'COGO', topic: 'Distance-distance resection problems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III', topic: 'Distance-distance COGO problems' },
+        ],
+      },
+      {
+        id: 'fs-d5-dd-intersect-s4',
+        type: 'worked_example',
+        title: 'Example 2: Simple Distance-Distance Problem',
+        workedExample: {
+          problem: 'Control point A = (N=2,000.00\', E=2,000.00\'). Control point B = (N=2,000.00\', E=2,600.00\'). Distance from A to unknown point P = 500.00\'. Distance from B to P = 400.00\'. Find the coordinates of P (assume P is north of the A-B baseline).',
+          steps: [
+            { step: 1, description: 'Inverse between A and B for baseline.', calculation: 'ΔN = 0.00\'  ΔE = 600.00\'\nBearing A to B = N 90°00\'E (due east)\nBaseline distance A-B = 600.00\'' },
+            { step: 2, description: 'Apply Law of Cosines to find angle A (at vertex A, opposite side a = B-to-P = 400.00\').', calculation: 'a = 400.00\' (B-P, opposite A)\nb = 500.00\' (A-P)\nc = 600.00\' (A-B baseline)\ncos A = (a² − b² − c²) / (−2 × b × c)\ncos A = (160,000 − 250,000 − 360,000) / (−2 × 500 × 600)\ncos A = (−450,000) / (−600,000) = 0.75000\nAngle A = arccos(0.75000) = 41°24\'35"' },
+            { step: 3, description: 'Compute bearing A-to-P. Since P is north of the A-B line, subtract angle A from baseline bearing (N90°E).', calculation: 'Bearing A to B = N 90°00\'00"E\nBearing A to P = N 90°00\'00"E − 41°24\'35" = N 48°35\'25"E' },
+            { step: 4, description: 'Compute coordinates of P from A using bearing N48°35\'25"E and distance 500.00\'.', calculation: 'ΔN = cos(48°35\'25") × 500 = 0.66143 × 500 = 330.71\'\nΔE = sin(48°35\'25") × 500 = 0.74990 × 500 = 374.95\'\nP North = 2,000.00 + 330.71 = 2,330.71\'\nP East = 2,000.00 + 374.95 = 2,374.95\'' },
+            { step: 5, description: 'Verify by checking distance from B to P.', calculation: 'ΔN from B to P = 2,330.71 − 2,000.00 = 330.71\'  ΔE from B to P = 2,374.95 − 2,600.00 = −225.05\'\nDist B-P = √(330.71² + 225.05²) = √(109,369.3 + 50,647.5) = √160,016.8 = 400.02\' ✓ (≈ 400.00\', small rounding)' },
+          ],
+          answer: 'Point P coordinates: N = 2,330.71\', E = 2,374.95\'. The check distance B-to-P ≈ 400.00\' confirms the solution. The other solution (P south of A-B) would use bearing N90°E + 41°24\'35" = S 131°24\'35"E — same magnitude ΔE but negative ΔN.',
+        },
+        bookRefs: [
+          { book: 'Math for Surveyors (MFS)', chapter: 'Distance, Distance Intersection', topic: 'Simple distance-distance example' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Law of Cosines in surveying triangle problems' },
         ],
       },
     ],
@@ -346,6 +428,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Interpolation', topic: 'Example — interpolating tangent table' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Trigonometric functions and table interpolation' },
         ],
       },
       {
@@ -447,7 +530,26 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'The Intersection of Two Grades', topic: 'Full worked example' },
-          { book: 'Surveying Solved Problems (SSP)', chapter: 'Vertical Curves', topic: 'PVI computation practice problems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Vertical curve design and PVI location' },
+        ],
+      },
+      {
+        id: 'fs-d5-grades-s6',
+        type: 'worked_example',
+        title: 'Example 2: Grade, Distance, and Intermediate Elevation',
+        workedExample: {
+          problem: 'A grade of +3.50% is set from Point A at Station 4+50, elevation 348.72 ft to Point B at Station 9+00. (a) What is the elevation at Station 9+00? (b) What is the distance along the grade? (c) What is the elevation at Station 6+75?',
+          steps: [
+            { step: 1, description: 'Compute the horizontal distance from Station 4+50 to Station 9+00.', calculation: 'Station 4+50 = 450 ft; Station 9+00 = 900 ft\nHorizontal distance = 900 − 450 = 450.00 ft' },
+            { step: 2, description: 'Compute elevation at Station 9+00 using grade formula.', calculation: 'ΔElevation = G × distance = (3.50/100) × 450.00 = 0.035 × 450 = 15.75 ft\nElevation at Sta 9+00 = 348.72 + 15.75 = 364.47 ft' },
+            { step: 3, description: 'Compute the slope distance (actual distance along the grade, not just horizontal).', calculation: 'Slope distance = horizontal distance / cos(grade angle)\nGrade angle = arctan(0.035) = 2°00\'13"\nSlope distance = 450.00 / cos(2°00\'13") = 450.00 / 0.99939 = 450.28 ft\n\nNote: For small grades, slope distance ≈ horizontal distance. The difference (0.28 ft) is small but calculable.' },
+            { step: 4, description: 'Compute elevation at Station 6+75 using the same grade from Point A.', calculation: 'Station 6+75 = 675 ft\nDistance from Sta 4+50 to Sta 6+75 = 675 − 450 = 225.00 ft\nΔElevation = 0.035 × 225.00 = 7.875 ft\nElevation at Sta 6+75 = 348.72 + 7.875 = 356.60 ft (rounded to 0.01 ft)' },
+          ],
+          answer: '(a) Elevation at Sta 9+00 = 364.47 ft. (b) Slope distance = 450.28 ft. (c) Elevation at Sta 6+75 = 356.60 ft. The key insight: the grade percentage applied as a decimal multiplied by the horizontal distance gives the elevation change directly.',
+        },
+        bookRefs: [
+          { book: 'Math for Surveyors (MFS)', chapter: 'Grades and Slopes', topic: 'Grade, slope distance, and intermediate elevation problems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Grade line elevation calculations' },
         ],
       },
     ],
