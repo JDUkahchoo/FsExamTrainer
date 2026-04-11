@@ -3637,6 +3637,32 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
   // ============================================================
   {
     domain: 'Math & Basic Science',
+    question: 'In an oblique triangle, angle A = 50°00\', angle B = 70°00\', and side c = 200.00 ft (side c is opposite angle C). Find side b.',
+    options: [
+      '168.4 ft',
+      '187.9 ft',
+      '217.0 ft',
+      '234.6 ft'
+    ],
+    correctAnswer: 2,
+    explanation: 'Angle C = 180° − 50° − 70° = 60°. By Law of Sines: b/sin B = c/sin C. b = c × sin B / sin C = 200.00 × sin(70°) / sin(60°) = 200.00 × 0.93969 / 0.86603 = 217.0 ft. Side b is opposite the 70° angle, which is larger than C = 60°, so b > c = 200 ft — consistent with the geometry. Option A (168.4) would require sin B / sin C ≈ 0.842, inconsistent with B = 70°. Option D (234.6) would apply if using sin A instead of sin B.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Two fence lines meet at a corner. One runs N 24°15\'W and the other runs S 36°40\'W. What is the interior angle at the corner?',
+    options: [
+      '60°55\'00"',
+      '79°05\'00"',
+      '119°05\'00"',
+      '143°20\'00"'
+    ],
+    correctAnswer: 2,
+    explanation: 'N 24°15\'W is in the NW quadrant; S 36°40\'W is in the SW quadrant. Both bearings are on the west side — they cross the E-W line on the same (west) side. This is the NW + SW pair, which requires Rule 3: add the two bearing angles, then subtract the sum from 180°. Sum = 24°15\'00" + 36°40\'00" = 60°55\'00". Interior angle = 180° − 60°55\'00" = 119°05\'00". Azimuth check: NW bearing = 360° − 24°15\' = 335°45\'; SW bearing = 180° + 36°40\' = 216°40\'. Difference = 335°45\' − 216°40\' = 119°05\' ✓. Option A (60°55\') is the raw sum — incorrect for this pair. Option B (79°05\') = 180° − sum of supplementary values — wrong approach.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Math & Basic Science',
     question: 'In an oblique triangle, angle A = 38°20\', side a = 175.00 ft, and side c = 230.00 ft. Determine the height h and classify the solution case.',
     options: [
       'h = 143.16 ft; since h < a < c, there are two possible triangles (ambiguous case)',

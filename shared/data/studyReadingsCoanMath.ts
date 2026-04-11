@@ -28,7 +28,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'When using the Law of Sines to solve an oblique triangle given angle A, side a, and side c, there are six possible outcomes. The height h = c × sin A is the key dividing line.\n\n**Case 1 — No solution (obtuse A, a ≤ c):**\nIf angle A is obtuse (greater than 90°) and side a is shorter than or equal to side c, no triangle exists. Side a cannot reach the far side.\n\n**Case 2 — One solution (obtuse A, a > c):**\nIf angle A is obtuse and side a is greater than side c, the triangle is uniquely determined. Side a can only intersect the base in one place.\n\n**Case 3 — One solution (acute A, a > c):**\nIf angle A is acute (less than 90°) and side a is longer than side c, there is exactly one triangle. Side a is long enough to cross, but the geometry uniquely determines the solution.\n\n**Case 4 — No solution (acute A, a < h):**\nIf angle A is acute and side a is shorter than the height h (where h = c × sin A), side a cannot reach the opposite side. No triangle exists.\n\n**Case 5 — One solution (acute A, a = h):**\nIf angle A is acute and side a exactly equals the height h, a right triangle is formed — only one solution exists and it is a right triangle at B.\n\n**Case 6 — Two solutions (acute A, h < a < c):**\nThis is the ambiguous case. If angle A is acute and the height h is less than side a, but side a is also less than side c, then side a can intersect the base in two places. Both triangles are valid solutions; you must use field knowledge to choose the correct one. In surveying, the field sketch tells you which solution applies.',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Oblique Triangles', topic: 'Six solution cases with diagrams' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Appendix A', topic: 'Trigonometry review and oblique triangles' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Oblique triangles and Law of Sines — ambiguous case' },
         ],
       },
       {
@@ -113,7 +113,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: '**Rule 1 — Same quadrant: subtract**\nIf both bearings are in the same quadrant (both NE, both SE, both SW, or both NW), the angle between them equals the larger bearing angle minus the smaller bearing angle.\n\nExample: S 82°35\'40"E and S 25°15\'10"E are both SE bearings.\nAngle = 82°35\'40" − 25°15\'10" = 57°20\'30"\n\n**Rule 2 — Same hemisphere, adjacent quadrants: add**\n"Same hemisphere" means either the northern pair (NE + NW) or the southern pair (SE + SW). If both bearings are in adjacent quadrants on the same side of the E-W line, the angle between them equals the sum of the two bearing angles.\n\nExample: N 30°15\'26"E and N 21°10\'14"W are both north bearings.\nAngle = 30°15\'26" + 21°10\'14" = 51°25\'40"\n\n**Rule 3 — Cross-hemisphere (NE+SE or NW+SW): add, then subtract from 180°**\nIf one bearing is in the NE quadrant and the other is in the SE quadrant (or one NW and one SW), the two bearings are on opposite sides of the E-W line but both measured from the same meridian side. Add the two bearing angles together, then subtract the sum from 180°.\n\nExample: N 15°50\'25"W and S 20°10\'15"W are a NW and SW pair.\nAngle = 180° − (15°50\'25" + 20°10\'15") = 180° − 36°00\'40" = 143°59\'20"\n\n**The Azimuth Shortcut (works for any combination):**\nConvert both bearings to azimuths, subtract the smaller from the larger. If the result is greater than 180°, subtract it from 360° to get the interior angle. This method always works and avoids memorizing the three rules, but requires two conversions.',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Azimuths, Angles & Bearings', topic: 'Three bearing angle rules with examples' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 7', topic: 'Directions and angles in traverses' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II', topic: 'Bearings, azimuths, and angle measurement' },
         ],
       },
       {
@@ -333,7 +333,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'The Law of Cosines', topic: 'Formula and rearrangement for angle-finding' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 9', topic: 'Law of Cosines applications' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 8', topic: 'Law of Cosines — solving for angles in surveying triangles' },
         ],
       },
       {
@@ -393,7 +393,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'Interpolation is the determination of an intermediate value between two fixed known values, based on an assumed or known rate of change. The American Congress on Surveying and Mapping defines it as: "Determination of an intermediate value between fixed values from some known or assumed rate or system of change."\n\nIn surveying, interpolation is used to:\n• Read trig function values between tabulated entries (when tables rather than calculators are used).\n• Find the elevation of a contour crossing between two surveyed points.\n• Calculate an intermediate station elevation along a grade between two benchmarks.\n• Interpolate stadia readings, proportion errors in a traverse, or find a value in an intermediate year between two epochs of a magnetic declination table.\n\nLinear interpolation assumes that the change between the two known values is constant (a straight-line rate of change). This is an approximation, but for small intervals it is accurate enough for surveying work.',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Interpolation', topic: 'Definition and surveying applications' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Appendix', topic: 'Mathematical tools — interpolation' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I', topic: 'Mathematical review — interpolation for surveying calculations' },
         ],
       },
       {
@@ -445,7 +445,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Interpolation', topic: 'Applied interpolation for surveying' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 16', topic: 'Contour interpolation from spot elevations' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV', topic: 'Topographic survey — contour interpolation methods' },
         ],
       },
     ],
@@ -466,7 +466,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'Grade and slope both describe the steepness of a line, but they use different conventions:\n\n**Grade** measures the ratio of vertical change (elevation difference) to horizontal distance, going up or down along a road, pipe, or drainage channel. A positive grade (+) goes uphill; a negative grade (−) goes downhill.\n  Grade = ΔElevation / Horizontal Distance (expressed as ft/ft or as a percentage)\n  Grade % = (ΔElevation / Horizontal Distance) × 100\n\nExample: If a road rises 16.84 ft over 352.45 ft of horizontal distance, grade = 16.84/352.45 = 0.04778 ft/ft = 4.78%.\n\nGrade is also the tangent of the vertical angle: Grade = opposite/adjacent = tan(vertical angle). So a 6% grade corresponds to an angle of arctan(0.06) = 3°26\'06".\n\n**Slope** describes the same steepness but is expressed as a horizontal:vertical ratio. A 2:1 slope means 2 units horizontal for every 1 unit vertical. A 3:1 slope is flatter. Slopes are always stated as positive numbers regardless of direction.\n\nConversions:\n• Slope ratio H:V = 1 / (grade in ft/ft) [e.g., grade 0.50 = slope 2:1]\n• Grade % to slope: slope = 100 / grade%\n• Grade is a tangent; slope is the inverse (run/rise)',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Grades & Slopes', topic: 'Definitions, positive/negative grades, slope ratios' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 25', topic: 'Vertical alignment — grades and slopes' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Vertical alignment — grades, slopes, and grade lines' },
         ],
       },
       {
@@ -493,7 +493,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'When two road grades meet, they intersect at a point called the PVI (Point of Vertical Intersection). Finding its station and elevation is essential before designing the vertical curve that smoothly joins the two grades.\n\nThe two-step formula uses the equation of a line (y = mx + b) for each grade:\n\n**Step 1 — Compute b for each grade line:**\n  b₁ = Elevation₁ − (G₁/100) × Station₁\n  b₂ = Elevation₂ − (G₂/100) × Station₂\n\nWhere G₁ and G₂ are grades in percent (e.g., −1.00 for a downgrade of 1%) and stations are in feet (station 7+00 = 700 ft).\n\n**Step 2 — Set the two lines equal and solve for the PVI station:**\n  PVI Station = (b₁ − b₂) / (G₂/100 − G₁/100)\n\nUse the absolute value of the PVI Station to get the station number.\n\n**Step 3 — Compute PVI elevation:**\n  PVI Elevation = Elevation₁ + (G₁/100) × (PVI Station − Station₁)\n\nThis is just: starting elevation + grade × distance to PVI.',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'The Intersection of Two Grades', topic: 'PVI formula derivation and procedure' },
-          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 25', topic: 'Vertical curves — PVI location' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Vertical curve design — PVI computation and grade intersection' },
         ],
       },
       {

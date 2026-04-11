@@ -5306,6 +5306,32 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'Once the distance from A to P is computed via the Law of Sines, the final step is a standard COGO traverse: start at the known coordinates of A, use the known bearing from A toward P, and the computed distance A-P to calculate ΔNorth and ΔEast (ΔN = dist × cos(bearing), ΔE = dist × sin(bearing)), then add these to the coordinates of A. As a check, you can also compute from B to P and verify both give the same coordinates. The check is important in practice.',
     difficulty: 'medium'
   },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a bearing-bearing intersection triangle ABP, the angles at A and B are both 45°. The baseline A-B = 400.00 ft. What is the distance from A to P?',
+    options: [
+      '200.00 ft',
+      '282.84 ft',
+      '400.00 ft',
+      '565.69 ft'
+    ],
+    correctAnswer: 1,
+    explanation: 'Angle at P = 180° − 45° − 45° = 90°. By Law of Sines: dist(A-P)/sin(B) = dist(A-B)/sin(P). dist(A-P) = 400.00 × sin(45°)/sin(90°) = 400.00 × 0.70711/1.00000 = 282.84 ft. When the angle at P is 90° (ideal geometry), and both base angles are equal, the triangle is an isoceles right triangle. The legs equal baseline × sin45° = baseline / √2.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'When computing interior angles in a bearing-bearing intersection, point A has bearing N 35°10\'E toward the baseline point B, and bearing N 58°45\'E toward the unknown point P. What is the angle at A?',
+    options: [
+      '23°35\'',
+      '35°10\'',
+      '58°45\'',
+      '93°55\''
+    ],
+    correctAnswer: 0,
+    explanation: 'Both bearings from A are NE — same quadrant. Apply Rule 1: subtract the smaller bearing angle from the larger. Angle at A = 58°45\' − 35°10\' = 23°35\'. The interior angle is the angular difference between the two NE directions from A. Rule 1 (same quadrant) always produces a simple subtraction.',
+    difficulty: 'medium'
+  },
 
   // ============================================================
   // Math for Surveyors (MFS) — Coan: Bearing-Distance Intersections
@@ -5347,6 +5373,33 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     ],
     correctAnswer: 1,
     explanation: 'The bearing-distance intersection reduces to an oblique triangle (the two known points and the unknown point). You know the angle at one vertex (at C, computed from bearings) and the side opposite another vertex (the given distance from A to D, opposite vertex C). With one angle and its opposite side known, you can apply the Law of Sines: the ratio of any side to the sine of its opposite angle is constant. This gives the sine of the angle at D, leading to the unknown bearing and then to COGO coordinates.',
+    difficulty: 'medium'
+  },
+
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a bearing-distance intersection problem, the angle at C = 35°00\', the baseline A-C = 350.00 ft (opposite angle D), and the given distance A-D = 420.00 ft (opposite angle C). What is sin D?',
+    options: [
+      '0.4782',
+      '0.5745',
+      '0.6912',
+      '0.8391'
+    ],
+    correctAnswer: 0,
+    explanation: 'By the Law of Sines: sin D / (A-C) = sin C / (A-D). Side A-C = 350.00 ft is opposite angle D; side A-D = 420.00 ft is opposite angle C. So sin D = sin(35°00\') × (A-C / A-D) = sin(35°) × (350/420) = 0.57358 × 0.83333 = 0.47798 ≈ 0.4782. Since 0.4782 < 1.000, a real angle exists: D = arcsin(0.4782) = 28°33\' or the supplementary angle 151°27\'. The field sketch determines which applies.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a bearing-distance intersection, the computed value for sin D = 1.0524. What does this mean?',
+    options: [
+      'Angle D = arcsin(1.0524) ≈ 92°; the solution is well-conditioned',
+      'There are two valid solutions: D₁ and its supplement',
+      'The problem has no real solution — the given distance is too short to reach the bearing line',
+      'The angle D = exactly 90°, producing one solution'
+    ],
+    correctAnswer: 2,
+    explanation: 'The sine function always returns values between −1 and +1. A computed sin D greater than 1.000 means the equation has no real solution — the arc (circle of radius dist(A-D) centered at A) does not intersect the bearing line from C. This no-solution case occurs when the given distance from A to D is less than the perpendicular distance from A to the bearing line C-D. In practice, it signals either incorrect field data or an error in the problem setup. The surveyor should recheck the given distance and bearing.',
     difficulty: 'medium'
   },
 
