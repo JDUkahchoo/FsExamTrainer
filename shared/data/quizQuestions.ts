@@ -5251,6 +5251,46 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'medium'
   },
 
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Two traverse sides have bearings N 15°30\'E and S 42°20\'E at their shared vertex. Which rule applies, and what is the interior angle?',
+    options: [
+      'Rule 1 (same quadrant): angle = 42°20\' − 15°30\' = 26°50\'',
+      'Rule 2 (same hemisphere): angle = 15°30\' + 42°20\' = 57°50\'',
+      'Rule 3 (NE+SE, same east side): angle = 180° − (15°30\' + 42°20\') = 122°10\'',
+      'Rule 3 (NE+SE, same east side): angle = 180° − (42°20\' − 15°30\') = 153°10\''
+    ],
+    correctAnswer: 2,
+    explanation: 'N 15°30\'E is in the NE quadrant; S 42°20\'E is in the SE quadrant. These are on the same east side but cross the N-S line — an NE+SE pair. Apply Rule 3: add the two bearing angles, then subtract from 180°. Sum = 15°30\' + 42°20\' = 57°50\'. Interior angle = 180° − 57°50\' = 122°10\'. Azimuth check: N15°30\'E = azimuth 15°30\'; S42°20\'E = 180° − 42°20\' = 137°40\'. Difference = 137°40\' − 15°30\' = 122°10\' ✓. Source: MFS "Azimuths, Angles & Bearings — Rule 3."',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Two road centerlines meet at a point. One runs N 55°00\'W and the other runs N 35°00\'E. What rule applies, and what is the interior angle?',
+    options: [
+      'Rule 1 (same NE/NW both north): angle = 55°00\' − 35°00\' = 20°00\'',
+      'Rule 2 (NE+NW both north): angle = 55°00\' + 35°00\' = 90°00\'',
+      'Rule 3 (NW+NE): angle = 180° − (55°00\' + 35°00\') = 90°00\'',
+      'Rule 1 (both north hemisphere): angle = 90°00\' + 55°00\' = 145°00\''
+    ],
+    correctAnswer: 1,
+    explanation: 'N 55°00\'W is NW; N 35°00\'E is NE. Both bearings are in the north hemisphere — NW+NE pair. Apply Rule 2 (same hemisphere, adjacent quadrants): add the two bearing angles. Sum = 55°00\' + 35°00\' = 90°00\'. Interior angle = 90°00\'. Azimuth check: N55°W = 360° − 55° = 305°; N35°E = 35°. Difference = 305° − 35° = 270°. Since 270° > 180°: reflex angle = 360° − 270° = 90° ✓. Source: MFS "Azimuths, Angles & Bearings — Rule 2."',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Given two bearings S 18°44\'W and S 72°16\'W at a traverse vertex, compute the interior angle.',
+    options: [
+      '53°32\'',
+      '71°00\'',
+      '109°00\'',
+      '161°16\''
+    ],
+    correctAnswer: 0,
+    explanation: 'Both bearings are SW (same quadrant). Apply Rule 1 — subtract the smaller from the larger bearing angle. Angle = 72°16\' − 18°44\' = 53°32\'. Azimuth check: S18°44\'W = 180° + 18°44\' = 198°44\'; S72°16\'W = 180° + 72°16\' = 252°16\'. Difference = 252°16\' − 198°44\' = 53°32\' ✓. Source: MFS "Azimuths, Angles & Bearings — Rule 1."',
+    difficulty: 'easy'
+  },
+
   // ============================================================
   // Math for Surveyors (MFS) — Coan: Bearing-Bearing Intersections
   // ============================================================
@@ -5443,6 +5483,20 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     ],
     correctAnswer: 1,
     explanation: 'If dist(A-C) + dist(B-C) < dist(A-B), the two circles do not overlap — the circles are too far apart to intersect, and no valid point C exists. Similarly, if one circle is entirely inside the other (|dist(A-C) - dist(B-C)| > dist(A-B)), there is also no intersection. In surveying practice, if the distances are field-measured, a no-solution result usually indicates a measurement or data entry error.',
+    difficulty: 'medium'
+  },
+
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Using the Law of Cosines in a distance-distance intersection, you have: a = 300 ft (opposite A), b = 400 ft (A to C), c = 500 ft (A to B, baseline). What is cos A?',
+    options: [
+      'cos A = 0.8000',
+      'cos A = 0.6000',
+      'cos A = 0.4000',
+      'cos A = −0.1667'
+    ],
+    correctAnswer: 0,
+    explanation: 'By the Law of Cosines: cos A = (b² + c² − a²) / (2bc) = (400² + 500² − 300²) / (2 × 400 × 500). Numerator: 160,000 + 250,000 − 90,000 = 320,000. Denominator: 400,000. cos A = 320,000 / 400,000 = 0.8000. Equivalently using the Coan form: cos A = (a² − b² − c²)/(−2bc) = (90,000 − 160,000 − 250,000)/(−400,000) = −320,000/(−400,000) = 0.8000. Angle A = arccos(0.8000) = 36°52\'12". Source: MFS "Distance, Distance Intersections."',
     difficulty: 'medium'
   },
 
