@@ -3657,8 +3657,8 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
       '96°05\'15"',
       '83°25\'15"'
     ],
-    correctAnswer: 2,
-    explanation: 'One bearing is SE and the other is SW — both south bearings in adjacent quadrants (same hemisphere, south). Apply Rule 2: add the two bearing angles. Sum = 32°14\'30" + 51°40\'15" = 83°54\'45". Wait — that gives 83°54\'45" which is in the options. But Rule 2 adds for SE+SW. 32°14\'30" + 51°40\'15": seconds 30+15=45, minutes 14+40=54, degrees 32+51=83. Answer = 83°54\'45". This is the interior angle between the two legs at their junction, measured on the interior side of the traverse.',
+    correctAnswer: 1,
+    explanation: 'S 32°14\'30"E is in the SE quadrant; S 51°40\'15"W is in the SW quadrant. Both bearings are south — they are in adjacent quadrants on the same hemisphere (south). Apply Rule 2 (same hemisphere, adjacent quadrants): add the two bearing angles. Sum = 32°14\'30" + 51°40\'15": seconds 30" + 15" = 45"; minutes 14\' + 40\' = 54\'; degrees 32° + 51° = 83°. Interior angle = 83°54\'45". Option A (19°25\'45") is the difference (Rule 1 — wrong quadrant rule). Option C (96°05\'15") equals 180° - 83°54\'45", which is the Rule 3 result — also incorrect here.',
     difficulty: 'medium'
   },
   {
@@ -3678,13 +3678,13 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     domain: 'Survey Computations & Applications',
     question: 'In a bearing-distance intersection problem, sin D = 0.87462, where D is the angle at the unknown point. The inverse sine gives D₁ = 61°04\'. The alternative angle is D₂ = 118°56\'. Given that the angle at C (computed from bearings) is 55°30\', which solution for D is valid?',
     options: [
-      'Only D₁ = 61°04\' is valid, because D₂ + angle C exceeds 180°',
+      'Only D₁ = 61°04\' is valid — D₂ produces a triangle with all three angles summing to more than 180°',
       'Only D₂ = 118°56\' is valid, because D₁ is too small for the geometry',
-      'Both are valid — the field sketch alone determines the correct choice',
+      'Both triangles are geometrically valid; the field sketch determines the correct solution',
       'Neither — a third solution exists when the sine value exceeds 0.8'
     ],
-    correctAnswer: 0,
-    explanation: 'To determine validity, the sum of all angles in the triangle (D + angle at C + angle at A) must equal 180°. Check D₂: angle at C = 55°30\', D₂ = 118°56\', sum so far = 174°26\'. The remaining angle at A = 180° - 174°26\' = 5°34\', which is technically valid but a very weak angle. Check D₁: angle at C = 55°30\', D₁ = 61°04\', sum = 116°34\'. Angle at A = 63°26\', making a well-conditioned triangle. The better practical check: if D₂ = 118°56\' and angle C = 55°30\', then 118°56\' + 55°30\' = 174°26\' < 180°, so D₂ technically works too. The correct determinant is the field sketch. Without additional info, D₁ gives a stronger geometry.',
+    correctAnswer: 2,
+    explanation: 'Both solutions must be checked against the triangle angle-sum rule. For D₁ = 61°04\': remaining angle at A = 180° - 61°04\' - 55°30\' = 63°26\' — a strong, well-conditioned triangle. For D₂ = 118°56\': remaining angle at A = 180° - 118°56\' - 55°30\' = 5°34\' — a very acute angle, but still a valid triangle since all angles sum to 180°. Both solutions satisfy the mathematics; neither can be rejected on geometric grounds alone. The surveyor\'s field sketch, deed description, or knowledge of which side of the bearing line the point lies on must determine the correct answer. This is the surveying counterpart of the Law of Sines ambiguous case.',
     difficulty: 'hard'
   },
   {
@@ -3733,10 +3733,10 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
       'Station 7+25',
       'Station 8+12.50',
       'Station 6+83.75',
-      'Station 7+81.25'
+      'Station 9+02.50'
     ],
     correctAnswer: 3,
-    explanation: 'b₁ = 186.25 - (2.50/100)×400 = 186.25 - 10.00 = 176.25. b₂ = 197.35 - (-1.50/100)×1000 = 197.35 + 15.00 = 212.35. PVI Sta = (b₁ - b₂) / (G₂/100 - G₁/100) = (176.25 - 212.35) / (-0.015 - 0.025) = (-36.10) / (-0.040) = 902.5 ft = Station 9+02.50. Hmm — check: G₁ passes through Sta 4+00 at elev 186.25; at Sta 9+02.5: elev = 186.25 + 0.025×(902.5-400) = 186.25 + 12.56 = 198.81 ft. G₂ passes through Sta 10+00 at 197.35; at Sta 9+02.5: elev = 197.35 + (-0.015)×(902.5-1000) = 197.35 + 1.46 = 198.81 ft ✓. PVI is at Station 9+02.50. The closest answer listed is 7+81.25 as a distractor; the correct computation yields 9+02.50.',
+    explanation: 'Step 1 — compute y-intercepts (stations in feet: Sta 4+00 = 400 ft, Sta 10+00 = 1000 ft): b₁ = 186.25 - (2.50/100)×400 = 186.25 - 10.00 = 176.25. b₂ = 197.35 - (-1.50/100)×1000 = 197.35 + 15.00 = 212.35. Step 2 — PVI station: PVI Sta = (b₁ - b₂)/(G₂/100 - G₁/100) = (176.25 - 212.35)/(-0.015 - 0.025) = -36.10/-0.040 = 902.5 ft = Station 9+02.50. Verification: elevation at PVI from G₁: 186.25 + 0.025×(902.5 - 400) = 186.25 + 12.56 = 198.81 ft. Elevation from G₂: 197.35 + (-0.015)×(902.5 - 1000) = 197.35 + 1.46 = 198.81 ft ✓. Both grade lines confirm PVI at Station 9+02.50, elevation 198.81 ft.',
     difficulty: 'hard'
   },
 ];

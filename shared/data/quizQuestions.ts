@@ -5092,15 +5092,15 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     domain: 'Math & Basic Science',
-    question: 'In triangle ABC, angle A = 55°, angle B = 72°, and side c = 420 ft. Using the Law of Sines, find side b.',
+    question: 'In triangle ABC, angle A = 50°, angle B = 70°, and side c = 200.00 ft (side opposite angle C). Using the Law of Sines, find side b.',
     options: [
-      '487.2 ft',
-      '412.6 ft',
-      '395.8 ft',
-      '528.3 ft'
+      '217.0 ft',
+      '185.4 ft',
+      '253.6 ft',
+      '172.9 ft'
     ],
     correctAnswer: 0,
-    explanation: 'First: angle C = 180° - 55° - 72° = 53°. Law of Sines: b/sin B = c/sin C → b = c × sin B / sin C = 420 × sin(72°) / sin(53°) = 420 × 0.95106 / 0.79864 = 499.7... Wait, let me recompute: b = 420 × 0.95106 / 0.79864 ≈ 420 × 1.19085 ≈ 500.2 ft. Actually: b/sin 72° = 420/sin 53°; b = 420 × sin72°/sin53° = 420×0.9511/0.7986 ≈ 499.8 ft. Closest is 487.2. The key concept: Angle C = 53°; use c/sinC = b/sinB.',
+    explanation: 'First find angle C: C = 180° - 50° - 70° = 60°. Apply the Law of Sines: b/sin B = c/sin C → b = c × sin B / sin C = 200.00 × sin(70°) / sin(60°) = 200.00 × 0.93969 / 0.86603 = 217.0 ft. The Law of Sines ratio (side/sin opposite angle) is constant for all three pairs in the triangle, so matching the known side c to its opposite angle C gives a direct solution for b.',
     difficulty: 'medium'
   },
   {
@@ -5189,13 +5189,13 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     domain: 'Survey Computations & Applications',
     question: 'What is the angle between bearings S 55°10\'00"E and S 30°25\'00"W?',
     options: [
-      '25°45\'00" (Rule 1)',
-      '85°35\'00" (Rule 2)',
-      '94°25\'00" (Rule 3)',
+      '25°45\'00" (Rule 1 — wrong rule)',
+      '85°35\'00" (Rule 2 — same hemisphere, add)',
+      '94°25\'00" (Rule 3 — wrong rule)',
       '180°00\'00"'
     ],
-    correctAnswer: 2,
-    explanation: 'One bearing is SE and the other is SW — they are in adjacent quadrants on the same hemisphere (both south bearings). Apply Rule 2 (same hemisphere, adjacent quadrants): Angle = 55°10\'00" + 30°25\'00" = 85°35\'00". Wait — Rule 2 applies here (SE+SW are both south). But checking: the answer should be 85°35\'. The angle between S55°10\'E and S30°25\'W is the angle measured across the south meridian = 55°10\' + 30°25\' = 85°35\'. The correct answer is 85°35\'00", but the option states 94°25\'. Re-examining: 55°10\' + 30°25\' = 85°35\', so 94°25\' is not correct. The Rule 2 (SE+SW): add = 85°35\'. The listed correct answer key is 85°35\'.',
+    correctAnswer: 1,
+    explanation: 'S 55°10\'E is in the SE quadrant; S 30°25\'W is in the SW quadrant. Both bearings are south — they are in adjacent quadrants on the same hemisphere. Apply Rule 2 (same hemisphere, adjacent quadrants): add the two bearing angles. Angle = 55°10\'00" + 30°25\'00" = 85°35\'00". This is the angle between the two lines measured through the southern sector, spanning from one side of south to the other. Rule 3 would apply for NE+SE or NW+SW cross-hemisphere pairs, which is not the case here.',
     difficulty: 'medium'
   },
   {
@@ -5428,11 +5428,11 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     options: [
       '61.4 ft',
       '88.6 ft',
-      '123.8 ft',
+      '123.0 ft',
       '156.2 ft'
     ],
     correctAnswer: 2,
-    explanation: 'Use interpolation: x₁ = 0 ft, y₁ = 105.45 ft; x₃ = 200 ft, y₃ = 112.85 ft; y₂ = 110.00 ft. Solve for x₂: x₂ = x₁ + [(y₂ - y₁)/(y₃ - y₁)] × (x₃ - x₁) = 0 + [(110.00 - 105.45)/(112.85 - 105.45)] × 200 = [4.55/7.40] × 200 = 0.61486 × 200 = 122.97 ≈ 123.8 ft from the lower point (105.45 ft).',
+    explanation: 'Use interpolation rearranged to solve for position: x₂ = x₁ + [(y₂ - y₁)/(y₃ - y₁)] × (x₃ - x₁). With x₁ = 0 ft (elev 105.45 ft), x₃ = 200 ft (elev 112.85 ft), and contour y₂ = 110.00 ft: x₂ = 0 + [(110.00 - 105.45)/(112.85 - 105.45)] × 200 = [4.55/7.40] × 200 = 0.61486 × 200 = 123.0 ft from the lower point (105.45 ft).',
     difficulty: 'medium'
   },
   {
@@ -5453,12 +5453,12 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'Magnetic declination at a location was 4°30\'W in 1985 and 5°15\'W in 2010. Using interpolation, what was the declination in 1997?',
     options: [
       '4°30\'W',
-      '4°52\'12"W',
+      '4°51\'36"W',
       '5°00\'00"W',
       '4°40\'48"W'
     ],
     correctAnswer: 1,
-    explanation: 'x₁ = 1985, y₁ = 4°30\'W (= 4.500°); x₃ = 2010, y₃ = 5°15\'W (= 5.250°); x₂ = 1997. Fraction = (1997 - 1985)/(2010 - 1985) = 12/25 = 0.48. y₂ = 0.48 × (5.250 - 4.500) + 4.500 = 0.48 × 0.750 + 4.500 = 0.360 + 4.500 = 4.860° = 4°51\'36"W ≈ 4°52\'W. Interpolation between epoch values is standard practice in surveying for adjusting historical deed bearings to modern magnetic declination.',
+    explanation: 'x₁ = 1985, y₁ = 4°30\'W (= 4.500°); x₃ = 2010, y₃ = 5°15\'W (= 5.250°); x₂ = 1997. Fraction = (1997 - 1985)/(2010 - 1985) = 12/25 = 0.48. y₂ = 0.48 × (5.250 - 4.500) + 4.500 = 0.48 × 0.750 + 4.500 = 0.360 + 4.500 = 4.860° = 4°51\'36"W. Interpolation between epoch values is standard practice in surveying for adjusting historical deed bearings to modern magnetic declination.',
     difficulty: 'hard'
   },
 
@@ -5532,15 +5532,15 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     domain: 'Survey Computations & Applications',
-    question: 'Grade G₁ = +3.00% passes through station 5+00 at elevation 252.15 ft. Grade G₂ = -2.00% passes through station 11+00 at elevation 260.15 ft. What is the PVI elevation?',
+    question: 'Grade G₁ = +2.00% passes through station 2+00 (elevation 200.00 ft). Grade G₂ = -3.00% passes through station 8+00 (elevation 215.00 ft). What is the PVI elevation?',
     options: [
-      '258.30 ft',
-      '260.15 ft',
-      '256.15 ft',
-      '262.68 ft'
+      '213.20 ft',
+      '208.40 ft',
+      '217.80 ft',
+      '221.60 ft'
     ],
     correctAnswer: 0,
-    explanation: 'b₁ = 252.15 - (3.00/100)×500 = 252.15 - 15.00 = 237.15. b₂ = 260.15 - (-2.00/100)×1100 = 260.15 + 22.00 = 282.15. PVI Sta = (237.15 - 282.15)/((-2.00/100) - (3.00/100)) = (-45.00)/(-0.05) = 900 ft = Sta 9+00. PVI Elevation = 252.15 + (3.00/100)×(900-500) = 252.15 + 0.03×400 = 252.15 + 12.00 = 264.15 ft. (Note: G₂ check: 260.15 + (-0.02)×(900-1100) = 260.15 + 4.00 = 264.15 ft ✓). The nearest listed answer is 262.68 — closest answer shown is 258.30; however, PVI elev = 264.15. The correct answer represents 258.30 as the option to recognize the PVI computation procedure even if rounding differs.',
+    explanation: 'Step 1 — compute y-intercepts: b₁ = 200.00 - (2.00/100)×200 = 200.00 - 4.00 = 196.00. b₂ = 215.00 - (-3.00/100)×800 = 215.00 + 24.00 = 239.00. Step 2 — PVI station: PVI Sta = (196.00 - 239.00)/((-3.00/100) - (2.00/100)) = (-43.00)/(-0.05) = 860 ft = Station 8+60. Step 3 — PVI elevation from G₁: PVI Elev = 200.00 + (2.00/100)×(860 - 200) = 200.00 + 0.02×660 = 200.00 + 13.20 = 213.20 ft. Verification using G₂: 215.00 + (-0.03)×(860 - 800) = 215.00 - 1.80 = 213.20 ft ✓. This is a summit curve (G₁ positive, G₂ negative), so the vertical curve at this PVI is concave downward.',
     difficulty: 'hard'
   },
 ];
