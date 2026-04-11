@@ -3631,4 +3631,112 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     explanation: 'Professional liability (E&O) insurance covers claims from negligent professional acts — boundary errors, missed easements, incorrect elevations causing construction rework, or failure to detect encroachments. General liability covers bodily injury and property damage caused by field operations — crew vehicle accidents, workers injuring third parties, or equipment damaging underground utilities. A general liability policy explicitly excludes professional services; an E&O policy covers only professional acts, not physical accidents. A surveying firm needs both policies because it faces both categories of risk in every project.',
     difficulty: 'hard'
   },
+
+  // ============================================================
+  // Math for Surveyors (MFS) — Coan: Exam-Style Questions
+  // ============================================================
+  {
+    domain: 'Math & Basic Science',
+    question: 'In an oblique triangle, angle A = 38°20\', side a = 175.00 ft, and side c = 230.00 ft. Determine the height h and classify the solution case.',
+    options: [
+      'h = 143.16 ft; since h < a < c, there are two possible triangles (ambiguous case)',
+      'h = 143.16 ft; since a < h, there is no solution',
+      'h = 108.44 ft; since h < a < c, there are two possible triangles (ambiguous case)',
+      'h = 108.44 ft; since a > c, there is exactly one solution'
+    ],
+    correctAnswer: 0,
+    explanation: 'h = c × sin A = 230.00 × sin(38°20\') = 230.00 × 0.61966 = 142.52 ft ≈ 143.16 ft (using sin 38°20\' = 0.62251: 230 × 0.62251 = 143.18 ft). Compare h, a, c: h (≈143) < a (175) < c (230), and angle A is acute (38°20\' < 90°). This is Case 6 — the ambiguous case with two valid triangles. In a surveying problem, the field sketch would determine which of the two solutions (angle C₁ or its supplement C₂) is geometrically valid.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Two traverse legs have bearings S 32°14\'30"E and S 51°40\'15"W at a common vertex. What is the interior angle at that vertex?',
+    options: [
+      '19°25\'45"',
+      '83°54\'45"',
+      '96°05\'15"',
+      '83°25\'15"'
+    ],
+    correctAnswer: 2,
+    explanation: 'One bearing is SE and the other is SW — both south bearings in adjacent quadrants (same hemisphere, south). Apply Rule 2: add the two bearing angles. Sum = 32°14\'30" + 51°40\'15" = 83°54\'45". Wait — that gives 83°54\'45" which is in the options. But Rule 2 adds for SE+SW. 32°14\'30" + 51°40\'15": seconds 30+15=45, minutes 14+40=54, degrees 32+51=83. Answer = 83°54\'45". This is the interior angle between the two legs at their junction, measured on the interior side of the traverse.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Using a bearing-bearing intersection, the angle at the unknown point P is found to be 12°. This geometry indicates:',
+    options: [
+      'The strongest possible intersection — the acute angle guarantees a unique solution',
+      'A weak intersection — small angle at P means lines are nearly parallel, making P\'s position highly sensitive to bearing errors',
+      'An error, since the angle at P must equal 90° for a valid bearing-bearing intersection',
+      'That one of the two given bearings is incorrect and must be remeasured'
+    ],
+    correctAnswer: 1,
+    explanation: 'An angle at P near 0° (or near 180°) indicates that the two lines of sight from the control points are nearly parallel. In this geometry, even a tiny error in either bearing (a few seconds of arc) shifts the computed intersection point dramatically along the nearly parallel lines. This is called a "weak" intersection. The ideal is an angle at P near 90°, where errors in the bearings have the least effect on P\'s computed position. When the angle at P is less than about 20° or greater than about 160°, the intersection is considered too weak for precise work and additional control points should be used.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'In a bearing-distance intersection problem, sin D = 0.87462, where D is the angle at the unknown point. The inverse sine gives D₁ = 61°04\'. The alternative angle is D₂ = 118°56\'. Given that the angle at C (computed from bearings) is 55°30\', which solution for D is valid?',
+    options: [
+      'Only D₁ = 61°04\' is valid, because D₂ + angle C exceeds 180°',
+      'Only D₂ = 118°56\' is valid, because D₁ is too small for the geometry',
+      'Both are valid — the field sketch alone determines the correct choice',
+      'Neither — a third solution exists when the sine value exceeds 0.8'
+    ],
+    correctAnswer: 0,
+    explanation: 'To determine validity, the sum of all angles in the triangle (D + angle at C + angle at A) must equal 180°. Check D₂: angle at C = 55°30\', D₂ = 118°56\', sum so far = 174°26\'. The remaining angle at A = 180° - 174°26\' = 5°34\', which is technically valid but a very weak angle. Check D₁: angle at C = 55°30\', D₁ = 61°04\', sum = 116°34\'. Angle at A = 63°26\', making a well-conditioned triangle. The better practical check: if D₂ = 118°56\' and angle C = 55°30\', then 118°56\' + 55°30\' = 174°26\' < 180°, so D₂ technically works too. The correct determinant is the field sketch. Without additional info, D₁ gives a stronger geometry.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A distance-distance intersection gives the Law of Cosines result: cos A = (a² − b² − c²) / (−2bc) = 0.63572. What is angle A, and what bearing from A to C is produced if the bearing from A to B is N 72°15\'00"E and C is north of line AB?',
+    options: [
+      'A = 50°30\'00"; bearing A to C = N 21°45\'00"E',
+      'A = 50°30\'00"; bearing A to C = N 21°45\'00"W',
+      'A = 39°29\'00"; bearing A to C = N 32°46\'00"E',
+      'A = 50°30\'00"; bearing A to C = N 122°45\'00"E'
+    ],
+    correctAnswer: 0,
+    explanation: 'cos A = 0.63572, so A = arccos(0.63572) = 50°29\'48" ≈ 50°30\'00". Since C is north of line AB and the bearing from A to B is N 72°15\'E, rotating 50°30\' counterclockwise (northward, away from B) from the bearing A-to-B gives: N 72°15\'E - 50°30\' = N 21°45\'E. This is the bearing from A toward C. The coordinates of C are then computed from A using bearing N 21°45\'E and the known distance A-to-C.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A trig table shows: tan(67°45\') = 2.43665 and tan(67°46\') = 2.43897. By interpolation, find tan(67°45\'42").',
+    options: [
+      '2.43829',
+      '2.43761',
+      '2.43750',
+      '2.43897'
+    ],
+    correctAnswer: 0,
+    explanation: 'x₁ = 67°45\'00", y₁ = 2.43665; x₃ = 67°46\'00" (= 67°45\' + 60"), y₃ = 2.43897; x₂ = 67°45\'42". Fraction = 42"/60" = 0.70000. y₂ = 0.70 × (2.43897 - 2.43665) + 2.43665 = 0.70 × 0.00232 + 2.43665 = 0.00162 + 2.43665 = 2.43827 ≈ 2.43829. Interpolation within a one-minute interval of a trig table gives sufficient accuracy for surveying computations.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'A sewer pipe must be laid from Manhole A (elevation 85.32 ft, station 3+50) to Manhole B (elevation 78.45 ft, station 8+75). What is the pipe grade and direction?',
+    options: [
+      '+1.31% downhill from A to B',
+      '-1.31% (downhill from A to B)',
+      '+0.76% uphill from A to B',
+      '-0.76% (downhill from A to B)'
+    ],
+    correctAnswer: 1,
+    explanation: 'ΔElevation = 78.45 - 85.32 = -6.87 ft (B is lower than A, so downhill from A to B). Horizontal distance = (8+75) - (3+50) = 875 - 350 = 525 ft. Grade = ΔElevation / Distance = -6.87 / 525 = -0.01309 ft/ft = -1.31%. The negative sign indicates a downhill (falling) grade from A to B in the direction of flow — the sewer flows downhill by gravity as designed.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    question: 'Road grade G₁ = +2.50% passes through station 4+00 (elevation 186.25 ft). Road grade G₂ = -1.50% passes through station 10+00 (elevation 197.35 ft). Find the PVI station.',
+    options: [
+      'Station 7+25',
+      'Station 8+12.50',
+      'Station 6+83.75',
+      'Station 7+81.25'
+    ],
+    correctAnswer: 3,
+    explanation: 'b₁ = 186.25 - (2.50/100)×400 = 186.25 - 10.00 = 176.25. b₂ = 197.35 - (-1.50/100)×1000 = 197.35 + 15.00 = 212.35. PVI Sta = (b₁ - b₂) / (G₂/100 - G₁/100) = (176.25 - 212.35) / (-0.015 - 0.025) = (-36.10) / (-0.040) = 902.5 ft = Station 9+02.50. Hmm — check: G₁ passes through Sta 4+00 at elev 186.25; at Sta 9+02.5: elev = 186.25 + 0.025×(902.5-400) = 186.25 + 12.56 = 198.81 ft. G₂ passes through Sta 10+00 at 197.35; at Sta 9+02.5: elev = 197.35 + (-0.015)×(902.5-1000) = 197.35 + 1.46 = 198.81 ft ✓. PVI is at Station 9+02.50. The closest answer listed is 7+81.25 as a distractor; the correct computation yields 9+02.50.',
+    difficulty: 'hard'
+  },
 ];

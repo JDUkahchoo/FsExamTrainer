@@ -41,6 +41,13 @@ export const REFERENCE_BOOKS = {
     author: "Jan Van Sickle, PLS",
     edition: "5th Edition",
     publisher: "PPI",
+  },
+  MFS: {
+    id: "MFS",
+    title: "Math for Surveyors",
+    author: "James A. Coan Sr. PLS",
+    edition: "1st Edition",
+    publisher: "NSPS (National Society of Professional Surveyors)",
   }
 } as const;
 

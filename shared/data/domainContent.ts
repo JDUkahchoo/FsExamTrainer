@@ -17,23 +17,31 @@ export const DOMAIN_CONTENT: Record<DomainNumber, DomainContent> = {
     read: [
       "Surveyor Ref Manual (SRM) Ch. 1 (Algebra/Trig basics)",
       "Review fundamental math operations and calculator usage",
-      "NCEES Handbook: Math & Stats formulas section"
+      "NCEES Handbook: Math & Stats formulas section",
+      "Math for Surveyors (MFS) — Oblique Triangles chapter",
+      "Interactive Reading: 'Oblique Triangles: Law of Sines and the Ambiguous Case'"
     ],
     focus: [
       "Algebraic manipulations and equation solving",
       "Trigonometric functions and identities",
       "Basic calculus concepts (derivatives, integrals)",
-      "Scientific notation and significant figures"
+      "Scientific notation and significant figures",
+      "Oblique triangles: Law of Sines formula and when to use it",
+      "Oblique triangle ambiguous case — identifying which of the 6 cases applies (no solution / one solution / two solutions)"
     ],
     apply: [
       "SRM Ch. 1 practice problems",
       "Calculator drills for trig functions",
-      "Unit conversion exercises"
+      "Unit conversion exercises",
+      "Solve 3 oblique triangle problems from MFS using Law of Sines",
+      "Classify each triangle case given angle A and sides a, c"
     ],
     reinforce: [
       "Flashcards: Trig identities and formulas",
       "Daily calculator practice (5 min)",
-      "Memorize: Common angle values (30°, 45°, 60°)"
+      "Memorize: Common angle values (30°, 45°, 60°)",
+      "Flashcard: Oblique triangle 6 cases quick-reference",
+      "Flashcard: Law of Sines formula and when to use vs. Law of Cosines"
     ]
   },
   1: {
@@ -160,7 +168,9 @@ export const DOMAIN_CONTENT: Record<DomainNumber, DomainContent> = {
       "ES15 Ch. 9 (Traverse), Ch. 10 (Traverse Computations)",
       "ES15 Ch. 12 (Area), Ch. 26 (Volumes)",
       "ES15 Ch. 24 (Horizontal Curves), Ch. 25 (Vertical Curves)",
-      "SRM Ch. 6 (Traverse), Ch. 8 (Areas/Volumes), Ch. 10 (Curves)"
+      "SRM Ch. 6 (Traverse), Ch. 8 (Areas/Volumes), Ch. 10 (Curves)",
+      "Math for Surveyors (MFS) — Azimuths/Angles/Bearings, Bearing-Bearing, Bearing-Distance, Distance-Distance, Interpolation, Grades & Slopes chapters",
+      "Interactive Readings: 'Finding Angles Between Bearings: Hemisphere Rules', 'Bearing-Bearing Intersection', 'Bearing-Distance Intersection', 'Distance-Distance Intersection', 'Interpolation in Surveying', 'Grades, Slopes & Finding the Grade Intersection (PVI)'"
     ],
     focus: [
       "Latitude and Departure calculations",
@@ -171,21 +181,38 @@ export const DOMAIN_CONTENT: Record<DomainNumber, DomainContent> = {
       "Borrow pit volume calculations",
       "Horizontal curve elements (PC, PT, PI, LC, R, D, T, E, M)",
       "Degree of curve definition (arc vs chord)",
-      "Vertical curve high/low point calculation"
+      "Vertical curve high/low point calculation",
+      "Bearing angle rules — same quadrant (subtract), same hemisphere (add), cross-hemisphere (add then subtract from 180°)",
+      "Bearing-bearing intersection — inverse baseline, angles, Law of Sines, COGO",
+      "Bearing-distance intersection — two possible solutions, Law of Sines procedure",
+      "Distance-distance intersection — Law of Cosines to find angle at A, then COGO",
+      "Linear interpolation formula and surveying applications (contour crossings, trig tables)",
+      "Grade vs slope — conversions, sign convention, grade as tangent of angle",
+      "Locating the PVI (intersection of two grades) using the b₁/b₂ formula"
     ],
     apply: [
       "Complete full traverse adjustment by hand (Compass rule)",
       "Calculate area of a 5-sided polygon using coordinates",
       "Calculate earthwork volume for a 3-station roadway section",
       "Compute all elements for a horizontal curve given Delta and R",
-      "Find station and elevation of a vertical curve high point"
+      "Find station and elevation of a vertical curve high point",
+      "Find the angle between two bearings using all three hemisphere rules",
+      "Solve a bearing-bearing intersection to find a section center",
+      "Solve a bearing-distance intersection and identify which of two solutions is correct",
+      "Use the Law of Cosines to solve a distance-distance intersection",
+      "Interpolate a contour crossing between two ground points",
+      "Compute PVI station and elevation for two intersecting grades"
     ],
     reinforce: [
       "Review: Standard traverse closure ratios (1:5000, etc.)",
       "Memorize: Lat/Dep formulas (Dist*Cos(Az), Dist*Sin(Az))",
       "Flashcards: Prismoidal formula, DMD rules",
       "Memorize: Standard curve formulas for T, L, LC, E, M",
-      "Draw and label a full curve diagram from memory"
+      "Draw and label a full curve diagram from memory",
+      "Flashcard: Bearing angle rules — 3 cases (same quadrant, same hemisphere, cross-hemisphere)",
+      "Flashcard: Intersection type selector — which type to use given what you know",
+      "Flashcard: Interpolation formula y₂ = [(x₂−x₁)/(x₃−x₁)]×(y₃−y₁)+y₁",
+      "Flashcard: Grade formulas (ΔElev/Distance, % = ×100, PVI formula)"
     ]
   },
   6: {

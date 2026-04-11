@@ -831,6 +831,59 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     category: 'definition',
     examTrack: 'fs'
   },
+
+  // ============================================================
+  // Math for Surveyors (MFS) — Coan: Flashcards
+  // ============================================================
+  {
+    domain: 'Math & Basic Science',
+    front: 'Oblique Triangle: Law of Sines',
+    back: 'a / sin A = b / sin B = c / sin C\n\nUse when you know:\n• A side and its opposite angle, plus any other side or angle\n• AAS, ASA, or SSA cases\n\nNOT for SSS or SAS — use Law of Cosines instead\n\nRemember: sides lowercase (a,b,c), opposite angles uppercase (A,B,C)',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Math & Basic Science',
+    front: 'Oblique Triangle Ambiguous Case (Case 6)',
+    back: 'Given: acute angle A, side a, side c\n\nSix cases determined by h = c × sin A:\n• a < h → No solution\n• a = h → One solution (right triangle)\n• h < a < c (A acute) → TWO solutions ← ambiguous case\n• a ≥ c (A acute) → One solution\n• a ≤ c (A obtuse) → No solution\n• a > c (A obtuse) → One solution\n\nIn surveying: field sketch determines which of two solutions is correct',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Bearing Angle Rules (Coan Three Rules)',
+    back: 'Rule 1 — Same quadrant (NE+NE, SE+SE, etc.):\n  Angle = larger − smaller\n\nRule 2 — Same hemisphere, adjacent quadrants:\n  NE+NW or SE+SW: Angle = bearing₁ + bearing₂\n\nRule 3 — Cross-hemisphere (NE+SE or NW+SW):\n  Angle = 180° − (bearing₁ + bearing₂)\n\nShortcut: Convert both to azimuth, subtract;\n  if result > 180°, use 360° − result',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'COGO Intersection Types: What You Know → What You Use',
+    back: 'Bearing + Bearing from 2 known pts:\n  → Law of Sines (angles from bearing rules)\n  → 0 or 1 valid solutions (field picks one)\n\nBearing from 1 pt + Distance from another:\n  → Law of Sines (ambiguous case possible)\n  → 1 or 2 solutions; sketch determines which\n\nDistance from 2 known pts:\n  → Law of Cosines (find angle at A)\n  → 2 solutions; sketch determines which\n\nAll three types: Inverse baseline first, then COGO at the end',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Interpolation Formula',
+    back: 'y₂ = [(x₂ − x₁) / (x₃ − x₁)] × (y₃ − y₁) + y₁\n\nWhere:\n• x₁, y₁ = lower boundary (known)\n• x₃, y₃ = upper boundary (known)\n• x₂ = intermediate argument (given)\n• y₂ = interpolated result (find this)\n\nSurveying uses: trig tables, contour crossings,\nbenchmark elevations, magnetic declination epochs\n\nAssumes constant (linear) rate of change between boundaries',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'Grade vs. Slope: Formulas and Conversions',
+    back: 'Grade = ΔElevation / Horizontal Distance  (ft/ft)\nGrade % = Grade × 100\nΔElev = Grade × Distance\nGrade = tan(vertical angle)\n\nSlope ratio (H:V): slope = 1/grade  (e.g., 25% grade = 4:1 slope)\nGrade from slope: grade = 1/slope ratio × 100%\n\nSign: + = uphill (ascending), − = downhill (descending)',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Survey Computations & Applications',
+    front: 'PVI (Point of Vertical Intersection) Formula',
+    back: 'Step 1: Compute y-intercepts for each grade line\n  b₁ = Elev₁ − (G₁/100) × Sta₁\n  b₂ = Elev₂ − (G₂/100) × Sta₂\n\nStep 2: PVI Station = (b₁ − b₂) / (G₂/100 − G₁/100)\n\nStep 3: PVI Elevation = Elev₁ + (G₁/100) × (PVI Sta − Sta₁)\n\nWhere G = grade in percent (+uphill, −downhill)\nStation in feet (Sta 7+00 = 700 ft)\n\nUse: locating the PVI before designing vertical curves',
+    category: 'formula',
+    examTrack: 'fs'
+  },
 ];
 
 // Combined flashcards for both exams

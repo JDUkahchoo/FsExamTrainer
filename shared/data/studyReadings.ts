@@ -23,6 +23,7 @@ import { STUDY_READINGS_LIDAR } from './studyReadingsLidar';
 import { STUDY_READINGS_LIDAR_GRAPHICS } from './studyReadingsLidarGraphics';
 import { STUDY_READINGS_BASIC_SCIENCES } from './studyReadingsBasicScience';
 import { STUDY_READINGS_BUSINESS_SAFETY } from './studyReadingsBusinessSafety';
+import { STUDY_READINGS_COAN_MATH } from './studyReadingsCoanMath';
 
 const STUDY_READINGS_BASE: ReadingModule[] = [
   {
@@ -737,4 +738,5 @@ export const STUDY_READINGS: ReadingModule[] = [
   ...STUDY_READINGS_LIDAR_GRAPHICS,
   ...STUDY_READINGS_BASIC_SCIENCES,
   ...STUDY_READINGS_BUSINESS_SAFETY,
+  ...STUDY_READINGS_COAN_MATH,
 ];
