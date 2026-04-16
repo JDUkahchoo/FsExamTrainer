@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Dumbbell, BrainCircuit, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame, Trophy } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame, Trophy } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -39,11 +39,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { getDomainConfig } from '@/lib/domains';
 import { STUDY_PLAN, PS_STUDY_PLAN } from '@shared/data/studyPlan';
 import { generateStudyPlan, generateLongTermPlan, getLongTermPhaseInfo } from '@shared/lib/planGenerator';
@@ -1825,75 +1820,3 @@ export default function StudyPlan() {
   );
 }
 
-function ChecklistSection({
-  title,
-  icon: Icon,
-  items,
-  completed,
-  onToggle,
-  prefix,
-  colorClass,
-  action
-}: {
-  title: string;
-  icon: typeof BookOpen;
-  items: string[];
-  completed: Set<string>;
-  onToggle: (index: number) => void;
-  prefix: string;
-  colorClass: string;
-  action?: {
-    label: string;
-    icon: typeof BookOpen;
-    onClick: () => void;
-    testId: string;
-  };
-}) {
-  return (
-    <div className="space-y-3">
-      <div className={`flex items-center justify-between gap-2`}>
-        <div className={`flex items-center gap-2 ${colorClass} font-semibold uppercase text-sm tracking-wider`}>
-          <Icon className="w-4 h-4" />
-          {title}
-        </div>
-        {action && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={action.onClick}
-            className="text-xs gap-1"
-            data-testid={action.testId}
-          >
-            <action.icon className="w-3 h-3" />
-            {action.label}
-          </Button>
-        )}
-      </div>
-      <div className="space-y-2">
-        {items.map((item, index) => {
-          const itemId = `${prefix}-${index}`;
-          const isChecked = completed.has(itemId);
-          return (
-            <div key={itemId} className="flex items-start gap-3 group">
-              <Checkbox
-                id={itemId}
-                checked={isChecked}
-                onCheckedChange={() => onToggle(index)}
-                className="mt-0.5 flex-shrink-0"
-                data-testid={`checkbox-${itemId}`}
-              />
-              <label
-                htmlFor={itemId}
-                className={`text-sm cursor-pointer flex-1 leading-relaxed ${
-                  isChecked ? 'text-muted-foreground line-through' : 'text-foreground'
-                }`}
-              >
-                {item}
-              </label>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
