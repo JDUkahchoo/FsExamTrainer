@@ -82,10 +82,11 @@ export function ReadCheckpoint({
   }, [isLoading, readingProgress]);
 
   const saveProgressMutation = useMutation({
-    mutationFn: async (data: { chapterIndex: number; completed: boolean; confidenceRating?: number; takeawayNote?: string }) => {
+    mutationFn: async (data: { chapterIndex: number; readingId?: string; completed: boolean; confidenceRating?: number; takeawayNote?: string }) => {
       const res = await apiRequest('POST', '/api/reading-progress', {
         week,
         chapterIndex: data.chapterIndex,
+        readingId: data.readingId,
         completed: data.completed,
         confidenceRating: data.confidenceRating,
         takeawayNote: data.takeawayNote,
@@ -105,11 +106,34 @@ export function ReadCheckpoint({
     },
   });
 
-  const getProgress = (index: number) => readingProgress.find(p => p.chapterIndex === index);
-  const isItemDone = (chapterIndex: number) => getProgress(chapterIndex)?.completed ?? false;
+  // For interactive readings, look up by stable readingId first (new records).
+  // Fall back to legacy chapterIndex-based lookup for records saved before readingId was added.
+  // For chapter items, look up by chapterIndex (readingId is null).
+  const getProgressForInteractive = (readingId: string, fallbackChapterIndex: number) => {
+    const byId = readingProgress.find(p => p.readingId === readingId);
+    if (byId) return byId;
+    // Legacy fallback: old records stored only chapterIndex without readingId
+    return readingProgress.find(p => p.chapterIndex === fallbackChapterIndex && !p.readingId);
+  };
+  const getProgressByChapterIndex = (index: number) =>
+    readingProgress.find(p => p.chapterIndex === index && !p.readingId);
 
-  const handleToggle = (chapterIndex: number) => {
-    const current = getProgress(chapterIndex);
+  const isItemDone = (item: { type: string; chapterIndex: number; id?: string }) =>
+    item.type === 'interactive' && item.id
+      ? (getProgressForInteractive(item.id, item.chapterIndex)?.completed ?? false)
+      : (getProgressByChapterIndex(item.chapterIndex)?.completed ?? false);
+
+  const handleInteractiveToggle = (readingId: string, fallbackChapterIndex: number) => {
+    const current = getProgressForInteractive(readingId, fallbackChapterIndex);
+    saveProgressMutation.mutate({
+      chapterIndex: -1,
+      readingId,
+      completed: !(current?.completed ?? false),
+    });
+  };
+
+  const handleChapterToggle = (chapterIndex: number) => {
+    const current = getProgressByChapterIndex(chapterIndex);
     saveProgressMutation.mutate({
       chapterIndex,
       completed: !(current?.completed ?? false),
@@ -120,7 +144,7 @@ export function ReadCheckpoint({
 
   const handleRatingChange = (chapterIndex: number, rating: number) => {
     setLocalRatings(prev => ({ ...prev, [chapterIndex]: rating }));
-    const current = getProgress(chapterIndex);
+    const current = getProgressByChapterIndex(chapterIndex);
     saveProgressMutation.mutate({
       chapterIndex,
       completed: current?.completed || false,
@@ -130,7 +154,7 @@ export function ReadCheckpoint({
   };
 
   const handleNoteSave = (chapterIndex: number) => {
-    const current = getProgress(chapterIndex);
+    const current = getProgressByChapterIndex(chapterIndex);
     saveProgressMutation.mutate({
       chapterIndex,
       completed: current?.completed || false,
@@ -168,9 +192,10 @@ export function ReadCheckpoint({
     interactiveOffset
   );
 
-  // Overall progress: all items (chapters + interactive readings)
+  // Overall progress: count only scheduled items using isItemDone (avoids orphaned legacy rows inflating the count)
   const totalItems = chapters.length + weekReadings.length;
-  const completedItems = readingProgress.filter(p => p.completed).length;
+  const allScheduledItems = daySchedule.flatMap(d => d.items);
+  const completedItems = allScheduledItems.filter(item => isItemDone(item)).length;
   const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
   const ratedProgress = readingProgress.filter(p => p.confidenceRating && p.confidenceRating > 0);
@@ -230,9 +255,9 @@ export function ReadCheckpoint({
       {/* Day-by-day layout */}
       <div className="space-y-3">
         {daySchedule.map(day => {
-          const dayAllDone = day.items.length > 0 && day.items.every(item => isItemDone(item.chapterIndex));
+          const dayAllDone = day.items.length > 0 && day.items.every(item => isItemDone(item));
           const isDayCollapsed = collapsedDays.has(day.dayNumber);
-          const dayDoneCount = day.items.filter(item => isItemDone(item.chapterIndex)).length;
+          const dayDoneCount = day.items.filter(item => isItemDone(item)).length;
 
           return (
             <div
@@ -278,7 +303,7 @@ export function ReadCheckpoint({
                 <div className="px-3 pb-3 space-y-2 border-t border-border/50">
                   <div className="pt-2 space-y-2">
                     {day.items.map(item => {
-                      const itemDone = isItemDone(item.chapterIndex);
+                      const itemDone = isItemDone(item);
 
                       if (item.type === 'interactive') {
                         return (
@@ -290,9 +315,9 @@ export function ReadCheckpoint({
                             <div className="flex items-center gap-2 p-2">
                               <Checkbox
                                 checked={itemDone}
-                                onCheckedChange={() => handleToggle(item.chapterIndex)}
+                                onCheckedChange={() => handleInteractiveToggle(item.id, item.chapterIndex)}
                                 className="shrink-0"
-                                data-testid={`checkbox-interactive-${week}-${item.chapterIndex}`}
+                                data-testid={`checkbox-interactive-${week}-${item.id}`}
                               />
                               <Link
                                 href={`/app/${examTrack}/readings/${item.id}?from=study-plan&week=${week}`}
@@ -319,7 +344,7 @@ export function ReadCheckpoint({
                       // Chapter item
                       const { chapterIndex } = item;
                       const isExpanded = expandedChapter === chapterIndex;
-                      const rating = localRatings[chapterIndex] || getProgress(chapterIndex)?.confidenceRating || 0;
+                      const rating = localRatings[chapterIndex] || getProgressByChapterIndex(chapterIndex)?.confidenceRating || 0;
 
                       return (
                         <Collapsible
@@ -331,7 +356,7 @@ export function ReadCheckpoint({
                             <div className="flex items-start gap-3 p-3">
                               <Checkbox
                                 checked={itemDone}
-                                onCheckedChange={() => handleToggle(chapterIndex)}
+                                onCheckedChange={() => handleChapterToggle(chapterIndex)}
                                 className="mt-0.5"
                                 data-testid={`checkbox-read-${week}-${chapterIndex}`}
                               />

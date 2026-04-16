@@ -321,9 +321,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // This is immutable: once completedAt is set, it stays set forever
       // This prevents XP farming via toggle off/on
       let isFirstCompletion = false;
-      if (data.week && data.chapterIndex !== undefined && data.completed === true) {
+      if (data.week && data.completed === true) {
         const existingProgress = await storage.getReadingProgress(userId, data.week);
-        const existingChapter = existingProgress.find(p => p.chapterIndex === data.chapterIndex);
+        // For interactive readings, match by stable readingId; for chapters, match by chapterIndex
+        const existingChapter = data.readingId
+          ? existingProgress.find(p => p.readingId === data.readingId)
+          : existingProgress.find(p => p.chapterIndex === data.chapterIndex && !p.readingId);
         // Only award XP if completedAt was never set (not just if currently incomplete)
         isFirstCompletion = !existingChapter?.completedAt;
       }
@@ -333,7 +336,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Award XP and quest progress ONLY for FIRST-EVER completions
       // Belt-and-suspenders: XP system also has idempotency via activityKey
       if (isFirstCompletion) {
-        const activityKey = `read:week${data.week}:chapter${data.chapterIndex}`;
+        // Use readingId as the activity key for interactive readings (stable across chapter list changes)
+        const activityKey = data.readingId
+          ? `read:week${data.week}:reading:${data.readingId}`
+          : `read:week${data.week}:chapter${data.chapterIndex}`;
         const xpResult = await storage.awardXp(userId, 25, activityKey);
         
         // Double-check XP was actually awarded (prevents edge cases)

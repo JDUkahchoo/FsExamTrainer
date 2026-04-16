@@ -973,17 +973,26 @@ export class DatabaseStorage implements IStorage {
 
   async upsertReadingProgress(progress: InsertReadingProgress): Promise<ReadingProgress> {
     const trackFilter = progress.examTrack || 'fs';
-    const existing = await db
-      .select()
-      .from(readingProgress)
-      .where(
-        and(
+    // For interactive readings, use readingId as the stable lookup key.
+    // For chapter items, fall back to chapterIndex (existing behaviour).
+    const lookupConditions = progress.readingId
+      ? and(
+          eq(readingProgress.userId, progress.userId),
+          eq(readingProgress.week, progress.week),
+          eq(readingProgress.examTrack, trackFilter),
+          eq(readingProgress.readingId, progress.readingId)
+        )
+      : and(
           eq(readingProgress.userId, progress.userId),
           eq(readingProgress.week, progress.week),
           eq(readingProgress.chapterIndex, progress.chapterIndex),
-          eq(readingProgress.examTrack, trackFilter)
-        )
-      )
+          eq(readingProgress.examTrack, trackFilter),
+          sql`${readingProgress.readingId} IS NULL`
+        );
+    const existing = await db
+      .select()
+      .from(readingProgress)
+      .where(lookupConditions)
       .limit(1);
 
     if (existing.length > 0) {

@@ -719,6 +719,7 @@ export const readingProgress = pgTable("reading_progress", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   week: integer("week").notNull(),
   chapterIndex: integer("chapter_index").notNull(),
+  readingId: varchar("reading_id"), // stable ID for interactive readings (e.g. 'fs-d0-trig'); null for chapter items
   completed: boolean("completed").notNull().default(false),
   confidenceRating: integer("confidence_rating"), // 1-5 scale
   takeawayNote: text("takeaway_note"),
