@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useQuery } from '@tanstack/react-query';
-import { Target, Flame, AlertTriangle, ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Target, Flame, AlertTriangle, ChevronDown, TrendingUp, TrendingDown, Minus, CheckCircle2 } from 'lucide-react';
 import { MicroDrillModal } from './micro-drill-modal';
 import type { QuizResult, Domain, DOMAINS } from '@shared/schema';
 
@@ -18,6 +19,10 @@ interface FocusWeaknessScannerProps {
   domains?: string[];
   colorClass?: string;
   examTrack?: string;
+  checklistItems?: string[];
+  completedSet?: Set<string>;
+  autoSet?: Set<string>;
+  onToggle?: (index: number) => void;
 }
 
 const DOMAIN_COLORS: Record<string, string> = {
@@ -31,7 +36,7 @@ const DOMAIN_COLORS: Record<string, string> = {
   'Applied Mathematics & Statistics': 'bg-indigo-500',
 };
 
-export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary", examTrack = "fs" }: FocusWeaknessScannerProps) {
+export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary", examTrack = "fs", checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle }: FocusWeaknessScannerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showDrillModal, setShowDrillModal] = useState(false);
 
@@ -282,6 +287,41 @@ export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary
                   examTrack={examTrack}
                 />
               </>
+            )}
+
+            {checklistItems.length > 0 && (
+              <div className="pt-3 border-t border-border/50 mt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Focus Tasks</p>
+                  <Badge variant="secondary" className="text-xs">
+                    {checklistItems.filter((_, i) => completedSet.has(`focus-${i}`) || autoSet.has(`focus-${i}`)).length}/{checklistItems.length}
+                  </Badge>
+                </div>
+                <div className="space-y-1.5">
+                  {checklistItems.map((item, i) => {
+                    const key = `focus-${i}`;
+                    const isAuto = autoSet.has(key);
+                    const isDone = completedSet.has(key) || isAuto;
+                    return (
+                      <div key={key} className="flex items-start gap-2">
+                        <Checkbox
+                          checked={isDone}
+                          onCheckedChange={() => onToggle?.(i)}
+                          disabled={isAuto}
+                          className="mt-0.5 shrink-0"
+                          data-testid={`checkbox-focus-pillar-${i}`}
+                        />
+                        <span className={`text-sm leading-snug flex-1 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
+                          {item}
+                        </span>
+                        {isAuto && (
+                          <Badge variant="outline" className="text-xs shrink-0 text-muted-foreground">auto</Badge>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </CardContent>
         </CollapsibleContent>

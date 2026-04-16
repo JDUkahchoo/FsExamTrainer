@@ -10,6 +10,7 @@ import type { RetentionReview } from '@shared/schema';
 import { DOMAINS, XP_AWARDS } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface RetentionStats {
   totalReviews: number;
@@ -24,6 +25,10 @@ interface ReinforceRetentionBoosterProps {
   examTrack?: string;
   studyMode?: string;
   examDate?: string | null;
+  checklistItems?: string[];
+  completedSet?: Set<string>;
+  autoSet?: Set<string>;
+  onToggle?: (index: number) => void;
 }
 
 // Returns the daily review cap based on the user's study mode and exam proximity.
@@ -276,7 +281,7 @@ function markSessionCompletedToday(userId: string | undefined, week: number): vo
   }
 }
 
-export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate }: ReinforceRetentionBoosterProps) {
+export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate, checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -839,6 +844,41 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
                 <p className="text-xs text-muted-foreground">Great job reinforcing your knowledge.</p>
               </div>
             )}
+          </div>
+        )}
+
+        {checklistItems.length > 0 && (
+          <div className="pt-3 border-t border-border/50 mt-2">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reinforce Tasks</p>
+              <Badge variant="secondary" className="text-xs">
+                {checklistItems.filter((_, i) => completedSet.has(`reinforce-${i}`) || autoSet.has(`reinforce-${i}`)).length}/{checklistItems.length}
+              </Badge>
+            </div>
+            <div className="space-y-1.5">
+              {checklistItems.map((item, i) => {
+                const key = `reinforce-${i}`;
+                const isAuto = autoSet.has(key);
+                const isDone = completedSet.has(key) || isAuto;
+                return (
+                  <div key={key} className="flex items-start gap-2">
+                    <Checkbox
+                      checked={isDone}
+                      onCheckedChange={() => onToggle?.(i)}
+                      disabled={isAuto}
+                      className="mt-0.5 shrink-0"
+                      data-testid={`checkbox-reinforce-pillar-${i}`}
+                    />
+                    <span className={`text-sm leading-snug flex-1 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
+                      {item}
+                    </span>
+                    {isAuto && (
+                      <Badge variant="outline" className="text-xs shrink-0 text-muted-foreground">auto</Badge>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </CardContent>

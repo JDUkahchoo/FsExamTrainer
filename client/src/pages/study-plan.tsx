@@ -1215,12 +1215,20 @@ export default function StudyPlan() {
                     domains={plan.domains as string[]}
                     colorClass="text-domain-computations-fg"
                     examTrack={examTrack}
+                    checklistItems={plan.focus}
+                    completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('focus-')))}
+                    autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('focus-')))}
+                    onToggle={(i) => toggleItem(plan.week, `focus-${i}`)}
                   />
                   <ApplyScenarioLab
                     week={plan.week}
                     domains={plan.domains as string[]}
                     colorClass="text-domain-boundary-fg"
                     examTrack={examTrack}
+                    checklistItems={plan.apply}
+                    completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('apply-')))}
+                    autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('apply-')))}
+                    onToggle={(i) => toggleItem(plan.week, `apply-${i}`)}
                   />
                   <ReinforceRetentionBooster
                     week={plan.week}
@@ -1228,6 +1236,10 @@ export default function StudyPlan() {
                     examTrack={examTrack}
                     studyMode={preferences?.studyMode}
                     examDate={preferences?.examDate}
+                    checklistItems={plan.reinforce}
+                    completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
+                    autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
+                    onToggle={(i) => toggleItem(plan.week, `reinforce-${i}`)}
                   />
                   <FlashcardWeekPreview
                     week={plan.week}
@@ -1264,66 +1276,40 @@ export default function StudyPlan() {
                     </div>
                   )}
 
-                  {/* Study Checklist Section - shows items with auto/manual completion */}
+                  {/* Compact week summary bar — replaces old checklist collapsible */}
                   {(() => {
                     const weekKey = `week-${plan.week}`;
-                    const manualItems = completedItems[weekKey] || new Set();
-                    const autoItems = autoCompletedItems[weekKey] || new Set();
+                    const manualItems = completedItems[weekKey] || new Set<string>();
+                    const autoItems = autoCompletedItems[weekKey] || new Set<string>();
                     const mergedItems = new Set([...manualItems, ...autoItems]);
-                    const handleToggle = (prefix: string) => (index: number) => {
-                      toggleItem(plan.week, `${prefix}-${index}`);
-                    };
+                    const interactiveCount = getWeekInteractiveCount(examTrack, plan.week);
+                    const readTotal = plan.read.length + interactiveCount;
+                    const readDone = Math.min([...mergedItems].filter(k => k.startsWith('read-')).length, readTotal);
+                    const focusDone = Math.min([...mergedItems].filter(k => k.startsWith('focus-')).length, plan.focus.length);
+                    const applyDone = Math.min([...mergedItems].filter(k => k.startsWith('apply-')).length, plan.apply.length);
+                    const reinforceDone = Math.min([...mergedItems].filter(k => k.startsWith('reinforce-')).length, plan.reinforce.length);
+                    const totalDone = readDone + focusDone + applyDone + reinforceDone;
+                    const totalItems = readTotal + plan.focus.length + plan.apply.length + plan.reinforce.length;
+                    const pct = totalItems > 0 ? Math.round((totalDone / totalItems) * 100) : 0;
+                    const allDone = totalDone === totalItems && totalItems > 0;
                     return (
-                      <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
-                        <Collapsible>
-                          <CollapsibleTrigger className="w-full flex items-center justify-between p-3 rounded-lg hover-elevate active-elevate-2" data-testid={`button-checklist-${plan.week}`}>
-                            <div className="flex items-center gap-2 text-foreground font-semibold uppercase text-sm tracking-wider">
-                              <CheckCircle2 className="w-4 h-4" />
-                              Study Checklist ({mergedItems.size}/{plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length})
+                      <div className="md:col-span-2 mt-4 pt-4 border-t border-border" data-testid={`summary-bar-week-${plan.week}`}>
+                        <div className="flex items-center gap-3 mb-2">
+                          <CheckCircle2 className={`w-4 h-4 shrink-0 ${allDone ? 'text-green-500' : 'text-muted-foreground'}`} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-sm font-semibold">Week {plan.week} Progress</span>
+                              <span className="text-xs text-muted-foreground" data-testid={`stat-total-${plan.week}`}>{totalDone}/{totalItems} tasks</span>
                             </div>
-                            <ChevronDown className="h-4 w-4" />
-                          </CollapsibleTrigger>
-                          <CollapsibleContent className="mt-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <ChecklistSection
-                                title="Read"
-                                icon={BookOpen}
-                                items={plan.read}
-                                completed={mergedItems}
-                                onToggle={handleToggle('read')}
-                                prefix="read"
-                                colorClass="text-foreground"
-                              />
-                              <ChecklistSection
-                                title="Focus"
-                                icon={Target}
-                                items={plan.focus}
-                                completed={mergedItems}
-                                onToggle={handleToggle('focus')}
-                                prefix="focus"
-                                colorClass="text-domain-computations-fg"
-                              />
-                              <ChecklistSection
-                                title="Apply"
-                                icon={Dumbbell}
-                                items={plan.apply}
-                                completed={mergedItems}
-                                onToggle={handleToggle('apply')}
-                                prefix="apply"
-                                colorClass="text-domain-boundary-fg"
-                              />
-                              <ChecklistSection
-                                title="Reinforce"
-                                icon={BrainCircuit}
-                                items={plan.reinforce}
-                                completed={mergedItems}
-                                onToggle={handleToggle('reinforce')}
-                                prefix="reinforce"
-                                colorClass="text-primary"
-                              />
-                            </div>
-                          </CollapsibleContent>
-                        </Collapsible>
+                            <Progress value={pct} className="h-2" data-testid={`progress-bar-week-${plan.week}`} />
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pl-7">
+                          <span data-testid={`stat-read-${plan.week}`}>📖 Read {readDone}/{readTotal}</span>
+                          {plan.focus.length > 0 && <span data-testid={`stat-focus-${plan.week}`}>🎯 Focus {focusDone}/{plan.focus.length}</span>}
+                          {plan.apply.length > 0 && <span data-testid={`stat-apply-${plan.week}`}>💪 Apply {applyDone}/{plan.apply.length}</span>}
+                          {plan.reinforce.length > 0 && <span data-testid={`stat-reinforce-${plan.week}`}>🧠 Reinforce {reinforceDone}/{plan.reinforce.length}</span>}
+                        </div>
                       </div>
                     );
                   })()}

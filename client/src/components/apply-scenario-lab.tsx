@@ -22,12 +22,17 @@ import { Dumbbell, ChevronDown, Timer, Play, CheckCircle2, Star, Clock, MapPin, 
 import type { ApplyChallengeAttempt } from '@shared/schema';
 import { XP_AWARDS } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface ApplyScenarioLabProps {
   week: number;
   domains?: string[];
   colorClass?: string;
   examTrack?: string;
+  checklistItems?: string[];
+  completedSet?: Set<string>;
+  autoSet?: Set<string>;
+  onToggle?: (index: number) => void;
 }
 
 interface FieldProblem {
@@ -272,7 +277,7 @@ const ALL_PROBLEMS: FieldProblem[] = [
   }
 ];
 
-export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", examTrack = "fs" }: ApplyScenarioLabProps) {
+export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", examTrack = "fs", checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle }: ApplyScenarioLabProps) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -582,6 +587,41 @@ export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", e
                     </div>
                   )}
                 </>
+              )}
+
+              {checklistItems.length > 0 && (
+                <div className="pt-3 border-t border-border/50 mt-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Apply Tasks</p>
+                    <Badge variant="secondary" className="text-xs">
+                      {checklistItems.filter((_, i) => completedSet.has(`apply-${i}`) || autoSet.has(`apply-${i}`)).length}/{checklistItems.length}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1.5">
+                    {checklistItems.map((item, i) => {
+                      const key = `apply-${i}`;
+                      const isAuto = autoSet.has(key);
+                      const isDone = completedSet.has(key) || isAuto;
+                      return (
+                        <div key={key} className="flex items-start gap-2">
+                          <Checkbox
+                            checked={isDone}
+                            onCheckedChange={() => onToggle?.(i)}
+                            disabled={isAuto}
+                            className="mt-0.5 shrink-0"
+                            data-testid={`checkbox-apply-pillar-${i}`}
+                          />
+                          <span className={`text-sm leading-snug flex-1 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
+                            {item}
+                          </span>
+                          {isAuto && (
+                            <Badge variant="outline" className="text-xs shrink-0 text-muted-foreground">auto</Badge>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </CardContent>
           </CollapsibleContent>
