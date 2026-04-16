@@ -230,6 +230,7 @@ export interface IStorage {
   
   // Flashcard Review Sessions methods (timestamped tracking)
   getFlashcardReviewSessions(userId: string, date?: Date): Promise<FlashcardReviewSession[]>;
+  getCompletedFlashcardSessionsByExamTrack(userId: string, examTrack: string): Promise<FlashcardReviewSession[]>;
   getTodayFlashcardSessions(userId: string): Promise<FlashcardReviewSession[]>;
   createFlashcardReviewSession(session: InsertFlashcardReviewSession): Promise<FlashcardReviewSession>;
   completeFlashcardReviewSession(sessionId: string, data: { cardsReviewed: number; avgMasteryRating?: number; domainBreakdown?: Record<string, { reviewed: number; avgRating: number }>; timeSpentSeconds: number }): Promise<FlashcardReviewSession>;
@@ -3626,6 +3627,18 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(flashcardReviewSessions)
       .where(eq(flashcardReviewSessions.userId, userId))
+      .orderBy(desc(flashcardReviewSessions.startedAt));
+  }
+
+  async getCompletedFlashcardSessionsByExamTrack(userId: string, examTrack: string): Promise<FlashcardReviewSession[]> {
+    return await db
+      .select()
+      .from(flashcardReviewSessions)
+      .where(and(
+        eq(flashcardReviewSessions.userId, userId),
+        eq(flashcardReviewSessions.examTrack, examTrack),
+        sql`${flashcardReviewSessions.completedAt} IS NOT NULL`
+      ))
       .orderBy(desc(flashcardReviewSessions.startedAt));
   }
 

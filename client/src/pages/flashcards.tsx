@@ -187,6 +187,7 @@ export default function FlashcardsPage() {
       setCurrentSessionId(null);
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions'] });
       queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions/today'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/flashcards/sessions/completed', examTrack] });
       queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
       queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress/domain-mastery'] });

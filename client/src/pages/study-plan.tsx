@@ -49,7 +49,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
-import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog, ReadingProgress, ApplyChallengeAttempt } from '@shared/schema';
+import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog, ReadingProgress, ApplyChallengeAttempt, FlashcardReviewSession } from '@shared/schema';
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
@@ -175,6 +175,19 @@ export default function StudyPlan() {
       if (!res.ok) throw new Error("Failed to fetch apply attempts");
       return res.json();
     },
+  });
+
+  // Fetch completed flashcard sessions for auto-marking reinforce items
+  // staleTime: 0 / refetchOnMount: 'always' ensures fresh data after returning from the flashcard page
+  const { data: completedFlashcardSessions = [] } = useQuery<FlashcardReviewSession[]>({
+    queryKey: ['/api/flashcards/sessions/completed', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/flashcards/sessions/completed?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch completed flashcard sessions");
+      return res.json();
+    },
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   // Fetch overall progress for the progress indicator
@@ -377,8 +390,34 @@ export default function StudyPlan() {
       }
     });
 
+    // Auto-mark first REINFORCE item when flashcard reviews cover the week's domains.
+    // domainBreakdown can be stored as either a plain count (number) from the flashcard
+    // page, or as { reviewed, avgRating } from other review paths — handle both shapes.
+    const reviewedDomains = new Set<string>();
+    completedFlashcardSessions.forEach(session => {
+      if (session.domainBreakdown && typeof session.domainBreakdown === 'object') {
+        const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
+        Object.keys(breakdown).forEach(domain => {
+          const value = breakdown[domain];
+          const count = typeof value === 'number' ? value : (value?.reviewed ?? 0);
+          if (count > 0) {
+            reviewedDomains.add(domain);
+          }
+        });
+      }
+    });
+    baseStudyPlan.forEach(plan => {
+      const weekKey = `week-${plan.week}`;
+      const weekDomains: string[] = plan.domains || [];
+      const hasFlashcardReview = weekDomains.some(d => reviewedDomains.has(d));
+      if (hasFlashcardReview && plan.reinforce.length > 0) {
+        if (!result[weekKey]) result[weekKey] = new Set();
+        result[weekKey].add('reinforce-0');
+      }
+    });
+
     return result;
-  }, [allReadingProgress, allApplyAttempts, baseStudyPlan]);
+  }, [allReadingProgress, allApplyAttempts, baseStudyPlan, completedFlashcardSessions]);
 
   // Mutation to save week progress
   const saveProgressMutation = useMutation({

@@ -1271,6 +1271,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/flashcards/sessions/completed", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      const sessions = await storage.getCompletedFlashcardSessionsByExamTrack(userId, examTrack);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch completed sessions" });
+    }
+  });
+
   app.get("/api/flashcards/sessions/today", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
