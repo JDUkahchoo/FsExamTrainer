@@ -71,6 +71,7 @@ import {
 import { solvedProblemsTopics, type SolvedProblemsTopic } from '@shared/data/solved-problems-reference';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { FileText } from 'lucide-react';
+import { getWeekInteractiveCount } from '@/lib/week-reading-map';
 
 export default function StudyPlan() {
   const [, navigate] = useLocation();
@@ -650,15 +651,20 @@ export default function StudyPlan() {
       else if (item.startsWith('reinforce-')) reinforceDone++;
     });
 
-    // Cap each category to the plan's count to avoid over-counting
+    // Interactive readings for this week are tracked at chapterIndex offsets
+    // (chapters.length + i). Include them in the READ denominator and count.
+    const interactiveCount = getWeekInteractiveCount(examTrack, week);
+    const readTotal = plan.read.length + interactiveCount;
+
+    // Cap each category to its total to avoid over-counting
     const totalCompleted =
-      Math.min(readDone, plan.read.length) +
+      Math.min(readDone, readTotal) +
       Math.min(focusDone, plan.focus.length) +
       Math.min(applyDone, plan.apply.length) +
       Math.min(reinforceDone, plan.reinforce.length);
 
-    // Denominator matches the checklist shown to the user
-    const trackableTotal = plan.read.length + plan.focus.length + plan.apply.length + plan.reinforce.length;
+    // Denominator includes interactive readings in the READ bucket
+    const trackableTotal = readTotal + plan.focus.length + plan.apply.length + plan.reinforce.length;
 
     return trackableTotal > 0 ? Math.round((totalCompleted / trackableTotal) * 100) : 0;
   };
@@ -1202,7 +1208,7 @@ export default function StudyPlan() {
                     colorClass="text-foreground"
                     examTrack={examTrack}
                     examDate={preferences?.examDate}
-                    totalWeeks={baseStudyPlan.length}
+                    totalWeeks={adaptiveMeta.totalWeeks}
                   />
                   <FocusWeaknessScanner
                     week={plan.week}

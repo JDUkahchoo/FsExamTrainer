@@ -65,7 +65,8 @@ export function computeDailySchedule(
 
   if (allItems.length === 0) return [];
 
-  const activeDays = Math.min(daysPerWeek, allItems.length);
+  // Small workloads (1–2 items) stay in a single day regardless of daysPerWeek
+  const activeDays = allItems.length <= 2 ? 1 : Math.min(daysPerWeek, allItems.length);
   const days: DaySchedule[] = [];
   const baseCount = Math.floor(allItems.length / activeDays);
   const extra = allItems.length % activeDays;
