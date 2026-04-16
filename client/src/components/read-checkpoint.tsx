@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BookOpen, ChevronDown, ChevronUp, MessageSquare, Star, Check, Loader2, Zap, ArrowRight, ScrollText, CalendarDays, CheckCircle2 } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, MessageSquare, Star, Check, Loader2, ArrowRight, ScrollText, CalendarDays, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
@@ -62,15 +62,22 @@ interface ReadCheckpointProps {
   colorClass?: string;
   examTrack?: string;
   examDate?: Date | string | null;
+  totalWeeks?: number;
 }
 
-export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground", examTrack = "fs", examDate }: ReadCheckpointProps) {
+export function ReadCheckpoint({
+  week,
+  chapters,
+  colorClass = "text-foreground",
+  examTrack = "fs",
+  examDate,
+  totalWeeks,
+}: ReadCheckpointProps) {
   const [expandedChapter, setExpandedChapter] = useState<number | null>(null);
   const [localNotes, setLocalNotes] = useState<Record<number, string>>({});
   const [localRatings, setLocalRatings] = useState<Record<number, number>>({});
   const [collapsedDays, setCollapsedDays] = useState<Set<number>>(new Set());
   const { toast } = useToast();
-  const lastSyncedWeek = useRef<number | null>(null);
   const hasInitialized = useRef(false);
 
   const { data: readingProgress = [], isLoading } = useQuery<ReadingProgress[]>({
@@ -83,7 +90,6 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
   });
 
   useEffect(() => {
-    lastSyncedWeek.current = null;
     hasInitialized.current = false;
     setLocalNotes({});
     setLocalRatings({});
@@ -92,7 +98,7 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
 
   useEffect(() => {
     if (isLoading || hasInitialized.current) return;
-    if (readingProgress.length === 0 && !isLoading) {
+    if (readingProgress.length === 0) {
       hasInitialized.current = true;
       return;
     }
@@ -126,44 +132,42 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
       if (data.isNewCompletion) {
         queryClient.invalidateQueries({ queryKey: ['/api/xp'] });
         queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
-        toast({
-          title: `+${XP_AWARDS.READ_CHECKPOINT} XP`,
-          description: "Chapter checkpoint completed!"
-        });
+        toast({ title: `+${XP_AWARDS.READ_CHECKPOINT} XP`, description: "Reading completed!" });
       }
     },
   });
 
-  const getChapterProgress = (index: number) => readingProgress.find(p => p.chapterIndex === index);
+  const getProgress = (index: number) => readingProgress.find(p => p.chapterIndex === index);
+  const isItemDone = (chapterIndex: number) => getProgress(chapterIndex)?.completed ?? false;
 
-  const handleToggleComplete = (index: number) => {
-    const current = getChapterProgress(index);
+  const handleToggle = (chapterIndex: number) => {
+    const current = getProgress(chapterIndex);
     saveProgressMutation.mutate({
-      chapterIndex: index,
+      chapterIndex,
       completed: !(current?.completed ?? false),
-      confidenceRating: localRatings[index],
-      takeawayNote: localNotes[index],
+      confidenceRating: localRatings[chapterIndex],
+      takeawayNote: localNotes[chapterIndex],
     });
   };
 
-  const handleRatingChange = (index: number, rating: number) => {
-    setLocalRatings(prev => ({ ...prev, [index]: rating }));
-    const current = getChapterProgress(index);
+  const handleRatingChange = (chapterIndex: number, rating: number) => {
+    setLocalRatings(prev => ({ ...prev, [chapterIndex]: rating }));
+    const current = getProgress(chapterIndex);
     saveProgressMutation.mutate({
-      chapterIndex: index,
+      chapterIndex,
       completed: current?.completed || false,
       confidenceRating: rating,
-      takeawayNote: localNotes[index],
+      takeawayNote: localNotes[chapterIndex],
     });
   };
 
-  const handleNoteSave = (index: number) => {
-    const current = getChapterProgress(index);
+  const handleNoteSave = (chapterIndex: number) => {
+    const current = getProgress(chapterIndex);
     saveProgressMutation.mutate({
-      chapterIndex: index,
+      chapterIndex,
       completed: current?.completed || false,
-      confidenceRating: localRatings[index],
-      takeawayNote: localNotes[index],
+      confidenceRating: localRatings[chapterIndex],
+      takeawayNote: localNotes[chapterIndex],
     });
     toast({ title: "Takeaway saved", description: "Your key insight has been recorded." });
   };
@@ -177,26 +181,34 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
     });
   };
 
-  const completedCount = readingProgress.filter(p => p.completed).length;
-  const progressPercent = chapters.length > 0 ? (completedCount / chapters.length) * 100 : 0;
-  const ratedProgress = readingProgress.filter(p => p.confidenceRating && p.confidenceRating > 0);
-  const avgConfidence = ratedProgress.length > 0
-    ? ratedProgress.reduce((acc, p) => acc + (p.confidenceRating || 0), 0) / ratedProgress.length
-    : 0;
-
-  // Build the daily schedule
+  // Build interactive readings for this week
   const weekToReadingMap = getWeekToReadingIds(examTrack);
   const readingIds = weekToReadingMap[week] || [];
   const weekReadings = readingIds
     .map(id => STUDY_READINGS.find(r => r.id === id))
     .filter(Boolean) as NonNullable<typeof STUDY_READINGS[0]>[];
 
-  const daysPerWeek = computeDaysPerWeek(examDate);
+  // Interactive readings use chapterIndex = chapters.length + their index
+  // This is additive — existing chapter indices (0..chapters.length-1) are unchanged
+  const interactiveOffset = chapters.length;
+
+  const daysPerWeek = computeDaysPerWeek(examDate, week, totalWeeks);
   const daySchedule: DaySchedule[] = computeDailySchedule(
     weekReadings.map(r => ({ id: r.id, title: r.title, estimatedMinutes: r.estimatedMinutes })),
     chapters,
-    daysPerWeek
+    daysPerWeek,
+    interactiveOffset
   );
+
+  // Overall progress: all items (chapters + interactive readings)
+  const totalItems = chapters.length + weekReadings.length;
+  const completedItems = readingProgress.filter(p => p.completed).length;
+  const progressPercent = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+
+  const ratedProgress = readingProgress.filter(p => p.confidenceRating && p.confidenceRating > 0);
+  const avgConfidence = ratedProgress.length > 0
+    ? ratedProgress.reduce((acc, p) => acc + (p.confidenceRating || 0), 0) / ratedProgress.length
+    : 0;
 
   if (isLoading) {
     return (
@@ -221,9 +233,9 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
           READ — Daily Schedule
         </div>
         <div className="flex items-center gap-2">
-          {chapters.length > 0 && (
+          {totalItems > 0 && (
             <Badge variant="secondary" className="text-xs">
-              {completedCount}/{chapters.length} chapters
+              {completedItems}/{totalItems} done
             </Badge>
           )}
           {avgConfidence > 0 && (
@@ -241,9 +253,7 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
         </div>
       </div>
 
-      {chapters.length > 0 && (
-        <Progress value={progressPercent} className="h-1.5" />
-      )}
+      {totalItems > 0 && <Progress value={progressPercent} className="h-1.5" />}
 
       {daySchedule.length === 0 && (
         <p className="text-sm text-muted-foreground italic">No readings scheduled for this week.</p>
@@ -252,41 +262,37 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
       {/* Day-by-day layout */}
       <div className="space-y-3">
         {daySchedule.map(day => {
-          const chapterItemsInDay = day.items.filter(i => i.type === 'chapter');
-          const dayChaptersDone = chapterItemsInDay.every(i => {
-            if (i.type !== 'chapter') return true;
-            return getChapterProgress(i.chapterIndex)?.completed ?? false;
-          });
-          const allDone = chapterItemsInDay.length > 0 && dayChaptersDone;
+          const dayAllDone = day.items.length > 0 && day.items.every(item => isItemDone(item.chapterIndex));
           const isDayCollapsed = collapsedDays.has(day.dayNumber);
+          const dayDoneCount = day.items.filter(item => isItemDone(item.chapterIndex)).length;
 
           return (
             <div
               key={day.dayNumber}
-              className={`rounded-lg border ${allDone ? 'border-primary/30 bg-primary/5' : 'border-border bg-background'}`}
+              className={`rounded-lg border ${dayAllDone ? 'border-primary/30 bg-primary/5' : 'border-border bg-background'}`}
               data-testid={`day-block-week-${week}-day-${day.dayNumber}`}
             >
-              {/* Day header */}
+              {/* Day header — toggle collapse */}
               <button
                 className="w-full flex items-center justify-between px-3 py-2.5 text-left"
                 onClick={() => toggleDayCollapsed(day.dayNumber)}
                 data-testid={`button-toggle-day-${week}-${day.dayNumber}`}
               >
                 <div className="flex items-center gap-2">
-                  {allDone ? (
+                  {dayAllDone ? (
                     <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
                   ) : (
                     <CalendarDays className="w-4 h-4 text-muted-foreground shrink-0" />
                   )}
-                  <span className={`text-sm font-semibold ${allDone ? 'text-primary' : 'text-foreground'}`}>
+                  <span className={`text-sm font-semibold ${dayAllDone ? 'text-primary' : 'text-foreground'}`}>
                     Day {day.dayNumber}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {day.items.length} {day.items.length === 1 ? 'item' : 'items'}
+                    {dayDoneCount}/{day.items.length} {day.items.length === 1 ? 'item' : 'items'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {allDone && (
+                  {dayAllDone && (
                     <Badge variant="secondary" className="text-xs text-primary bg-primary/10">
                       Complete
                     </Badge>
@@ -303,34 +309,49 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
               {!isDayCollapsed && (
                 <div className="px-3 pb-3 space-y-2 border-t border-border/50">
                   <div className="pt-2 space-y-2">
-                    {day.items.map((item, itemIdx) => {
+                    {day.items.map(item => {
+                      const itemDone = isItemDone(item.chapterIndex);
+
                       if (item.type === 'interactive') {
                         return (
-                          <Link
+                          <div
                             key={item.id}
-                            href={`/app/${examTrack}/readings/${item.id}?from=study-plan&week=${week}`}
-                            className="flex items-center gap-2 rounded-md border p-2 text-sm hover-elevate cursor-pointer no-underline text-foreground bg-muted/30"
-                            data-testid={`link-reading-${item.id}`}
+                            className={`rounded-md border ${itemDone ? 'border-primary/20 bg-primary/5' : 'border-border bg-muted/20'}`}
+                            data-testid={`interactive-item-week-${week}-${item.id}`}
                           >
-                            <ScrollText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <div className="truncate font-medium">{item.title}</div>
-                              <div className="text-xs text-muted-foreground">Interactive Reading</div>
+                            <div className="flex items-center gap-2 p-2">
+                              <Checkbox
+                                checked={itemDone}
+                                onCheckedChange={() => handleToggle(item.chapterIndex)}
+                                className="shrink-0"
+                                data-testid={`checkbox-interactive-${week}-${item.chapterIndex}`}
+                              />
+                              <Link
+                                href={`/app/${examTrack}/readings/${item.id}?from=study-plan&week=${week}`}
+                                className="flex items-center gap-2 flex-1 min-w-0 no-underline text-foreground group"
+                                data-testid={`link-reading-${item.id}`}
+                              >
+                                <ScrollText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <div className={`text-sm truncate font-medium group-hover:underline ${itemDone ? 'line-through text-muted-foreground' : ''}`}>
+                                    {item.title}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">Interactive Reading</div>
+                                </div>
+                                <Badge variant="outline" className="text-xs shrink-0">
+                                  ~{item.estimatedMinutes} min
+                                </Badge>
+                                <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                              </Link>
                             </div>
-                            <Badge variant="outline" className="text-xs shrink-0">
-                              ~{item.estimatedMinutes} min
-                            </Badge>
-                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                          </Link>
+                          </div>
                         );
                       }
 
                       // Chapter item
                       const { chapterIndex } = item;
-                      const progress = getChapterProgress(chapterIndex);
                       const isExpanded = expandedChapter === chapterIndex;
-                      const isCompleted = progress?.completed || false;
-                      const rating = localRatings[chapterIndex] || progress?.confidenceRating || 0;
+                      const rating = localRatings[chapterIndex] || getProgress(chapterIndex)?.confidenceRating || 0;
 
                       return (
                         <Collapsible
@@ -338,17 +359,17 @@ export function ReadCheckpoint({ week, chapters, colorClass = "text-foreground",
                           open={isExpanded}
                           onOpenChange={() => setExpandedChapter(isExpanded ? null : chapterIndex)}
                         >
-                          <div className={`rounded-md border ${isCompleted ? 'bg-muted/30 border-primary/20' : 'bg-background'}`}>
+                          <div className={`rounded-md border ${itemDone ? 'bg-muted/30 border-primary/20' : 'bg-background'}`}>
                             <div className="flex items-start gap-3 p-3">
                               <Checkbox
-                                checked={isCompleted}
-                                onCheckedChange={() => handleToggleComplete(chapterIndex)}
+                                checked={itemDone}
+                                onCheckedChange={() => handleToggle(chapterIndex)}
                                 className="mt-0.5"
                                 data-testid={`checkbox-read-${week}-${chapterIndex}`}
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-2">
-                                  <span className={`text-sm ${isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+                                  <span className={`text-sm ${itemDone ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                                     {item.text}
                                   </span>
                                   <CollapsibleTrigger asChild>

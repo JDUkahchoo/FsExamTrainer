@@ -1202,6 +1202,7 @@ export default function StudyPlan() {
                     colorClass="text-foreground"
                     examTrack={examTrack}
                     examDate={preferences?.examDate}
+                    totalWeeks={baseStudyPlan.length}
                   />
                   <FocusWeaknessScanner
                     week={plan.week}
