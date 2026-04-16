@@ -49,7 +49,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
-import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog, ReadingProgress, ApplyChallengeAttempt, FlashcardReviewSession } from '@shared/schema';
+import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog, ReadingProgress, ApplyChallengeAttempt, FlashcardReviewSession, QuizSession } from '@shared/schema';
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
@@ -188,6 +188,17 @@ export default function StudyPlan() {
     },
     staleTime: 0,
     refetchOnMount: 'always',
+  });
+
+  // Fetch all quiz sessions for auto-marking focus items
+  const { data: allQuizSessions = [] } = useQuery<QuizSession[]>({
+    queryKey: ['/api/quiz/sessions', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/quiz/sessions`);
+      if (!res.ok) throw new Error("Failed to fetch quiz sessions");
+      const sessions: QuizSession[] = await res.json();
+      return sessions.filter(s => s.examTrack === examTrack);
+    },
   });
 
   // Fetch overall progress for the progress indicator
@@ -390,6 +401,7 @@ export default function StudyPlan() {
       }
     });
 
+<<<<<<< HEAD
     // Auto-mark first REINFORCE item when flashcard reviews cover the week's domains.
     // domainBreakdown can be stored as either a plain count (number) from the flashcard
     // page, or as { reviewed, avgRating } from other review paths — handle both shapes.
@@ -416,8 +428,24 @@ export default function StudyPlan() {
       }
     });
 
+    // Auto-mark FOCUS items when completed quiz sessions exist for a week's domains
+    baseStudyPlan.forEach(plan => {
+      const weekKey = `week-${plan.week}`;
+      const weekDomains = plan.domains;
+      const hasQuizForWeek = allQuizSessions.some(session =>
+        session.completedAt &&
+        (session.domain === 'all' || weekDomains.includes(session.domain as Domain))
+      );
+      if (hasQuizForWeek) {
+        if (!result[weekKey]) result[weekKey] = new Set();
+        plan.focus.forEach((_, i) => {
+          result[weekKey].add(`focus-${i}`);
+        });
+      }
+    });
+
     return result;
-  }, [allReadingProgress, allApplyAttempts, baseStudyPlan, completedFlashcardSessions]);
+  }, [allReadingProgress, allApplyAttempts, allQuizSessions, baseStudyPlan, completedFlashcardSessions]);
 
   // Mutation to save week progress
   const saveProgressMutation = useMutation({
