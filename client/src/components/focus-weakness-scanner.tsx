@@ -23,6 +23,7 @@ interface FocusWeaknessScannerProps {
   completedSet?: Set<string>;
   autoSet?: Set<string>;
   onToggle?: (index: number) => void;
+  onDrillComplete?: () => void;
 }
 
 const DOMAIN_COLORS: Record<string, string> = {
@@ -36,7 +37,7 @@ const DOMAIN_COLORS: Record<string, string> = {
   'Applied Mathematics & Statistics': 'bg-indigo-500',
 };
 
-export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary", examTrack = "fs", checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle }: FocusWeaknessScannerProps) {
+export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary", examTrack = "fs", checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle, onDrillComplete }: FocusWeaknessScannerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showDrillModal, setShowDrillModal] = useState(false);
 
@@ -285,6 +286,7 @@ export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary
                   onOpenChange={setShowDrillModal}
                   focusDomains={weakestDomains.filter(d => d.accuracy < 70).map(d => d.domain)}
                   examTrack={examTrack}
+                  onComplete={onDrillComplete}
                 />
               </>
             )}

@@ -29,6 +29,7 @@ interface ReinforceRetentionBoosterProps {
   completedSet?: Set<string>;
   autoSet?: Set<string>;
   onToggle?: (index: number) => void;
+  onSessionComplete?: () => void;
 }
 
 // Returns the daily review cap based on the user's study mode and exam proximity.
@@ -281,7 +282,7 @@ function markSessionCompletedToday(userId: string | undefined, week: number): vo
   }
 }
 
-export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate, checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle }: ReinforceRetentionBoosterProps) {
+export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate, checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle, onSessionComplete }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -540,6 +541,7 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
           setSessionActive(false);
           setSessionCompleted(true);
           markSessionCompletedToday(userId, week);
+          onSessionComplete?.();
           setSessionCards([]);
           setReviewedCardIds(new Set());
           setCurrentCardIndex(0);
@@ -576,7 +578,7 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
         setActiveRating(null);
       }
     }
-  }, [sessionCards, currentCardIndex, updateReviewMutation, awardXpMutation, toast, createFreshReviews]);
+  }, [sessionCards, currentCardIndex, updateReviewMutation, awardXpMutation, toast, createFreshReviews, onSessionComplete]);
 
   const getDecayColor = (score: number): string => {
     if (score >= 80) return 'text-green-500';

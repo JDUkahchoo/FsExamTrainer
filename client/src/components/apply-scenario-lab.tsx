@@ -33,6 +33,7 @@ interface ApplyScenarioLabProps {
   completedSet?: Set<string>;
   autoSet?: Set<string>;
   onToggle?: (index: number) => void;
+  onChallengeComplete?: () => void;
 }
 
 interface FieldProblem {
@@ -277,7 +278,7 @@ const ALL_PROBLEMS: FieldProblem[] = [
   }
 ];
 
-export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", examTrack = "fs", checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle }: ApplyScenarioLabProps) {
+export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", examTrack = "fs", checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle, onChallengeComplete }: ApplyScenarioLabProps) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -431,6 +432,8 @@ export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", e
             }
           }
         });
+
+        onChallengeComplete?.();
       } catch (error) {
         console.error('Failed to update attempt:', error);
       }
@@ -442,7 +445,7 @@ export function ApplyScenarioLab({ week, domains, colorClass = "text-primary", e
       setSelfGrade([]);
       setStartTime(null);
     }
-  }, [activeChallenge, activeAttemptId, startTime, selfGrade, userAnswer, updateAttemptMutation, questProgressMutation, awardXpMutation, toast, examTrack]);
+  }, [activeChallenge, activeAttemptId, startTime, selfGrade, userAnswer, updateAttemptMutation, questProgressMutation, awardXpMutation, toast, examTrack, onChallengeComplete]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

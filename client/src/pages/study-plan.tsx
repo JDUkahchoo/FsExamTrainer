@@ -1214,6 +1214,15 @@ export default function StudyPlan() {
                     completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('focus-')))}
                     autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('focus-')))}
                     onToggle={(i) => toggleItem(plan.week, `focus-${i}`)}
+                    onDrillComplete={() => {
+                      const weekKey = `week-${plan.week}`;
+                      const manual = completedItems[weekKey] || new Set<string>();
+                      const auto = autoCompletedItems[weekKey] || new Set<string>();
+                      for (let i = 0; i < plan.focus.length; i++) {
+                        const key = `focus-${i}`;
+                        if (!manual.has(key) && !auto.has(key)) { toggleItem(plan.week, key); break; }
+                      }
+                    }}
                   />
                   <ApplyScenarioLab
                     week={plan.week}
@@ -1224,6 +1233,15 @@ export default function StudyPlan() {
                     completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('apply-')))}
                     autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('apply-')))}
                     onToggle={(i) => toggleItem(plan.week, `apply-${i}`)}
+                    onChallengeComplete={() => {
+                      const weekKey = `week-${plan.week}`;
+                      const manual = completedItems[weekKey] || new Set<string>();
+                      const auto = autoCompletedItems[weekKey] || new Set<string>();
+                      for (let i = 0; i < plan.apply.length; i++) {
+                        const key = `apply-${i}`;
+                        if (!manual.has(key) && !auto.has(key)) { toggleItem(plan.week, key); break; }
+                      }
+                    }}
                   />
                   <ReinforceRetentionBooster
                     week={plan.week}
@@ -1235,6 +1253,15 @@ export default function StudyPlan() {
                     completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
                     autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
                     onToggle={(i) => toggleItem(plan.week, `reinforce-${i}`)}
+                    onSessionComplete={() => {
+                      const weekKey = `week-${plan.week}`;
+                      const manual = completedItems[weekKey] || new Set<string>();
+                      const auto = autoCompletedItems[weekKey] || new Set<string>();
+                      for (let i = 0; i < plan.reinforce.length; i++) {
+                        const key = `reinforce-${i}`;
+                        if (!manual.has(key) && !auto.has(key)) { toggleItem(plan.week, key); break; }
+                      }
+                    }}
                   />
                   <FlashcardWeekPreview
                     week={plan.week}

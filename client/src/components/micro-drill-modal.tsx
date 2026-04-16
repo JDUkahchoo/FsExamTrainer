@@ -16,6 +16,7 @@ interface MicroDrillModalProps {
   onOpenChange: (open: boolean) => void;
   focusDomains: string[];
   examTrack?: string;
+  onComplete?: () => void;
 }
 
 interface QuizQuestion {
@@ -31,7 +32,7 @@ type DrillState = 'ready' | 'active' | 'completed';
 
 const DRILL_QUESTION_COUNT = 10;
 
-export function MicroDrillModal({ open, onOpenChange, focusDomains, examTrack = 'fs' }: MicroDrillModalProps) {
+export function MicroDrillModal({ open, onOpenChange, focusDomains, examTrack = 'fs', onComplete }: MicroDrillModalProps) {
   const [drillState, setDrillState] = useState<DrillState>('ready');
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -146,6 +147,7 @@ export function MicroDrillModal({ open, onOpenChange, focusDomains, examTrack = 
         examTrack,
         pillar: 'focus',
       });
+      onComplete?.();
     }
   };
 
