@@ -1201,6 +1201,7 @@ export default function StudyPlan() {
                     chapters={plan.read}
                     colorClass="text-foreground"
                     examTrack={examTrack}
+                    examDate={preferences?.examDate}
                   />
                   <FocusWeaknessScanner
                     week={plan.week}

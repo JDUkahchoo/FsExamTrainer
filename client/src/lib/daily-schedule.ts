@@ -1,0 +1,45 @@
+export type ScheduleItem =
+  | { type: 'interactive'; id: string; title: string; estimatedMinutes: number }
+  | { type: 'chapter'; text: string; chapterIndex: number };
+
+export type DaySchedule = {
+  dayNumber: number;
+  items: ScheduleItem[];
+};
+
+export function computeDaysPerWeek(examDate?: Date | string | null): number {
+  if (!examDate) return 5;
+  const now = new Date();
+  const exam = new Date(examDate);
+  const daysRemaining = Math.ceil((exam.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  if (daysRemaining <= 21) return 7;
+  if (daysRemaining <= 56) return 6;
+  return 5;
+}
+
+export function computeDailySchedule(
+  interactiveItems: { id: string; title: string; estimatedMinutes: number }[],
+  chapters: string[],
+  daysPerWeek: number
+): DaySchedule[] {
+  const allItems: ScheduleItem[] = [
+    ...interactiveItems.map(r => ({ type: 'interactive' as const, id: r.id, title: r.title, estimatedMinutes: r.estimatedMinutes })),
+    ...chapters.map((text, i) => ({ type: 'chapter' as const, text, chapterIndex: i })),
+  ];
+
+  if (allItems.length === 0) return [];
+
+  const activeDays = Math.min(daysPerWeek, allItems.length);
+  const days: DaySchedule[] = [];
+  const baseCount = Math.floor(allItems.length / activeDays);
+  const extra = allItems.length % activeDays;
+
+  let idx = 0;
+  for (let d = 0; d < activeDays; d++) {
+    const count = baseCount + (d < extra ? 1 : 0);
+    days.push({ dayNumber: d + 1, items: allItems.slice(idx, idx + count) });
+    idx += count;
+  }
+
+  return days;
+}
