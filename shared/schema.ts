@@ -1021,6 +1021,7 @@ export const userPreferences = pgTable("user_preferences", {
   reminderEmail: text("reminder_email"),
   lastReminderSent: timestamp("last_reminder_sent"),
   weeklyHoursGoal: integer("weekly_hours_goal"),
+  baseDaysPerWeek: integer("base_days_per_week").notNull().default(5),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 

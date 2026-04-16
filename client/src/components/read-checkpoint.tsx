@@ -31,6 +31,7 @@ interface ReadCheckpointProps {
   examTrack?: string;
   examDate?: Date | string | null;
   totalWeeks?: number;
+  baseDaysPerWeek?: number;
 }
 
 export function ReadCheckpoint({
@@ -40,6 +41,7 @@ export function ReadCheckpoint({
   examTrack = "fs",
   examDate,
   totalWeeks,
+  baseDaysPerWeek = 5,
 }: ReadCheckpointProps) {
   const [expandedChapter, setExpandedChapter] = useState<number | null>(null);
   const [localNotes, setLocalNotes] = useState<Record<number, string>>({});
@@ -184,7 +186,7 @@ export function ReadCheckpoint({
   // This is additive — existing chapter indices (0..chapters.length-1) are unchanged
   const interactiveOffset = chapters.length;
 
-  const daysPerWeek = computeDaysPerWeek(examDate, week, totalWeeks);
+  const daysPerWeek = computeDaysPerWeek(examDate, week, totalWeeks, baseDaysPerWeek);
   const daySchedule: DaySchedule[] = computeDailySchedule(
     weekReadings.map(r => ({ id: r.id, title: r.title, estimatedMinutes: r.estimatedMinutes })),
     chapters,
@@ -237,7 +239,7 @@ export function ReadCheckpoint({
               {avgConfidence.toFixed(1)} avg
             </Badge>
           )}
-          {daysPerWeek !== 5 && (
+          {daysPerWeek !== baseDaysPerWeek && (
             <Badge variant="outline" className="text-xs flex items-center gap-1">
               <CalendarDays className="w-3 h-3" />
               {daysPerWeek}-day week

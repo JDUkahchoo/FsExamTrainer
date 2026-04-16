@@ -401,7 +401,6 @@ export default function StudyPlan() {
       }
     });
 
-<<<<<<< HEAD
     // Auto-mark first REINFORCE item when flashcard reviews cover the week's domains.
     // domainBreakdown can be stored as either a plain count (number) from the flashcard
     // page, or as { reviewed, avgRating } from other review paths — handle both shapes.
@@ -549,6 +548,16 @@ export default function StudyPlan() {
   const setStudyModeMutation = useMutation({
     mutationFn: async (mode: import('@shared/schema').StudyMode) => {
       return apiRequest('PATCH', '/api/preferences', { studyMode: mode });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+    }
+  });
+
+  // Mutation to save base study days per week
+  const setBaseDaysMutation = useMutation({
+    mutationFn: async (days: number) => {
+      return apiRequest('PATCH', '/api/preferences', { baseDaysPerWeek: days });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
@@ -948,7 +957,7 @@ export default function StudyPlan() {
         </div>
         
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Select value={preferences?.studyMode || 'standard'} onValueChange={(val) => {
               setStudyModeMutation.mutate(val as import('@shared/schema').StudyMode);
             }}>
@@ -963,6 +972,21 @@ export default function StudyPlan() {
                   <SelectItem value="long-term">Long-Term (24-Mo)</SelectItem>
                 )}
                 <SelectItem value="custom">Custom Plan</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={String(preferences?.baseDaysPerWeek ?? 5)}
+              onValueChange={(val) => setBaseDaysMutation.mutate(Number(val))}
+            >
+              <SelectTrigger className="w-44" data-testid="select-base-days-per-week">
+                <SelectValue placeholder="Study days/week" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="3">3 days/week</SelectItem>
+                <SelectItem value="4">4 days/week</SelectItem>
+                <SelectItem value="5">5 days/week</SelectItem>
+                <SelectItem value="6">6 days/week</SelectItem>
+                <SelectItem value="7">7 days/week</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1271,6 +1295,7 @@ export default function StudyPlan() {
                     examTrack={examTrack}
                     examDate={preferences?.examDate}
                     totalWeeks={adaptiveMeta.totalWeeks}
+                    baseDaysPerWeek={preferences?.baseDaysPerWeek ?? 5}
                   />
                   <FocusWeaknessScanner
                     week={plan.week}

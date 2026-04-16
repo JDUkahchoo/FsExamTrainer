@@ -2044,6 +2044,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         reminderEmail: req.body.reminderEmail !== undefined ? req.body.reminderEmail : existing?.reminderEmail,
         lastReminderSent: req.body.lastReminderSent !== undefined ? req.body.lastReminderSent : existing?.lastReminderSent,
         weeklyHoursGoal: req.body.weeklyHoursGoal !== undefined ? req.body.weeklyHoursGoal : existing?.weeklyHoursGoal,
+        baseDaysPerWeek: Math.min(7, Math.max(3, Number(req.body.baseDaysPerWeek ?? existing?.baseDaysPerWeek ?? 5))) || 5,
       };
       
       const data = insertUserPreferencesSchema.parse(merged);

@@ -11,18 +11,22 @@ export type DaySchedule = {
  * Compute the number of active study days per week based on:
  * 1. Plan position (weekNumber relative to totalWeeks) — last weeks are sprint weeks
  * 2. Exam date proximity
- * 3. Default of 5 days
+ * 3. User-configured base (default 5 days)
  */
 export function computeDaysPerWeek(
   examDate?: Date | string | null,
   weekNumber?: number,
-  totalWeeks?: number
+  totalWeeks?: number,
+  baseDays: number = 5
 ): number {
+  // Clamp baseDays defensively to valid range (3–7)
+  const base = Math.min(7, Math.max(3, Math.round(baseDays) || 5));
+
   // Plan-position compression: last 1 week = 7 days, approaching final = 6 days
   if (weekNumber && totalWeeks) {
     const weeksRemaining = totalWeeks - weekNumber;
     if (weeksRemaining <= 0) return 7;
-    if (weeksRemaining <= 2) return 6;
+    if (weeksRemaining <= 2) return Math.max(6, base);
   }
 
   // Exam-date compression
@@ -31,10 +35,10 @@ export function computeDaysPerWeek(
     const exam = new Date(examDate);
     const daysRemaining = Math.ceil((exam.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     if (daysRemaining <= 21) return 7;
-    if (daysRemaining <= 56) return 6;
+    if (daysRemaining <= 56) return Math.max(6, base);
   }
 
-  return 5;
+  return base;
 }
 
 /**
