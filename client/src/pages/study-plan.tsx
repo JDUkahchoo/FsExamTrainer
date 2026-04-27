@@ -401,7 +401,8 @@ export default function StudyPlan() {
       }
     });
 
-    // Auto-mark first REINFORCE item when flashcard reviews cover the week's domains.
+    // Auto-mark REINFORCE items progressively based on how many of the week's domains
+    // have been covered by flashcard reviews.
     // domainBreakdown can be stored as either a plain count (number) from the flashcard
     // page, or as { reviewed, avgRating } from other review paths — handle both shapes.
     const reviewedDomains = new Set<string>();
@@ -420,10 +421,13 @@ export default function StudyPlan() {
     baseStudyPlan.forEach(plan => {
       const weekKey = `week-${plan.week}`;
       const weekDomains: string[] = plan.domains || [];
-      const hasFlashcardReview = weekDomains.some(d => reviewedDomains.has(d));
-      if (hasFlashcardReview && plan.reinforce.length > 0) {
-        if (!result[weekKey]) result[weekKey] = new Set();
-        result[weekKey].add('reinforce-0');
+      if (weekDomains.length === 0 || plan.reinforce.length === 0) return;
+      const coveredCount = weekDomains.filter(d => reviewedDomains.has(d)).length;
+      if (coveredCount === 0) return;
+      if (!result[weekKey]) result[weekKey] = new Set();
+      const itemsToMark = Math.ceil((coveredCount / weekDomains.length) * plan.reinforce.length);
+      for (let i = 0; i < itemsToMark; i++) {
+        result[weekKey].add(`reinforce-${i}`);
       }
     });
 
