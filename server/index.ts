@@ -6,6 +6,7 @@ import { lessons, lessonQuestions } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
 import { count, eq } from "drizzle-orm";
+import { backfillInteractiveReadingIds } from "./migrate-reading-ids";
 
 const app = express();
 
@@ -109,8 +110,11 @@ async function autoSeedIfNeeded() {
   }, () => {
     log(`serving on port ${port}`);
     
-    // Run database seeding in background AFTER server starts listening
+    // Run database seeding and migrations in background AFTER server starts listening
     // This ensures health checks pass immediately
     autoSeedIfNeeded();
+    backfillInteractiveReadingIds().catch(err =>
+      console.error("Reading ID backfill migration failed:", err)
+    );
   });
 })();
