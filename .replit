@@ -6,7 +6,7 @@ channel = "stable-25_05"
 [deployment]
 deploymentTarget = "autoscale"
 build = ["bash", "-c", "npx drizzle-kit push && npm run build"]
-run = ["npm", "run", "start"]
+run = ["bash", "-c", "NODE_ENV=production node dist/index.js"]
 
 [[ports]]
 localPort = 5000
