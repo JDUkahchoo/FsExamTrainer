@@ -10,7 +10,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useQuery } from '@tanstack/react-query';
-import { Target, Flame, AlertTriangle, ChevronDown, TrendingUp, TrendingDown, Minus, CheckCircle2 } from 'lucide-react';
+import { Target, Flame, AlertTriangle, ChevronDown, TrendingUp, TrendingDown, Minus, CheckCircle2, Info } from 'lucide-react';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { MicroDrillModal } from './micro-drill-modal';
 import type { QuizResult, Domain, DOMAINS } from '@shared/schema';
 
@@ -292,38 +293,56 @@ export function FocusWeaknessScanner({ week, domains, colorClass = "text-primary
             )}
 
             {checklistItems.length > 0 && (
-              <div className="pt-3 border-t border-border/50 mt-2">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Focus Tasks</p>
-                  <Badge variant="secondary" className="text-xs">
-                    {checklistItems.filter((_, i) => completedSet.has(`focus-${i}`) || autoSet.has(`focus-${i}`)).length}/{checklistItems.length}
-                  </Badge>
+              <TooltipProvider delayDuration={200}>
+                <div className="pt-3 border-t border-border/50 mt-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Focus Tasks</p>
+                    <Badge variant="secondary" className="text-xs">
+                      {checklistItems.filter((_, i) => completedSet.has(`focus-${i}`) || autoSet.has(`focus-${i}`)).length}/{checklistItems.length}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1.5">
+                    {checklistItems.map((item, i) => {
+                      const key = `focus-${i}`;
+                      const isAuto = autoSet.has(key);
+                      const isDone = completedSet.has(key) || isAuto;
+                      return (
+                        <div key={key} className="flex items-start gap-2">
+                          <Checkbox
+                            checked={isDone}
+                            onCheckedChange={() => onToggle?.(i)}
+                            disabled={isAuto}
+                            className="mt-0.5 shrink-0"
+                            data-testid={`checkbox-focus-pillar-${i}`}
+                          />
+                          <span className={`text-sm leading-snug flex-1 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
+                            {item}
+                          </span>
+                          {isAuto && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span
+                                  tabIndex={0}
+                                  role="img"
+                                  aria-label="Auto-checked: flashcard review detected for this topic"
+                                  className="shrink-0 flex items-center gap-1 text-xs text-muted-foreground cursor-default select-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded"
+                                  data-testid={`auto-indicator-focus-${i}`}
+                                >
+                                  <Info className="h-3.5 w-3.5" />
+                                  <span>auto</span>
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[220px] text-center">
+                                Auto-checked: flashcard review detected for this topic
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  {checklistItems.map((item, i) => {
-                    const key = `focus-${i}`;
-                    const isAuto = autoSet.has(key);
-                    const isDone = completedSet.has(key) || isAuto;
-                    return (
-                      <div key={key} className="flex items-start gap-2">
-                        <Checkbox
-                          checked={isDone}
-                          onCheckedChange={() => onToggle?.(i)}
-                          disabled={isAuto}
-                          className="mt-0.5 shrink-0"
-                          data-testid={`checkbox-focus-pillar-${i}`}
-                        />
-                        <span className={`text-sm leading-snug flex-1 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
-                          {item}
-                        </span>
-                        {isAuto && (
-                          <Badge variant="outline" className="text-xs shrink-0 text-muted-foreground">auto</Badge>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              </TooltipProvider>
             )}
           </CardContent>
         </CollapsibleContent>
