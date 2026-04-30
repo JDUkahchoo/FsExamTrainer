@@ -4,13 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Brain, Timer, RefreshCw, CheckCircle, XCircle, AlertTriangle, Sparkles, Zap, Loader2 } from 'lucide-react';
+import { Brain, Timer, RefreshCw, CheckCircle, XCircle, AlertTriangle, Sparkles, Zap, Loader2, Info } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { RetentionReview } from '@shared/schema';
 import { DOMAINS, XP_AWARDS } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 
 interface RetentionStats {
   totalReviews: number;
@@ -850,38 +851,56 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
         )}
 
         {checklistItems.length > 0 && (
-          <div className="pt-3 border-t border-border/50 mt-2">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reinforce Tasks</p>
-              <Badge variant="secondary" className="text-xs">
-                {checklistItems.filter((_, i) => completedSet.has(`reinforce-${i}`) || autoSet.has(`reinforce-${i}`)).length}/{checklistItems.length}
-              </Badge>
+          <TooltipProvider delayDuration={200}>
+            <div className="pt-3 border-t border-border/50 mt-2">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reinforce Tasks</p>
+                <Badge variant="secondary" className="text-xs">
+                  {checklistItems.filter((_, i) => completedSet.has(`reinforce-${i}`) || autoSet.has(`reinforce-${i}`)).length}/{checklistItems.length}
+                </Badge>
+              </div>
+              <div className="space-y-1.5">
+                {checklistItems.map((item, i) => {
+                  const key = `reinforce-${i}`;
+                  const isAuto = autoSet.has(key);
+                  const isDone = completedSet.has(key) || isAuto;
+                  return (
+                    <div key={key} className="flex items-start gap-2">
+                      <Checkbox
+                        checked={isDone}
+                        onCheckedChange={() => onToggle?.(i)}
+                        disabled={isAuto}
+                        className="mt-0.5 shrink-0"
+                        data-testid={`checkbox-reinforce-pillar-${i}`}
+                      />
+                      <span className={`text-sm leading-snug flex-1 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
+                        {item}
+                      </span>
+                      {isAuto && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span
+                              tabIndex={0}
+                              role="img"
+                              aria-label="Auto-checked: flashcard review detected for this topic"
+                              className="shrink-0 flex items-center gap-1 text-xs text-muted-foreground cursor-default select-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded"
+                              data-testid={`auto-indicator-reinforce-${i}`}
+                            >
+                              <Info className="h-3.5 w-3.5" />
+                              <span>auto</span>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[220px] text-center">
+                            Auto-checked: flashcard review detected for this topic
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="space-y-1.5">
-              {checklistItems.map((item, i) => {
-                const key = `reinforce-${i}`;
-                const isAuto = autoSet.has(key);
-                const isDone = completedSet.has(key) || isAuto;
-                return (
-                  <div key={key} className="flex items-start gap-2">
-                    <Checkbox
-                      checked={isDone}
-                      onCheckedChange={() => onToggle?.(i)}
-                      disabled={isAuto}
-                      className="mt-0.5 shrink-0"
-                      data-testid={`checkbox-reinforce-pillar-${i}`}
-                    />
-                    <span className={`text-sm leading-snug flex-1 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
-                      {item}
-                    </span>
-                    {isAuto && (
-                      <Badge variant="outline" className="text-xs shrink-0 text-muted-foreground">auto</Badge>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          </TooltipProvider>
         )}
       </CardContent>
     </Card>
