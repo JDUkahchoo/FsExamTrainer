@@ -726,7 +726,12 @@ export const readingProgress = pgTable("reading_progress", {
   completedAt: timestamp("completed_at"),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   examTrack: varchar("exam_track").notNull().default('fs'),
-});
+}, (table) => [
+  // Partial unique index: one row per (user, week, track, readingId) for interactive readings
+  uniqueIndex("reading_progress_unique_reading_id_idx")
+    .on(table.userId, table.week, table.examTrack, table.readingId)
+    .where(sql`${table.readingId} IS NOT NULL`),
+]);
 
 export const readingProgressRelations = relations(readingProgress, ({ one }) => ({
   user: one(users, {

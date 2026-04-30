@@ -7,6 +7,7 @@ import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
 import { count, eq } from "drizzle-orm";
 import { backfillInteractiveReadingIds } from "./migrate-reading-ids";
+import { migrateReadingProgressUnique } from "./migrate-reading-progress-unique";
 
 const app = express();
 
@@ -113,8 +114,10 @@ async function autoSeedIfNeeded() {
     // Run database seeding and migrations in background AFTER server starts listening
     // This ensures health checks pass immediately
     autoSeedIfNeeded();
-    backfillInteractiveReadingIds().catch(err =>
-      console.error("Reading ID backfill migration failed:", err)
-    );
+    // Run reading migrations sequentially: backfill legacy rows first so that
+    // the unique-index migration sees clean, already-merged data.
+    backfillInteractiveReadingIds()
+      .then(() => migrateReadingProgressUnique())
+      .catch(err => console.error("Reading progress migration failed:", err));
   });
 })();
