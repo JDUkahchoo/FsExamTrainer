@@ -438,41 +438,41 @@ export default function LessonPage() {
   }
 
   if (showResults) {
+    const correctCount = results.filter((r) => r.isCorrect).length;
     return (
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              {submitMutation.data?.passed ? (
-                <>
-                  <Trophy className="h-6 w-6 text-yellow-500" />
-                  Lesson Complete!
-                </>
-              ) : (
-                <>
-                  <XCircle className="h-6 w-6 text-destructive" />
-                  Keep Practicing
-                </>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-2xl font-bold">{submitMutation.data?.percentage}%</p>
-                <p className="text-sm text-muted-foreground">Score</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold">
-                  {submitMutation.data?.score}/{submitMutation.data?.totalPoints}
-                </p>
-                <p className="text-sm text-muted-foreground">Points</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{results.filter((r) => r.isCorrect).length}</p>
-                <p className="text-sm text-muted-foreground">Correct</p>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <CardTitle className="flex items-center gap-2">
+                {submitMutation.data?.passed ? (
+                  <>
+                    <Trophy className="h-6 w-6 text-yellow-500" />
+                    Lesson Complete!
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="h-6 w-6 text-destructive" />
+                    Keep Practicing
+                  </>
+                )}
+              </CardTitle>
+              <div className="flex items-center gap-3 text-sm">
+                <Badge variant="secondary" className="text-base px-3 py-1" data-testid="badge-results-score">
+                  {submitMutation.data?.percentage}% • {correctCount}/{results.length} correct
+                </Badge>
               </div>
             </div>
+            <p className="text-sm text-muted-foreground mt-2" data-testid="text-results-summary">
+              Review every question below — see what you got right and learn from what you missed.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {results.length === 0 && (
+              <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
+                No question results were returned. If this keeps happening, try submitting again.
+              </div>
+            )}
 
             {(() => {
               const formatAnswer = (answer: any, questionType?: string, options?: any) => {
