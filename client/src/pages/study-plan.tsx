@@ -451,6 +451,30 @@ export default function StudyPlan() {
     return result;
   }, [allReadingProgress, allApplyAttempts, allQuizSessions, baseStudyPlan, completedFlashcardSessions]);
 
+  // Per-week flashcard domain coverage: { covered, total } for each week
+  const flashcardCoverageByWeek = useMemo(() => {
+    const reviewedDomains = new Set<string>();
+    completedFlashcardSessions.forEach(session => {
+      if (session.domainBreakdown && typeof session.domainBreakdown === 'object') {
+        const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
+        Object.keys(breakdown).forEach(domain => {
+          const value = breakdown[domain];
+          const count = typeof value === 'number' ? value : (value?.reviewed ?? 0);
+          if (count > 0) reviewedDomains.add(domain);
+        });
+      }
+    });
+    const coverage: Record<string, { covered: number; total: number }> = {};
+    baseStudyPlan.forEach(plan => {
+      const weekDomains: string[] = plan.domains || [];
+      coverage[`week-${plan.week}`] = {
+        covered: weekDomains.filter(d => reviewedDomains.has(d)).length,
+        total: weekDomains.length,
+      };
+    });
+    return coverage;
+  }, [completedFlashcardSessions, baseStudyPlan]);
+
   // Mutation to save week progress
   const saveProgressMutation = useMutation({
     mutationFn: async ({ week, completed }: { week: number; completed: Set<string> }) => {
@@ -1349,6 +1373,8 @@ export default function StudyPlan() {
                     checklistItems={plan.reinforce}
                     completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
                     autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
+                    coveredDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.covered ?? 0}
+                    totalDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.total ?? 0}
                     onToggle={(i) => toggleItem(plan.week, `reinforce-${i}`)}
                     onSessionComplete={() => {
                       const weekKey = `week-${plan.week}`;

@@ -29,6 +29,8 @@ interface ReinforceRetentionBoosterProps {
   checklistItems?: string[];
   completedSet?: Set<string>;
   autoSet?: Set<string>;
+  coveredDomains?: number;
+  totalDomains?: number;
   onToggle?: (index: number) => void;
   onSessionComplete?: () => void;
 }
@@ -283,7 +285,7 @@ function markSessionCompletedToday(userId: string | undefined, week: number): vo
   }
 }
 
-export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate, checklistItems = [], completedSet = new Set(), autoSet = new Set(), onToggle, onSessionComplete }: ReinforceRetentionBoosterProps) {
+export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate, checklistItems = [], completedSet = new Set(), autoSet = new Set(), coveredDomains = 0, totalDomains = 0, onToggle, onSessionComplete }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -855,9 +857,27 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
             <div className="pt-3 border-t border-border/50 mt-2">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Reinforce Tasks</p>
-                <Badge variant="secondary" className="text-xs">
-                  {checklistItems.filter((_, i) => completedSet.has(`reinforce-${i}`) || autoSet.has(`reinforce-${i}`)).length}/{checklistItems.length}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {totalDomains > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 font-medium cursor-default select-none"
+                          data-testid="flashcard-coverage-indicator"
+                        >
+                          <Brain className="h-3 w-3" />
+                          {coveredDomains}/{totalDomains} domains reviewed
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-[220px] text-center">
+                        Flashcard domains reviewed this week. Reviewing more domains auto-checks reinforce tasks.
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  <Badge variant="secondary" className="text-xs">
+                    {checklistItems.filter((_, i) => completedSet.has(`reinforce-${i}`) || autoSet.has(`reinforce-${i}`)).length}/{checklistItems.length}
+                  </Badge>
+                </div>
               </div>
               <div className="space-y-1.5">
                 {checklistItems.map((item, i) => {
