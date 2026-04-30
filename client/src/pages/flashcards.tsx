@@ -35,6 +35,7 @@ export default function FlashcardsPage() {
   const searchString = useSearch();
   const urlParams = new URLSearchParams(searchString);
   const domainsFromUrl = urlParams.get('domains');
+  const weekFromUrl = urlParams.get('week') ? parseInt(urlParams.get('week')!, 10) : undefined;
   const { examTrack, domains: examDomains, examName } = useExamTrack();
   
   const getSavedFlashcardState = () => {
@@ -160,7 +161,8 @@ export default function FlashcardsPage() {
       currentIndex,
       studyMode,
       masteryRatings: sessionStatsRef.current.masteryRatings,
-      startTime: sessionStatsRef.current.startTime
+      startTime: sessionStatsRef.current.startTime,
+      ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
     };
     
     updateStateMutation.mutate({ sessionId: currentSessionId, state });
@@ -179,7 +181,8 @@ export default function FlashcardsPage() {
         cardsReviewed: stats.cardsReviewed,
         avgMasteryRating: avgMastery,
         domainBreakdown: stats.domainsReviewed,
-        timeSpentSeconds: timeSpent
+        timeSpentSeconds: timeSpent,
+        ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
       });
       return await res.json();
     },
@@ -258,7 +261,8 @@ export default function FlashcardsPage() {
             currentIndex,
             studyMode,
             masteryRatings: stats.masteryRatings,
-            startTime: stats.startTime
+            startTime: stats.startTime,
+            ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
           })], { type: 'application/json' });
           
           navigator.sendBeacon(
@@ -273,7 +277,8 @@ export default function FlashcardsPage() {
             cardsReviewed: stats.cardsReviewed,
             avgMasteryRating: avgMastery,
             domainBreakdown: stats.domainsReviewed,
-            timeSpentSeconds: timeSpent
+            timeSpentSeconds: timeSpent,
+            ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
           })], { type: 'application/json' });
           
           navigator.sendBeacon(

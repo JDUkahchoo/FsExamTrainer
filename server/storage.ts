@@ -3671,6 +3671,7 @@ export class DatabaseStorage implements IStorage {
       avgMasteryRating?: number; 
       domainBreakdown?: Record<string, { reviewed: number; avgRating: number }>; 
       timeSpentSeconds: number;
+      weekNumber?: number; // study-plan week this session was explicitly launched for
     }
   ): Promise<FlashcardReviewSession> {
     const [updated] = await db
@@ -3681,7 +3682,9 @@ export class DatabaseStorage implements IStorage {
         domainBreakdown: data.domainBreakdown,
         timeSpentSeconds: data.timeSpentSeconds,
         completedAt: new Date(),
-        userState: null // Clear state on completion
+        // Preserve weekNumber so study-plan auto-check can use it after completion.
+        // All other resume-state fields are discarded.
+        userState: data.weekNumber != null ? { weekNumber: data.weekNumber } : null,
       })
       .where(eq(flashcardReviewSessions.id, sessionId))
       .returning();

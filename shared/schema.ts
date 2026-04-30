@@ -470,6 +470,7 @@ export type FlashcardSessionState = {
   studyMode: FlashcardMode;
   masteryRatings: number[];
   startTime: number;
+  weekNumber?: number; // study-plan week this session was launched from (if known)
 };
 
 export const flashcardReviewSessionsRelations = relations(flashcardReviewSessions, ({ one }) => ({

@@ -1429,14 +1429,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const { sessionId } = req.params;
-      const { cardsReviewed, avgMasteryRating, domainBreakdown, timeSpentSeconds } = req.body;
+      const { cardsReviewed, avgMasteryRating, domainBreakdown, timeSpentSeconds, weekNumber } = req.body;
       
       // Complete the session
       const session = await storage.completeFlashcardReviewSession(sessionId, {
         cardsReviewed,
         avgMasteryRating,
         domainBreakdown,
-        timeSpentSeconds
+        timeSpentSeconds,
+        weekNumber: Number.isInteger(weekNumber) ? weekNumber : undefined,
       });
       
       // Award XP (idempotent per period per day)

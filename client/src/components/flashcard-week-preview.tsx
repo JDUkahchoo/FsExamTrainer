@@ -261,7 +261,7 @@ export function FlashcardWeekPreview({ week, domains, examTrack, allWeeks }: Fla
             {totalCards} cards this week
           </Badge>
         </div>
-        <Link href={`/app/${examTrack}/flashcards?domains=${domainsParam}`}>
+        <Link href={`/app/${examTrack}/flashcards?domains=${domainsParam}&week=${week}`}>
           <Button
             size="sm"
             variant="outline"

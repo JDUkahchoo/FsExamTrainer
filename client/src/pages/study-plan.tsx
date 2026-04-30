@@ -406,24 +406,76 @@ export default function StudyPlan() {
     // have been covered by flashcard reviews.
     // domainBreakdown can be stored as either a plain count (number) from the flashcard
     // page, or as { reviewed, avgRating } from other review paths — handle both shapes.
-    const reviewedDomains = new Set<string>();
+    //
+    // Each session is assigned to exactly ONE week to prevent shared domains (e.g. "Security"
+    // in both Week 2 and Week 5) from accidentally crediting the wrong week:
+    //  1. Explicit: if the session has userState.weekNumber (set when launched via ?week=N),
+    //     that week is used directly.
+    //  2. Fallback: among weeks whose domain set fully contains the session's domains, pick
+    //     the most specific one (fewest extra domains). If two or more weeks tie, the session
+    //     is treated as ambiguous and no week is credited.
+
+    // Step 1: build a map of sessionId → week number.
+    // Priority: use the explicit weekNumber stored in userState (set when the session was
+    // launched from a specific week's reinforce section via ?week=N in the URL).
+    // Fallback: find the most specific week whose domain set is a superset of the session's
+    // reviewed domains (fewest "extra" domains).  If multiple weeks tie on specificity the
+    // assignment is ambiguous, so no credit is given for that session.
+    const sessionToWeek = new Map<string, number>();
     completedFlashcardSessions.forEach(session => {
-      if (session.domainBreakdown && typeof session.domainBreakdown === 'object') {
-        const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
-        Object.keys(breakdown).forEach(domain => {
-          const value = breakdown[domain];
-          const count = typeof value === 'number' ? value : (value?.reviewed ?? 0);
-          if (count > 0) {
-            reviewedDomains.add(domain);
-          }
-        });
+      // Explicit binding takes priority
+      const userState = session.userState as ({ weekNumber?: number } | null);
+      if (userState?.weekNumber != null && Number.isInteger(userState.weekNumber)) {
+        sessionToWeek.set(session.id, userState.weekNumber);
+        return;
       }
+
+      // Domain-based fallback for legacy sessions (no weekNumber in userState)
+      if (!session.domainBreakdown || typeof session.domainBreakdown !== 'object') return;
+      const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
+      const sessionDomains = Object.keys(breakdown).filter(domain => {
+        const value = breakdown[domain];
+        const count = typeof value === 'number' ? value : (value?.reviewed ?? 0);
+        return count > 0;
+      });
+      if (sessionDomains.length === 0) return;
+
+      let bestWeek: number | null = null;
+      let bestExtra = Infinity;
+      let isTied = false;
+      baseStudyPlan.forEach(plan => {
+        const weekDomainSet = new Set(plan.domains || []);
+        if (!sessionDomains.every(d => weekDomainSet.has(d))) return; // session not a subset
+        const extra = weekDomainSet.size - sessionDomains.length; // fewer extra = more specific
+        if (extra < bestExtra) {
+          bestExtra = extra;
+          bestWeek = plan.week;
+          isTied = false;
+        } else if (extra === bestExtra) {
+          isTied = true; // ambiguous: multiple equally specific weeks — don't credit either
+        }
+      });
+      // Only assign if there is a unique best match (no tie)
+      if (bestWeek !== null && !isTied) sessionToWeek.set(session.id, bestWeek);
     });
+
+    // Step 2: for each week, collect reviewed domains from sessions assigned to that week
     baseStudyPlan.forEach(plan => {
       const weekKey = `week-${plan.week}`;
       const weekDomains: string[] = plan.domains || [];
       if (weekDomains.length === 0 || plan.reinforce.length === 0) return;
-      const coveredCount = weekDomains.filter(d => reviewedDomains.has(d)).length;
+      const weekReviewedDomains = new Set<string>();
+      completedFlashcardSessions.forEach(session => {
+        if (sessionToWeek.get(session.id) !== plan.week) return;
+        if (!session.domainBreakdown || typeof session.domainBreakdown !== 'object') return;
+        const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
+        Object.keys(breakdown).forEach(domain => {
+          const value = breakdown[domain];
+          const count = typeof value === 'number' ? value : (value?.reviewed ?? 0);
+          if (count > 0) weekReviewedDomains.add(domain);
+        });
+      });
+      const coveredCount = weekDomains.filter(d => weekReviewedDomains.has(d)).length;
       if (coveredCount === 0) return;
       if (!result[weekKey]) result[weekKey] = new Set();
       const itemsToMark = Math.ceil((coveredCount / weekDomains.length) * plan.reinforce.length);
@@ -451,24 +503,63 @@ export default function StudyPlan() {
     return result;
   }, [allReadingProgress, allApplyAttempts, allQuizSessions, baseStudyPlan, completedFlashcardSessions]);
 
-  // Per-week flashcard domain coverage: { covered, total } for each week
+  // Per-week flashcard domain coverage: { covered, total } for each week.
+  // Uses the same two-tier single-week assignment as autoCompletedItems so that shared
+  // domain names across weeks never inflate multiple weeks simultaneously.
   const flashcardCoverageByWeek = useMemo(() => {
-    const reviewedDomains = new Set<string>();
+    // Step 1: assign each session to exactly one week (explicit weekNumber wins; fallback
+    // to most-specific-superset domain match; ties are treated as ambiguous — no credit)
+    const sessionToWeek = new Map<string, number>();
     completedFlashcardSessions.forEach(session => {
-      if (session.domainBreakdown && typeof session.domainBreakdown === 'object') {
+      const userState = session.userState as ({ weekNumber?: number } | null);
+      if (userState?.weekNumber != null && Number.isInteger(userState.weekNumber)) {
+        sessionToWeek.set(session.id, userState.weekNumber);
+        return;
+      }
+
+      if (!session.domainBreakdown || typeof session.domainBreakdown !== 'object') return;
+      const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
+      const sessionDomains = Object.keys(breakdown).filter(domain => {
+        const value = breakdown[domain];
+        const count = typeof value === 'number' ? value : (value?.reviewed ?? 0);
+        return count > 0;
+      });
+      if (sessionDomains.length === 0) return;
+      let bestWeek: number | null = null;
+      let bestExtra = Infinity;
+      let isTied = false;
+      baseStudyPlan.forEach(plan => {
+        const weekDomainSet = new Set(plan.domains || []);
+        if (!sessionDomains.every(d => weekDomainSet.has(d))) return;
+        const extra = weekDomainSet.size - sessionDomains.length;
+        if (extra < bestExtra) {
+          bestExtra = extra;
+          bestWeek = plan.week;
+          isTied = false;
+        } else if (extra === bestExtra) {
+          isTied = true;
+        }
+      });
+      if (bestWeek !== null && !isTied) sessionToWeek.set(session.id, bestWeek);
+    });
+
+    // Step 2: compute per-week coverage from sessions assigned to that week only
+    const coverage: Record<string, { covered: number; total: number }> = {};
+    baseStudyPlan.forEach(plan => {
+      const weekDomains: string[] = plan.domains || [];
+      const weekReviewedDomains = new Set<string>();
+      completedFlashcardSessions.forEach(session => {
+        if (sessionToWeek.get(session.id) !== plan.week) return;
+        if (!session.domainBreakdown || typeof session.domainBreakdown !== 'object') return;
         const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
         Object.keys(breakdown).forEach(domain => {
           const value = breakdown[domain];
           const count = typeof value === 'number' ? value : (value?.reviewed ?? 0);
-          if (count > 0) reviewedDomains.add(domain);
+          if (count > 0) weekReviewedDomains.add(domain);
         });
-      }
-    });
-    const coverage: Record<string, { covered: number; total: number }> = {};
-    baseStudyPlan.forEach(plan => {
-      const weekDomains: string[] = plan.domains || [];
+      });
       coverage[`week-${plan.week}`] = {
-        covered: weekDomains.filter(d => reviewedDomains.has(d)).length,
+        covered: weekDomains.filter(d => weekReviewedDomains.has(d)).length,
         total: weekDomains.length,
       };
     });
