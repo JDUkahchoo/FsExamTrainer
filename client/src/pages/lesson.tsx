@@ -474,84 +474,136 @@ export default function LessonPage() {
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="font-semibold">Question Review</h3>
-              {results.map((result, index) => {
-                const question = questions[index];
-                
-                // Helper function to format answer based on question type
-                const formatAnswer = (answer: any, questionType: QuestionType, options?: any) => {
-                  try {
-                    // Handle undefined/null answers
-                    if (answer === undefined || answer === null) {
-                      return "No answer provided";
-                    }
-                    
-                    if (questionType === 'multiple_choice') {
-                      // Ensure options is an array (handle if it's a string or undefined)
-                      const optionsArray = Array.isArray(options) 
-                        ? options 
-                        : typeof options === 'string' 
-                          ? JSON.parse(options)
-                          : [];
-                      
-                      if (optionsArray.length > 0) {
-                        const answerIndex = parseInt(String(answer), 10);
-                        if (!isNaN(answerIndex) && answerIndex >= 0 && answerIndex < optionsArray.length) {
-                          return optionsArray[answerIndex];
-                        }
+            {(() => {
+              const formatAnswer = (answer: any, questionType?: string, options?: any) => {
+                try {
+                  if (answer === undefined || answer === null) return "No answer provided";
+                  if (questionType === 'multiple_choice') {
+                    const optionsArray = Array.isArray(options)
+                      ? options
+                      : typeof options === 'string'
+                        ? (() => { try { return JSON.parse(options); } catch { return []; } })()
+                        : [];
+                    if (optionsArray.length > 0) {
+                      const answerIndex = parseInt(String(answer), 10);
+                      if (!isNaN(answerIndex) && answerIndex >= 0 && answerIndex < optionsArray.length) {
+                        return optionsArray[answerIndex];
                       }
-                      return `Option ${answer || 'undefined'}`;
-                    } else if (questionType === 'fill_in_blank') {
-                      return String(answer || 'No answer provided');
-                    } else if (questionType === 'drag_drop') {
-                      return Array.isArray(answer) ? answer.join(', ') : String(answer || 'No answer provided');
                     }
-                    return String(answer || 'No answer provided');
-                  } catch (error) {
-                    console.error('Error formatting answer:', error);
-                    return String(answer || 'No answer provided');
+                    return `Option ${answer}`;
                   }
-                };
+                  if (questionType === 'drag_drop') {
+                    return Array.isArray(answer) ? answer.join(', ') : String(answer);
+                  }
+                  return String(answer);
+                } catch {
+                  return String(answer ?? 'No answer provided');
+                }
+              };
 
-                return (
-                  <Card key={result.questionId} className={result.isCorrect ? "border-green-500" : "border-red-500"}>
-                    <CardContent className="pt-6 space-y-2">
-                      <div className="flex items-start gap-2">
-                        {result.isCorrect ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        ) : (
-                          <XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                        )}
-                        <div className="flex-1">
-                          <p className="font-medium">Question {index + 1}</p>
-                          <p className="text-sm text-muted-foreground mt-1">{question.questionText}</p>
-                          
-                          {!result.isCorrect && (
-                            <div className="mt-2 space-y-1">
-                              <p className="text-sm">
-                                <span className="font-medium">Your answer:</span>{" "}
-                                <span className="text-red-500">{formatAnswer(result.userAnswer, question.questionType, question.options)}</span>
-                              </p>
-                              <p className="text-sm">
-                                <span className="font-medium">Correct answer:</span>{" "}
-                                <span className="text-green-500">{formatAnswer(result.correctAnswer, question.questionType, question.options)}</span>
-                              </p>
-                            </div>
-                          )}
-                          
-                          {result.explanation && (
-                            <p className="text-sm text-muted-foreground mt-2 p-3 bg-muted rounded-md">
-                              {result.explanation}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+              const missedResults = results.filter((r) => !r.isCorrect);
+              const correctResults = results.filter((r) => r.isCorrect);
+
+              const indexById = new Map<string, number>();
+              results.forEach((r, i) => indexById.set(r.questionId, i));
+
+              const getOriginalIndex = (result: QuestionResult) => {
+                const idx = indexById.get(result.questionId);
+                return idx === undefined ? -1 : idx;
+              };
+
+              const getQuestionData = (result: QuestionResult, fallbackIndex: number) => {
+                const fallback = fallbackIndex >= 0 ? questions[fallbackIndex] : undefined;
+                return {
+                  text: result.questionText ?? fallback?.questionText ?? "Question",
+                  type: (result.questionType ?? fallback?.questionType) as string | undefined,
+                  options: result.options ?? fallback?.options,
+                };
+              };
+
+              const formatQuestionLabel = (originalIndex: number) =>
+                originalIndex >= 0 ? `Question ${originalIndex + 1}` : "Question";
+
+              return (
+                <div className="space-y-6">
+                  {missedResults.length > 0 && (
+                    <div className="space-y-3" data-testid="section-missed-questions">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <XCircle className="h-5 w-5 text-red-500" />
+                        Missed Questions ({missedResults.length})
+                      </h3>
+                      {missedResults.map((result) => {
+                        const originalIndex = getOriginalIndex(result);
+                        const q = getQuestionData(result, originalIndex);
+                        return (
+                          <Card key={result.questionId} className="border-red-500">
+                            <CardContent className="pt-6 space-y-2">
+                              <div className="flex items-start gap-2">
+                                <XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                                <div className="flex-1">
+                                  <p className="font-medium">{formatQuestionLabel(originalIndex)}</p>
+                                  <p className="text-sm text-muted-foreground mt-1">{q.text}</p>
+                                  <div className="mt-2 space-y-1">
+                                    <p className="text-sm">
+                                      <span className="font-medium">Your answer:</span>{" "}
+                                      <span className="text-red-500">{formatAnswer(result.userAnswer, q.type, q.options)}</span>
+                                    </p>
+                                    <p className="text-sm">
+                                      <span className="font-medium">Correct answer:</span>{" "}
+                                      <span className="text-green-500">{formatAnswer(result.correctAnswer, q.type, q.options)}</span>
+                                    </p>
+                                  </div>
+                                  {result.explanation && (
+                                    <p className="text-sm text-muted-foreground mt-2 p-3 bg-muted rounded-md">
+                                      {result.explanation}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {correctResults.length > 0 && (
+                    <div className="space-y-3" data-testid="section-correct-questions">
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        Correct ({correctResults.length})
+                      </h3>
+                      {correctResults.map((result) => {
+                        const originalIndex = getOriginalIndex(result);
+                        const q = getQuestionData(result, originalIndex);
+                        return (
+                          <Card key={result.questionId} className="border-green-500">
+                            <CardContent className="pt-6 space-y-2">
+                              <div className="flex items-start gap-2">
+                                <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                                <div className="flex-1">
+                                  <p className="font-medium">{formatQuestionLabel(originalIndex)}</p>
+                                  <p className="text-sm text-muted-foreground mt-1">{q.text}</p>
+                                  <p className="text-sm mt-2">
+                                    <span className="font-medium">Your answer:</span>{" "}
+                                    <span className="text-green-600 dark:text-green-500">{formatAnswer(result.userAnswer, q.type, q.options)}</span>
+                                  </p>
+                                  {result.explanation && (
+                                    <p className="text-sm text-muted-foreground mt-2 p-3 bg-muted rounded-md">
+                                      {result.explanation}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             <div className="flex gap-4">
               {!submitMutation.data?.passed && (
