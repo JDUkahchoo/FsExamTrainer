@@ -2477,11 +2477,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         return {
           questionId: question.id,
+          questionText: question.questionText,
+          questionType: question.questionType,
           userAnswer: userAnswer !== undefined ? userAnswer : null,
           correctAnswer: question.correctAnswer,
           isCorrect,
           explanation: question.explanation,
           points: isCorrect ? question.points : 0,
+          options: question.options,
         };
       });
 
@@ -2512,6 +2515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         attempts,
         timeSpentSeconds: (existingProgress?.timeSpentSeconds || 0) + timeSpentSeconds,
         seenQuestionVariations: seenVariations,
+        questionResults: results as any,
         lastAttemptAt: new Date(),
         completedAt: completed ? new Date() : existingProgress?.completedAt,
       });

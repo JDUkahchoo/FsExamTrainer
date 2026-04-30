@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, Trophy, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, Trophy, BookOpen, History, Eye } from "lucide-react";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { getAllLessonReferences, type BookReference } from "@shared/data/referenceManualMappings";
@@ -45,6 +45,9 @@ interface LessonData {
 
 interface QuestionResult {
   questionId: string;
+  questionText?: string;
+  questionType?: string;
+  options?: any;
   userAnswer: any;
   correctAnswer: any;
   isCorrect: boolean;
@@ -81,7 +84,22 @@ export default function LessonPage() {
   const [submitted, setSubmitted] = useState(false);
   const [results, setResults] = useState<QuestionResult[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [showLastAttempt, setShowLastAttempt] = useState(false);
   const [startTime, setStartTime] = useState(Date.now());
+
+  const { data: allLessonProgress = [] } = useQuery<any[]>({
+    queryKey: ["/api/lessons/progress", examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/lessons/progress?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error("Failed to fetch progress");
+      return res.json();
+    },
+  });
+  const storedProgress = allLessonProgress.find((p: any) => p.lessonId === lessonId);
+  const storedResults = storedProgress?.questionResults as QuestionResult[] | null | undefined;
+  const storedPercentage = storedProgress?.score != null && storedProgress?.totalPoints
+    ? Math.round((storedProgress.score / storedProgress.totalPoints) * 100)
+    : null;
 
   useEffect(() => {
     if (showResults) {
@@ -315,6 +333,110 @@ export default function LessonPage() {
     typeof answers[q.id] === 'number' ? true : answers[q.id] !== ""
   ));
 
+  if (showLastAttempt && storedResults && storedResults.length > 0 && lessonData) {
+    const { lesson } = lessonData;
+    const correctCount = storedResults.filter(r => r.isCorrect).length;
+    const missedResults = storedResults.filter(r => !r.isCorrect);
+    const correctResults = storedResults.filter(r => r.isCorrect);
+
+    const formatStoredAnswer = (answer: any, questionType?: string, options?: any): string => {
+      if (answer === undefined || answer === null) return "No answer provided";
+      if (questionType === 'multiple_choice') {
+        const optionsArray = Array.isArray(options) ? options : (typeof options === 'string' ? (() => { try { return JSON.parse(options); } catch { return []; } })() : []);
+        if (optionsArray.length > 0) {
+          const idx = parseInt(String(answer), 10);
+          if (!isNaN(idx) && idx >= 0 && idx < optionsArray.length) return optionsArray[idx];
+        }
+        return `Option ${answer}`;
+      }
+      if (questionType === 'drag_drop') return Array.isArray(answer) ? answer.join(', ') : String(answer);
+      return String(answer);
+    };
+
+    return (
+      <div className="container max-w-4xl mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <History className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle>Last Attempt Review</CardTitle>
+                <p className="text-sm text-muted-foreground mt-0.5">{lesson.title}</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-3 gap-4 text-center p-4 rounded-lg bg-muted/50">
+              <div>
+                <p className="text-2xl font-bold">{storedPercentage}%</p>
+                <p className="text-sm text-muted-foreground">Score</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{correctCount}</p>
+                <p className="text-sm text-muted-foreground">Correct</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">{missedResults.length}</p>
+                <p className="text-sm text-muted-foreground">Missed</p>
+              </div>
+            </div>
+
+            {missedResults.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
+                  <XCircle className="h-4 w-4" /> Missed Questions ({missedResults.length})
+                </h3>
+                {missedResults.map((result, i) => (
+                  <Card key={result.questionId} className="border-red-200 dark:border-red-800">
+                    <CardContent className="pt-4 space-y-2">
+                      <p className="text-sm font-medium">{result.questionText || `Question ${i + 1}`}</p>
+                      <div className="space-y-1 text-sm">
+                        <p>
+                          <span className="font-medium">Your answer: </span>
+                          <span className="text-red-600 dark:text-red-400">{formatStoredAnswer(result.userAnswer, result.questionType, result.options)}</span>
+                        </p>
+                        <p>
+                          <span className="font-medium">Correct answer: </span>
+                          <span className="text-green-600 dark:text-green-400">{formatStoredAnswer(result.correctAnswer, result.questionType, result.options)}</span>
+                        </p>
+                      </div>
+                      {result.explanation && (
+                        <p className="text-sm text-muted-foreground p-2 bg-muted rounded-md">{result.explanation}</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {correctResults.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="font-semibold text-green-600 dark:text-green-400 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" /> Correct ({correctResults.length})
+                </h3>
+                {correctResults.map((result, i) => (
+                  <div key={result.questionId} className="flex items-start gap-2 text-sm p-3 rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
+                    <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">{result.questionText || `Question ${i + 1}`}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setShowLastAttempt(false)} className="flex-1" data-testid="button-back-from-last-attempt">
+                <ArrowLeft className="h-4 w-4 mr-2" /> Take Lesson
+              </Button>
+              <Button variant="outline" onClick={() => navigate(backPath)} className="flex-1" data-testid="button-back-to-list-from-last-attempt">
+                {backLabel}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (showResults) {
     return (
       <div className="container max-w-4xl mx-auto px-4 py-8">
@@ -490,6 +612,26 @@ export default function LessonPage() {
           </div>
           <Progress value={progress} data-testid="progress-lesson" />
         </div>
+
+        {/* Last Attempt Banner — shows when user has a previous attempt stored */}
+        {storedResults && storedResults.length > 0 && storedPercentage !== null && (
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border border-border bg-muted/40">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <History className="h-4 w-4 shrink-0" />
+              <span>Last attempt: <span className="font-semibold text-foreground">{storedPercentage}%</span> — {storedResults.filter(r => r.isCorrect).length}/{storedResults.length} correct</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowLastAttempt(true)}
+              className="text-xs gap-1 shrink-0"
+              data-testid="button-review-last-attempt"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              Review
+            </Button>
+          </div>
+        )}
 
         {/* Lesson Content Card */}
         <Card>

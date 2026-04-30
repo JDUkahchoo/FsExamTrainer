@@ -1947,6 +1947,7 @@ export class DatabaseStorage implements IStorage {
               attempts: progressData.attempts,
               timeSpentSeconds: progressData.timeSpentSeconds,
               seenQuestionVariations: progressData.seenQuestionVariations,
+              questionResults: progressData.questionResults,
               lastAttemptAt: progressData.lastAttemptAt,
               completedAt: progressData.completedAt,
             })

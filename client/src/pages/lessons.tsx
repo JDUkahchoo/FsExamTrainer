@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { BookOpen, CheckCircle2, ChevronRight, Lock } from 'lucide-react';
+import { BookOpen, CheckCircle2, ChevronRight, XCircle } from 'lucide-react';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { getDomainConfig } from '@/lib/domains';
 
@@ -22,6 +22,9 @@ interface Lesson {
 interface LessonProgress {
   lessonId: string;
   completed: boolean;
+  score?: number;
+  totalPoints?: number;
+  attempts?: number;
 }
 
 export default function LessonsPage() {
@@ -144,41 +147,51 @@ export default function LessonsPage() {
 
               <div className="grid gap-3">
                 {lessons.map((lesson, index) => {
-                  const isCompleted = completedLessonIds.has(lesson.id);
+                  const lessonProg = progress.find(p => p.lessonId === lesson.id);
+                  const isCompleted = lessonProg?.completed ?? false;
+                  const percentage = lessonProg?.score != null && lessonProg?.totalPoints
+                    ? Math.round((lessonProg.score / lessonProg.totalPoints) * 100)
+                    : null;
+                  const isMastered = percentage !== null && percentage >= 90;
+                  const isPassed = percentage !== null && percentage >= 70 && percentage < 90;
+                  const isFailed = lessonProg && !lessonProg.completed && percentage !== null && percentage < 70;
+
+                  let cardClass = 'hover-elevate cursor-pointer transition-all';
+                  if (isMastered) cardClass += ' border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-950/20';
+                  else if (isPassed) cardClass += ' border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/30';
+                  else if (isFailed) cardClass += ' border-red-200 dark:border-red-800 bg-red-50/30 dark:bg-red-950/20';
                   
                   return (
                     <Link key={lesson.id} href={`/app/${examTrack}/lesson/${lesson.id}`}>
-                      <Card 
-                        className={`hover-elevate cursor-pointer transition-all ${
-                          isCompleted ? 'border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/30' : ''
-                        }`}
-                        data-testid={`lesson-card-${lesson.id}`}
-                      >
+                      <Card className={cardClass} data-testid={`lesson-card-${lesson.id}`}>
                         <CardContent className="p-4">
                           <div className="flex items-center gap-4">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                              isCompleted 
-                                ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' 
-                                : 'bg-muted text-muted-foreground'
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium shrink-0 ${
+                              isMastered ? 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300'
+                              : isPassed ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+                              : isFailed ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
+                              : 'bg-muted text-muted-foreground'
                             }`}>
-                              {isCompleted ? (
-                                <CheckCircle2 className="h-4 w-4" />
-                              ) : (
-                                index + 1
-                              )}
+                              {isMastered ? <CheckCircle2 className="h-4 w-4" />
+                              : isPassed ? <CheckCircle2 className="h-4 w-4" />
+                              : isFailed ? <XCircle className="h-4 w-4" />
+                              : index + 1}
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-medium truncate">{lesson.title}</h3>
-                              <div className="flex items-center gap-2 mt-1">
+                              <div className="flex items-center gap-2 mt-1 flex-wrap">
                                 <Badge variant="outline" className="text-xs">
                                   {lesson.difficulty}
                                 </Badge>
-                                <span className="text-xs text-muted-foreground">
-                                  ~{lesson.estimatedMinutes} min
-                                </span>
+                                <span className="text-xs text-muted-foreground">~{lesson.estimatedMinutes} min</span>
+                                {percentage !== null && (
+                                  <span className={`text-xs font-semibold ${isMastered ? 'text-amber-600 dark:text-amber-400' : isPassed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`} data-testid={`score-${lesson.id}`}>
+                                    {percentage}% {isMastered ? '· Mastered' : isPassed ? '· Passed' : '· Retry'}
+                                  </span>
+                                )}
                               </div>
                             </div>
-                            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                            <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
                           </div>
                         </CardContent>
                       </Card>

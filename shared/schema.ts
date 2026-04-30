@@ -1205,6 +1205,7 @@ export const lessonProgress = pgTable("lesson_progress", {
   attempts: integer("attempts").notNull().default(0),
   timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
   seenQuestionVariations: jsonb("seen_question_variations").default(sql`'{}'::jsonb`), // Tracks variation IDs user has seen: { "1": [vid1, vid2], "2": [vid3] }
+  questionResults: jsonb("question_results"), // Stores per-question results from last attempt: [{ questionId, questionText, userAnswer, correctAnswer, isCorrect, explanation }]
   lastAttemptAt: timestamp("last_attempt_at"),
   completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),

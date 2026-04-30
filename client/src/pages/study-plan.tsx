@@ -90,6 +90,7 @@ export default function StudyPlan() {
   const [newDomain, setNewDomain] = useState<Domain | ''>('');
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[] } | null>(null);
+  const [expandedLessonId, setExpandedLessonId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
 
@@ -1435,6 +1436,17 @@ export default function StudyPlan() {
                   {/* Interactive Lessons Section */}
                   {(() => {
                     const currentWeekLessons = weeklyLessonsMap.get(plan.week) || [];
+                    const formatStoredAnswer = (answer: any, questionType?: string, options?: any): string => {
+                      if (answer === undefined || answer === null) return "No answer";
+                      if (questionType === 'multiple_choice') {
+                        const arr = Array.isArray(options) ? options : [];
+                        const idx = parseInt(String(answer), 10);
+                        if (!isNaN(idx) && idx >= 0 && idx < arr.length) return arr[idx];
+                        return `Option ${answer}`;
+                      }
+                      if (questionType === 'drag_drop') return Array.isArray(answer) ? answer.join(', ') : String(answer);
+                      return String(answer);
+                    };
                     return currentWeekLessons.length > 0 && (
                       <div className="md:col-span-2 mt-4 pt-4 border-t border-border">
                         <div className="flex items-center gap-2 text-primary font-semibold uppercase text-sm tracking-wider mb-4">
@@ -1511,6 +1523,41 @@ export default function StudyPlan() {
                                 >
                                   {isMastered ? 'Review Lesson' : isPassed ? 'Improve Score' : isFailed ? 'Retry Lesson' : 'Start Lesson'}
                                 </Button>
+
+                                {hasAttempted && Array.isArray((progress as any)?.questionResults) && (progress as any).questionResults.length > 0 && (
+                                  <>
+                                    <button
+                                      className="w-full flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+                                      onClick={() => setExpandedLessonId(expandedLessonId === lesson.id ? null : lesson.id)}
+                                      data-testid={`button-toggle-breakdown-${lesson.id}`}
+                                    >
+                                      <ChevronDown className={`h-3.5 w-3.5 transition-transform ${expandedLessonId === lesson.id ? 'rotate-180' : ''}`} />
+                                      {expandedLessonId === lesson.id ? 'Hide breakdown' : 'Show last attempt'}
+                                    </button>
+                                    {expandedLessonId === lesson.id && (
+                                      <div className="space-y-1.5 border-t pt-3 mt-1">
+                                        {((progress as any).questionResults as any[]).map((r: any, i: number) => (
+                                          <div key={r.questionId || i} className={`flex items-start gap-2 text-xs p-2 rounded-md ${r.isCorrect ? 'bg-green-50 dark:bg-green-950/20' : 'bg-red-50 dark:bg-red-950/20'}`} data-testid={`breakdown-q-${lesson.id}-${i}`}>
+                                            {r.isCorrect
+                                              ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0 mt-0.5" />
+                                              : <XCircle className="h-3.5 w-3.5 text-red-500 shrink-0 mt-0.5" />
+                                            }
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-muted-foreground leading-snug line-clamp-2">{r.questionText || `Question ${i + 1}`}</p>
+                                              {!r.isCorrect && (
+                                                <p className="mt-0.5 leading-snug">
+                                                  <span className="text-red-600 dark:text-red-400">{formatStoredAnswer(r.userAnswer, r.questionType, r.options)}</span>
+                                                  <span className="text-muted-foreground"> → </span>
+                                                  <span className="text-green-600 dark:text-green-400">{formatStoredAnswer(r.correctAnswer, r.questionType, r.options)}</span>
+                                                </p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </>
+                                )}
                               </div>
                             </Card>
                           );
