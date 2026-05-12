@@ -6,7 +6,7 @@ import { lessons, lessonQuestions } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
 import { count, eq } from "drizzle-orm";
-import { backfillInteractiveReadingIds } from "./migrate-reading-ids";
+import { backfillInteractiveReadingIds, cleanupOrphanedReadingProgress } from "./migrate-reading-ids";
 import { migrateReadingProgressUnique } from "./migrate-reading-progress-unique";
 import { runOnce } from "./migration-log";
 
@@ -119,6 +119,7 @@ async function autoSeedIfNeeded() {
     // the unique-index migration sees clean, already-merged data.
     // Each is wrapped in runOnce() so it only executes once per database.
     runOnce("backfill_interactive_reading_ids", backfillInteractiveReadingIds)
+      .then(() => runOnce("cleanup_orphaned_reading_progress", cleanupOrphanedReadingProgress))
       .then(() => runOnce("reading_progress_unique_index", migrateReadingProgressUnique))
       .catch(err => console.error("Reading progress migration failed:", err));
   });
