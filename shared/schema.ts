@@ -1622,6 +1622,15 @@ export const insertWeekMemoryHealthSchema = createInsertSchema(weekMemoryHealth)
 export type WeekMemoryHealth = typeof weekMemoryHealth.$inferSelect;
 export type InsertWeekMemoryHealth = z.infer<typeof insertWeekMemoryHealthSchema>;
 
+// --- Migration Log (one-time migration tracking) ---
+
+export const migrationLog = pgTable("migration_log", {
+  name: varchar("name").primaryKey(),
+  executedAt: timestamp("executed_at").notNull().defaultNow(),
+});
+
+export type MigrationLogEntry = typeof migrationLog.$inferSelect;
+
 // --- Study Reading Progress Table ---
 
 export const studyReadingProgress = pgTable("study_reading_progress", {
