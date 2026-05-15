@@ -879,6 +879,39 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
                   </Badge>
                 </div>
               </div>
+              {totalDomains > 0 && (() => {
+                const pct = Math.min(100, Math.round((coveredDomains / totalDomains) * 100));
+                const isComplete = coveredDomains >= totalDomains;
+                return (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className="h-1.5 w-full rounded-full bg-violet-100 dark:bg-violet-900/30 overflow-hidden mb-2 cursor-default"
+                        data-testid="flashcard-coverage-progress"
+                        role="progressbar"
+                        aria-valuemin={0}
+                        aria-valuemax={totalDomains}
+                        aria-valuenow={coveredDomains}
+                        aria-label={`${coveredDomains} of ${totalDomains} flashcard domains reviewed`}
+                      >
+                        <div
+                          className={`h-full transition-all duration-500 ease-out ${
+                            isComplete
+                              ? 'bg-green-500 dark:bg-green-400'
+                              : 'bg-violet-500 dark:bg-violet-400'
+                          }`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px] text-center">
+                      {isComplete
+                        ? 'All flashcard domains reviewed for this week!'
+                        : `${coveredDomains} of ${totalDomains} flashcard domains reviewed this week.`}
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })()}
               <div className="space-y-1.5">
                 {checklistItems.map((item, i) => {
                   const key = `reinforce-${i}`;
