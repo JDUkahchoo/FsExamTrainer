@@ -427,6 +427,9 @@ export const flashcardReviewSessions = pgTable("flashcard_review_sessions", {
   completedAt: timestamp("completed_at"),
   // Resume state - stores current position and filters for resuming session
   userState: jsonb("user_state"), // { deck, domains, shuffledIndices, currentIndex, studyMode }
+  // Explicit study-plan week this session was launched for (set when started via ?week=N).
+  // Null for sessions started outside the study plan; legacy rows fall back to userState.weekNumber.
+  weekNumber: integer("week_number"),
 });
 
 // --- Flashcard Review Events (tracks each individual card review) ---

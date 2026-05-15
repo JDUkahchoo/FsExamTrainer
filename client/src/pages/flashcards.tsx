@@ -100,7 +100,10 @@ export default function FlashcardsPage() {
   // Start session mutation - always starts fresh (deck/domain/mode restored from localStorage instead)
   const startSessionMutation = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest('POST', '/api/flashcards/sessions/start', { examTrack });
+      const res = await apiRequest('POST', '/api/flashcards/sessions/start', {
+        examTrack,
+        ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
+      });
       return await res.json() as FlashcardReviewSession;
     },
     onSuccess: (data: FlashcardReviewSession) => {

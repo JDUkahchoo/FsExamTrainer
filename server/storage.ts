@@ -3674,6 +3674,23 @@ export class DatabaseStorage implements IStorage {
       weekNumber?: number; // study-plan week this session was explicitly launched for
     }
   ): Promise<FlashcardReviewSession> {
+    // Look up the existing session so we can treat the start-time `weekNumber` as
+    // immutable: once set (at session start), it must NOT be overwritten by whatever
+    // week the completion call happens to come from. This matters because /start
+    // resumes any existing active session, so the session's week is whichever week
+    // it was originally launched for.
+    const [existing] = await db
+      .select({ weekNumber: flashcardReviewSessions.weekNumber })
+      .from(flashcardReviewSessions)
+      .where(eq(flashcardReviewSessions.id, sessionId));
+    const existingWeek = existing?.weekNumber ?? null;
+    // Only backfill the column when it's currently null AND the caller supplied a
+    // week — never overwrite an existing value.
+    const shouldBackfillWeek = existingWeek == null && data.weekNumber != null;
+    // The effective week for downstream userState mirroring: existing wins, then any
+    // newly-provided value (backfill case).
+    const effectiveWeek = existingWeek ?? (data.weekNumber ?? null);
+
     const [updated] = await db
       .update(flashcardReviewSessions)
       .set({
@@ -3682,9 +3699,10 @@ export class DatabaseStorage implements IStorage {
         domainBreakdown: data.domainBreakdown,
         timeSpentSeconds: data.timeSpentSeconds,
         completedAt: new Date(),
-        // Preserve weekNumber so study-plan auto-check can use it after completion.
-        // All other resume-state fields are discarded.
-        userState: data.weekNumber != null ? { weekNumber: data.weekNumber } : null,
+        ...(shouldBackfillWeek ? { weekNumber: data.weekNumber } : {}),
+        // Mirror the effective week into userState for backwards compatibility with
+        // the legacy fallback reader. All other resume-state fields are discarded.
+        userState: effectiveWeek != null ? { weekNumber: effectiveWeek } : null,
       })
       .where(eq(flashcardReviewSessions.id, sessionId))
       .returning();

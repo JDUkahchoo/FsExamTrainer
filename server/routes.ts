@@ -1318,6 +1318,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const period = getReviewPeriod();
       const examTrack = req.body.examTrack || 'fs';
       const userState = req.body.userState || null;
+      const weekNumber = Number.isInteger(req.body.weekNumber) ? req.body.weekNumber : null;
       
       // Auto-complete any stale sessions first
       await storage.autoCompleteStaleFlashcardSessions(userId, examTrack);
@@ -1337,7 +1338,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cardsReviewed: 0,
         timeSpentSeconds: 0,
         xpAwarded: false,
-        userState
+        userState,
+        weekNumber,
       });
       
       res.json(session);

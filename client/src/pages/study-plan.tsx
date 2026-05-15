@@ -416,21 +416,27 @@ export default function StudyPlan() {
     //     is treated as ambiguous and no week is credited.
 
     // Step 1: build a map of sessionId → week number.
-    // Priority: use the explicit weekNumber stored in userState (set when the session was
-    // launched from a specific week's reinforce section via ?week=N in the URL).
-    // Fallback: find the most specific week whose domain set is a superset of the session's
-    // reviewed domains (fewest "extra" domains).  If multiple weeks tie on specificity the
+    // Priority: use the explicit weekNumber column (set when the session was launched from
+    // a specific week's reinforce section via ?week=N in the URL). Fall back to the same
+    // value stored in userState for older rows that predate the column. If neither is set,
+    // fall back to the most specific week whose domain set is a superset of the session's
+    // reviewed domains (fewest "extra" domains). If multiple weeks tie on specificity the
     // assignment is ambiguous, so no credit is given for that session.
     const sessionToWeek = new Map<string, number>();
     completedFlashcardSessions.forEach(session => {
-      // Explicit binding takes priority
+      // Explicit binding takes priority — column first, then legacy userState
+      const explicitWeek = (session as { weekNumber?: number | null }).weekNumber;
+      if (explicitWeek != null && Number.isInteger(explicitWeek)) {
+        sessionToWeek.set(session.id, explicitWeek);
+        return;
+      }
       const userState = session.userState as ({ weekNumber?: number } | null);
       if (userState?.weekNumber != null && Number.isInteger(userState.weekNumber)) {
         sessionToWeek.set(session.id, userState.weekNumber);
         return;
       }
 
-      // Domain-based fallback for legacy sessions (no weekNumber in userState)
+      // Domain-based fallback for legacy sessions (no explicit weekNumber recorded)
       if (!session.domainBreakdown || typeof session.domainBreakdown !== 'object') return;
       const breakdown = session.domainBreakdown as Record<string, number | { reviewed: number; avgRating: number }>;
       const sessionDomains = Object.keys(breakdown).filter(domain => {
@@ -511,6 +517,11 @@ export default function StudyPlan() {
     // to most-specific-superset domain match; ties are treated as ambiguous — no credit)
     const sessionToWeek = new Map<string, number>();
     completedFlashcardSessions.forEach(session => {
+      const explicitWeek = (session as { weekNumber?: number | null }).weekNumber;
+      if (explicitWeek != null && Number.isInteger(explicitWeek)) {
+        sessionToWeek.set(session.id, explicitWeek);
+        return;
+      }
       const userState = session.userState as ({ weekNumber?: number } | null);
       if (userState?.weekNumber != null && Number.isInteger(userState.weekNumber)) {
         sessionToWeek.set(session.id, userState.weekNumber);
