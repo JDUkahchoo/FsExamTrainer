@@ -732,6 +732,10 @@ export const readingProgress = pgTable("reading_progress", {
   uniqueIndex("reading_progress_unique_reading_id_idx")
     .on(table.userId, table.week, table.examTrack, table.readingId)
     .where(sql`${table.readingId} IS NOT NULL`),
+  // Partial unique index: one row per (user, week, track, chapterIndex) for chapter-based items
+  uniqueIndex("reading_progress_unique_chapter_idx")
+    .on(table.userId, table.week, table.examTrack, table.chapterIndex)
+    .where(sql`${table.readingId} IS NULL`),
 ]);
 
 export const readingProgressRelations = relations(readingProgress, ({ one }) => ({

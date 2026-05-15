@@ -7,7 +7,7 @@ import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
 import { count, eq } from "drizzle-orm";
 import { backfillInteractiveReadingIds, cleanupOrphanedReadingProgress } from "./migrate-reading-ids";
-import { migrateReadingProgressUnique } from "./migrate-reading-progress-unique";
+import { migrateReadingProgressUnique, migrateReadingProgressChapterUnique } from "./migrate-reading-progress-unique";
 import { runOnce } from "./migration-log";
 
 const app = express();
@@ -121,6 +121,7 @@ async function autoSeedIfNeeded() {
     runOnce("backfill_interactive_reading_ids", backfillInteractiveReadingIds)
       .then(() => runOnce("cleanup_orphaned_reading_progress", cleanupOrphanedReadingProgress))
       .then(() => runOnce("reading_progress_unique_index", migrateReadingProgressUnique))
+      .then(() => runOnce("reading_progress_chapter_unique_index", migrateReadingProgressChapterUnique))
       .catch(err => console.error("Reading progress migration failed:", err));
   });
 })();
