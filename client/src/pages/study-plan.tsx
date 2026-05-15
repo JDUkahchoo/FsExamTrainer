@@ -544,7 +544,7 @@ export default function StudyPlan() {
     });
 
     // Step 2: compute per-week coverage from sessions assigned to that week only
-    const coverage: Record<string, { covered: number; total: number }> = {};
+    const coverage: Record<string, { covered: number; total: number; reviewedDomains: string[]; missingDomains: string[] }> = {};
     baseStudyPlan.forEach(plan => {
       const weekDomains: string[] = plan.domains || [];
       const weekReviewedDomains = new Set<string>();
@@ -558,9 +558,13 @@ export default function StudyPlan() {
           if (count > 0) weekReviewedDomains.add(domain);
         });
       });
+      const reviewedDomains = weekDomains.filter(d => weekReviewedDomains.has(d));
+      const missingDomains = weekDomains.filter(d => !weekReviewedDomains.has(d));
       coverage[`week-${plan.week}`] = {
-        covered: weekDomains.filter(d => weekReviewedDomains.has(d)).length,
+        covered: reviewedDomains.length,
         total: weekDomains.length,
+        reviewedDomains,
+        missingDomains,
       };
     });
     return coverage;
@@ -1466,6 +1470,8 @@ export default function StudyPlan() {
                     autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
                     coveredDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.covered ?? 0}
                     totalDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.total ?? 0}
+                    reviewedDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.reviewedDomains ?? []}
+                    missingDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.missingDomains ?? []}
                     onToggle={(i) => toggleItem(plan.week, `reinforce-${i}`)}
                     onSessionComplete={() => {
                       const weekKey = `week-${plan.week}`;

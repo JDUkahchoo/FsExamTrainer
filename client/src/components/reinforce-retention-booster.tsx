@@ -31,6 +31,8 @@ interface ReinforceRetentionBoosterProps {
   autoSet?: Set<string>;
   coveredDomains?: number;
   totalDomains?: number;
+  reviewedDomains?: string[];
+  missingDomains?: string[];
   onToggle?: (index: number) => void;
   onSessionComplete?: () => void;
 }
@@ -285,7 +287,7 @@ function markSessionCompletedToday(userId: string | undefined, week: number): vo
   }
 }
 
-export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate, checklistItems = [], completedSet = new Set(), autoSet = new Set(), coveredDomains = 0, totalDomains = 0, onToggle, onSessionComplete }: ReinforceRetentionBoosterProps) {
+export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs", studyMode, examDate, checklistItems = [], completedSet = new Set(), autoSet = new Set(), coveredDomains = 0, totalDomains = 0, reviewedDomains = [], missingDomains = [], onToggle, onSessionComplete }: ReinforceRetentionBoosterProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -861,16 +863,47 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
                   {totalDomains > 0 && (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span
-                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 font-medium cursor-default select-none"
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 font-medium select-none hover:bg-violet-200 dark:hover:bg-violet-900/60 transition-colors"
                           data-testid="flashcard-coverage-indicator"
+                          aria-label={`${coveredDomains} of ${totalDomains} domains reviewed. Click to see breakdown.`}
                         >
                           <Brain className="h-3 w-3" />
                           {coveredDomains}/{totalDomains} domains reviewed
-                        </span>
+                        </button>
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-[220px] text-center">
-                        Flashcard domains reviewed this week. Reviewing more domains auto-checks reinforce tasks.
+                      <TooltipContent side="top" className="max-w-[260px] p-2.5">
+                        <div className="space-y-1.5" data-testid="flashcard-coverage-breakdown">
+                          <p className="text-xs font-semibold mb-1">Flashcard domain coverage</p>
+                          <ul className="space-y-1">
+                            {reviewedDomains.map((d) => (
+                              <li
+                                key={`reviewed-${d}`}
+                                className="flex items-start gap-1.5 text-xs"
+                                data-testid={`coverage-domain-reviewed-${d}`}
+                              >
+                                <CheckCircle className="h-3 w-3 mt-0.5 shrink-0 text-green-500 dark:text-green-400" />
+                                <span className="leading-snug">{d}</span>
+                              </li>
+                            ))}
+                            {missingDomains.map((d) => (
+                              <li
+                                key={`missing-${d}`}
+                                className="flex items-start gap-1.5 text-xs"
+                                data-testid={`coverage-domain-missing-${d}`}
+                              >
+                                <XCircle className="h-3 w-3 mt-0.5 shrink-0 text-muted-foreground" />
+                                <span className="leading-snug text-muted-foreground">{d}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          {missingDomains.length > 0 && (
+                            <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/50">
+                              Review the missing domains to auto-check reinforce tasks.
+                            </p>
+                          )}
+                        </div>
                       </TooltipContent>
                     </Tooltip>
                   )}
