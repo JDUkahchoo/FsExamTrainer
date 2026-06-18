@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -303,6 +303,28 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
   const [remainingAfterBatch, setRemainingAfterBatch] = useState(0);
 
   const dailyCap = getDailySessionCap(studyMode, examDate, week);
+
+  const prevCoveredRef = useRef<number>(coveredDomains);
+  useEffect(() => {
+    const wasComplete = prevCoveredRef.current >= totalDomains && totalDomains > 0;
+    const isNowComplete = coveredDomains >= totalDomains && totalDomains > 0;
+    const justCompleted = isNowComplete && !wasComplete;
+    prevCoveredRef.current = coveredDomains;
+
+    if (!justCompleted) return;
+
+    const celebrationKey = `fc-coverage-celebrated:${userId ?? 'guest'}:w${week}:${examTrack}`;
+    try {
+      if (localStorage.getItem(celebrationKey)) return;
+      localStorage.setItem(celebrationKey, '1');
+    } catch {
+    }
+
+    toast({
+      title: '🎉 All domains reviewed!',
+      description: `Every flashcard domain for Week ${week} is covered. Keep it up!`,
+    });
+  }, [coveredDomains, totalDomains, week, examTrack, userId, toast]);
 
   const { data: stats, isLoading: statsLoading } = useQuery<RetentionStats>({
     queryKey: ['/api/retention/stats', week, examTrack],
