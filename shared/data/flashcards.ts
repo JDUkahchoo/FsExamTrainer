@@ -885,6 +885,93 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     examTrack: 'fs'
   },
 
+  // ─── Surveying Instrument Types ───
+
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Dumpy Level',
+    back: 'A leveling instrument with a FIXED telescope — the telescope cannot be removed from the level bar.\n\nKey facts:\n• Requires careful manual leveling of the bubble\n• Older design, still used for precise work\n• Must be re-leveled if disturbed\n• Accuracy: ~1–2 mm/km for precise work\n\nDistinguishing fact: "Dumpy" = short, squat telescope fixed to the level bar. If the bubble drifts, all readings are wrong until re-leveled.',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Self-Leveling (Automatic) Level',
+    back: 'A level with a built-in compensator that automatically maintains a horizontal line of sight within a small range (typically ±15\').\n\nKey facts:\n• Operator only does coarse leveling (3-screw footplate)\n• Compensator (pendulum or prism) auto-corrects fine level\n• Most common level in use today\n• Faster setup than dumpy level\n• Fails if tilted beyond compensator range\n\nDistinguishing fact: Shake the instrument slightly — if the rod reading returns to the same value, the compensator is working.',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Dumpy Level vs. Self-Leveling Level',
+    back: 'DUMPY LEVEL:\n• Fixed telescope\n• Manual leveling required (4 or 3 screws)\n• Must re-level if disturbed\n• Older technology\n\nSELF-LEVELING:\n• Compensator automatically maintains level\n• Only coarse leveling needed\n• Faster, less operator skill required\n• Most common today\n\nBoth require a level rod and can achieve similar accuracy — the difference is setup time and skill required.',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Abney Hand Level',
+    back: 'A handheld instrument used to measure approximate elevations and slope angles.\n\nKey facts:\n• No tripod required — held in hand\n• Useful range: up to ~50 ft\n• Accuracy: ±0.5 ft (rough)\n• Has a bubble tube and mirror for reading bubble while sighting\n• Can read percent grade or vertical angle\n\nUse: Quick elevation checks, vegetation height, rough topography\nDo NOT use for: Differential leveling, precise elevation, control surveys',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Clinometer',
+    back: 'A handheld instrument for measuring slope angles (vertical angles), typically graduated in percent grade or degrees.\n\nKey facts:\n• Handheld — no tripod\n• Measures slope of terrain or structures\n• Common types: Suunto, Abney (Abney is both clinometer & hand level)\n• Accuracy: ±0.5° to ±1°\n• Used for: slope correction, tree heights, road grades\n\nDistinguishing fact: A clinometer reads the angle of inclination. An Abney hand level reads elevation differences. Some instruments do both.',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Telescopic Alidade',
+    back: 'A telescope with stadia hairs mounted on a ruler (alidade rule) that slides on a plane table.\n\nKey facts:\n• Used with a plane table for field mapping\n• Measures horizontal and vertical angles\n• Uses stadia method to measure distances (HD = 100 × s)\n• Allows direct plotting of map features in the field\n• Accuracy limited to stadia precision: 1:500 to 1:1,000\n\nDistinguishing fact: Only instrument designed specifically for PLANE TABLE surveying. The alidade sits directly on the map sheet on the table.',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Staff Compass (Brunton Compass)',
+    back: 'A compass mounted on a staff or tripod for magnetic bearing measurements.\n\nKey facts:\n• Measures magnetic bearings\n• Accuracy: approximately ±30 minutes (30\')\n• Has sighting vanes for more precise aiming than pocket compass\n• Can also measure vertical angles\n• Requires declination correction to convert to true north\n\nUse: Reconnaissance surveys, timber cruising, low-precision traverses\nDistinguishing fact: The Brunton pocket transit is the most common staff compass — it is also used as a hand level.',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Hand Compass',
+    back: 'A simple pocket compass used for rough direction finding.\n\nKey facts:\n• Accuracy: approximately ±2°\n• Handheld — no staff or tripod\n• Graduated to 1° or 2° intervals\n• Used for: reconnaissance, rough sketches, orienteering\n• NOT suitable for: any work requiring more than ±2° accuracy\n\nComparison:\n• Hand compass: ±2°\n• Staff compass (Brunton): ±30\'\n• Optical theodolite: ±1"\n• Electronic total station: ±1" or better',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Two-Peg Test: Purpose & What It Detects',
+    back: 'The two-peg test checks whether the line of collimation (line of sight through the telescope) is truly horizontal when the bubble is centered.\n\nError detected: Collimation error — the line of sight is tilted upward or downward even when the bubble reads level.\n\nCaused by: Misalignment of cross-hair with bubble tube axis\n\nEffect: Every reading has a systematic error proportional to distance — the farther the rod, the larger the error.\n\nWhen to perform: Before a precise leveling campaign, when accuracy is questioned, or after the instrument has been dropped or transported roughly.',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Two-Peg Test: Procedure',
+    back: 'Step 1 — MIDPOINT SETUP:\n• Drive pegs A and B about 100–200 ft apart\n• Set up level exactly halfway between them\n• Read rod at A (r₁) and rod at B (r₂)\n• True elevation difference: Δh = r₁ - r₂\n  (errors cancel because distances are equal)\n\nStep 2 — NEAR-PEG SETUP:\n• Move level to within 5–10 ft of peg A\n• Read rod at A: rₐ (nearly error-free, short distance)\n• Calculate correct reading at B: rB_correct = rₐ - Δh\n• Read actual rod at B: rB_actual\n\nStep 3 — EVALUATE:\n• If rB_actual ≈ rB_correct → instrument is OK\n• If they differ → collimation error exists\n• Adjust cross-hair until B reads rB_correct',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Vernier Scale: How It Works',
+    back: 'A vernier scale allows reading fractions of the smallest main scale division.\n\nPrinciple:\n• n vernier divisions = (n-1) main scale divisions\n• Vernier precision = 1/n of main scale division\n\nExample — 1-minute vernier on a transit:\n• Main scale: 1° divisions\n• Vernier: 60 divisions span 59° of main scale\n• Precision: 1/60 of 1° = 1 minute\n\nTo read:\n1. Read whole degrees at vernier index (0 line)\n2. Find which vernier graduation aligns perfectly with any main scale line\n3. That graduation number = the minutes',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Vernier Scale: Reading a 1-Minute Transit Vernier',
+    back: 'Given: Main scale index is between 47° and 48°.\nThe 23rd vernier graduation aligns with a main scale line.\n\nReading = 47°23\'\n\nStep-by-step:\n1. Whole degrees from main scale: 47°\n2. Minutes from vernier: find the vernier line that aligns = 23rd line\n3. Full reading: 47° + 23\' = 47°23\'\n\nCommon mistakes:\n• Reading the wrong side of the vernier (double vernier has two sets — read the side that goes in the direction of increasing angle)\n• Counting from the wrong end\n• Misidentifying the "best" aligning line — it should be the one that clearly straddles both scales without offset',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+
   // ─── FGCS Survey Orders of Accuracy ───
 
   {

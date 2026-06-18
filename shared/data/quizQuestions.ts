@@ -5651,6 +5651,104 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
 
+  // ─── Surveying Instrument Types ───
+
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A field crew needs a quick elevation check across a 40-foot ditch — no tripod, no level rod setup, just a rough reading to decide if a culvert will drain properly. Which instrument is most appropriate?',
+    options: ['Self-leveling level', 'Abney hand level', 'Staff compass', 'Telescopic alidade'],
+    correctAnswer: 1,
+    explanation: 'The Abney hand level is specifically designed for quick, handheld elevation checks at short ranges (up to ~50 ft) without a tripod. Accuracy is ±0.5 ft, which is acceptable for a rough drainage check. A self-leveling level would require a tripod and level rod. A staff compass measures directions, not elevations. A telescopic alidade is for plane table mapping.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A forester needs to measure the slope angle of a hillside to apply a slope correction to a tape measurement. The required accuracy is ±1°. Which handheld instrument is appropriate?',
+    options: ['Dumpy level', 'Clinometer', 'Hand compass', 'Staff compass'],
+    correctAnswer: 1,
+    explanation: 'A clinometer is specifically designed for measuring slope angles (vertical angles), typically to ±0.5° to ±1° accuracy — matching the requirement. A dumpy level requires a tripod and measures elevation differences, not slope angles. A hand compass measures horizontal bearings (accuracy ±2°, which would not give slope). A staff compass also measures bearings.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor is using a plane table to map a topographic survey by sighting a rod and plotting directly on the map sheet in the field. Which instrument is used on the plane table to measure stadia distances and angles?',
+    options: ['Dumpy level', 'Self-leveling level', 'Telescopic alidade', 'Engineer\'s transit'],
+    correctAnswer: 2,
+    explanation: 'The telescopic alidade is the instrument designed specifically for use on a plane table. It has stadia hairs to measure distances (HD = 100 × s) and a vertical arc to measure angles, and it rests directly on the map sheet allowing direct field plotting. The dumpy and self-leveling levels are for differential leveling. A transit is used for traverses, not plane-table work.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A reconnaissance traverse uses a staff compass (Brunton compass) to measure bearing angles. What is the approximate accuracy of bearings measured with a staff compass?',
+    options: ['±2°', '±30 minutes', '±1 minute', '±10 seconds'],
+    correctAnswer: 1,
+    explanation: 'A staff compass (Brunton) has an accuracy of approximately ±30 minutes of arc. This is adequate for reconnaissance traverses and low-precision mapping but not for control surveys. For comparison: a hand compass gives ±2°; an engineer\'s transit reads to 1 minute; a precision theodolite reads to 1 second.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'What is the PRIMARY error that the two-peg test detects in a level?',
+    options: [
+      'Parallax error between the cross-hair and the rod image',
+      'Collimation error — the line of sight is not horizontal when the bubble is centered',
+      'A bubble tube that is too sensitive',
+      'A compensator that oscillates too slowly'
+    ],
+    correctAnswer: 1,
+    explanation: 'The two-peg test detects collimation error: the misalignment between the line of sight through the telescope and the true horizontal plane defined by the bubble. When this error exists, every rod reading is slightly too high or too low, with the error proportional to the distance. The test isolates this by first measuring the true elevation difference (errors cancel at equal distances) and then comparing to a reading where the error is fully present.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In a two-peg test, why is the level set up EXACTLY at the midpoint between pegs A and B for the first reading?',
+    options: [
+      'So the compensator can level both directions equally',
+      'So any collimation error cancels — the error is equal at both rods and drops out of the elevation difference',
+      'To maximize the stadia interval between the two rods',
+      'So the level bubble is easier to center'
+    ],
+    correctAnswer: 1,
+    explanation: 'At the midpoint, the instrument is equidistant from both rods. Any collimation error shifts each rod reading by the same amount (error × distance). When you subtract the two readings (r1 - r2), the equal errors cancel, giving the TRUE elevation difference. This is the key principle of the two-peg test — the midpoint setup eliminates systematic error from the result.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A transit main scale reads 135°. A 1-minute vernier (60 divisions spanning 59° on the main scale) shows that the 42nd vernier graduation aligns with a main scale line. What is the full angle reading?',
+    options: ['135°42\'', '135°18\'', '136°42\'', '135°00\'42"'],
+    correctAnswer: 0,
+    explanation: 'Reading a vernier: (1) main scale gives the whole degrees at the vernier index = 135°. (2) The vernier graduation that aligns with a main scale line gives the minutes = 42. (3) Full reading = 135°42\'. The 1-minute vernier has 60 divisions, each corresponding to 1 minute of arc, so the aligning graduation number directly equals the minutes. The answer 135°18\' would result from misreading the complementary vernier.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Which key feature distinguishes a self-leveling level from a dumpy level?',
+    options: [
+      'The self-leveling level has a fixed telescope; the dumpy does not',
+      'The self-leveling level uses a compensator to automatically maintain a horizontal line of sight after coarse leveling',
+      'The self-leveling level requires 4-screw leveling; the dumpy uses 3-screw leveling',
+      'The self-leveling level cannot be used for differential leveling'
+    ],
+    correctAnswer: 1,
+    explanation: 'The defining feature of a self-leveling level is its internal compensator (a pendulum or prism mechanism) that automatically maintains a horizontal line of sight as long as the instrument is within the compensator\'s operating range (typically ±15\' of tilt). The operator only does coarse leveling with the footscrews. The dumpy level has a FIXED telescope and requires precise manual leveling of the bubble before every reading.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'During a two-peg test, the midpoint setup gives rod readings: peg A = 5.64 ft, peg B = 4.28 ft. The level is then moved to within 5 ft of peg A and reads 5.10 ft at A. What should the rod at B read if the level has NO collimation error?',
+    options: ['3.74 ft', '4.28 ft', '6.46 ft', '4.74 ft'],
+    correctAnswer: 0,
+    explanation: 'True elevation difference from midpoint: Δh = r_A - r_B = 5.64 - 4.28 = 1.36 ft (B is 1.36 ft higher than A). Near peg A, the instrument reads 5.10 ft at A, so HI = elev_A + 5.10. Expected reading at B (no error) = HI - elev_B = (elev_A + 5.10) - (elev_A + 1.36) = 5.10 - 1.36 = 3.74 ft. If the actual rod reading at B differs from 3.74 ft, a collimation error exists and the cross-hair must be adjusted until B reads 3.74 ft.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'For a rough survey requiring bearing accuracy of ±2°, which compass type is the MINIMUM adequate tool?',
+    options: ['Hand compass', 'Staff compass (Brunton)', 'Theodolite with compass attachment', 'Total station with magnetic sensor'],
+    correctAnswer: 0,
+    explanation: 'A hand compass gives approximately ±2° accuracy — exactly meeting the stated requirement. A staff compass (Brunton) gives ±30\', a theodolite gives ±1\', and a total station gives even better accuracy; all would exceed the requirement, but the simplest adequate tool is the hand compass. On the FS exam, instrument selection questions test whether you match the tool to the required accuracy, not whether you always pick the most precise option.',
+    difficulty: 'easy'
+  },
+
   // ─── FGCS Survey Orders of Accuracy ───
 
   {
