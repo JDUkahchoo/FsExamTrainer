@@ -5650,6 +5650,81 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'Step 1 — compute y-intercepts: b₁ = 200.00 - (2.00/100)×200 = 200.00 - 4.00 = 196.00. b₂ = 215.00 - (-3.00/100)×800 = 215.00 + 24.00 = 239.00. Step 2 — PVI station: PVI Sta = (196.00 - 239.00)/((-3.00/100) - (2.00/100)) = (-43.00)/(-0.05) = 860 ft = Station 8+60. Step 3 — PVI elevation from G₁: PVI Elev = 200.00 + (2.00/100)×(860 - 200) = 200.00 + 0.02×660 = 200.00 + 13.20 = 213.20 ft. Verification using G₂: 215.00 + (-0.03)×(860 - 800) = 215.00 - 1.80 = 213.20 ft ✓. This is a summit curve (G₁ positive, G₂ negative), so the vertical curve at this PVI is concave downward.',
     difficulty: 'hard'
   },
+
+  // ─── Historical Units of Measure ───
+
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A Louisiana deed references a lot with "8 arpents frontage on the river." Approximately how many feet is this?',
+    options: ['1,534 ft', '528 ft', '792 ft', '2,640 ft'],
+    correctAnswer: 0,
+    explanation: '1 linear arpent ≈ 191.8 ft (French colonial unit used in Louisiana). 8 arpents × 191.8 ft/arpent ≈ 1,534 ft. The arpent appears frequently in Louisiana deed descriptions, especially for the long, narrow "long lot" parcels fronting the Mississippi River.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'A California Spanish land grant describes a parcel as "50 varas wide." Using the California vara (33 inches), approximately how wide is this in feet?',
+    options: ['137.5 ft', '165.0 ft', '150.0 ft', '125.0 ft'],
+    correctAnswer: 0,
+    explanation: 'California vara = 33 inches = 2.75 ft. 50 varas × 2.75 ft/vara = 137.5 ft. The vara is the standard unit in California and other former Spanish/Mexican territories. Note: the Texas vara is slightly larger at 33⅓ inches ≈ 2.778 ft.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Which of the following are ALL names for the same unit of length?',
+    options: ['Rod, pole, and perch', 'Link, pole, and chain', 'Furlong, rod, and chain', 'Vara, rod, and fathom'],
+    correctAnswer: 0,
+    explanation: 'Rod, pole, and perch are three different names for the exact same unit: 16½ ft (or 25 links). This unit is commonly encountered in colonial-era deed descriptions. Don\'t confuse rod/perch/pole with a chain (66 ft) or furlong (660 ft).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor\'s 1855 field notes show a distance of "12 chains 50 links." What is this distance in feet?',
+    options: ['825 ft', '882 ft', '660 ft', '792 ft'],
+    correctAnswer: 0,
+    explanation: '1 chain = 66 ft; 1 link = 0.66 ft. 12 chains 50 links = 12.50 chains. 12.50 chains × 66 ft/chain = 825 ft. Field notes from the 1800s routinely record distances in chains and links, which was the standard for all U.S. public land surveys.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'How many Gunter\'s chains equal exactly one mile?',
+    options: ['80 chains', '100 chains', '66 chains', '40 chains'],
+    correctAnswer: 0,
+    explanation: '1 mile = 5,280 ft ÷ 66 ft/chain = 80 chains. This is a key conversion: 80 chains = 1 mile. Gunter\'s chain (66 ft, 100 links) was designed so that 10 square chains = 1 acre and 80 chains = 1 mile — making area calculations straightforward.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A fathom equals how many feet?',
+    options: ['6 ft', '16.5 ft', '3 ft', '12 ft'],
+    correctAnswer: 0,
+    explanation: '1 fathom = 6 ft. The fathom originates from the span of outstretched arms and was primarily used for nautical depth measurements and mining shaft depths. It occasionally appears in coastal and tidal boundary survey descriptions.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'A Texas land grant describes a tract as "120 varas × 120 varas." Using the Texas vara (33⅓ inches), what is the approximate area of this tract in square feet?',
+    options: ['111,111 sq ft', '144,000 sq ft', '129,600 sq ft', '43,560 sq ft'],
+    correctAnswer: 0,
+    explanation: 'Texas vara = 33⅓ in = 100/36 ft ≈ 2.7778 ft. Side length = 120 × 2.7778 ft = 333.33 ft. Area = 333.33² ≈ 111,111 sq ft (≈ 2.55 acres). This is a classic exam scenario: convert varas to feet, then compute area. The Texas vara differs from the California vara (33 in = 2.75 ft), so region matters.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A furlong is equal to how many Gunter\'s chains?',
+    options: ['10 chains', '8 chains', '40 chains', '80 chains'],
+    correctAnswer: 0,
+    explanation: '1 furlong = 660 ft ÷ 66 ft/chain = 10 chains. Also: 1 furlong = 40 rods and 8 furlongs = 1 mile. The furlong ("furrow-long") derived from the length of a plowed furrow. Knowing it equals 10 chains helps when old deed descriptions mix units.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    question: 'An old deed calls for a boundary that runs "40 rods north, then 40 rods east." What is the total perimeter of this two-course traverse in feet?',
+    options: ['1,320 ft', '2,640 ft', '660 ft', '1,980 ft'],
+    correctAnswer: 0,
+    explanation: '1 rod = 16.5 ft. 40 rods = 40 × 16.5 ft = 660 ft per side. Two courses × 660 ft = 1,320 ft total perimeter (for these two courses). Rod/perch/pole are all the same 16.5 ft unit, common in colonial and early American deed descriptions.',
+    difficulty: 'medium'
+  },
 ];
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [...FS_QUIZ_QUESTIONS, ...PS_QUIZ_QUESTIONS];

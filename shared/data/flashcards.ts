@@ -884,6 +884,65 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     category: 'formula',
     examTrack: 'fs'
   },
+
+  // ─── Historical Units of Measure ───
+
+  {
+    domain: 'Field Data Acquisition',
+    front: "Gunter's Chain: Key Conversions",
+    back: "1 chain = 66 ft = 100 links\n1 link = 0.66 ft = 7.92 inches\n1 mile = 80 chains\n1 acre = 10 square chains\n4 rods = 1 chain\n\nInvented by Edmund Gunter (~1620)\nStandard unit for all U.S. public land surveys",
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Surveyor\'s Link: Value and Usage',
+    back: '1 link = 1/100 of a Gunter\'s chain\n= 0.66 ft = 7.92 inches\n\n100 links = 1 chain (66 ft)\n\nHow to read old field notes:\n"N 45° E, 47 ch 63 lk" = 47 chains + 63 links\n= 47.63 chains × 66 ft = 3,143.58 ft',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Rod, Perch, and Pole: Are They the Same?',
+    back: 'YES — all three names refer to the SAME unit:\n\n1 rod = 1 perch = 1 pole = 16½ ft = 25 links\n\n• 4 rods = 1 chain (66 ft)\n• 320 rods = 1 mile\n• 40 rods = 1 furlong\n\nHistorical origin: length of an ox-goad stick\nAppears in colonial-era deed descriptions',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Furlong: Conversion and Origin',
+    back: '1 furlong = 660 ft = 40 rods = 10 chains\n8 furlongs = 1 mile\n\nOrigin: "furrow-long" — the length of one furrow plowed by an ox without resting\n\nStill used in:\n• Horse racing distances\n• Some historic deed descriptions\n\nMemory aid: "fur" = 10 chains, 40 rods',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Fathom: Value and Usage',
+    back: '1 fathom = 6 ft\n\nPrimarily used in:\n• Nautical depth measurements\n• Mining shaft depths\n• Coastal and tidal boundary surveys\n\nOrigin: outstretched arms span\n\nRarely appears in upland land surveys, but may appear in descriptions of tidelands, harbors, or coastal boundaries',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    front: 'Arpent: French Colonial Land Unit',
+    back: '1 linear arpent ≈ 191.8 ft\n1 square arpent ≈ 0.845 acres\n\nRegional usage:\n• Louisiana (French colonial grants)\n• Canadian provinces\n• Mississippi River "long lots" frontage\n\nExample deed call:\n"4 arpents front on the river, 40 arpents deep"\n= ~767 ft frontage × ~7,672 ft depth',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    front: 'Vara: California vs. Texas Value',
+    back: 'CALIFORNIA vara:\n• 1 vara = 33 inches = 2.75 ft\n• Used in Spanish & Mexican land grants\n\nTEXAS vara:\n• 1 vara = 33⅓ inches ≈ 2.778 ft\n• Used in Texas land grants\n\nValues vary slightly by state (some use 33.33 in).\n\nMemory aid: "vara ≈ yard (36 in) but shorter"\n\nConverting: multiply number of varas × ft/vara',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Boundary Law & PLSS',
+    front: 'Historical Units in Old Deeds: Quick Reference',
+    back: 'Unit          | Value\n--------------|------------------\nChain         | 66 ft (100 links)\nLink          | 0.66 ft (7.92 in)\nRod/pole/perch| 16.5 ft (25 links)\nFurlong       | 660 ft (10 chains)\nFathom        | 6 ft\nArpent (LA)   | ≈ 191.8 ft\nVara (CA)     | 33 in = 2.75 ft\nVara (TX)     | 33⅓ in ≈ 2.778 ft\n\nRule: Identify the region first, then look up the local value',
+    category: 'concept',
+    examTrack: 'fs'
+  },
 ];
 
 // Combined flashcards for both exams
