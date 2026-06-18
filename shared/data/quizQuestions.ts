@@ -5651,6 +5651,126 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
 
+  // ─── GNSS Advanced Concepts ───
+
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A surveyor needs to establish a new geodetic control point with ±5 cm accuracy. The site is remote with no nearby base station. Which workflow is most appropriate?',
+    options: [
+      'OPUS — submit raw static GNSS data (≥2 hours) to NGS; the CORS network serves as the base station',
+      'RTK with a handheld base station placed anywhere within 50 km',
+      'Standalone C/A code GPS averaged over 15 minutes',
+      'DGPS using WAAS corrections from a geostationary satellite'
+    ],
+    correctAnswer: 0,
+    explanation: 'OPUS (Online Positioning User Service) was designed exactly for this scenario: one receiver, no base station, and high-accuracy results. The surveyor observes for ≥2 hours, submits the raw RINEX file to NGS, and receives NAD 83 coordinates accurate to ±3–5 cm. OPUS uses the CORS network as the distributed base station — no physical base needed. Handheld RTK would require a second receiver. Standalone C/A code GPS gives only ±3–5 m accuracy. WAAS gives ±1–3 m.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'What is the primary distinction between the CORS network and the HARN network?',
+    options: [
+      'CORS stations are active electronic stations that continuously log data; HARN consists of passive monuments you physically occupy with a GPS receiver',
+      'CORS is for vertical control; HARN is for horizontal control',
+      'CORS is privately owned; HARN is maintained by state agencies',
+      'CORS provides code-phase data; HARN provides carrier-phase data'
+    ],
+    correctAnswer: 0,
+    explanation: 'CORS (Continuously Operating Reference Stations) are permanent electronic stations that record and transmit GNSS data 24/7 — you never visit them; you use their archived data through OPUS or other processing software. HARN (High Accuracy Reference Network) stations are physical brass-disc monuments set in the ground that surveyors physically occupy with a GPS receiver. CORS is active; HARN is passive. Both are tied to NAD 83 and both provide high-accuracy control.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A GNSS receiver reports an ellipsoid height of 312.450 m at a benchmark. The geoid undulation (N) from GEOID18 is −25.300 m. What is the NAVD 88 orthometric height?',
+    options: [
+      '337.750 m',
+      '287.150 m',
+      '312.450 m',
+      '25.300 m'
+    ],
+    correctAnswer: 0,
+    explanation: 'Using h = H + N: H = h − N = 312.450 − (−25.300) = 312.450 + 25.300 = 337.750 m. In CONUS the geoid undulation N is negative (geoid below ellipsoid), so subtracting a negative number increases the result — orthometric heights are larger than ellipsoid heights throughout the continental U.S. This is among the most commonly tested GNSS calculations on the FS exam.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'Which GNSS measurement technique provides centimeter-level accuracy by measuring fractional wavelengths of the 19 cm L1 carrier signal?',
+    options: [
+      'Carrier phase measurement (used in RTK, static GNSS)',
+      'C/A code phase measurement (pseudorange)',
+      'P-code pseudorange differential correction',
+      'WAAS satellite-based augmentation'
+    ],
+    correctAnswer: 0,
+    explanation: 'Carrier phase measurement uses the 19 cm L1 (or 24 cm L2) carrier wavelength. Because the wavelength is far shorter than the PRN code chip (~300 m for C/A), fractional phase measurements yield millimeter-level precision. The key challenge is resolving the integer cycle ambiguity — how many whole wavelengths lie between the satellite and receiver. RTK resolves this ambiguity in real time; static post-processing resolves it in software. Code phase (pseudorange) gives only ±1–5 m accuracy.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A survey crew performing RTK observations in an urban area notices position solutions jumping erratically despite good PDOP. The most likely cause is:',
+    options: [
+      'Multipath — satellite signals reflecting off nearby buildings and reaching the antenna via multiple paths',
+      'Poor satellite geometry (high PDOP)',
+      'The radio link between base and rover has failed',
+      'The receiver is using code phase instead of carrier phase'
+    ],
+    correctAnswer: 0,
+    explanation: 'Erratic RTK solutions in urban environments with acceptable PDOP are the classic signature of multipath. Signals reflected off buildings, pavement, or vehicles arrive at the antenna slightly delayed, corrupting the carrier phase measurement and causing wrong ambiguity resolution. Mitigation: move away from reflective surfaces, raise the elevation mask to 15°, use a choke-ring antenna, or use a VRS that incorporates network-level multipath modeling.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A survey site is at longitude 87°W. What UTM zone contains this site?',
+    options: [
+      'Zone 16 — spans 90°W to 84°W',
+      'Zone 15 — spans 96°W to 90°W',
+      'Zone 17 — spans 84°W to 78°W',
+      'Zone 87 — UTM zones match the longitude'
+    ],
+    correctAnswer: 0,
+    explanation: 'Zone = ⌊(longitude + 180) / 6⌋ + 1. For 87°W (longitude = −87): ⌊(−87 + 180)/6⌋ + 1 = ⌊93/6⌋ + 1 = ⌊15.5⌋ + 1 = 15 + 1 = 16. Zone 16 spans 90°W to 84°W. The central meridian of Zone 16 is at 87°W — the survey site is at the exact center of Zone 16.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A VRS (Virtual Reference Station) survey requires the rover operator to:',
+    options: [
+      'Maintain a cellular data connection to the network server throughout the survey',
+      'Set up a physical base station within 3 km of the rover',
+      'Observe each point for at least 15 minutes to resolve ambiguities',
+      'Use a choke-ring antenna to receive VRS corrections'
+    ],
+    correctAnswer: 0,
+    explanation: 'VRS is a two-way process: the rover sends its approximate position to the network server, and the server sends synthesized corrections back. This requires continuous cellular data coverage. If the cellular link drops, VRS corrections stop and the survey cannot continue. This is the primary limitation of VRS in remote areas. No physical base station is needed — that is VRS\'s main advantage. VRS uses carrier phase, so ambiguity resolution happens in real time (minutes, not 15+ minutes).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'The UTM system divides Earth into how many zones, and what is the longitude width of each zone?',
+    options: [
+      '60 zones, each 6° of longitude wide',
+      '36 zones, each 10° of longitude wide',
+      '24 zones, each 15° of longitude wide',
+      '120 zones, each 3° of longitude wide'
+    ],
+    correctAnswer: 0,
+    explanation: 'UTM uses 60 zones numbered 1–60, each spanning exactly 6° of longitude. Zone 1 begins at 180°W and the zones increase eastward. Each zone uses a Transverse Mercator projection with a false easting of 500,000 m at the central meridian and a scale factor of 0.9996 at the central meridian (slightly smaller than 1 to minimize distortion across the full zone width).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'OPUS-Static requires a minimum observation session of approximately:',
+    options: [
+      '2 hours',
+      '15 minutes',
+      '30 seconds',
+      '24 hours'
+    ],
+    correctAnswer: 0,
+    explanation: 'OPUS-Static requires at least 2 hours of continuous dual-frequency observations to achieve its stated ±3–5 cm horizontal accuracy. The longer the session (up to ~6 hours), the more CORS baselines can be processed and averaged, improving precision. OPUS-Rapid Static accepts shorter sessions (15 minutes minimum) but provides somewhat lower accuracy. The 2-hour minimum is a commonly tested specification.',
+    difficulty: 'easy'
+  },
+
   // ─── Surveying Instrument Types ───
 
   {

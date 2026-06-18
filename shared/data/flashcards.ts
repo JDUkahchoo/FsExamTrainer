@@ -885,6 +885,58 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     examTrack: 'fs'
   },
 
+  // ─── GNSS Advanced Concepts ───
+
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'CORS Network (Continuously Operating Reference Stations)',
+    back: 'A nationwide network of permanently installed GNSS reference stations maintained by NOAA/NGS.\n\nKey facts:\n• Stations log raw data 24/7 and upload to NGS servers\n• Over 2,000 stations in the U.S. (typical spacing 100–300 km)\n• Coordinates tied to NAD 83 / ITRF\n• FREE to use via the OPUS web service\n• No user base station needed — CORS serves as your base\n\nDistinct from HARN:\nCORS = active electronic stations\nHARN = passive monuments (brass discs) you physically occupy',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'OPUS Workflow (Online Positioning User Service)',
+    back: 'Free NGS web service that computes precise coordinates from raw static GNSS data.\n\nWorkflow:\n1. Occupy point with ONE dual-frequency receiver\n   • Static: ≥2 hours  |  Rapid Static: ≥15 min\n2. Download raw data as RINEX file\n3. Submit to geodesy.noaa.gov/OPUS (enter antenna type & height)\n4. NOAA auto-selects ≥3 nearby CORS stations, processes baselines, averages\n5. Receive email with NAD 83 lat/lon + ellipsoid height + NAVD 88 elevation\n\nAccuracy: ±3–5 cm horizontal, ±5–8 cm vertical (2-hour session)\nKey: Only ONE receiver needed — no field base station',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'VRS — Virtual Reference Station / Network RTK',
+    back: 'Network-based RTK that generates virtual corrections near the rover using multiple CORS stations.\n\nHow it works:\n1. Rover sends approximate position to network server via cellular\n2. Server models atmospheric/orbital errors using nearby CORS\n3. Server sends virtual corrections as if a base station were nearby\n4. Rover processes like conventional RTK\n\nAdvantages:\n• No physical base station needed\n• Consistent ±1–2 cm accuracy over large areas\n• One-person operation\n\nLimitation: Requires two-way cellular data — fails without coverage\n\nAlso called: Network RTK, eRTK, iMAX',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Code Phase vs. Carrier Phase Accuracy',
+    back: 'Two fundamentally different ways GNSS receivers measure distance to satellites:\n\nCODE PHASE (pseudorange):\n• Times arrival of PRN code chips (~300 m chip length)\n• Accuracy: ±1–5 m (C/A code standalone)\n• Used by: phone/vehicle GPS, handheld receivers\n\nCARRIER PHASE:\n• Measures fraction of 19 cm L1 carrier wavelength\n• Must resolve integer cycle ambiguity\n• Accuracy: ±1–3 cm (RTK) / ±3–10 mm (static post-processed)\n• Used by: RTK, VRS, OPUS, static control surveys\n\nRule: Code phase = navigation accuracy. Carrier phase = survey accuracy.',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Geoid Height Formula: h = H + N (expanded)',
+    back: 'h = H + N\n\nh = ellipsoid height (GNSS output, above GRS 80 ellipsoid)\nH = orthometric height / elevation (above geoid, used in engineering)\nN = geoid undulation (ellipsoid − geoid separation)\n\nTo find elevation from GPS:\nH = h − N\n\nIn CONUS:\n• N is negative (−8 to −53 m)\n• H > h (elevation exceeds ellipsoid height)\n\nExample:\nh = 45.238 m, N = −31.500 m\nH = 45.238 − (−31.500) = 76.738 m\n\nGeoid model: Use GEOID18 or GEOID12B from NGS',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'UTM Zone System',
+    back: 'Universal Transverse Mercator: 60 zones, each 6° of longitude wide.\n\nZone numbering:\n• Zone 1: 180°W to 174°W\n• Zones increase eastward\n• Zone 60: 174°E to 180°E\n\nFormula:\nZone = ⌊(longitude + 180) / 6⌋ + 1\n(W longitude is negative)\n\nExamples:\n• 93°W: ⌊(−93+180)/6⌋+1 = ⌊14.5⌋+1 = 15\n• 87°W: ⌊(−87+180)/6⌋+1 = ⌊15.5⌋+1 = 16\n• 75°W: ⌊(−75+180)/6⌋+1 = ⌊17.5⌋+1 = 18\n\nFalse Easting = 500,000 m at central meridian\nScale factor at central meridian = 0.9996',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Multipath Error: Causes and Mitigation',
+    back: 'CAUSE: Satellite signals reach the antenna via reflected paths (off buildings, vehicles, water, pavement), corrupting the direct-signal measurement.\n\nEffects:\n• Code phase error: 1–5 m\n• Carrier phase error: cm-level, can cause cycle slips\n• Dominant error in urban environments\n\nMITIGATION:\n1. Site selection — keep 50 m clear of reflective surfaces\n2. Elevation mask — ignore satellites below 10–15°\n3. Choke-ring antenna / ground plane — rejects low-angle signals\n4. Longer observation sessions — partially averages out\n5. Avoid metal surfaces for antenna mounting',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+
   // ─── Surveying Instrument Types ───
 
   {
