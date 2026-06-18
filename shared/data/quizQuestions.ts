@@ -5651,6 +5651,95 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
 
+  // ─── FGCS Survey Orders of Accuracy ───
+
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A Second Order Class I traverse has 9 angles. Using the FGCS formula c = K√N with K = 1.7", what is the allowable angular misclosure?',
+    options: ['5.1"', '3.0"', '15.3"', '1.7"'],
+    correctAnswer: 0,
+    explanation: 'c = K × √N = 1.7" × √9 = 1.7" × 3 = 5.1". The allowable misclosure for a Second Order Class I traverse with 9 angles is 5.1 arc-seconds. If the measured misclosure is 5.1" or less, the survey passes; if it exceeds 5.1", it fails.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A differential leveling loop covers 25 km. The Third Order allowance is K = 2.0 mm (c = K√M). A field crew measures a closure error of 9.5 mm. Does this loop pass Third Order?',
+    options: [
+      'Yes — allowable is 10.0 mm and 9.5 mm ≤ 10.0 mm',
+      'No — allowable is 10.0 mm and 9.5 mm exceeds tolerance',
+      'Yes — allowable is 50.0 mm and 9.5 mm is well within tolerance',
+      'No — Third Order requires closure better than 5.0 mm'
+    ],
+    correctAnswer: 0,
+    explanation: 'c = K × √M = 2.0 mm × √25 = 2.0 mm × 5 = 10.0 mm. The measured closure of 9.5 mm is less than the allowable 10.0 mm, so the loop passes Third Order. The survey meets the standard with a margin of 0.5 mm.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A traverse has 16 angles and a measured angular misclosure of 6.4". Which is the HIGHEST FGCS order this survey satisfies?',
+    options: [
+      'Second Order Class I (K = 1.7", allowable = 6.8")',
+      'First Order (K = 1.0", allowable = 4.0")',
+      'Second Order Class II (K = 3.0", allowable = 12.0")',
+      'Third Order Class I (K = 6.0", allowable = 24.0")'
+    ],
+    correctAnswer: 0,
+    explanation: 'Check each order starting from the tightest: First Order: c = 1.0 × √16 = 4.0" — 6.4 > 4.0, FAILS. Second Order Class I: c = 1.7 × √16 = 1.7 × 4 = 6.8" — 6.4 ≤ 6.8, PASSES. The highest order satisfied is Second Order Class I. (It also meets Class II and Third Order, but the question asks for the highest.)',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A leveling loop with M = 4 km measures a closure of 0.9 mm. What is the highest FGCS vertical order this satisfies?',
+    options: [
+      'First Order Class I (K = 0.5 mm, allowable = 1.0 mm)',
+      'First Order Class II (K = 0.7 mm, allowable = 1.4 mm)',
+      'Second Order Class I (K = 1.0 mm, allowable = 2.0 mm)',
+      'Third Order (K = 2.0 mm, allowable = 4.0 mm)'
+    ],
+    correctAnswer: 0,
+    explanation: 'First Order Class I: c = 0.5 × √4 = 0.5 × 2 = 1.0 mm. Measured 0.9 mm ≤ 1.0 mm — PASSES. Since the survey meets the tightest standard, the highest order is First Order Class I. No need to check lower orders once the highest is satisfied.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In the FGCS formula c = K√N, what does N represent?',
+    options: [
+      'The number of angles measured in the survey',
+      'The total traverse distance in miles',
+      'The number of loops closed',
+      'The network precision ratio'
+    ],
+    correctAnswer: 0,
+    explanation: 'N is the total number of angles measured in the horizontal survey. More angles mean more opportunities for random errors to accumulate, so the allowable misclosure grows proportionally to √N. The formula rewards good geometry: doubling the number of angles only increases the allowance by a factor of √2, not 2.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A leveling loop has M = 64 km and a measured misclosure of 7.5 mm. What is the minimum FGCS order it fails to meet, and why?',
+    options: [
+      'It fails Second Order Class I (allowable 8.0 mm) — wait, 7.5 < 8.0, so it passes Second-I',
+      'It fails First Order Class II (allowable = 5.6 mm) and below — 7.5 > 5.6',
+      'It fails Third Order (allowable = 16.0 mm) — 7.5 > allowable',
+      'It meets all orders because 7.5 mm is a small error'
+    ],
+    correctAnswer: 1,
+    explanation: 'Check each order: First-I: 0.5×√64 = 4.0 mm — 7.5 > 4.0, FAILS. First-II: 0.7×√64 = 5.6 mm — 7.5 > 5.6, FAILS. Second-I: 1.0×√64 = 8.0 mm — 7.5 ≤ 8.0, PASSES. The highest order satisfied is Second Order Class I. The survey fails First Order (both classes). Option B correctly identifies this, though the wording is about the first order it fails going downward.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Why does the FGCS allowable misclosure formula use √N (or √M) rather than N directly?',
+    options: [
+      'Random errors accumulate proportionally to the square root of the number of observations, not linearly',
+      'The square root converts arc-seconds to decimal degrees',
+      'FGCS regulations require square-root scaling to match international standards',
+      'Using √N makes the formula easier to compute in the field'
+    ],
+    correctAnswer: 0,
+    explanation: 'This is error propagation theory: random errors in individual angle measurements are uncorrelated. When you sum N independent random errors, the total uncertainty grows as √N (not N), because the variance of a sum of independent variables equals the sum of the variances. The FGCS formula is derived from this principle — the standard deviation of the closure error scales with √N for angles and √M for leveling distances.',
+    difficulty: 'hard'
+  },
+
   // ─── Stadia Measurement ───
 
   {

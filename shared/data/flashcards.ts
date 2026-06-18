@@ -885,6 +885,37 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     examTrack: 'fs'
   },
 
+  // ─── FGCS Survey Orders of Accuracy ───
+
+  {
+    domain: 'Field Data Acquisition',
+    front: 'FGCS Horizontal K Constants (c = K√N)',
+    back: 'Allowable angular misclosure (arc-seconds):\n\nOrder                  K\nFirst Order            1.0"\nSecond Order Class I   1.7"\nSecond Order Class II  3.0"\nThird Order Class I    6.0"\nThird Order Class II  12.0"\n\nc = K × √N\nN = number of angles\nResult in arc-seconds',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'FGCS Vertical K Constants (c = K√M)',
+    back: 'Allowable level-loop closure (millimeters):\n\nOrder                  K\nFirst Order Class I    0.5 mm\nFirst Order Class II   0.7 mm\nSecond Order Class I   1.0 mm\nSecond Order Class II  1.3 mm\nThird Order            2.0 mm\n\nc = K × √M\nM = loop distance in km\nResult in millimeters',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'FGCS Horizontal vs Vertical Formula',
+    back: 'HORIZONTAL (angular):\nc = K√N\n• K in arc-seconds\n• N = Number of aNgles\n• c in arc-seconds\n\nVERTICAL (leveling):\nc = K√M\n• K in mm\n• M = distance in kM\n• c in millimeters\n\nMemory aid: "N for aNgles, M for kM"',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'FGCS: Reading Order Results',
+    back: 'PASS: measured error ≤ allowable (c)\nFAIL: measured error > allowable (c)\n\nOrder hierarchy (best → worst):\nFirst → Second-I → Second-II → Third-I → Third-II\n\nTo find the highest order satisfied:\n1. Start at First Order (tightest)\n2. Work down until measured ≤ c\n3. Report that order\n\nNote: Higher number = LESS precise',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+
   // ─── Stadia Measurement ───
 
   {

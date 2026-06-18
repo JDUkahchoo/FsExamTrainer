@@ -666,4 +666,160 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
       },
     ],
   },
+  {
+    id: 'fs-d1-fgcs',
+    examTrack: 'fs',
+    domainNumber: 1,
+    domain: 'Field Data Acquisition',
+    title: 'FGCS Survey Orders of Accuracy',
+    description: 'Master the Federal Geodetic Control Subcommittee standards for survey accuracy: the order classification system, K constants, and how to calculate and compare allowable misclosures for horizontal and vertical surveys.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'fs-d1-fgcs-s1',
+        type: 'concept',
+        title: 'What Are FGCS Survey Orders?',
+        content: 'The Federal Geodetic Control Subcommittee (FGCS) established a hierarchy of accuracy standards for geodetic control surveys in the United States. These "orders" define how precisely a survey must close — the smaller the allowed error, the higher (better) the order.\n\nWhy orders matter:\n• Control surveys must meet a specified order before their coordinates are published in the National Spatial Reference System (NSRS)\n• Project specifications typically require a minimum order — if your survey does not meet it, the work must be redone\n• The FS exam tests whether you can calculate the allowable misclosure for a given order and compare it to a measured closure\n\nThe three main orders, from most to least precise:\n\n1. First Order — geodetic control, national networks, high-precision projects\n2. Second Order (Class I and Class II) — local control, state surveys, large engineering projects\n3. Third Order (Class I and Class II) — topographic surveys, smaller engineering projects, general-purpose control\n\nEach order has a K constant. You plug K and either the number of angles (N) or the distance (M) into the appropriate formula to get the maximum allowed closure error.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'FGCS accuracy standards and survey orders' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 4', topic: 'Survey accuracy, orders, and error standards' },
+        ],
+      },
+      {
+        id: 'fs-d1-fgcs-s2',
+        type: 'concept',
+        title: 'The FGCS K Constant Tables',
+        content: 'Two separate K constant tables apply to two different types of surveys.\n\n── HORIZONTAL: K values for angle misclosure (c = K√N) ──\nK is in arc-seconds. N is the number of angles in the survey.\n\n• First Order:            K = 1.0"\n• Second Order Class I:   K = 1.7"\n• Second Order Class II:  K = 3.0"\n• Third Order Class I:    K = 6.0"\n• Third Order Class II:   K = 12.0"\n\n── VERTICAL: K values for level-loop closure (c = K√M) ──\nK is in millimeters. M is the total loop distance in kilometers.\n\n• First Order Class I:    K = 0.5 mm\n• First Order Class II:   K = 0.7 mm\n• Second Order Class I:   K = 1.0 mm\n• Second Order Class II:  K = 1.3 mm\n• Third Order:            K = 2.0 mm\n\nMemory tip: Both formulas use K × √(something). For horizontal, the "something" is N (number of angles). For vertical, the "something" is M (miles or kilometers of loop distance). Keep the units straight: horizontal gives seconds of arc, vertical gives millimeters.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'FGCS order K constants for horizontal and vertical surveys' },
+        ],
+      },
+      {
+        id: 'fs-d1-fgcs-s3',
+        type: 'formula',
+        title: 'Horizontal Angle Misclosure Formula',
+        formula: {
+          expression: 'c = K × √N',
+          variables: [
+            { symbol: 'c', description: 'Allowable angular misclosure (arc-seconds)' },
+            { symbol: 'K', description: 'Order constant (arc-seconds): First = 1.0, Second-I = 1.7, Second-II = 3.0, Third-I = 6.0, Third-II = 12.0' },
+            { symbol: 'N', description: 'Total number of angles measured in the survey or traverse' },
+          ],
+          whenToUse: 'Use to find the maximum allowed angular closure error for a traverse or triangulation network. If the measured misclosure is less than or equal to c, the survey meets the specified order. If it exceeds c, the survey fails.',
+        },
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Horizontal closure formula and FGCS standards' },
+        ],
+      },
+      {
+        id: 'fs-d1-fgcs-s4',
+        type: 'worked_example',
+        title: 'Horizontal Closure: Does the Survey Pass?',
+        workedExample: {
+          problem: 'A Second Order Class II traverse has 16 angles. The measured angular misclosure is 10.8 arc-seconds. Does the survey meet Second Order Class II requirements?',
+          steps: [
+            { step: 1, description: 'Identify K for Second Order Class II.', calculation: 'K = 3.0"' },
+            { step: 2, description: 'Count the number of angles.', calculation: 'N = 16' },
+            { step: 3, description: 'Calculate the allowable misclosure: c = K × √N.', calculation: 'c = 3.0" × √16 = 3.0" × 4 = 12.0"' },
+            { step: 4, description: 'Compare measured misclosure to allowable.', calculation: 'Measured = 10.8" ≤ Allowable = 12.0" → PASSES' },
+          ],
+          answer: 'The survey passes Second Order Class II. The measured misclosure of 10.8" is within the 12.0" allowable limit.',
+        },
+      },
+      {
+        id: 'fs-d1-fgcs-s5',
+        type: 'knowledge_check',
+        title: 'Horizontal Closure Check',
+        knowledgeCheck: {
+          question: 'A traverse has 25 angles and is required to meet First Order standards (K = 1.0"). The measured angular misclosure is 4.8 arc-seconds. Does the survey pass First Order?',
+          options: [
+            'Yes — the allowable is 5.0" and the measured 4.8" is within tolerance',
+            'No — the allowable is 5.0" and the measured 4.8" exceeds tolerance',
+            'Yes — the allowable is 25.0" and the measured 4.8" is within tolerance',
+            'No — First Order requires 0 angular misclosure',
+          ],
+          correctIndex: 0,
+          explanation: 'Allowable c = K × √N = 1.0" × √25 = 1.0" × 5 = 5.0". The measured misclosure of 4.8" is less than 5.0", so the survey passes First Order. If it had been 5.1", it would fail First Order but you could check whether it meets Second Order Class I (K = 1.7", allowable = 8.5").',
+        },
+      },
+      {
+        id: 'fs-d1-fgcs-s6',
+        type: 'formula',
+        title: 'Vertical Level Loop Closure Formula',
+        formula: {
+          expression: 'c = K × √M',
+          variables: [
+            { symbol: 'c', description: 'Allowable vertical misclosure (millimeters)' },
+            { symbol: 'K', description: 'Order constant (mm): First-I = 0.5, First-II = 0.7, Second-I = 1.0, Second-II = 1.3, Third = 2.0' },
+            { symbol: 'M', description: 'Total loop distance in kilometers (for metric surveys). Some references use miles with different K values.' },
+          ],
+          whenToUse: 'Use to find the maximum allowed elevation misclosure for a differential leveling loop. Run your level loop back to the starting BM, compute the misclosure in millimeters, and compare to c. If M is in miles, use the corresponding K value from your reference (some texts give K in mm/√mile).',
+        },
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Vertical closure formula and FGCS leveling orders' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Differential leveling accuracy and order standards' },
+        ],
+      },
+      {
+        id: 'fs-d1-fgcs-s7',
+        type: 'worked_example',
+        title: 'Vertical Closure: Finding the Allowable Limit',
+        workedExample: {
+          problem: 'A differential leveling loop has a total distance of 36 km. The required order is Second Order Class I (K = 1.0 mm). What is the maximum allowed misclosure? If the measured closure error is 5.8 mm, does the survey pass?',
+          steps: [
+            { step: 1, description: 'Identify K for Second Order Class I.', calculation: 'K = 1.0 mm' },
+            { step: 2, description: 'Identify M (loop distance in km).', calculation: 'M = 36 km' },
+            { step: 3, description: 'Calculate the allowable misclosure: c = K × √M.', calculation: 'c = 1.0 mm × √36 = 1.0 mm × 6 = 6.0 mm' },
+            { step: 4, description: 'Compare measured closure to allowable.', calculation: 'Measured = 5.8 mm ≤ Allowable = 6.0 mm → PASSES' },
+          ],
+          answer: 'The allowable misclosure is 6.0 mm. The survey passes Second Order Class I by a margin of 0.2 mm.',
+        },
+      },
+      {
+        id: 'fs-d1-fgcs-s8',
+        type: 'knowledge_check',
+        title: 'Vertical Closure Check',
+        knowledgeCheck: {
+          question: 'A leveling loop covers 100 km. The Third Order requirement is K = 2.0 mm. What is the allowable misclosure, and does a measured error of 22.0 mm pass?',
+          options: [
+            'Allowable = 20.0 mm; the survey FAILS (22.0 > 20.0)',
+            'Allowable = 20.0 mm; the survey PASSES (22.0 < allowable with rounding)',
+            'Allowable = 200.0 mm; the survey PASSES',
+            'Allowable = 14.1 mm; the survey FAILS',
+          ],
+          correctIndex: 0,
+          explanation: 'c = K × √M = 2.0 mm × √100 = 2.0 mm × 10 = 20.0 mm. The measured error of 22.0 mm exceeds 20.0 mm, so the survey FAILS Third Order. It would need re-leveling or could only be used at a lower standard (if one existed below Third Order). This is a classic exam scenario — calculate the allowable, compare, and state pass/fail clearly.',
+        },
+      },
+      {
+        id: 'fs-d1-fgcs-s9',
+        type: 'concept',
+        title: 'Identifying the Minimum Order a Survey Satisfies',
+        content: 'Sometimes an exam question gives you the actual measured error and asks: which is the HIGHEST (most precise) order this survey satisfies?\n\nProcedure for horizontal:\n1. Calculate the allowable for First Order: c₁ = 1.0 × √N\n2. If measured ≤ c₁ → survey meets First Order (done)\n3. If measured > c₁, calculate Second Order Class I: c₂ = 1.7 × √N\n4. Continue down the list until measured ≤ allowable\n\nProcedure for vertical:\nSame approach — start with the tightest standard (First Order Class I, K = 0.5) and work down until you find the order where the measured error fits.\n\nExample: A 9-angle traverse has a measured misclosure of 4.9".\n• First Order allowable: 1.0 × √9 = 3.0" → 4.9 > 3.0 → FAILS\n• Second Order Class I: 1.7 × √9 = 5.1" → 4.9 ≤ 5.1 → PASSES\n\nAnswer: The survey satisfies Second Order Class I (but not First Order).\n\nKey rule: Always state the HIGHEST order the survey achieves, not just any order it passes. A survey that meets First Order automatically meets all lower orders too.',
+      },
+      {
+        id: 'fs-d1-fgcs-tips',
+        type: 'exam_tips',
+        title: 'Exam Tips: FGCS Orders',
+        examTips: [
+          'Keep the two formulas distinct: c = K√N is HORIZONTAL (N = number of aNgles), c = K√M is vertical (M = distance in Miles/km). The letter N helps — "aNgles."',
+          'The formula gives the MAXIMUM ALLOWED error. If measured ≤ allowable → PASSES. If measured > allowable → FAILS.',
+          'When asked which order a survey satisfies, always start from First Order (tightest) and work down. Report the HIGHEST (most precise) order the measured error fits.',
+          'Higher order number = LESS precise. First Order is best; Third Order is worst. This is counterintuitive — "First" is strictest.',
+          'Vertical K constants are in mm/√km. Horizontal K constants are in arc-seconds. Make sure you are reading the correct table for the type of survey.',
+          'If the question gives M in miles for a leveling problem, check your reference for the corresponding K in mm/√mile (common values: Third Order ≈ 8.4 mm/√mile, Second Order Class II ≈ 6.0 mm/√mile).',
+        ],
+      },
+      {
+        id: 'fs-d1-fgcs-s10',
+        type: 'further_reading',
+        title: 'FGCS Accuracy Standards References',
+        furtherReading: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'FGCS accuracy standards, survey orders, and closure tolerances' },
+          { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 4', topic: 'Survey accuracy, error propagation, and order standards' },
+          { book: 'Standards and Specifications for Geodetic Control Networks (FGCS, 1984)', chapter: 'Full document', topic: 'Official FGCS order definitions, K constants, and test procedures' },
+        ],
+      },
+    ],
+  },
 ];
