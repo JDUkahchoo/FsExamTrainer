@@ -405,4 +405,115 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
       },
     ],
   },
+  {
+    id: 'fs-d1-field-notes',
+    examTrack: 'fs',
+    domainNumber: 1,
+    domain: 'Field Data Acquisition',
+    title: 'Field Notes: Standards and Practice',
+    description: 'Learn the professional standards for keeping survey field notes: the five required features, recording conventions, left/right page layout, required metadata, and standard abbreviations that appear on the FS exam.',
+    estimatedMinutes: 20,
+    sections: [
+      {
+        id: 'fs-d1-fn-s1',
+        type: 'concept',
+        title: 'Why Field Notes Matter',
+        content: 'Survey field notes are the official record of every measurement made in the field. They are the legal document that supports a survey plat, boundary description, or construction stakeout. Courts have relied on original field notes to resolve boundary disputes decades after a survey was completed.\n\nBecause field notes serve a legal function, they must meet professional standards for preparation, content, and storage. The USDA Engineering Field Handbook and NCEES reference materials identify specific features that every set of survey field notes must possess. Failure to maintain proper notes is considered professional negligence and can jeopardize a surveyor\'s license.\n\nField notes come in two broad categories:\n• Original notes: recorded in the field at the time of measurement, in the surveyor\'s own hand\n• Transcribed notes: a copy made later from originals — these are secondary evidence and carry less weight than originals',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Field notes — preparation and standards' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 2', topic: 'Field notes and their importance as legal records' },
+        ],
+      },
+      {
+        id: 'fs-d1-fn-s2',
+        type: 'concept',
+        title: 'The Five Required Features of Field Notes',
+        content: 'Professional survey field notes must possess all five of the following features. The FS exam may ask you to identify which feature is missing from a described scenario, or to recognize which action violates one of these standards.\n\n1. ACCURACY\nThe notes must correctly represent what was measured. Numbers must be recorded exactly as read — never "corrected" or rounded in the field book. If a measurement is suspect, record it and note the doubt; don\'t alter it to what you think it should be.\n\n2. INTEGRITY\nNotes must be a true, unaltered record. This means no erasures — ever. If a number is wrong, draw a single line through it and write the correct value above. The original value must remain legible so reviewers can see what was changed and why. Erasing is considered falsification of a legal record.\n\n3. LEGIBILITY\nNotes must be readable by anyone, not just the original recorder. Use clear block lettering (not cursive). Numbers should be formed carefully — a 1 that looks like a 7, or a 0 that looks like a 6, can cause serious errors when the notes are used later.\n\n4. ARRANGEMENT\nInformation must be organized in a consistent, logical way. Standard formats exist for traverse notes, leveling notes, cross-section notes, and so on. Following a standard arrangement allows another surveyor to pick up the notes and immediately understand what was done without asking questions.\n\n5. CLARITY\nThe notes must be complete enough that any competent surveyor can reproduce the survey from the notes alone, without additional explanation from the original crew. Sketches, labels, and explanatory notes are part of this requirement.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Five features of good field notes' },
+        ],
+      },
+      {
+        id: 'fs-d1-fn-s3',
+        type: 'knowledge_check',
+        title: 'Five Features Checkpoint',
+        knowledgeCheck: {
+          question: 'A surveyor makes a mistake recording a distance and erases it before writing the correct value. Which of the five required features of field notes has been violated?',
+          options: [
+            'Accuracy',
+            'Integrity',
+            'Legibility',
+            'Arrangement',
+          ],
+          correctIndex: 1,
+          explanation: 'Erasure violates the INTEGRITY of field notes. Integrity means the notes are an unaltered, true record. The correct procedure is to draw a single line through the incorrect value (leaving it legible), then write the correct value above it. Erasing destroys the original record and is considered falsification of a legal document. Accuracy refers to the values being correct; integrity refers to the record being unaltered.',
+        },
+      },
+      {
+        id: 'fs-d1-fn-s4',
+        type: 'concept',
+        title: 'Recording Rules and Conventions',
+        content: 'Beyond the five features, specific recording rules govern how numbers and text are entered into field books:\n\nNO ERASING: Cross out errors with a single line. Write the correct value above. Never use correction fluid (White-Out).\n\nBLOCK LETTERING: All entries in capital letters. Avoid cursive. This ensures legibility by any reader.\n\nRECORD FROM THE BOTTOM UP: In many note formats (especially cross-section and level notes), numerical values are recorded moving up the page from bottom to top. This matches the physical direction of travel on the ground and makes sketches easier to orient.\n\nDECIMAL FORMAT: Record feet and decimals of a foot, not feet and inches, unless the project specifically calls for feet-inches. Write "125.34" not "125-4" or "125\'4\'".\n\nSTRONG DECIMALS: When the whole number is zero, include a leading zero (write "0.34", not ".34"). This prevents misreading and is especially important with small corrections or error values.\n\nDATE AND SIGN: Every page must show the date and the name or initials of the person who made the record. Without a signature, there is no accountable author.\n\nPENCIL VS. PEN: Survey notes are traditionally kept in pencil (H or 2H hardness) so they can be shaded to indicate work areas and because pencil survives weather better than ink. Some agencies require waterproof ink for permanent records.',
+      },
+      {
+        id: 'fs-d1-fn-s5',
+        type: 'concept',
+        title: 'Left Page vs. Right Page Layout',
+        content: 'A standard survey field book opens to a two-page spread. Each page has a specific purpose that keeps notes organized and efficient:\n\nLEFT PAGE (Data Page):\n• Numerical measurements — angles, distances, elevations, coordinates\n• Tabular data organized in columns\n• Column headings at the top of each set of data\n• Arithmetic checks (sum of angles, closure check)\n\nRIGHT PAGE (Sketch and Notes Page):\n• A freehand sketch of the survey area, oriented with north toward the top of the page (or with a north arrow if rotated)\n• Point numbers, station identifiers, and labels keyed to the left-page data\n• Narrative notes explaining conditions, obstructions, or decisions\n• Reference to monuments found or set, with descriptions\n\nThis left/right convention means that when the book is open flat on a table, you always know exactly where to look for numbers versus context. Some agencies and firms use their own variations of this layout, but the principle — numerical data separate from sketches and narrative — is universal.\n\nVoiding a Page: If an entire page must be discarded (e.g., wrong project, flooded page), draw diagonal lines through the page and write "VOID" in large letters. Do not tear out the page — removed pages raise questions about what was deleted.',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 2', topic: 'Field book layout and organization conventions' },
+        ],
+      },
+      {
+        id: 'fs-d1-fn-s6',
+        type: 'concept',
+        title: 'Required Metadata: What Every Set of Notes Must Contain',
+        content: 'Every set of field notes must include identifying metadata so they can be located, authenticated, and understood in context — even years later. Required elements include:\n\nPROJECT IDENTIFICATION:\n• Project name and/or number\n• Client name\n• Location (county, state, legal description reference)\n\nDATE AND TIME:\n• Date of field work (MM/DD/YYYY format)\n• Start and end times for productivity and crew records\n\nPERSONNEL:\n• Names of all crew members and their roles (party chief, instrument operator, rod person)\n• Surveyor\'s signature or initials on each page\n\nINSTRUMENT INFORMATION:\n• Type of instrument (total station, level, GPS receiver)\n• Manufacturer and model\n• Serial numbers — required for calibration tracking and legal defensibility\n\nWEATHER CONDITIONS:\n• Temperature, wind speed, visibility\n• These affect measurement quality and help explain anomalies\n\nMAGNETIC DECLINATION:\n• If a compass is used, the declination value and the date it was obtained must be recorded\n• Without this, magnetic bearings cannot be converted to true bearings\n\nPAGE NUMBERING:\n• Sequential page numbers allow gaps to be detected\n• The field book cover should show the total number of pages',
+      },
+      {
+        id: 'fs-d1-fn-s7',
+        type: 'knowledge_check',
+        title: 'Metadata Checkpoint',
+        knowledgeCheck: {
+          question: 'A set of differential leveling notes includes all numerical data, sketches, crew names, and dates — but the notes do not record the instrument serial numbers or equipment model. What is the PRIMARY risk of this omission?',
+          options: [
+            'The notes cannot be used to compute elevations',
+            'There is no way to verify the instrument was calibrated or to reconstruct the survey conditions if the results are challenged',
+            'The notes violate the "legibility" feature',
+            'The magnetic declination cannot be determined',
+          ],
+          correctIndex: 1,
+          explanation: 'Instrument serial numbers and model information are required so that calibration records can be verified and the instrument\'s condition at the time of the survey can be established. If a survey is challenged in court, the ability to show that the instrument was properly calibrated and in good working order is critical for defensibility. This omission primarily affects the integrity and defensibility of the record, not the ability to compute elevations from the data.',
+        },
+      },
+      {
+        id: 'fs-d1-fn-s8',
+        type: 'concept',
+        title: 'Standard Field Note Abbreviations',
+        content: 'Surveyors use a consistent set of abbreviations to keep notes concise. The FS exam expects you to recognize these standard abbreviations:\n\nLEVELING ABBREVIATIONS:\n• BS — Backsight (rod reading taken on a known point to establish HI)\n• FS — Foresight (rod reading taken on an unknown point to determine its elevation)\n• HI — Height of Instrument (elevation of line of sight)\n• BM — Benchmark (permanent monument with known elevation)\n• TBM — Temporary Benchmark (temporary elevation reference point, not permanent)\n• TP — Turning Point (temporary point used to advance the level run)\n\nTRAVERSE ABBREVIATIONS:\n• PC — Point of Curvature (beginning of a horizontal curve)\n• PT — Point of Tangency (end of a horizontal curve)\n• PI — Point of Intersection (where two tangents meet)\n• STA — Station (distance along a baseline, e.g., Sta 7+35 = 735 ft from origin)\n\nGENERAL ABBREVIATIONS:\n• MON — Monument\n• IP — Iron Pin\n• IM — Iron Monument\n• CALC — Calculated\n• MEAS — Measured\n• N, S, E, W — Cardinal directions\n• DMS — Degrees, Minutes, Seconds\n• DD — Decimal Degrees\n• CL — Centerline\n• R/W — Right of Way\n• @ — At a specific station or location',
+      },
+      {
+        id: 'fs-d1-fn-tips',
+        type: 'exam_tips',
+        title: 'Exam Tips: Field Notes',
+        examTips: [
+          'The five features are a common source of "which is NOT" questions. Memorize them as: Accuracy, Integrity, Legibility, Arrangement, Clarity. A helpful mnemonic: "All I Like Are Clear (notes)."',
+          'Erasure = violation of Integrity. This is the most tested distinction. Striking through and rewriting is correct; erasing is not.',
+          'Voiding a page = diagonal lines + "VOID" written across it. Never tear out pages. Torn-out pages imply something was hidden.',
+          'The left page holds numerical data; the right page holds sketches and narrative. This is tested in scenario-based questions about where to find specific information.',
+          'Magnetic declination must be recorded whenever a compass is used — not just assumed to be known. Without the recorded declination value, magnetic bearings are legally useless for future boundary recovery.',
+          'TP (Turning Point) is temporary and has no permanent elevation significance. BM (Benchmark) is permanent. TBM (Temporary Benchmark) is semi-permanent for a project, but not a permanent NGS monument.',
+        ],
+      },
+      {
+        id: 'fs-d1-fn-s9',
+        type: 'further_reading',
+        title: 'Field Notes References',
+        furtherReading: [
+          { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 2', topic: 'Surveying field notes — requirements, formats, and conventions' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Field note-keeping standards and professional practice requirements' },
+        ],
+      },
+    ],
+  },
 ];

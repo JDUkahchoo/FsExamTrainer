@@ -5651,6 +5651,82 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
 
+  // ─── Field Notes ───
+
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Which of the following is NOT one of the five required features of survey field notes?',
+    options: ['Integrity', 'Legibility', 'Redundancy', 'Arrangement'],
+    correctAnswer: 2,
+    explanation: 'The five required features of survey field notes are: Accuracy, Integrity, Legibility, Arrangement, and Clarity. Redundancy is not one of the five features — it is a surveying best practice for detecting errors but is not a required feature of field notes. A helpful mnemonic: "All I Like Are Clear (notes)."',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A party chief makes an error recording a distance in the field book. The correct action is to:',
+    options: [
+      'Use correction fluid to white out the error and write the correct value',
+      'Erase the error completely and write the correct value in the same space',
+      'Draw a single line through the incorrect value, leaving it legible, and write the correct value above it',
+      'Tear out the page and start a new page with the corrected entry'
+    ],
+    correctAnswer: 2,
+    explanation: 'The correct procedure is to draw a single line through the incorrect value — keeping it legible — and write the correct value above it. Erasing, using correction fluid, or removing pages all violate the INTEGRITY feature of field notes. Field notes are legal documents; the original (wrong) entry must remain visible to show it was corrected, not concealed.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In a standard field book layout, where are numerical measurements (distances, rod readings, angles) typically recorded?',
+    options: [
+      'On the right-hand page',
+      'On the left-hand page',
+      'On either page at the recorder\'s preference',
+      'On a separate data sheet, not in the field book'
+    ],
+    correctAnswer: 1,
+    explanation: 'In standard field note format, the LEFT page contains tabular numerical data (measurements, rod readings, elevations, angles). The RIGHT page contains the freehand sketch, point labels, and narrative notes. This consistent layout allows any surveyor to immediately know where to find numerical data versus contextual information.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'Which metadata item is required in field notes specifically when a compass is used for direction measurement?',
+    options: [
+      'Instrument serial number',
+      'Weather conditions',
+      'Magnetic declination value and the date it was obtained',
+      'Client name and project number'
+    ],
+    correctAnswer: 2,
+    explanation: 'When a compass is used, the magnetic declination value AND the date it was obtained must be recorded. Without this information, the magnetic bearings recorded in the notes cannot be converted to true bearings — making the notes legally unusable for boundary recovery. Declination changes over time, so both the value and the date it was determined are essential.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In differential leveling field notes, the abbreviation "TP" refers to:',
+    options: [
+      'True Position',
+      'Turning Point',
+      'Temporary Pin',
+      'Traverse Point'
+    ],
+    correctAnswer: 1,
+    explanation: 'TP stands for Turning Point — a temporary point used to advance a leveling run from one instrument setup to the next. The level rod is held on the TP while the instrument is moved forward; the rod is not moved until the new HI is established. A TP has no permanent elevation significance, unlike a BM (Benchmark) or TBM (Temporary Benchmark).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor completes an entire page of field notes only to realize it was recorded on the wrong project\'s field book. The correct action is to:',
+    options: [
+      'Tear out the page since it contains no useful data for this project',
+      'Draw diagonal lines through the entire page and write "VOID" in large letters across it',
+      'Leave the page blank and start fresh on the next page without explanation',
+      'Use correction fluid to blank out all entries on the page'
+    ],
+    correctAnswer: 1,
+    explanation: 'To void a page, draw diagonal lines across the entire page and write "VOID" in large letters. Do NOT tear out the page — missing pages in a sequential field book suggest that information was deliberately removed, which raises serious questions in any legal proceeding. The voided page must remain in the book so the sequential record is intact.',
+    difficulty: 'medium'
+  },
+
   // ─── Historical Units of Measure ───
 
   {
