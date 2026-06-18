@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LayersIcon, ChevronLeft, ChevronRight, ExternalLink, Sun, Sunset, Moon } from 'lucide-react';
+import { LayersIcon, ChevronLeft, ChevronRight, ExternalLink, Sun, Sunset, Moon, CheckCircle2, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { COMPREHENSIVE_FLASHCARDS } from '@shared/data/flashcardsComprehensive';
 import { PS_FLASHCARDS } from '@shared/data/ps-flashcards';
 import { useMutation } from '@tanstack/react-query';
@@ -21,6 +21,8 @@ interface FlashcardWeekPreviewProps {
   domains: string[];
   examTrack: string;
   allWeeks: WeekEntry[];
+  reviewedDomains?: string[];
+  missingDomains?: string[];
 }
 
 interface Session {
@@ -176,7 +178,82 @@ function CardNavigator({ cards, weekKey, examTrack }: { cards: Card[]; weekKey: 
   );
 }
 
-export function FlashcardWeekPreview({ week, domains, examTrack, allWeeks }: FlashcardWeekPreviewProps) {
+/** Compact collapsible domain coverage breakdown shown on the week card */
+function DomainCoverageBreakdown({
+  week,
+  reviewedDomains,
+  missingDomains,
+}: {
+  week: number;
+  reviewedDomains: string[];
+  missingDomains: string[];
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const total = reviewedDomains.length + missingDomains.length;
+
+  if (total === 0) return null;
+
+  const allReviewed = missingDomains.length === 0;
+
+  return (
+    <div
+      className="rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50/30 dark:bg-yellow-900/10 overflow-hidden"
+      data-testid={`domain-coverage-breakdown-${week}`}
+    >
+      {/* Toggle header */}
+      <button
+        onClick={() => setExpanded(v => !v)}
+        className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-yellow-700 dark:text-yellow-400 hover:bg-yellow-100/50 dark:hover:bg-yellow-900/20 transition-colors"
+        data-testid={`button-domain-coverage-toggle-${week}`}
+      >
+        <span className="flex items-center gap-1.5">
+          Domain coverage
+          <span className={[
+            'inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
+            allReviewed
+              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+              : 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400',
+          ].join(' ')}>
+            {reviewedDomains.length}/{total}
+          </span>
+        </span>
+        {expanded
+          ? <ChevronUp className="w-3.5 h-3.5 shrink-0" />
+          : <ChevronDown className="w-3.5 h-3.5 shrink-0" />}
+      </button>
+
+      {/* Domain list */}
+      {expanded && (
+        <ul
+          className="px-3 pb-2.5 space-y-1"
+          data-testid={`domain-coverage-list-${week}`}
+        >
+          {reviewedDomains.map(domain => (
+            <li key={domain} className="flex items-start gap-1.5 text-xs text-foreground">
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-green-500 dark:text-green-400" />
+              <span>{domain}</span>
+            </li>
+          ))}
+          {missingDomains.map(domain => (
+            <li key={domain} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+              <XCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-yellow-400 dark:text-yellow-600" />
+              <span>{domain}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export function FlashcardWeekPreview({
+  week,
+  domains,
+  examTrack,
+  allWeeks,
+  reviewedDomains = [],
+  missingDomains = [],
+}: FlashcardWeekPreviewProps) {
   const [activeSession, setActiveSession] = useState(0);
 
   const { sessions, domainsParam, totalCards } = useMemo(() => {
@@ -273,6 +350,13 @@ export function FlashcardWeekPreview({ week, domains, examTrack, allWeeks }: Fla
           </Button>
         </Link>
       </div>
+
+      {/* Domain coverage breakdown */}
+      <DomainCoverageBreakdown
+        week={week}
+        reviewedDomains={reviewedDomains}
+        missingDomains={missingDomains}
+      />
 
       {/* Session tabs — only render tabs that have cards */}
       {sessions.length > 1 && (

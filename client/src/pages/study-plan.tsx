@@ -1499,6 +1499,8 @@ export default function StudyPlan() {
                     domains={plan.domains as string[]}
                     examTrack={examTrack}
                     allWeeks={allWeeks.map(w => ({ week: w.week, domains: w.domains as string[] }))}
+                    reviewedDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.reviewedDomains ?? []}
+                    missingDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.missingDomains ?? []}
                   />
 
                   <WeekStudyTip week={plan.week} examTrack={examTrack} />
