@@ -885,6 +885,37 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     examTrack: 'fs'
   },
 
+  // ─── Stadia Measurement ───
+
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Stadia: Level Distance Formula',
+    back: 'HD = k × s\n\nWhere:\n• k = stadia constant = 100\n• s = stadia interval (upper hair − lower hair)\n\nExample:\nUpper hair = 7.84 ft, lower hair = 5.96 ft\ns = 1.88 ft\nHD = 100 × 1.88 = 188 ft\n\nRemember: 0.01 ft of interval = 1 ft of distance',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Stadia: Slope Distance Formulas',
+    back: 'For inclined sights (vertical angle α):\n\nHD = k × s × cos²(α)\nVD = (k × s / 2) × sin(2α)\n\nWhere:\n• HD = horizontal distance\n• VD = vertical distance\n• k = 100, s = stadia interval\n• α = vertical angle\n\nLevel trap: HD = k × s only when α = 0°',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Stadia Half-Interval Method',
+    back: 'Used when one stadia hair falls off the rod.\n\nProcedure:\n1. Read middle cross-hair (m) and ONE stadia hair\n2. Half-interval = |stadia hair − middle hair|\n3. Full interval = 2 × half-interval\n4. HD = 100 × full interval\n\nWorks because stadia hairs are symmetric\naround the middle cross-hair',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    front: 'Stadia Accuracy vs. EDM',
+    back: 'STADIA:\n• Accuracy: 1:500 to 1:1,000\n• Pre-EDM topo surveys\n• Not suitable for control or boundary work\n\nEDM (Total Station):\n• Accuracy: 1:50,000 to 1:300,000+\n• Suitable for all precision work\n\nKey: Stadia accuracy is ~100× worse than EDM.\nUse stadia for rough topo, never for boundary.',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+
   // ─── Historical Units of Measure ───
 
   {

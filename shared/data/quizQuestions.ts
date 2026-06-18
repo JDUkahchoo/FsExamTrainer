@@ -5651,6 +5651,67 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
 
+  // ─── Stadia Measurement ───
+
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A stadia rod is read through a level transit (k = 100). The upper stadia hair reads 7.23 ft and the lower stadia hair reads 5.99 ft. What is the horizontal distance to the rod?',
+    options: ['124 ft', '723 ft', '599 ft', '62 ft'],
+    correctAnswer: 0,
+    explanation: 'Stadia interval s = upper − lower = 7.23 − 5.99 = 1.24 ft. Horizontal distance = k × s = 100 × 1.24 = 124 ft. The stadia constant k = 100 means that every 0.01 ft of rod interval equals 1 ft of horizontal distance on level ground. Never use the individual rod readings (7.23 or 5.99) as the distance.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A transit with k = 100 is aimed at a rod with a vertical angle of +12°00\'. The stadia interval is 1.62 ft. What is the horizontal distance?',
+    options: ['155.19 ft', '162.00 ft', '149.21 ft', '174.37 ft'],
+    correctAnswer: 0,
+    explanation: 'For a sloped sight: HD = k × s × cos²(α) = 100 × 1.62 × cos²(12°). cos(12°) = 0.9781; cos²(12°) = 0.9567. HD = 162.00 × 0.9567 = 155.19 ft. Using the level formula (HD = 162 ft) would overestimate the horizontal distance — a classic exam trap. Always apply the cos²(α) correction when a vertical angle is given.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'The typical precision of stadia distance measurement falls in which range?',
+    options: ['1:500 to 1:1,000', '1:5,000 to 1:10,000', '1:50,000 to 1:100,000', '1:100 to 1:200'],
+    correctAnswer: 0,
+    explanation: 'Stadia achieves approximately 1:500 to 1:1,000 precision — suitable for topographic work but NOT for control surveys, boundary surveys, or construction stakeout. For comparison, tape measurement achieves 1:5,000 to 1:50,000, and EDM/total stations achieve 1:50,000 or better.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'During a stadia reading, the lower stadia hair falls below the bottom of the graduated rod. The middle cross-hair reads 4.75 ft and the upper stadia hair reads 6.20 ft. Using the half-interval method, what is the horizontal distance?',
+    options: ['290 ft', '145 ft', '620 ft', '475 ft'],
+    correctAnswer: 0,
+    explanation: 'Half-interval = upper hair − middle hair = 6.20 − 4.75 = 1.45 ft. Full interval = 2 × 1.45 = 2.90 ft. HD = k × full interval = 100 × 2.90 = 290 ft. The half-interval method works because the two stadia hairs are symmetric about the middle cross-hair — both intervals are always equal.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'A surveyor uses stadia to map a topographic survey and needs distances to approximately ±0.5 ft over ranges up to 500 ft. Which statement best describes whether stadia is appropriate?',
+    options: [
+      'Yes — stadia precision of 1:1,000 gives ±0.5 ft at 500 ft, which meets the requirement',
+      'No — stadia is never appropriate for distances over 200 ft',
+      'Yes — stadia is as accurate as an EDM for topographic work',
+      'No — stadia requires a reflector prism, which the surveyor does not have'
+    ],
+    correctAnswer: 0,
+    explanation: 'At the favorable end of stadia accuracy (1:1,000), the expected error at 500 ft is 500 ÷ 1,000 = 0.5 ft — exactly meeting the requirement. Stadia is appropriate for topographic surveys where density of points and speed matter more than centimeter-level precision. EDMs and total stations are far more accurate but stadia can serve when 0.5 ft tolerance is acceptable.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Field Data Acquisition',
+    question: 'In a stadia reading on a sloped sight, which formula gives the VERTICAL distance (elevation difference) between the instrument axis and the rod reading?',
+    options: [
+      'VD = (k × s / 2) × sin(2α)',
+      'VD = k × s × sin(α)',
+      'VD = k × s × cos²(α)',
+      'VD = k × s × tan(α)'
+    ],
+    correctAnswer: 0,
+    explanation: 'The vertical distance formula for stadia is VD = (k × s / 2) × sin(2α). This comes from the trigonometric reduction of the stadia geometry. The horizontal distance formula is HD = k × s × cos²(α). Do not confuse them: cos²(α) is for horizontal, sin(2α)/2 is for vertical. At small angles, sin(2α) ≈ 2α radians, so VD ≈ k × s × α, but use the exact formula on exams.',
+    difficulty: 'hard'
+  },
+
   // ─── Field Notes ───
 
   {

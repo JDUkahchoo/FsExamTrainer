@@ -516,4 +516,154 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
       },
     ],
   },
+  {
+    id: 'fs-d1-stadia',
+    examTrack: 'fs',
+    domainNumber: 1,
+    domain: 'Field Data Acquisition',
+    title: 'Stadia Measurement',
+    description: 'Learn the stadia method of distance measurement: how to read a stadia interval, the 100:1 distance constant, horizontal distance correction for sloped sights, and when to use the half-interval technique.',
+    estimatedMinutes: 18,
+    sections: [
+      {
+        id: 'fs-d1-st-s1',
+        type: 'concept',
+        title: 'What Is the Stadia Method?',
+        content: 'The stadia method is an indirect distance measurement technique used with a transit, theodolite, or telescopic alidade. It was the standard method for measuring distances in tacheometry (rapid topographic surveying) before electronic distance meters (EDMs) became common in the 1970s.\n\nInside the telescope, two additional horizontal lines called stadia hairs (or stadia wires) are etched on the reticle — one above and one below the main horizontal cross-hair. When you sight a level rod through the telescope, these hairs intercept two different readings on the rod. The difference between those readings — called the stadia interval — relates directly to the distance from the instrument to the rod.\n\nWhy the FS exam covers stadia:\n• It appears on historic survey records and resurvey notes\n• The FS exam tests whether candidates understand the principles of indirect distance measurement\n• The formulas and concept are straightforward and frequently tested\n• Understanding stadia helps contextualize EDM accuracy improvements',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Stadia surveying principles and formulas' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Distance measurement by stadia' },
+        ],
+      },
+      {
+        id: 'fs-d1-st-s2',
+        type: 'concept',
+        title: 'Reading the Stadia Interval',
+        content: 'To take a stadia reading, the rod person holds a level rod vertically at the target point. The instrument operator reads the rod at three hair positions:\n\n• Upper stadia hair reading (u)\n• Middle cross-hair reading (m) — used for elevation\n• Lower stadia hair reading (l)\n\nThe stadia interval is:\ns = upper reading − lower reading = u − l\n\nExample: Upper hair = 6.43 ft, lower hair = 4.97 ft\ns = 6.43 − 4.97 = 1.46 ft\n\nThe stadia hairs are designed so that their angular separation exactly matches a 1:100 ratio — meaning 1 unit of stadia interval equals 100 units of horizontal distance on level ground. This is the stadia constant k = 100.\n\nNote the order: the upper hair always reads a LARGER value on the rod because it intercepts a higher point on a rod that is graduated from bottom (small) to top (large). On a standard rod held vertically, the lower hair intercepts a smaller number than the upper hair.',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Stadia interval and rod readings' },
+        ],
+      },
+      {
+        id: 'fs-d1-st-s3',
+        type: 'formula',
+        title: 'Level Stadia Distance Formula',
+        formula: {
+          expression: 'HD = k × s',
+          variables: [
+            { symbol: 'HD', description: 'Horizontal distance from instrument to rod (feet or meters)' },
+            { symbol: 'k', description: 'Stadia constant = 100 (dimensionless; the standard value for all modern surveying telescopes)' },
+            { symbol: 's', description: 'Stadia interval = upper hair reading − lower hair reading (same units as the rod)' },
+          ],
+          whenToUse: 'Use when the line of sight is horizontal (level) or when the terrain is flat. This is the simplest form of the stadia formula. For inclined sights, use the slope correction formulas.',
+        },
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Stadia distance formula for level sights' },
+        ],
+      },
+      {
+        id: 'fs-d1-st-s4',
+        type: 'knowledge_check',
+        title: 'Level Stadia Distance Check',
+        knowledgeCheck: {
+          question: 'A surveyor reads a level rod through a transit and observes: upper stadia hair = 7.84 ft, lower stadia hair = 5.96 ft. Using k = 100, what is the horizontal distance to the rod?',
+          options: [
+            '188 ft',
+            '176 ft',
+            '784 ft',
+            '596 ft',
+          ],
+          correctIndex: 0,
+          explanation: 'Stadia interval s = 7.84 − 5.96 = 1.88 ft. Horizontal distance = k × s = 100 × 1.88 = 188 ft. The stadia constant k = 100 always: every 0.01 ft of stadia interval equals 1 ft of distance. Do not confuse the rod readings themselves (7.84 or 5.96) with the stadia interval (their difference).',
+        },
+      },
+      {
+        id: 'fs-d1-st-s5',
+        type: 'formula',
+        title: 'Slope Stadia Formulas',
+        formula: {
+          expression: 'HD = k × s × cos²(α)     VD = (k × s / 2) × sin(2α)',
+          variables: [
+            { symbol: 'HD', description: 'Horizontal distance from instrument to rod' },
+            { symbol: 'VD', description: 'Vertical distance (elevation difference) between instrument axis and middle cross-hair rod reading' },
+            { symbol: 'k', description: 'Stadia constant = 100' },
+            { symbol: 's', description: 'Stadia interval (rod intercept between upper and lower stadia hairs)' },
+            { symbol: 'α', description: 'Vertical angle of the line of sight (positive for uphill, negative for downhill)' },
+          ],
+          whenToUse: 'Use when the instrument is aimed at a slope — that is, when the line of sight is not horizontal. Both formulas use the same inputs. HD gives the map distance; VD gives the elevation difference that you add to or subtract from the instrument height to find the rod point\'s elevation.',
+        },
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Stadia reduction for inclined sights' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Inclined stadia measurements and reduction formulas' },
+        ],
+      },
+      {
+        id: 'fs-d1-st-s6',
+        type: 'worked_example',
+        title: 'Slope Stadia: Computing Horizontal Distance',
+        workedExample: {
+          problem: 'A transit with k = 100 is used to sight a rod on sloped terrain. The stadia interval reads 1.50 ft and the vertical angle is +10°00\'. What is the horizontal distance to the rod?',
+          steps: [
+            { step: 1, description: 'Identify the known values.', calculation: 'k = 100, s = 1.50 ft, α = 10°' },
+            { step: 2, description: 'Apply the slope stadia formula: HD = k × s × cos²(α).', calculation: 'HD = 100 × 1.50 × cos²(10°)' },
+            { step: 3, description: 'Compute cos(10°) and square it.', calculation: 'cos(10°) = 0.9848; cos²(10°) = 0.9698' },
+            { step: 4, description: 'Multiply to get HD.', calculation: 'HD = 100 × 1.50 × 0.9698 = 145.47 ft' },
+          ],
+          answer: 'The horizontal distance is 145.47 ft. Note: if you had used the level formula (HD = k × s = 150 ft), you would have overestimated by about 4.5 ft — a significant error on sloped ground.',
+        },
+      },
+      {
+        id: 'fs-d1-st-s7',
+        type: 'knowledge_check',
+        title: 'Slope Stadia Check',
+        knowledgeCheck: {
+          question: 'For a stadia reading with k = 100, stadia interval s = 0.82 ft, and vertical angle α = 15°, what is the horizontal distance?',
+          options: [
+            '76.56 ft',
+            '82.00 ft',
+            '79.13 ft',
+            '63.79 ft',
+          ],
+          correctIndex: 0,
+          explanation: 'HD = k × s × cos²(α) = 100 × 0.82 × cos²(15°). cos(15°) = 0.9659; cos²(15°) = 0.9330. HD = 100 × 0.82 × 0.9330 = 76.51 ft ≈ 76.56 ft. (Small rounding differences are expected.) Note that 82.00 ft is the answer if you ignored the slope correction — a common exam trap.',
+        },
+      },
+      {
+        id: 'fs-d1-st-s8',
+        type: 'concept',
+        title: 'Half-Interval Method',
+        content: 'Sometimes the rod is too close, too far, or the terrain is such that one of the stadia hairs falls outside the visible rod graduation — it goes "off the rod." When this happens, you cannot read a full stadia interval.\n\nThe solution is the half-interval method:\n1. Read the middle cross-hair on the rod (m)\n2. Read whichever one stadia hair IS visible — either upper (u) or lower (l)\n3. Compute the half-interval: half = |visible hair − middle cross-hair|\n4. Full interval = 2 × half-interval\n5. Distance = k × full interval = 100 × (2 × half)\n\nExample:\nMiddle cross-hair m = 5.25 ft\nUpper stadia hair u = 6.43 ft (lower hair goes off rod below zero)\nHalf-interval = 6.43 − 5.25 = 1.18 ft\nFull interval = 2 × 1.18 = 2.36 ft\nHD = 100 × 2.36 = 236 ft\n\nThis works because the stadia hairs are symmetric about the middle cross-hair — the upper and lower intervals are always equal. Using half of one measured interval and doubling it reconstructs the full interval.',
+      },
+      {
+        id: 'fs-d1-st-s9',
+        type: 'concept',
+        title: 'Accuracy and Limitations of Stadia',
+        content: 'Stadia measurement is convenient but relatively imprecise compared to modern methods:\n\nTypical stadia accuracy: 1:500 to 1:1,000\n• At 1:500, a 200 ft stadia distance has an error of about 0.4 ft\n• At 1:1,000, a 500 ft distance has an error of 0.5 ft\n\nFor comparison:\n• Tape measurement: 1:5,000 to 1:50,000\n• EDM/total station: 1:50,000 to 1:300,000+\n• GPS RTK: sub-centimeter\n\nWhen to use stadia (historically):\n• Topographic surveys where the density of points matters more than precise individual distances\n• Reconnaissance and plane table surveys\n• Checking rough distances quickly in the field\n\nWhen NOT to use stadia:\n• Control surveys\n• Property boundary surveys\n• Construction stakeout requiring precision better than 0.5 ft\n\nLimiting factors on stadia accuracy:\n• Rod not held vertical\n• Parallax in the telescope\n• Atmospheric shimmer on hot days\n• Reading error in estimating the rod intercept\n• The 100:1 constant being only approximately correct on older instruments',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Stadia accuracy, errors, and practical limitations' },
+        ],
+      },
+      {
+        id: 'fs-d1-st-tips',
+        type: 'exam_tips',
+        title: 'Exam Tips: Stadia',
+        examTips: [
+          'The stadia constant k = 100 is the only value you need to memorize. Every stadia distance problem reduces to: HD = 100 × s × (slope correction if needed).',
+          'On the FS exam, watch for the "slope trap": if a vertical angle is given, you must apply cos²(α) to get horizontal distance. Using HD = 100 × s directly gives the slope distance, not the horizontal distance.',
+          'Stadia interval = upper hair − lower hair (always positive). Do not use the individual rod readings as the distance.',
+          'Accuracy of 1:500 to 1:1,000 is the signature of stadia. If a question asks about a method with this precision range for topographic work, stadia is the answer.',
+          'The half-interval method produces the same result as reading a full interval — because the stadia hairs are symmetric. Doubling a half-interval gives the full interval.',
+        ],
+      },
+      {
+        id: 'fs-d1-st-s10',
+        type: 'further_reading',
+        title: 'Stadia References',
+        furtherReading: [
+          { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 5', topic: 'Stadia surveying — principles, formulas, and field procedures' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Indirect distance measurement by stadia and tacheometry' },
+        ],
+      },
+    ],
+  },
 ];
