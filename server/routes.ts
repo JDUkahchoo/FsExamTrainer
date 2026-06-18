@@ -1613,6 +1613,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get notes by domain
+  app.get("/api/notes/domain/:domain", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const domainNumber = parseInt(req.params.domain);
+      const notes = await storage.getStudyNotesByDomain(userId, domainNumber);
+      res.json(notes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch study notes for domain" });
+    }
+  });
+
   // Get notes by week and day
   app.get("/api/notes/week/:week/day/:day", isAuthenticated, async (req: any, res) => {
     try {

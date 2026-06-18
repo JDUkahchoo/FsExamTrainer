@@ -270,6 +270,7 @@ export interface IStorage {
   getAllStudyNotes(userId: string): Promise<StudyNote[]>;
   getStudyNotesByWeek(userId: string, week: number): Promise<StudyNote[]>;
   getStudyNotesByDay(userId: string, week: number, dayOfWeek: string): Promise<StudyNote[]>;
+  getStudyNotesByDomain(userId: string, domainNumber: number): Promise<StudyNote[]>;
   createStudyNote(note: InsertStudyNote): Promise<StudyNote>;
   updateStudyNote(userId: string, noteId: string, updates: Partial<InsertStudyNote>): Promise<StudyNote>;
   deleteStudyNote(userId: string, noteId: string): Promise<void>;
@@ -922,6 +923,14 @@ export class DatabaseStorage implements IStorage {
         eq(studyNotes.week, week),
         eq(studyNotes.dayOfWeek, dayOfWeek)
       ))
+      .orderBy(desc(studyNotes.updatedAt));
+  }
+
+  async getStudyNotesByDomain(userId: string, domainNumber: number): Promise<StudyNote[]> {
+    return await db
+      .select()
+      .from(studyNotes)
+      .where(and(eq(studyNotes.userId, userId), eq(studyNotes.domainNumber, domainNumber)))
       .orderBy(desc(studyNotes.updatedAt));
   }
 
