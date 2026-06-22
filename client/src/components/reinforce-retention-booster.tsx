@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { Link } from 'wouter';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -915,14 +916,20 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
                                 className="flex items-start gap-1.5 text-xs"
                                 data-testid={`coverage-domain-missing-${d}`}
                               >
-                                <XCircle className="h-3 w-3 mt-0.5 shrink-0 text-muted-foreground" />
-                                <span className="leading-snug text-muted-foreground">{d}</span>
+                                <XCircle className="h-3 w-3 mt-0.5 shrink-0 text-yellow-500 dark:text-yellow-400" />
+                                <Link
+                                  href={`/app/${examTrack}/flashcards?domains=${encodeURIComponent(d)}&week=${week}`}
+                                  className="leading-snug text-violet-600 dark:text-violet-400 underline underline-offset-2 hover:text-violet-800 dark:hover:text-violet-300 transition-colors"
+                                  data-testid={`link-coverage-missing-${d}`}
+                                >
+                                  {d}
+                                </Link>
                               </li>
                             ))}
                           </ul>
                           {missingDomains.length > 0 && (
                             <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/50">
-                              Review the missing domains to auto-check reinforce tasks.
+                              Tap a missing domain to study its flashcards now.
                             </p>
                           )}
                         </div>

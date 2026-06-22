@@ -181,10 +181,12 @@ function CardNavigator({ cards, weekKey, examTrack }: { cards: Card[]; weekKey: 
 /** Compact collapsible domain coverage breakdown shown on the week card */
 function DomainCoverageBreakdown({
   week,
+  examTrack,
   reviewedDomains,
   missingDomains,
 }: {
   week: number;
+  examTrack: string;
   reviewedDomains: string[];
   missingDomains: string[];
 }) {
@@ -235,9 +237,15 @@ function DomainCoverageBreakdown({
             </li>
           ))}
           {missingDomains.map(domain => (
-            <li key={domain} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+            <li key={domain} className="flex items-start gap-1.5 text-xs">
               <XCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-yellow-400 dark:text-yellow-600" />
-              <span>{domain}</span>
+              <Link
+                href={`/app/${examTrack}/flashcards?domains=${encodeURIComponent(domain)}&week=${week}`}
+                className="text-violet-600 dark:text-violet-400 underline underline-offset-2 hover:text-violet-800 dark:hover:text-violet-300 transition-colors leading-snug"
+                data-testid={`link-missing-domain-${week}-${domain}`}
+              >
+                {domain}
+              </Link>
             </li>
           ))}
         </ul>
@@ -354,6 +362,7 @@ export function FlashcardWeekPreview({
       {/* Domain coverage breakdown */}
       <DomainCoverageBreakdown
         week={week}
+        examTrack={examTrack}
         reviewedDomains={reviewedDomains}
         missingDomains={missingDomains}
       />
