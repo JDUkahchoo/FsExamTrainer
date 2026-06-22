@@ -885,6 +885,89 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     examTrack: 'fs'
   },
 
+  // ─── State Plane Coordinate System ───
+
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Scale Factor (SF) — State Plane Coordinate System',
+    back: 'The ratio of a grid distance to the corresponding ellipsoid distance at any point in a State Plane zone.\n\nSF = grid distance / ellipsoid distance\n\nKey facts:\n• SF = exactly 1.000000 at the standard parallels (LCC) or central meridian (TM)\n• SF < 1 between the lines of exact scale (grid is compressed)\n• SF > 1 toward zone edges (grid is expanded)\n• Typical range within a SPCS zone: 0.9999 to 1.0001\n\nSF corrects for the map projection distortion — NOT for elevation. Elevation is corrected by the Elevation Factor.',
+    category: 'definition',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Elevation Factor (EF) — State Plane Coordinate System',
+    back: 'Reduces a ground (physical) distance to the equivalent ellipsoid distance by accounting for terrain elevation above the ellipsoid.\n\nEF = R / (R + H)\n\nR = Earth\'s mean radius ≈ 6,372,000 m\nH = elevation of the survey (m or ft, consistent with R)\n\nKey facts:\n• EF is always < 1 (terrain sits above the ellipsoid)\n• Higher elevation → EF further below 1 → larger correction\n• At sea level (H=0): EF = 1.000000\n• At H = 1,000 m: EF ≈ 0.999843\n\nEF corrects for elevation — NOT map projection. Map projection is corrected by SF.',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Combined Factor (CF) and Grid/Ground Conversion',
+    back: 'CF = SF × EF\n\nCombines the map projection correction (SF) and the elevation correction (EF) into one multiplier.\n\nConversions:\nGrid = Ground × CF  (grid is shorter when CF < 1)\nGround = Grid / CF  (ground is longer when CF < 1)\n\nTypical value: CF ≈ 0.9998 – 0.9999 for most U.S. surveys\n\nMemory trick:\n• "Ground × CF = Grid" — multiplying by a number less than 1 shrinks it → grid is smaller\n• "Grid / CF = Ground" — dividing by a number less than 1 grows it → ground is larger',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'Lambert Conformal Conic vs Transverse Mercator (SPC)',
+    back: 'Two projection types used in the State Plane Coordinate System:\n\nLAMBERT CONFORMAL CONIC (LCC):\n• Use for zones that are WIDER east–west than tall north–south\n• Two standard parallels (lines of exact scale)\n• Examples: Tennessee, North Carolina, Louisiana\n• Memory: "Flat/wide state → flat cone → Lambert"\n\nTRANSVERSE MERCATOR (TM):\n• Use for zones that are TALLER north–south than wide east–west\n• Central meridian = line of exact scale\n• Examples: New Jersey, Vermont, Illinois, Idaho\n• Memory: "Tall/narrow state → tall cylinder → Transverse Mercator"\n\nOblique Mercator: used for diagonal zones (Alaska Panhandle)',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'State Plane vs UTM: Key Differences',
+    back: 'Both are plane coordinate systems for the U.S., but differ significantly:\n\nSTATE PLANE (SPCS):\n• U.S.-only\n• Zones: 1°–2° wide → very low distortion (<1:10,000)\n• ~125 zones nationwide\n• Accuracy: suitable for property surveys and construction\n• Units: feet (older) or meters (SPCS 2022)\n\nUTM:\n• Worldwide system\n• Zones: 6° wide → more distortion (up to 1:2,500 at edges)\n• 60 zones worldwide\n• Less accurate for high-precision local work\n• Units: always meters\n\nRule: Use State Plane for precision U.S. surveys; use UTM for regional/global work or where State Plane isn\'t established.',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    front: 'SPC Zone Design: Why Zones Follow County Lines',
+    back: 'State Plane zones are designed so that:\n\n1. Distortion stays below 1:10,000 everywhere within the zone\n2. Zone boundaries follow county lines\n\nWhy county lines?\n• A property deed references one county → one State Plane zone\n• Avoids splitting a survey project across two coordinate systems\n• Legal descriptions remain unambiguous\n\nPractical note:\n• A project spanning a zone boundary needs TWO coordinate systems\n• Plat distances recorded in the field (ground distances) differ from SPCS grid distances by the CF correction\n• Old plats used ground distances → converting to SPCS grid coordinates requires applying CF',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+
+  // ─── Photogrammetry ───
+
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Photo Scale Formula: S = f / (H − h)',
+    back: 'The scale of a vertical aerial photograph at a given terrain elevation:\n\nS = f / (H − h)\n\nf = camera focal length (convert mm → m)\nH = flying height above datum (m or ft)\nh = terrain elevation above datum at that point (m or ft)\nH − h = flying height above the LOCAL ground\n\nExamples:\n• f = 152 mm, H = 3,800 m, h = 300 m\n• H\' = 3,500 m → S = 0.152/3,500 = 1:23,026 ≈ 1:23,000\n\nRules:\n• Higher flight → smaller scale (covers more ground per photo)\n• Longer focal length → larger scale (more zoomed in)\n• Scale varies across a photo where terrain varies',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Relief Displacement: d = rh / H',
+    back: 'The radial outward shift of a tall object\'s top from its true planimetric position on a vertical aerial photo:\n\nd = r × h / H\n\nd = displacement on the photo (mm)\nr = radial distance from principal point to the TOP of the object (mm)\nh = HEIGHT of the object (m) — not terrain elevation\nH = flying height above the BASE of the object (m)\n\nKey facts:\n• Direction: always radially OUTWARD from the principal point\n• At the principal point: d = 0 (no displacement)\n• At photo edges: d is maximum\n• To find object height from displacement: h = dH / r\n\nExample: r=90mm, h=60m, H=3,000m → d = 90×60/3,000 = 1.80 mm',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Stereopair Overlap Standards: 60% Endlap / 30% Sidelap',
+    back: 'Standard overlap requirements for aerial photogrammetry:\n\nENDLAP (forward overlap — along the flight strip):\n• Standard: 60% minimum\n• Net advance between exposures = 40% of photo ground coverage\n• Ensures complete stereoscopic coverage of entire strip\n\nSIDELAP (lateral overlap — between adjacent strips):\n• Standard: 30% minimum\n• Strip spacing = 70% of photo cross-strip coverage\n• Ensures no data voids between strips\n\nMemory: "60/30" — sixty forward, thirty side\n\nWhy 60% and not 50%?\n• Provides buffer for aircraft roll/pitch and terrain variation\n• The stereo model occupies the central 40% of each photo — you need overlap on both sides',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Flight Planning: Number of Photos in a Strip',
+    back: 'Formula:\nN = (strip length / B) + 1, then round UP\n\nWhere B = net advance (air base) between exposures:\nB = ground coverage per photo × (1 − endlap)\nB = (format × scale_denom) × (1 − 0.60)\nB = ground_coverage × 0.40  (for 60% endlap)\n\nExample:\n• f=150mm, H\'=3,000m → scale=1:20,000\n• 230mm format → coverage = 230×20,000mm = 4,600m\n• B = 4,600 × 0.40 = 1,840m\n• Strip = 15,000m → N = 15,000/1,840 + 1 = 8.15+1 = 9.15 → 10 photos\n\nAlways round UP and add the "+1" for the first photo at strip start',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Principal Point and Relief Displacement Direction',
+    back: 'PRINCIPAL POINT (PP):\n• The geometric center of the aerial photograph\n• Where the optical axis pierces the photo plane\n• Located using fiducial marks (cross-hairs printed at photo edges/corners during exposure)\n• Objects AT the PP have zero relief displacement\n\nRELIEF DISPLACEMENT DIRECTION:\n• Always RADIALLY OUTWARD from the principal point\n• A tall building\'s top is displaced away from the PP, making it "lean outward"\n• The base of the building is at the true planimetric position; the top is displaced\n\nImplication for mapping:\n• Aerial photos cannot be used directly as planimetric maps — relief displacement must be corrected\n• Correction is done by differential rectification using a DEM → produces an ORTHOPHOTO',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+
   // ─── GNSS Advanced Concepts ───
 
   {

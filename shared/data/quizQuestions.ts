@@ -5651,6 +5651,194 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     difficulty: 'hard'
   },
 
+  // ─── State Plane Coordinate System ───
+
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A State Plane zone in a state with greater east-west extent than north-south extent would most likely use which map projection?',
+    options: [
+      'Lambert Conformal Conic — two standard parallels, best for wide east-west zones',
+      'Transverse Mercator — central meridian as the line of exact scale, best for tall north-south zones',
+      'UTM — the standard for all U.S. State Plane zones',
+      'Oblique Mercator — used when the zone is longer in a diagonal direction'
+    ],
+    correctAnswer: 0,
+    explanation: 'Lambert Conformal Conic (LCC) is used for State Plane zones that are wider east-west than tall north-south. The LCC has two standard parallels running east-west — exactly what is needed to keep distortion low across the wide extent of the zone. Transverse Mercator is used for zones that are taller north-south, like many eastern states with narrow E-W extent. Oblique Mercator is reserved for a small number of diagonal zones (e.g., Alaska Panhandle).',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'In a State Plane zone, where does the scale factor (SF) equal exactly 1.000000?',
+    options: [
+      'At the standard parallels (LCC) or the central meridian (TM)',
+      'At the center of the zone in both the north-south and east-west directions',
+      'At the false origin of the coordinate system',
+      'Nowhere — the scale factor always differs from 1 throughout the zone'
+    ],
+    correctAnswer: 0,
+    explanation: 'SF = 1.000000 exactly at the standard parallels in a Lambert Conformal Conic zone (where the cone intersects the ellipsoid) or at the central meridian in a Transverse Mercator zone (where the cylinder is tangent or secant). Between these lines, SF is slightly less than 1; outside them, SF is slightly greater than 1. The total range within a SPCS zone is typically 0.9999 to 1.0001.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A State Plane survey has SF = 0.999952 and average elevation H = 300 m. Using R = 6,372,000 m, what is the combined factor CF?',
+    options: [
+      'CF ≈ 0.999905',
+      'CF ≈ 0.999952',
+      'CF ≈ 0.999953',
+      'CF ≈ 1.000047'
+    ],
+    correctAnswer: 0,
+    explanation: 'Step 1: EF = R/(R+H) = 6,372,000/6,372,300 = 0.999953. Step 2: CF = SF × EF = 0.999952 × 0.999953 ≈ 0.999905. The combined factor accounts for both the projection distortion (SF) and the elevation above the ellipsoid (EF). Both are slightly less than 1, so CF is even further below 1 than either factor alone.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'A design plan shows a State Plane grid distance of 2,345.670 m between two points. The combined factor for the survey area is 0.999882. What is the ground distance the survey crew must lay out in the field?',
+    options: [
+      '2,345.947 m — Ground = Grid / CF = 2,345.670 / 0.999882',
+      '2,345.393 m — Ground = Grid × CF = 2,345.670 × 0.999882',
+      '2,345.670 m — No correction needed; grid and ground distances are the same',
+      '2,347.957 m — Ground = Grid × (1 + CF)'
+    ],
+    correctAnswer: 0,
+    explanation: 'Ground = Grid / CF = 2,345.670 / 0.999882 = 2,345.947 m. Because CF < 1, ground distances are longer than grid distances — dividing by a number slightly less than 1 produces a larger result. The crew must lay out 2,345.947 m to match the 2,345.670 m shown on the grid plan. Multiplying (option B) gives the grid-to-grid reduction, not the ground distance.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'Why are State Plane zone boundaries drawn along county lines?',
+    options: [
+      'So that an entire county falls within one zone, keeping legal descriptions unambiguous',
+      'Because county lines coincide with lines of equal scale factor',
+      'To match the boundaries used by the UTM system',
+      'Because federal law requires county boundaries to define coordinate system zones'
+    ],
+    correctAnswer: 0,
+    explanation: 'SPCS zone boundaries follow county lines by design so that all property within a county is described in one consistent coordinate system. A property deed references one county, which means one State Plane zone — no confusion about which coordinate system applies. A project that crosses a county/zone boundary must handle two coordinate systems, which is an added complication.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    question: 'An old subdivision plat records lot-line distances in feet measured on the ground at time of survey. When a surveyor retraces the survey using State Plane coordinates, the computed grid distances are consistently shorter than the plat distances by about 1 part in 8,000. The most likely explanation is:',
+    options: [
+      'The difference equals the combined factor correction — plat distances are ground distances; SPCS distances are grid distances',
+      'The original surveyor made systematic errors in chaining',
+      'The State Plane zone has changed since the original survey',
+      'The elevation factor was incorrectly applied to both the original and retracement surveys'
+    ],
+    correctAnswer: 0,
+    explanation: 'This is the classic CF discrepancy. Old plats record ground distances (what was physically measured). State Plane coordinates produce grid distances. Grid = Ground × CF. If CF ≈ 0.999875 (1 part in 8,000 below 1), then every ground distance converts to a grid distance that is shorter by 1 part in 8,000. This is not an error — it is the expected and correct behavior of the SPCS reduction.',
+    difficulty: 'medium'
+  },
+
+  // ─── Photogrammetry ───
+
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'An aerial camera with a focal length of 152 mm flies at 3,800 m above MSL. The terrain being photographed averages 300 m above MSL. What is the approximate photo scale?',
+    options: [
+      '1:23,026 — S = f/(H−h) = 0.152/(3,800−300) = 0.152/3,500',
+      '1:25,000 — S = f/H = 0.152/3,800',
+      '1:1,974 — S = f/h = 0.152/300',
+      '1:24,342 — S = f/(H+h) = 0.152/4,100'
+    ],
+    correctAnswer: 0,
+    explanation: 'S = f/(H−h) = 0.152 m / (3,800 − 300) m = 0.152/3,500 = 1/23,026 ≈ 1:23,000. The critical step is computing the flying height above the terrain (H−h = 3,500 m), not the flying height above datum. Using H alone (option B) ignores terrain elevation and gives the wrong scale.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On an aerial photo, the image of the top of a 60 m tall water tower is 90 mm from the principal point. The flying height above the ground is 3,000 m. What is the relief displacement of the tower top?',
+    options: [
+      '1.80 mm — d = rh/H = 90 × 60 / 3,000',
+      '0.50 mm — d = h/H = 60/3,000 (ignoring r)',
+      '5.00 mm — d = r/H × 1,000 = 90/3,000 × ... (wrong formula)',
+      '2.00 mm — d = rH/h = 90 × 3,000 / 60 (inverted formula)'
+    ],
+    correctAnswer: 0,
+    explanation: 'd = rh/H = (90 mm × 60 m) / 3,000 m = 5,400/3,000 = 1.80 mm. The top of the tower is displaced 1.80 mm radially outward from the principal point on the photo. The tower appears to "lean away" from the center of the photo by this amount.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What are the standard forward (endlap) and side (sidelap) overlap percentages for conventional aerial photography?',
+    options: [
+      '60% endlap and 30% sidelap',
+      '30% endlap and 60% sidelap',
+      '50% endlap and 50% sidelap',
+      '80% endlap and 60% sidelap'
+    ],
+    correctAnswer: 0,
+    explanation: 'The standard is 60% endlap (forward overlap along the flight strip) and 30% sidelap (lateral overlap between adjacent strips). Remember "60/30." The 60% endlap ensures that every point on the ground appears in at least two consecutive photos, enabling stereoscopic viewing and elevation measurement. The 30% sidelap ensures complete coverage between strips.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'An aerial photo is taken with a 150 mm focal length camera flying at 3,000 m above terrain (scale = 1:20,000) using a 230 mm × 230 mm format. How many photos are needed to cover a 15,000 m long flight strip with 60% endlap?',
+    options: [
+      '10 photos',
+      '7 photos',
+      '6 photos',
+      '14 photos'
+    ],
+    correctAnswer: 0,
+    explanation: 'Ground coverage per photo = 230 mm × 20,000 = 4,600 m. Net advance B = 4,600 × (1 − 0.60) = 4,600 × 0.40 = 1,840 m. Number of photos = (15,000 / 1,840) + 1 = 8.15 + 1 = 9.15 → round up to 10. The "+1" accounts for the first photo at the start of the strip before any advance occurs.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Which statement correctly describes relief displacement in a vertical aerial photograph?',
+    options: [
+      'The tops of tall objects are displaced radially outward from the principal point; objects at the principal point have zero displacement',
+      'The tops of tall objects are displaced toward the principal point; taller objects show greater displacement',
+      'Relief displacement is uniform across the photo regardless of distance from the principal point',
+      'Relief displacement only affects horizontal distances, not vertical measurements'
+    ],
+    correctAnswer: 0,
+    explanation: 'Relief displacement is always radially outward from the principal point (PP). A building\'s top appears farther from the PP than its base, making it "lean away" from the center of the photo. At the PP itself (r = 0), d = rh/H = 0, so there is zero displacement. Displacement increases with distance from PP, object height, and lower flying altitude.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A surveyor measures the relief displacement of a tree on an aerial photo and finds d = 2.25 mm. The image of the tree top is 75 mm from the principal point, and the flying height above the terrain is 3,000 m. What is the tree height?',
+    options: [
+      '90 m — h = dH/r = 2.25 × 3,000 / 75',
+      '100 m — h = dH/r = 2.25 × 3,000 / 67.5',
+      '45 m — h = dr/H = 2.25 × 75 / 3,000',
+      '0.056 m — h = d/r/H (wrong unit handling)'
+    ],
+    correctAnswer: 0,
+    explanation: 'Rearranging d = rh/H to solve for h: h = dH/r = 2.25 mm × 3,000 m / 75 mm = 6,750/75 = 90 m. This is one of the most useful applications of the relief displacement formula — measuring object heights from displacement without ever visiting the site.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'If a pilot doubles the flying height for an aerial survey mission (all other factors unchanged), what happens to the photo scale and relief displacement?',
+    options: [
+      'Photo scale is halved (1:N becomes 1:2N) and relief displacement is halved',
+      'Photo scale is doubled (1:N becomes 1:N/2) and relief displacement is halved',
+      'Photo scale is halved and relief displacement is doubled',
+      'Neither changes because focal length is unchanged'
+    ],
+    correctAnswer: 0,
+    explanation: 'Photo scale S = f/(H−h) ≈ f/H\'. If H\' doubles, S = f/(2H\') = (1/2)(f/H\'), so scale is halved (covers twice as much ground per photo). For relief displacement, d = rh/H — if H doubles, d = rh/(2H) = d/2, so displacement is also halved. Flying higher gives a smaller (more zoomed out) scale and less relief displacement — both effects follow directly from the formulas.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What is the purpose of sidelap (lateral overlap) between adjacent flight strips in aerial photogrammetry?',
+    options: [
+      'To ensure complete coverage between strips and provide redundancy for aerial triangulation',
+      'To enable stereoscopic viewing along the flight path',
+      'To reduce relief displacement at the photo edges',
+      'To match the 60% endlap standard along the strip'
+    ],
+    correctAnswer: 0,
+    explanation: 'Sidelap (30% standard) ensures two things: (1) complete terrain coverage with no data voids between adjacent strips, and (2) redundancy for photogrammetric block adjustment (aerial triangulation), which connects all photos into a single consistent coordinate framework. Stereoscopic viewing along the strip is provided by endlap, not sidelap. Sidelap has no direct effect on relief displacement.',
+    difficulty: 'easy'
+  },
+
   // ─── GNSS Advanced Concepts ───
 
   {
