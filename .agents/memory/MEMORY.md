@@ -1,0 +1,1 @@
+- [Exam track scoping](exam-track-scoping.md) — how FS/PS/TX tracks are isolated; quiz/exam scoped by domain string only, flashcards/readings by examTrack field; deck/URL-domain leakage traps.

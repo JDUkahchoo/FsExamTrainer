@@ -1,5 +1,6 @@
 import type { Flashcard } from '../schema';
 import { PS_FLASHCARDS } from './ps-flashcards';
+import { TX_FLASHCARDS } from './txFlashcards';
 
 // FS Exam Flashcards
 const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
@@ -1232,8 +1233,9 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
 // Combined flashcards for both exams
 export const FLASHCARDS: Omit<Flashcard, 'id'>[] = [
   ...FS_FLASHCARDS,
-  ...PS_FLASHCARDS
+  ...PS_FLASHCARDS,
+  ...TX_FLASHCARDS
 ];
 
 // Export FS cards separately for backward compatibility
-export { FS_FLASHCARDS, PS_FLASHCARDS };
+export { FS_FLASHCARDS, PS_FLASHCARDS, TX_FLASHCARDS };

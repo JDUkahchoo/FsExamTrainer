@@ -24,12 +24,13 @@ import { EXAM_TRACKS } from '@shared/schema';
 
 interface ExamLayoutProps {
   children: ReactNode;
-  examTrack?: 'fs' | 'ps';
+  examTrack?: 'fs' | 'ps' | 'tx';
 }
 
 const learnItems = (examTrack: string) => [
   { id: `/app/${examTrack}/study-plan`, icon: BookOpen, label: 'Study Plan', testId: 'nav-study-plan' },
-  { id: `/app/${examTrack}/lessons`, icon: BookOpen, label: 'Lessons', testId: 'nav-lessons' },
+  // Texas track has no interactive lessons (built around NCEES domains)
+  ...(examTrack !== 'tx' ? [{ id: `/app/${examTrack}/lessons`, icon: BookOpen, label: 'Lessons', testId: 'nav-lessons' }] : []),
   { id: `/app/${examTrack}/readings`, icon: ScrollText, label: 'Interactive Readings', testId: 'nav-readings' },
 ];
 
@@ -151,7 +152,7 @@ function ExamSidebar({ examTrack }: { examTrack: string }) {
 export function ExamLayout({ children, examTrack: examTrackProp }: ExamLayoutProps) {
   const [location] = useLocation();
 
-  const examTrack = examTrackProp || (location.startsWith('/app/ps/') ? 'ps' : 'fs');
+  const examTrack = examTrackProp || (location.startsWith('/app/ps/') ? 'ps' : location.startsWith('/app/tx/') ? 'tx' : 'fs');
 
   const style = {
     "--sidebar-width": "16rem",

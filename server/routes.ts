@@ -2070,10 +2070,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       
-      // Validate exam track - fs and ps are available, state-specific is coming soon
+      // Validate exam track - fs, ps, and tx (Texas state-specific) are available
       const requestedExamTrack = req.body.preferredExamTrack;
-      if (requestedExamTrack && requestedExamTrack === 'state-specific') {
-        return res.status(400).json({ error: "State-Specific exams are coming soon. Please select FS or PS exam." });
+      if (requestedExamTrack && !['fs', 'ps', 'tx'].includes(requestedExamTrack)) {
+        return res.status(400).json({ error: "Invalid exam track. Please select FS, PS, or Texas." });
       }
       
       // Get existing preferences to merge with partial updates
@@ -2207,15 +2207,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Helper function to get valid exam track (fs or ps only, defaults to fs)
-  const getValidExamTrack = (queryParam?: string, preference?: string): 'fs' | 'ps' => {
+  const getValidExamTrack = (queryParam?: string, preference?: string): 'fs' | 'ps' | 'tx' => {
     // First check explicit query parameter
-    if (queryParam === 'fs' || queryParam === 'ps') {
+    if (queryParam === 'fs' || queryParam === 'ps' || queryParam === 'tx') {
       return queryParam;
     }
-    // Fall back to preference, but only if it's a valid supported track (fs or ps)
-    // state-specific and any invalid values default to fs
+    // Fall back to preference, but only if it's a valid supported track
     if (preference === 'ps') {
       return 'ps';
+    }
+    if (preference === 'tx') {
+      return 'tx';
     }
     return 'fs'; // Default to FS for all other cases
   };

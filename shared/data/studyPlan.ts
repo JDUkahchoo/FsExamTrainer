@@ -1,4 +1,4 @@
-import type { WeekPlan, PSDomain } from '../schema';
+import type { WeekPlan, PSDomain, Domain } from '../schema';
 
 // FS Exam Study Plan (16 weeks)
 export const STUDY_PLAN: WeekPlan[] = [
@@ -257,5 +257,81 @@ export const PS_STUDY_PLAN: WeekPlan[] = [
     focus: ["Test-taking strategy (triage questions, time management)", "Packing for exam day (approved calculator, ID)", "Mental preparation techniques"],
     apply: ["Full PS Practice Exam (Timed, 6 hours)", "Analyze results and do final spot review"],
     reinforce: ["Rest and mental preparation", "Light review of key formulas and definitions"]
+  }
+];
+
+// Texas (State-Specific) Study Plan (8 weeks)
+export const TX_STUDY_PLAN: WeekPlan[] = [
+  {
+    week: 1,
+    title: "TBPELS Licensing, Rules & Professional Conduct",
+    domains: ['TBPELS Licensing & Rules'] as unknown as Domain[],
+    read: ["Texas Administrative Code, Title 22, Part 6 (Board rules)", "TBPELS overview of license types (SIT, RPLS, LSLS)", "Rules of professional conduct"],
+    focus: ["Who regulates surveying in Texas (TBPELS, post-2019 merger)", "License types: SIT, RPLS, LSLS and what each authorizes", "Path to RPLS: FS → SIT → experience → PS → Texas exam", "CEP requirements and the ethics/rules component"],
+    apply: ["Interactive Reading: TBPELS Licensing, Rules, and Professional Conduct", "TX quiz: Licensing & Rules domain"],
+    reinforce: ["Flashcards: License types and conduct duties", "Memorize: paramount duty = public health, safety, welfare"]
+  },
+  {
+    week: 2,
+    title: "Texas Land System: No PLSS, the GLO & Grant History",
+    domains: ['Texas Boundary Law & GLO Surveys', 'Texas Survey Units & History'] as unknown as Domain[],
+    read: ["Interactive Reading: Texas Boundary Law (land grants, GLO, senior rights)", "Interactive Reading: Texas Survey Heritage (empresarios, headrights, varas)", "GLO land grant records overview"],
+    focus: ["Why Texas has no PLSS (retained public lands in 1845)", "Role of the GLO as archive of original field notes & patents", "Empresario system and headright grants", "Spanish/Mexican land units: vara, labor, league"],
+    apply: ["TX quiz: Survey Units & History domain", "Practice converting vara distances to feet"],
+    reinforce: ["Flashcards: vara/labor/league conversions", "Memorize: league and labor ≈ 4,605 acres"]
+  },
+  {
+    week: 3,
+    title: "Texas Boundary Retracement: Senior Rights & Order of Calls",
+    domains: ['Texas Boundary Law & GLO Surveys'] as unknown as Domain[],
+    read: ["Interactive Reading: Texas Boundary Law (senior rights, order of calls)", "Brown's Boundary Control (order of dignity of calls)"],
+    focus: ["Senior rights: older grant holds full acreage; junior bears shortage", "Vacancies vs overlaps", "Order of calls: natural > artificial monuments > adjoinder > course > distance > quantity", "Follow the footsteps of the original surveyor"],
+    apply: ["TX quiz: Boundary Law & GLO Surveys domain", "Case study: resolve an overlap between a senior and junior grant"],
+    reinforce: ["Flashcards: senior rights and order of calls", "Diagram: senior vs junior grant overlap"]
+  },
+  {
+    week: 4,
+    title: "Texas Water Law: Gradient Boundary & Navigability",
+    domains: ['Texas Water Law'] as unknown as Domain[],
+    read: ["Interactive Reading: Texas Water Boundaries", "Texas Natural Resources Code Ch. 21 (navigable streams)", "Motl v. Boyd and Luttes v. State summaries"],
+    focus: ["Gradient boundary doctrine for navigable streams", "The 30-foot rule for navigability and bed ownership", "Riparian vs prior appropriation; groundwater rule of capture", "Tidal boundaries and the 3-marine-league Gulf boundary"],
+    apply: ["TX quiz: Water Law domain", "Determine bed ownership for streams above/below 30 ft"],
+    reinforce: ["Flashcards: gradient boundary, 30-foot rule, rule of capture", "Memorize: navigable = state bed = gradient boundary"]
+  },
+  {
+    week: 5,
+    title: "Texas State Plane Coordinate System: Five Lambert Zones",
+    domains: ['Texas State Plane Zones'] as unknown as Domain[],
+    read: ["Interactive Reading: Texas State Plane Coordinate System", "Texas Natural Resources Code Ch. 21, Subchapter C", "NGS State Plane documentation (Texas zones 4201–4205)"],
+    focus: ["Five zones, all Lambert Conformal Conic, banded north to south", "City-to-zone associations (DFW, Austin, San Antonio, etc.)", "Texas Coordinate System statute and county assignments", "Grid/ground: scale, elevation, and combined factor in Texas"],
+    apply: ["TX quiz: State Plane Zones domain", "Practice grid/ground conversions with the combined factor"],
+    reinforce: ["Flashcards: five zones and projection", "Memorize: all Texas zones = Lambert Conformal Conic"]
+  },
+  {
+    week: 6,
+    title: "Texas Professional Practice: Standards, Plats & Recording",
+    domains: ['Texas Professional Practice'] as unknown as Domain[],
+    read: ["Interactive Reading: Texas Professional Practice", "TSPS Manual of Practice (categories of land surveys)", "Texas Occupations Code Ch. 1071 (Practices Act)", "Texas Local Government Code (platting)"],
+    focus: ["TSPS Manual categories vs mandatory Board rules", "The Practices Act and monumentation/plat requirements", "Plat approval (city/ETJ vs county) and recording with the County Clerk", "TxDOT right-of-way conventions"],
+    apply: ["TX quiz: Professional Practice domain", "Critique a sample plat for required certification elements"],
+    reinforce: ["Flashcards: TSPS vs Board rules; statutes by topic", "Checklist: required plat/description elements"]
+  },
+  {
+    week: 7,
+    title: "Integration & Mixed Practice",
+    domains: ['Texas Boundary Law & GLO Surveys', 'Texas Water Law', 'Texas State Plane Zones', 'Texas Professional Practice'] as unknown as Domain[],
+    read: ["Review all six interactive readings", "Re-read any weak-area sections identified from quiz results"],
+    focus: ["Cross-domain scenarios (e.g., a riparian boundary on a senior grant)", "Statute placement: which code governs which topic", "Weak-area targeting based on quiz performance"],
+    apply: ["Mixed TX quiz across all six domains", "Weak-area drill on lowest-scoring domains"],
+    reinforce: ["Review all TX flashcard decks", "Re-attempt missed questions"]
+  },
+  {
+    week: 8,
+    title: "Final Review & Texas Practice Exam",
+    domains: ['TBPELS Licensing & Rules', 'Texas Boundary Law & GLO Surveys', 'Texas Water Law', 'Texas State Plane Zones', 'Texas Survey Units & History', 'Texas Professional Practice'] as unknown as Domain[],
+    read: ["Final skim of all readings", "Review summary exam-tips sections from each reading"],
+    focus: ["Test-taking strategy and time management", "Quick recall of key Texas facts (vara, 30-foot rule, five zones, statutes)", "Mental preparation for exam day"],
+    apply: ["Full Texas Practice Exam (timed)", "Analyze results and do final spot review"],
+    reinforce: ["Light review of key conversions and statutes", "Rest and mental preparation"]
   }
 ];

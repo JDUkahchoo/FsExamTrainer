@@ -38,7 +38,7 @@ import StudyReadingsPage from "@/pages/study-readings";
 import StudyReadingPage from "@/pages/study-reading";
 import WeakAreaDrillPage from "@/pages/weak-area-drill";
 
-function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' }) {
+function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' | 'tx' }) {
   return (
     <ExamLayout examTrack={examTrack}>
       <ExamTrackProvider examTrackOverride={examTrack}>
@@ -48,7 +48,7 @@ function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs
   );
 }
 
-function withExamTrack(Component: ComponentType<any>, examTrack: 'fs' | 'ps') {
+function withExamTrack(Component: ComponentType<any>, examTrack: 'fs' | 'ps' | 'tx') {
   return function WrappedComponent(props: any) {
     return (
       <ExamPage examTrack={examTrack}>
@@ -134,6 +134,26 @@ function Router() {
       <Route path="/app/ps/feedback" component={withExamTrack(FeedbackPage, 'ps')} />
       <Route path="/app/ps/privacy" component={withExamTrack(PrivacyPolicyPage, 'ps')} />
       <Route path="/app/ps/disclaimer" component={withExamTrack(DisclaimerPage, 'ps')} />
+
+      {/* Texas State-Specific track (no Lessons — built around NCEES domains) */}
+      <Route path="/app/tx/dashboard" component={withExamTrack(ExamDashboard, 'tx')} />
+      <Route path="/app/tx/study-plan" component={withExamTrack(StudyPlan, 'tx')} />
+      <Route path="/app/tx/readings" component={withExamTrack(StudyReadingsPage, 'tx')} />
+      <Route path="/app/tx/readings/:id" component={withExamTrack(StudyReadingPage, 'tx')} />
+      <Route path="/app/tx/quiz" component={withExamTrack(PracticeQuizPage, 'tx')} />
+      <Route path="/app/tx/drill" component={withExamTrack(WeakAreaDrillPage, 'tx')} />
+      <Route path="/app/tx/flashcards" component={withExamTrack(FlashcardsPage, 'tx')} />
+      <Route path="/app/tx/exam" component={withExamTrack(PracticeExamPage, 'tx')} />
+      <Route path="/app/tx/notes" component={withExamTrack(NotesPage, 'tx')} />
+      <Route path="/app/tx/progress" component={withExamTrack(ProgressPage, 'tx')} />
+      <Route path="/app/tx/reference-companion" component={withExamTrack(ReferenceCompanionPage, 'tx')} />
+      <Route path="/app/tx/procedures" component={withExamTrack(ProceduresPage, 'tx')} />
+      <Route path="/app/tx/formulas" component={withExamTrack(FormulaReferencePage, 'tx')} />
+      <Route path="/app/tx/settings" component={withExamTrack(SettingsPage, 'tx')} />
+      <Route path="/app/tx/testimonials" component={withExamTrack(TestimonialsPage, 'tx')} />
+      <Route path="/app/tx/feedback" component={withExamTrack(FeedbackPage, 'tx')} />
+      <Route path="/app/tx/privacy" component={withExamTrack(PrivacyPolicyPage, 'tx')} />
+      <Route path="/app/tx/disclaimer" component={withExamTrack(DisclaimerPage, 'tx')} />
       
       <Route component={NotFound} />
     </Switch>

@@ -49,12 +49,12 @@ export type Domain = FSDomain | PSDomain;
 export const DOMAINS: Domain[] = [...FS_DOMAINS, ...PS_DOMAINS];
 
 // --- Exam Track Types ---
-export type ExamTrack = 'fs' | 'ps' | 'state-specific';
+export type ExamTrack = 'fs' | 'ps' | 'tx';
 
-export const EXAM_TRACKS: { id: ExamTrack; name: string; status: 'ready' | 'coming-soon'; description: string }[] = [
+export const EXAM_TRACKS: { id: ExamTrack; name: string; status: 'ready' | 'coming-soon'; description: string; stateOnly?: string }[] = [
   { id: 'fs', name: 'FS Exam', status: 'ready', description: 'Fundamentals of Surveying - Entry-level exam' },
   { id: 'ps', name: 'PS Exam', status: 'ready', description: 'Principles and Practice of Surveying - Professional licensure exam' },
-  { id: 'state-specific', name: 'State-Specific', status: 'coming-soon', description: 'State laws, rules, and regulations for your jurisdiction' },
+  { id: 'tx', name: 'Texas (State-Specific)', status: 'ready', description: 'Texas state laws, TBPELS licensing, boundary law, water law, and SPC zones', stateOnly: 'TX' },
 ];
 
 // --- US States for Surveying Licensure ---
@@ -852,7 +852,7 @@ export type Flashcard = {
   front: string;
   back: string;
   category: 'formula' | 'definition' | 'concept';
-  examTrack?: 'fs' | 'ps'; // Which exam this flashcard belongs to (defaults to 'fs')
+  examTrack?: 'fs' | 'ps' | 'tx'; // Which exam this flashcard belongs to (defaults to 'fs')
 };
 
 export type WeekPlan = {
@@ -1028,7 +1028,7 @@ export const userPreferences = pgTable("user_preferences", {
   currentCycle: integer("current_cycle").notNull().default(1), // Current study cycle (1, 2, 3...)
   customWeeklyDomains: jsonb("custom_weekly_domains"), // Week-by-week domain assignments, e.g., { "1": [1, 2], "2": [3, 5], "3": [1, 4] }
   customTimeline: integer("custom_timeline").default(12), // Number of weeks for custom study plan (8-16)
-  preferredExamTrack: text("preferred_exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'state-specific'
+  preferredExamTrack: text("preferred_exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'tx'
   stateCode: text("state_code").default('TX'), // US state code (e.g., 'TX' for Texas)
   timezone: text("timezone").default('America/Chicago'), // User's timezone for midnight reset (IANA format)
   reminderEmailEnabled: boolean("reminder_email_enabled").notNull().default(false),
@@ -1590,7 +1590,7 @@ export interface ReadingSection {
 
 export interface ReadingModule {
   id: string;
-  examTrack: 'fs' | 'ps';
+  examTrack: 'fs' | 'ps' | 'tx';
   domainNumber: number;
   domain: string;
   title: string;

@@ -40,7 +40,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getDomainConfig } from '@/lib/domains';
-import { STUDY_PLAN, PS_STUDY_PLAN } from '@shared/data/studyPlan';
+import { STUDY_PLAN, PS_STUDY_PLAN, TX_STUDY_PLAN } from '@shared/data/studyPlan';
 import { generateStudyPlan, generateLongTermPlan, getLongTermPhaseInfo } from '@shared/lib/planGenerator';
 import { WeekReviewModal } from '@/components/week-review-modal';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -102,7 +102,7 @@ export default function StudyPlan() {
 
 
   // Use appropriate study plan based on exam track
-  const baseStudyPlan = examTrack === 'ps' ? PS_STUDY_PLAN : STUDY_PLAN;
+  const baseStudyPlan = examTrack === 'ps' ? PS_STUDY_PLAN : examTrack === 'tx' ? TX_STUDY_PLAN : STUDY_PLAN;
 
   // Fetch all week progress from database
   const { data: weekProgressData, isLoading } = useQuery<WeekProgress[]>({

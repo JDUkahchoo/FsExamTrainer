@@ -28,7 +28,11 @@ export default function PracticeQuizPage() {
   const { examTrack, examName, domains: examDomains } = useExamTrack();
   
   // Get appropriate domains based on exam track
-  const availableDomains = examTrack === 'ps' ? PS_DOMAINS : FS_DOMAINS;
+  const availableDomains = examTrack === 'ps'
+    ? PS_DOMAINS
+    : examTrack === 'tx'
+      ? (examDomains.map(d => d.name) as readonly string[])
+      : FS_DOMAINS;
   
   const ACTIVE_SESSION_KEY = `quiz-active-session-${examTrack}`;
   

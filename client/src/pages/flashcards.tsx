@@ -59,7 +59,7 @@ export default function FlashcardsPage() {
   const savedPageState = useRef(getSavedFlashcardState());
 
   const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>(
-    savedPageState.current?.deck || (examTrack === 'ps' ? 'original' : 'comprehensive')
+    savedPageState.current?.deck || (examTrack === 'fs' ? 'comprehensive' : 'original')
   );
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>(
     savedPageState.current?.domain || 'all'
@@ -363,7 +363,8 @@ export default function FlashcardsPage() {
 
   useEffect(() => {
     if (domainsFromUrl) {
-      const domains = domainsFromUrl.split(',').filter(d => DOMAINS.includes(d as Domain)) as Domain[];
+      const validDomainNames = new Set(examDomains.map(d => d.name));
+      const domains = domainsFromUrl.split(',').filter(d => validDomainNames.has(d)) as Domain[];
       if (domains.length > 0) {
         setSelectedDomains(domains);
         if (domains.length === 1) {
@@ -371,10 +372,10 @@ export default function FlashcardsPage() {
         }
       }
     }
-  }, [domainsFromUrl]);
+  }, [domainsFromUrl, examDomains]);
 
   useEffect(() => {
-    if (examTrack === 'ps') {
+    if (examTrack !== 'fs') {
       setSelectedDeck('original');
     }
   }, [examTrack]);

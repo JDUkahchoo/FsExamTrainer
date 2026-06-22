@@ -8,6 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Clock, CheckCircle2, XCircle, PlayCircle, RotateCcw, Layers, FileText, ListChecks, ArrowUpDown, Calculator } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { EXAM_QUESTIONS } from '@shared/data/examQuestions';
+import { TX_EXAM_QUESTIONS } from '@shared/data/txExamQuestions';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { NCEES_STYLE_QUESTIONS, getScenarioContext, type NCEESQuestion } from '@shared/data/nceesStyleQuestions';
 import { SelectAllQuestion, PriorityRankingQuestion, ScenarioContext, ComputationalBadge, getQuestionTypeName } from '@/components/ncees-question-types';
@@ -22,8 +23,10 @@ import { getVariedQuizQuestions, getSessionSeed } from '@shared/data/quizVariati
 
 const FS_EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
 const PS_EXAM_DURATION_MINUTES = 300; // 5 hours = 300 minutes
+const TX_EXAM_DURATION_MINUTES = 120; // Texas state-specific exam
 const FS_TOTAL_QUESTIONS = 110;
 const PS_TOTAL_QUESTIONS = 60; // PS exam has fewer questions
+const TX_TOTAL_QUESTIONS = 20; // Texas state-specific exam
 const NCEES_TOTAL_QUESTIONS = 110; // Match actual NCEES FS exam format
 
 type ExamState = 'setup' | 'active' | 'completed';
@@ -41,9 +44,9 @@ export default function PracticeExamPage() {
   const { examTrack, examName } = useExamTrack();
   
   // Calculate exam parameters based on exam track
-  const EXAM_DURATION_MINUTES = examTrack === 'ps' ? PS_EXAM_DURATION_MINUTES : FS_EXAM_DURATION_MINUTES;
-  const TOTAL_QUESTIONS = examTrack === 'ps' ? PS_TOTAL_QUESTIONS : FS_TOTAL_QUESTIONS;
-  const availableExamQuestions = examTrack === 'ps' ? PS_EXAM_QUESTIONS : EXAM_QUESTIONS;
+  const EXAM_DURATION_MINUTES = examTrack === 'ps' ? PS_EXAM_DURATION_MINUTES : examTrack === 'tx' ? TX_EXAM_DURATION_MINUTES : FS_EXAM_DURATION_MINUTES;
+  const TOTAL_QUESTIONS = examTrack === 'ps' ? PS_TOTAL_QUESTIONS : examTrack === 'tx' ? TX_TOTAL_QUESTIONS : FS_TOTAL_QUESTIONS;
+  const availableExamQuestions = examTrack === 'ps' ? PS_EXAM_QUESTIONS : examTrack === 'tx' ? TX_EXAM_QUESTIONS : EXAM_QUESTIONS;
   
   const [examState, setExamState] = useState<ExamState>('setup');
   const [examMode, setExamMode] = useState<ExamMode>('standard');
@@ -161,9 +164,12 @@ export default function PracticeExamPage() {
     const quizQuestionMap = new Map(
       QUIZ_QUESTIONS.map((q, i) => [`quiz-${i}`, q])
     );
+    const txExamQuestionMap = new Map(
+      TX_EXAM_QUESTIONS.map((q, i) => [`tx-exam-${i}`, q])
+    );
 
     const reconstructedQuestions = draftData.questionIds.map(id => {
-      const question = examQuestionMap.get(id) || quizQuestionMap.get(id);
+      const question = examQuestionMap.get(id) || quizQuestionMap.get(id) || txExamQuestionMap.get(id);
       if (!question) {
         console.error(`Question ${id} not found`);
         return null;
@@ -260,7 +266,7 @@ export default function PracticeExamPage() {
     const seedBase = Date.now();
     
     if (mode === 'standard') {
-      const questionPool = examTrack === 'ps' ? PS_EXAM_QUESTIONS : EXAM_QUESTIONS;
+      const questionPool = examTrack === 'ps' ? PS_EXAM_QUESTIONS : examTrack === 'tx' ? TX_EXAM_QUESTIONS : EXAM_QUESTIONS;
       const shuffled = [...questionPool].sort(() => Math.random() - 0.5);
       const selected = shuffled.slice(0, Math.min(TOTAL_QUESTIONS, shuffled.length));
       
@@ -268,7 +274,9 @@ export default function PracticeExamPage() {
         ...q,
         id: examTrack === 'ps' 
           ? `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
-          : `exam-${EXAM_QUESTIONS.indexOf(q)}`
+          : examTrack === 'tx'
+            ? `tx-exam-${TX_EXAM_QUESTIONS.indexOf(q)}`
+            : `exam-${EXAM_QUESTIONS.indexOf(q)}`
       }));
       
       const variedQuestions = examTrack === 'ps' 

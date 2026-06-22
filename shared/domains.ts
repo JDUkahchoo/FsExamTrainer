@@ -21,6 +21,16 @@ export const NCEES_PS_DOMAINS = {
   5: "Areas of Practice"
 } as const;
 
+// Texas State-Specific Track - Topic Areas (not NCEES domains)
+export const TX_DOMAINS = {
+  1: "TBPELS Licensing & Rules",
+  2: "Texas Boundary Law & GLO Surveys",
+  3: "Texas Water Law",
+  4: "Texas State Plane Zones",
+  5: "Texas Survey Units & History",
+  6: "Texas Professional Practice"
+} as const;
+
 // Legacy alias for backward compatibility
 export const NCEES_DOMAINS = NCEES_FS_DOMAINS;
 
@@ -49,6 +59,19 @@ export const getAllFSDomains = () => {
 export const getAllPSDomains = () => {
   return Object.entries(NCEES_PS_DOMAINS).map(([num, name]) => ({
     number: parseInt(num) as PSDomainNumber,
+    name
+  }));
+};
+
+export type TXDomainNumber = keyof typeof TX_DOMAINS;
+
+export const getTXDomainName = (domainNumber: TXDomainNumber): string => {
+  return TX_DOMAINS[domainNumber];
+};
+
+export const getAllTXDomains = () => {
+  return Object.entries(TX_DOMAINS).map(([num, name]) => ({
+    number: parseInt(num) as TXDomainNumber,
     name
   }));
 };

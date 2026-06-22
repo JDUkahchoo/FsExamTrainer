@@ -27,6 +27,7 @@ import { STUDY_READINGS_COAN_MATH } from './studyReadingsCoanMath';
 import { STUDY_READINGS_GNSS } from './studyReadingsGnss';
 import { STUDY_READINGS_SPC } from './studyReadingsSpc';
 import { STUDY_READINGS_PHOTOGRAMMETRY } from './studyReadingsPhotogrammetry';
+import { STUDY_READINGS_TX } from './studyReadingsTx';
 
 const STUDY_READINGS_BASE: ReadingModule[] = [
   {
@@ -745,4 +746,5 @@ export const STUDY_READINGS: ReadingModule[] = [
   ...STUDY_READINGS_GNSS,
   ...STUDY_READINGS_SPC,
   ...STUDY_READINGS_PHOTOGRAMMETRY,
+  ...STUDY_READINGS_TX,
 ];

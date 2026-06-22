@@ -69,7 +69,7 @@ export function ExamSelector() {
     switch (examId) {
       case 'fs': return GraduationCap;
       case 'ps': return FileText;
-      case 'state-specific': return MapPin;
+      case 'tx': return MapPin;
       default: return GraduationCap;
     }
   };
@@ -217,7 +217,7 @@ export function ExamSelector() {
         <ul className="list-disc list-inside space-y-1">
           <li><strong>FS Exam:</strong> Entry-level fundamentals exam - the first step toward licensure</li>
           <li><strong>PS Exam:</strong> Advanced professional practice exam - taken after work experience</li>
-          <li><strong>State-Specific:</strong> State laws and regulations for your jurisdiction</li>
+          <li><strong>Texas (State-Specific):</strong> Texas laws, TBPELS licensing, boundary &amp; water law, and SPC zones</li>
         </ul>
       </div>
     </div>

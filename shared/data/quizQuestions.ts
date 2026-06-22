@@ -8,6 +8,7 @@ export interface QuizQuestion {
 }
 
 import { PS_QUIZ_QUESTIONS } from './psQuizQuestions';
+import { TX_QUIZ_QUESTIONS } from './txQuizQuestions';
 
 const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   // Math & Basic Science
@@ -6359,4 +6360,4 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
 ];
 
-export const QUIZ_QUESTIONS: QuizQuestion[] = [...FS_QUIZ_QUESTIONS, ...PS_QUIZ_QUESTIONS];
+export const QUIZ_QUESTIONS: QuizQuestion[] = [...FS_QUIZ_QUESTIONS, ...PS_QUIZ_QUESTIONS, ...TX_QUIZ_QUESTIONS];
