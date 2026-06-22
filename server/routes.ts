@@ -288,6 +288,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Mark coverage celebration as shown (cross-device flag)
+  app.post("/api/progress/weeks/:week/coverage-celebrated", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = parseInt(req.params.week, 10);
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      if (isNaN(week) || week < 1) {
+        return res.status(400).json({ error: "Invalid week number" });
+      }
+      await storage.markCoverageCelebrated(userId, week, examTrack);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error marking coverage celebrated:", error);
+      res.status(500).json({ error: "Failed to mark coverage celebrated" });
+    }
+  });
+
+  // Get a single week's progress (used for cross-device celebration guard)
+  app.get("/api/progress/weeks/:week", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const week = parseInt(req.params.week, 10);
+      const examTrack = (req.query.examTrack as string) || 'fs';
+      if (isNaN(week) || week < 1) {
+        return res.status(400).json({ error: "Invalid week number" });
+      }
+      const progress = await storage.getWeekProgress(userId, week, examTrack);
+      res.json(progress ?? null);
+    } catch (error) {
+      console.error("Error fetching week progress:", error);
+      res.status(500).json({ error: "Failed to fetch week progress" });
+    }
+  });
+
   // Reading Progress routes (Comprehension Checkpoint)
   app.get("/api/reading-progress", isAuthenticated, async (req: any, res) => {
     try {

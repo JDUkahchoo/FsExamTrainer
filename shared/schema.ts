@@ -221,6 +221,7 @@ export const weekProgress = pgTable("week_progress", {
   focusCompleted: text("focus_completed").array().notNull().default(sql`'{}'::text[]`),
   applyCompleted: text("apply_completed").array().notNull().default(sql`'{}'::text[]`),
   reinforceCompleted: text("reinforce_completed").array().notNull().default(sql`'{}'::text[]`),
+  coverageCelebrated: boolean("coverage_celebrated").notNull().default(false),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 

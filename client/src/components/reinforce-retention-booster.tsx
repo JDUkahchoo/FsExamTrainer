@@ -305,7 +305,27 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
 
   const dailyCap = getDailySessionCap(studyMode, examDate, week);
 
+  const { data: weekProgressData } = useQuery<{ coverageCelebrated?: boolean } | null>({
+    queryKey: ['/api/progress/weeks', week, examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/progress/weeks/${week}?examTrack=${examTrack}`, { credentials: 'include' });
+      if (!res.ok) return null;
+      return res.json();
+    },
+    enabled: !!userId,
+  });
+
+  const markCelebrationMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest('POST', `/api/progress/weeks/${week}/coverage-celebrated?examTrack=${examTrack}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks', week, examTrack] });
+    },
+  });
+
   const prevCoveredRef = useRef<number>(coveredDomains);
+  const celebrationFiredRef = useRef<boolean>(false);
   useEffect(() => {
     const wasComplete = prevCoveredRef.current >= totalDomains && totalDomains > 0;
     const isNowComplete = coveredDomains >= totalDomains && totalDomains > 0;
@@ -313,7 +333,12 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
     prevCoveredRef.current = coveredDomains;
 
     if (!justCompleted) return;
+    if (celebrationFiredRef.current) return;
 
+    // Check server-side flag first (cross-device guard)
+    if (weekProgressData?.coverageCelebrated) return;
+
+    // Fallback localStorage check for guests or if server data not yet loaded
     const celebrationKey = `fc-coverage-celebrated:${userId ?? 'guest'}:w${week}:${examTrack}`;
     try {
       if (localStorage.getItem(celebrationKey)) return;
@@ -321,11 +346,14 @@ export function ReinforceRetentionBooster({ week, domains = [], examTrack = "fs"
     } catch {
     }
 
+    celebrationFiredRef.current = true;
+    markCelebrationMutation.mutate();
+
     toast({
       title: '🎉 All domains reviewed!',
       description: `Every flashcard domain for Week ${week} is covered. Keep it up!`,
     });
-  }, [coveredDomains, totalDomains, week, examTrack, userId, toast]);
+  }, [coveredDomains, totalDomains, week, examTrack, userId, toast, weekProgressData]);
 
   const { data: stats, isLoading: statsLoading } = useQuery<RetentionStats>({
     queryKey: ['/api/retention/stats', week, examTrack],

@@ -187,6 +187,7 @@ export interface IStorage {
   getWeekProgress(userId: string, week: number, examTrack?: string): Promise<WeekProgress | undefined>;
   getAllWeekProgress(userId: string, examTrack?: string): Promise<WeekProgress[]>;
   upsertWeekProgress(progress: InsertWeekProgress): Promise<WeekProgress>;
+  markCoverageCelebrated(userId: string, week: number, examTrack: string): Promise<void>;
 
   // Quiz Results methods
   getQuizResults(userId: string): Promise<QuizResult[]>;
@@ -462,6 +463,34 @@ export class DatabaseStorage implements IStorage {
         .values({ ...progress, examTrack: trackFilter, updatedAt: new Date() })
         .returning();
       return created;
+    }
+  }
+
+  async markCoverageCelebrated(userId: string, week: number, examTrack: string): Promise<void> {
+    const existing = await this.getWeekProgress(userId, week, examTrack);
+    if (existing) {
+      await db
+        .update(weekProgress)
+        .set({ coverageCelebrated: true, updatedAt: new Date() })
+        .where(and(
+          eq(weekProgress.userId, userId),
+          eq(weekProgress.week, week),
+          eq(weekProgress.examTrack, examTrack)
+        ));
+    } else {
+      await db
+        .insert(weekProgress)
+        .values({
+          userId,
+          week,
+          examTrack,
+          readCompleted: [],
+          focusCompleted: [],
+          applyCompleted: [],
+          reinforceCompleted: [],
+          coverageCelebrated: true,
+          updatedAt: new Date(),
+        });
     }
   }
 
