@@ -3649,6 +3649,49 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
     explanation: 'The combined curvature and refraction correction = 0.0206 × D² feet, where D is in miles. Curvature alone = 0.667 × D² ft/mile² × D² (actually 0.0239 × D² ft), and refraction reduces this by about 1/7, giving net ≈ 0.0206 × D². For D in feet: correction ≈ 0.0206 × (D/5280)² ft.',
     difficulty: 'medium'
   },
+  // ===== STATE PLANE COORDINATE SYSTEM (PS) =====
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A project lies in a State Plane zone with a grid scale factor of 0.9999380 in the survey area. The mean elevation is 1,500 ft above the ellipsoid (R = 20,906,000 ft). What ground distance must a crew lay out for a design line whose grid distance is 1,000.000 ft?',
+    options: ['1,000.134 ft', '999.866 ft', '1,000.062 ft', '1,000.000 ft'],
+    correctAnswer: 0,
+    explanation: 'EF = R/(R+H) = 20,906,000/20,907,500 = 0.9999282. CF = SF × EF = 0.9999380 × 0.9999282 = 0.9998662. Ground = Grid / CF = 1,000.000 / 0.9998662 = 1,000.134 ft. Because CF < 1, the ground distance is longer than the grid distance.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'At a control station east of the central meridian, the convergence (mapping) angle is +1°10′00″. A GNSS observation gives a geodetic azimuth of 88°25′00″ to a target. Using grid azimuth = geodetic azimuth − convergence, what grid azimuth should be used in the State Plane computation?',
+    options: ['87°15′00″', '89°35′00″', '88°25′00″', '86°05′00″'],
+    correctAnswer: 0,
+    explanation: 'East of the central meridian the convergence angle is positive, so grid azimuth = geodetic azimuth − γ = 88°25′00″ − 1°10′00″ = 87°15′00″. Convergence rotates the reference direction between grid north and geodetic north; it does not change the measured distance.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'Which statement best describes the relationship between SPCS 83 and SPCS2022 coordinates?',
+    options: [
+      'They are identical; SPCS2022 only renames the zones',
+      'They are tied to different reference frames (NAD 83 vs the modernized NSRS), so a published transformation is required to convert between them',
+      'SPCS2022 abandons projections and uses raw latitude/longitude',
+      'SPCS 83 coordinates can always be used directly as SPCS2022 coordinates without adjustment',
+    ],
+    correctAnswer: 1,
+    explanation: 'SPCS 83 is based on NAD 83 realizations, while SPCS2022 is part of the modernized National Spatial Reference System (new terrestrial reference frames and geopotential datum). The horizontal datum change produces a real coordinate shift (often a meter or more), so coordinates must be transformed with NGS tools — not simply reused.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    question: 'A surveyor designs a Low-Distortion Projection (LDP) for a corridor project. The primary advantage of an LDP over a standard State Plane zone is that:',
+    options: [
+      'It eliminates the need for any datum',
+      'The combined factor is approximately 1 across the project, so grid and ground distances effectively agree',
+      'It provides consistent coordinates for the entire state',
+      'It removes the need to reduce slope distances to horizontal',
+    ],
+    correctAnswer: 1,
+    explanation: 'An LDP is a custom conformal projection placed near the project mean ground elevation so that the combined factor is essentially 1 over the project area, making grid and ground distances effectively equal. The trade-off is limited coverage — an LDP cannot provide the statewide consistency of standard SPCS, and slope distances must still be reduced to horizontal.',
+    difficulty: 'medium'
+  },
 ];
 
 

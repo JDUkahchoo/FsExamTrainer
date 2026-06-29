@@ -26,6 +26,7 @@ import { STUDY_READINGS_BUSINESS_SAFETY } from './studyReadingsBusinessSafety';
 import { STUDY_READINGS_COAN_MATH } from './studyReadingsCoanMath';
 import { STUDY_READINGS_GNSS } from './studyReadingsGnss';
 import { STUDY_READINGS_SPC } from './studyReadingsSpc';
+import { STUDY_READINGS_SPC_PS } from './studyReadingsSpcPs';
 import { STUDY_READINGS_PHOTOGRAMMETRY } from './studyReadingsPhotogrammetry';
 import { STUDY_READINGS_TX } from './studyReadingsTx';
 
@@ -745,6 +746,7 @@ export const STUDY_READINGS: ReadingModule[] = [
   ...STUDY_READINGS_COAN_MATH,
   ...STUDY_READINGS_GNSS,
   ...STUDY_READINGS_SPC,
+  ...STUDY_READINGS_SPC_PS,
   ...STUDY_READINGS_PHOTOGRAMMETRY,
   ...STUDY_READINGS_TX,
 ];

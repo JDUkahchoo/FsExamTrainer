@@ -869,5 +869,48 @@ export const PS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     back: 'Survey of leasehold boundaries:\n\n• May differ from property lines\n• Common in oil/gas, mining\n• Defines extent of use rights\n• Often tied to legal description',
     category: 'definition',
     examTrack: 'ps'
+  },
+  // ===== State Plane Coordinate System =====
+  {
+    domain: 'Professional Survey Practices',
+    front: 'Combined Factor (CF)',
+    back: 'CF = SF × EF\n\n• SF = grid scale factor (projection distortion)\n• EF = elevation factor (height above ellipsoid)\n\nGrid = Ground × CF\nGround = Grid / CF\n\nCF < 1 in most cases, so ground distance > grid distance.',
+    category: 'formula',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    front: 'Elevation Factor (EF)',
+    back: 'EF = R / (R + H)\n\n• R = mean Earth radius (≈ 20,906,000 ft or 6,372,000 m)\n• H = ellipsoid height of the survey\n\nReduces a ground distance to the ellipsoid. Always < 1 for terrain above the ellipsoid — the higher the elevation, the smaller EF.',
+    category: 'formula',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    front: 'Lambert Conformal Conic vs Transverse Mercator',
+    back: 'LAMBERT CONFORMAL CONIC (LCC):\n• Wide E-W zones\n• Secant cone, two standard parallels\n• Scale factor varies with Northing\n\nTRANSVERSE MERCATOR (TM):\n• Tall N-S zones\n• Secant cylinder about a central meridian\n• Scale factor varies with Easting\n\nTip: flat/wide state = cone (Lambert); tall/narrow state = TM.',
+    category: 'concept',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    front: 'Convergence Angle (γ)',
+    back: 'Angle between grid north and geodetic (true) north at a station. Also called the mapping angle.\n\n• γ = 0 along the central meridian\n• Grows toward zone edges and with latitude\n• Positive east of the central meridian (common convention)\n\nGrid azimuth = Geodetic azimuth − γ\n\nConvergence rotates directions; it does not change distances.',
+    category: 'concept',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    front: 'SPCS 83 vs SPCS2022',
+    back: 'SPCS 83:\n• Based on NAD 83 realizations\n• NOAA Special Pub 65 zone definitions\n\nSPCS2022:\n• Modernized NSRS (NATRF2022 + NAPGD2022)\n• Updated/optional zone layouts, incl. low-distortion options\n\nNever reuse coordinates across them without an NGS transformation — the datum shift can be a meter or more.',
+    category: 'concept',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Professional Survey Practices',
+    front: 'Low-Distortion Projection (LDP)',
+    back: 'Custom conformal projection placed near the project mean ground elevation so CF ≈ 1 across the area.\n\n• Grid ≈ ground (a few ppm) — ignore CF for routine work\n• Limited coverage area\n• Sacrifices statewide consistency of standard SPCS\n• Must be documented and shared',
+    category: 'concept',
+    examTrack: 'ps'
   }
 ];
