@@ -3951,9 +3951,14 @@ export class DatabaseStorage implements IStorage {
         lte(flashcardReviewEvents.createdAt, endOfDay)
       ));
     
-    // Log daily activity if this is the first review of the day
+    // Log daily activity if this is the first review of the day,
+    // scoped to the exam track of the owning review session so streaks stay per-track.
     if (Number(todayEvents[0]?.count || 0) === 1) {
-      await this.logDailyActivity(event.userId, 'flashcard_review');
+      const [session] = await db
+        .select({ examTrack: flashcardReviewSessions.examTrack })
+        .from(flashcardReviewSessions)
+        .where(eq(flashcardReviewSessions.id, event.sessionId));
+      await this.logDailyActivity(event.userId, 'flashcard_review', session?.examTrack || 'fs');
     }
     
     return created;

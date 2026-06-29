@@ -24,6 +24,16 @@ The app supports multiple exam tracks (`'fs' | 'ps' | 'tx'`). Adding a track tou
 ## Combined pools
 `shared/data/flashcards.ts`, `quizQuestions.ts`, `studyReadings.ts` each spread per-track arrays into one combined export consumed app-wide; per-track files (e.g. `txFlashcards.ts`, `txQuizQuestions.ts`, `txExamQuestions.ts`, `studyReadingsTx.ts`, `TX_STUDY_PLAN` in `studyPlan.ts`) hold the content.
 
+## Per-track streaks: every daily-activity write needs an explicit track
+`logDailyActivity(userId, type, examTrack?)` falls back to `preferredExamTrack` when no track is passed. That fallback is wrong for streak attribution because the active request track can differ from the user's preferred track.
+**Why:** streaks/daily activity are stored per `(userId, date, examTrack)`; an unscoped write credits the wrong track and corrupts the per-track streak.
+**How to apply:** at EVERY `logDailyActivity` call site resolve the track from the request/owning record (route `examTrack`, `lesson.examTrack`, or the review session's `examTrack`) and pass it explicitly — never rely on the preference fallback for streak-sensitive endpoints.
+
+## Flashcard mastery upsert must key on (userId, flashcardId, examTrack)
+`card-N` flashcard ids are positional within the track-FILTERED card array, so the same `card-N` refers to different cards in FS vs PS — ids are NOT globally unique.
+**Why:** upserting mastery by `(userId, flashcardId)` alone collides FS/PS rows and overwrites the wrong card's mastery.
+**How to apply:** resolve existing mastery rows via `getFlashcardMastery(userId, flashcardId, examTrack)` and always persist `examTrack`. TX/FS share the FS quiz domain set (no `TX_DOMAINS`), so `tx` resolving to `FS_DOMAINS` for quiz-result filtering is intentional, not leakage.
+
 ## /api/progress/analytics is NOT exam-track scoped
 `getPersonalAnalytics(userId)` (storage.ts) takes no examTrack and loads ALL of a user's quiz/exam data across tracks; the route `/api/progress/analytics` passes no track. `PersonalAnalyticsDashboard` consumes it unscoped (pre-existing).
 **How to apply:** For any per-track Progress visualization, derive from already-track-scoped endpoints (`/api/quiz/sessions?examTrack=`, `/api/exams?examTrack=`) — e.g. the study-activity heatmap builds its day×hour matrix client-side from those props — instead of `/api/progress/analytics`, or FS data leaks into the PS view.
