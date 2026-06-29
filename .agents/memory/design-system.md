@@ -9,8 +9,9 @@ The theme narrates surveying's heritage → its geospatial-engineering future.
 - **Content surfaces** = aged field-book paper (warm cream `--background`, ink-navy `--foreground`).
 - **Navigation rail** = dark "instrument panel" — the `--sidebar*` tokens are intentionally DARK even in light mode.
 - **Primary** = instrument teal. **Accents** = brass (`--brass`) + survey-orange (`--survey-orange`). Domain colors are kept unchanged (functional navigation/coding).
-- **Headings** use `font-serif`/`font-display` → Source Serif 4 (plat-style). Body = Inter, mono = JetBrains Mono (coordinate/formula readouts).
-- Texture utilities live in `index.css`: `bg-fieldbook`, `bg-fieldbook-fine`, `bg-pointcloud`, `label-coord`, `rule-brass`.
+- **Headings** use Source Serif 4 (plat-style) — applied GLOBALLY to `h1/h2/h3` via `@layer base` in `index.css` (pages use `text-3xl font-bold` sans, so the base rule is what makes the serif land everywhere). Body = Inter, mono = JetBrains Mono.
+- Texture utilities live in `index.css`: `bg-fieldbook`, `bg-fieldbook-fine`, `bg-pointcloud`, `label-coord`, `rule-brass`. The authed shell applies `bg-fieldbook-fine` to the `<main>` content area in `exam-layout.tsx`, and the top header is branded with the exam name.
+- The literal phrase "Field Book → Point Cloud" is the internal concept name only — do NOT surface it as visible UI copy (user disliked it).
 
 **Why:** user wanted "traditional survey look with an integrated techy field… where the industry started and where it's headed, into geospatial engineering."
 

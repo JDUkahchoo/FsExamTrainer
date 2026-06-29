@@ -50,12 +50,12 @@ export default function Landing() {
               className="font-display text-5xl md:text-6xl font-bold tracking-tight text-foreground mt-6 mb-5"
               data-testid="heading-landing"
             >
-              From the field book to the point cloud
+              Master the Fundamentals of Surveying
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto leading-relaxed">
-              Master the NCEES Fundamentals and Professional Surveying exams with a guide
-              rooted in the craft's heritage and built for its geospatial future.
+              An adaptive study guide for the NCEES FS and PS exams — rooted in the
+              craft's heritage and built for its geospatial future.
             </p>
             <p className="text-base text-muted-foreground mb-9 max-w-2xl mx-auto leading-relaxed">
               Whether you have 8 weeks or 2 years, it adapts to your exam date, study pace, and

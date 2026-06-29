@@ -94,7 +94,7 @@ function ExamSidebar({ examTrack }: { examTrack: string }) {
           </div>
           <div>
             <h2 className="font-serif text-lg font-bold leading-tight text-sidebar-foreground">{examName}</h2>
-            <p className="label-coord text-[10px] text-sidebar-foreground/60">Field Book → Point Cloud</p>
+            <p className="label-coord text-[10px] text-sidebar-foreground/60">Surveying Exam Prep</p>
           </div>
         </div>
       </SidebarHeader>
@@ -153,6 +153,8 @@ export function ExamLayout({ children, examTrack: examTrackProp }: ExamLayoutPro
   const [location] = useLocation();
 
   const examTrack = examTrackProp || (location.startsWith('/app/ps/') ? 'ps' : location.startsWith('/app/tx/') ? 'tx' : 'fs');
+  const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);
+  const examName = examInfo?.name || examTrack.toUpperCase();
 
   const style = {
     "--sidebar-width": "16rem",
@@ -164,10 +166,13 @@ export function ExamLayout({ children, examTrack: examTrackProp }: ExamLayoutPro
       <div className="flex h-screen w-full">
         <ExamSidebar examTrack={examTrack} />
         <div className="flex flex-col flex-1 overflow-hidden">
-          <header className="flex items-center border-b border-border p-2 bg-background">
+          <header className="flex items-center gap-2 border-b border-border px-3 py-2 bg-card">
             <SidebarTrigger data-testid="button-sidebar-toggle" />
+            <Compass className="h-4 w-4 text-primary" />
+            <span className="font-serif text-sm font-bold text-foreground" data-testid="text-header-exam">{examName}</span>
+            <span className="label-coord ml-auto hidden text-[10px] text-muted-foreground sm:inline">NCEES Surveying Exam Prep</span>
           </header>
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto bg-fieldbook-fine">
             {children}
           </main>
         </div>
