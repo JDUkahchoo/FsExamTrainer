@@ -190,7 +190,7 @@ function DomainCoverageBreakdown({
   reviewedDomains: string[];
   missingDomains: string[];
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(missingDomains.length > 0);
   const total = reviewedDomains.length + missingDomains.length;
 
   if (total === 0) return null;
