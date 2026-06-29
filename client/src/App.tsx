@@ -208,6 +208,19 @@ function AppContent() {
     setSessionExpiredCallback(handleSessionExpired);
   }, [handleSessionExpired]);
 
+  useEffect(() => {
+    if (sessionStorage.getItem('_fc_cov_cleaned')) return;
+    const staleKeys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('fc-coverage-celebrated:')) {
+        staleKeys.push(key);
+      }
+    }
+    staleKeys.forEach(k => localStorage.removeItem(k));
+    sessionStorage.setItem('_fc_cov_cleaned', '1');
+  }, []);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
