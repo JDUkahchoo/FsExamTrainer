@@ -33,6 +33,7 @@ import ProgressHeader from '@/components/ProgressHeader';
 import { Link } from 'wouter';
 import { DailyLogForm } from '@/components/daily-log-form';
 import { DailyLogList } from '@/components/daily-log-list';
+import { DailyLogSummary, TodayActivityPrefill, type TodayPrefill } from '@/components/daily-log-insights';
 import { PersonalAnalyticsDashboard } from '@/components/personal-analytics-dashboard';
 import { ScoreTrendChart, DomainMasteryRadar, DomainAccuracyBar, StudyActivityHeatmap } from '@/components/progress-charts';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -47,6 +48,13 @@ export default function ProgressPage() {
   const [showStartNewCycleDialog, setShowStartNewCycleDialog] = useState(false);
   const [showExamDateDialog, setShowExamDateDialog] = useState(false);
   const [examDateInput, setExamDateInput] = useState('');
+  const [logPrefill, setLogPrefill] = useState<TodayPrefill | undefined>(undefined);
+  const [logFormKey, setLogFormKey] = useState(0);
+
+  const handlePrefillFromToday = (data: TodayPrefill) => {
+    setLogPrefill({ ...data });
+    setLogFormKey((k) => k + 1);
+  };
 
   const { data: stats, isLoading } = useQuery<{
     totalStudyDays: number;
@@ -497,7 +505,9 @@ export default function ProgressPage() {
 
         {/* Daily Logs Tab */}
         <TabsContent value="daily" className="space-y-6">
-          <DailyLogForm />
+          <DailyLogSummary />
+          <TodayActivityPrefill examTrack={examTrack} onPrefill={handlePrefillFromToday} />
+          <DailyLogForm key={logFormKey} initialData={logPrefill} />
           <div className="mt-8">
             <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
               <Calendar className="h-5 w-5" />

@@ -18,6 +18,15 @@ import { useToast } from '@/hooks/use-toast';
 import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
 import type { InsertDailyLog, Domain } from '@shared/schema';
+import { useExamTrack } from '@/contexts/exam-track-context';
+
+// Highest study-week number a user could log per track. FS includes the
+// 24-month (96-week) long-term pathway; PS runs a 12-week plan; TX defaults to 16.
+const MAX_WEEK_BY_TRACK: Record<string, number> = {
+  fs: 96,
+  ps: 12,
+  tx: 16,
+};
 
 interface DailyLogFormProps {
   onSuccess?: () => void;
@@ -35,6 +44,8 @@ interface DailyLogFormProps {
 
 export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormProps) {
   const { toast } = useToast();
+  const { examTrack } = useExamTrack();
+  const maxWeek = MAX_WEEK_BY_TRACK[examTrack] ?? 16;
   const [date, setDate] = useState(
     initialData?.date 
       ? new Date(initialData.date).toISOString().split('T')[0]
@@ -227,14 +238,14 @@ export function DailyLogForm({ onSuccess, onCancel, initialData }: DailyLogFormP
             id="weekNumber"
             type="number"
             min="1"
-            max="16"
+            max={maxWeek}
             value={weekNumber}
             onChange={(e) => setWeekNumber(e.target.value)}
             placeholder="e.g., 3"
             data-testid="input-log-week"
           />
           <p className="text-xs text-muted-foreground">
-            Link this log to a specific study week (1-16)
+            Link this log to a specific study week (1-{maxWeek})
           </p>
         </div>
 
