@@ -21,6 +21,8 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { EXAM_TRACKS } from '@shared/schema';
+import { CalculatorProvider } from '@/components/calculator/calculator-context';
+import { FloatingCalculator } from '@/components/calculator/floating-calculator';
 
 interface ExamLayoutProps {
   children: ReactNode;
@@ -167,21 +169,24 @@ export function ExamLayout({ children, examTrack: examTrackProp }: ExamLayoutPro
   };
 
   return (
-    <SidebarProvider style={style as CSSProperties}>
-      <div className="flex h-screen w-full">
-        <ExamSidebar examTrack={examTrack} />
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <header className="flex items-center gap-2 border-b border-border px-3 py-2 bg-card">
-            <SidebarTrigger data-testid="button-sidebar-toggle" />
-            <Compass className="h-4 w-4 text-primary" />
-            <span className="font-serif text-sm font-bold text-foreground" data-testid="text-header-exam">{examName}</span>
-            <span className="label-coord ml-auto hidden text-[10px] text-muted-foreground sm:inline">NCEES Surveying Exam Prep</span>
-          </header>
-          <main className="flex-1 overflow-auto bg-fieldbook-fine">
-            {children}
-          </main>
+    <CalculatorProvider>
+      <SidebarProvider style={style as CSSProperties}>
+        <div className="flex h-screen w-full">
+          <ExamSidebar examTrack={examTrack} />
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <header className="flex items-center gap-2 border-b border-border px-3 py-2 bg-card">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
+              <Compass className="h-4 w-4 text-primary" />
+              <span className="font-serif text-sm font-bold text-foreground" data-testid="text-header-exam">{examName}</span>
+              <span className="label-coord ml-auto hidden text-[10px] text-muted-foreground sm:inline">NCEES Surveying Exam Prep</span>
+            </header>
+            <main className="flex-1 overflow-auto bg-fieldbook-fine">
+              {children}
+            </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+        <FloatingCalculator />
+      </SidebarProvider>
+    </CalculatorProvider>
   );
 }
