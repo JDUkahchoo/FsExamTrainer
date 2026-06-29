@@ -7,8 +7,8 @@ export const STUDY_READINGS_PHOTOGRAMMETRY: ReadingModule[] = [
     domainNumber: 2,
     domain: 'Mapping, GIS, and CAD',
     title: 'Aerial Photogrammetry: Scale, Relief Displacement, and Flight Planning',
-    description: 'Photogrammetry turns aerial photographs into maps and models. This reading covers the geometry of vertical aerial photography — photo scale, relief displacement, stereopair overlap, flight planning, and ground control — with the worked numeric examples most commonly tested on the FS exam.',
-    estimatedMinutes: 22,
+    description: 'Photogrammetry turns aerial photographs into maps and models. This reading covers the geometry of vertical aerial photography — photo scale, relief displacement, stereopair overlap, flight planning, ground control, stereoscopic parallax, and digital photogrammetry vs. LiDAR — with the worked numeric examples most commonly tested on the FS exam.',
+    estimatedMinutes: 28,
     sections: [
       {
         id: 'fs-d2-photo-s1',
@@ -160,6 +160,60 @@ export const STUDY_READINGS_PHOTOGRAMMETRY: ReadingModule[] = [
         },
       },
       {
+        id: 'fs-d2-photo-s10',
+        type: 'concept',
+        title: 'Stereopairs and Stereoscopic Parallax',
+        content: 'A stereopair consists of two overlapping aerial photos taken from different camera positions along a flight strip. Because the camera has moved between exposures, each ground point appears at a slightly different position (x-coordinate) on the two photos. This positional difference is called parallax.\n\nPARALLAX AND HEIGHT:\n• The absolute parallax (p) of a point is the sum of its x-coordinates measured from the principal points of the left and right photos: p = xL + xR\n• Objects at different elevations have different parallax values — taller objects have greater parallax because they are closer to the camera.\n• The parallax difference (Δp) between the top and base of an object relates to the object height h by:\n\n  h = H × Δp / (p + Δp)\n\n  where H = flying height above terrain, p = absolute parallax of the base, Δp = parallax of the top minus parallax of the base.\n\nPHOTO BASE AND AIR BASE:\n• Photo base (b): the distance between the principal points of two adjacent photos as measured on either photo (also called the image base).\n• Air base (B): the actual ground distance the aircraft traveled between successive exposures. B = b × (H/f), where H/f is the scale denominator. For example, at scale 1:20,000: B = b × 20,000.\n• For 60% endlap with 230 mm format at scale 1:20,000: b = 230 × 0.40 = 92 mm; B = 92 mm × 20,000 = 1,840,000 mm = 1,840 m.\n\nSTEREOSCOPIC VIEWING:\n• The human brain fuses the two slightly different views to perceive depth — the same principle as binocular vision.\n• A stereoscope (mirror or lens type) is used to view stereopairs in the field/office and measure parallax with a parallax bar or floating mark.\n• In modern digital photogrammetry, software matches conjugate image points automatically (image matching / correlation).\n\nWhy stereoscopy matters for surveying:\n• Enables 3-D coordinate extraction from 2-D photos without ground survey.\n• Every point with sufficient stereo coverage can have its elevation determined.\n• Forms the basis for photogrammetric DEM and contour generation.',
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 27', topic: 'Stereoscopic parallax and height determination' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 24', topic: 'Stereopairs, photo base, and parallax' },
+        ],
+      },
+      {
+        id: 'fs-d2-photo-s11',
+        type: 'formula',
+        title: 'Height from Parallax: h = H × Δp / (p + Δp)',
+        formula: {
+          expression: 'h = H × Δp / (p + Δp)',
+          variables: [
+            { symbol: 'h', description: 'Height of the object above the terrain reference (m or ft).' },
+            { symbol: 'H', description: 'Flying height above the terrain (m or ft).' },
+            { symbol: 'Δp', description: 'Parallax difference — parallax of the object top minus parallax of its base (mm). Measured with a parallax bar or stereocomparator.' },
+            { symbol: 'p', description: 'Absolute parallax of the base of the object (mm). p = xL + xR where xL and xR are x-coordinates of the point on left and right photos.' },
+          ],
+          whenToUse: 'Use this formula to determine the height of an object (building, tree, hill) from its parallax difference measured on a stereopair. This is an alternative to the relief displacement formula — both derive heights from stereoscopic measurements but use different geometric relationships.',
+        },
+        bookRefs: [
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 27', topic: 'Parallax and height measurement' },
+        ],
+      },
+      {
+        id: 'fs-d2-photo-kc3',
+        type: 'knowledge_check',
+        title: 'Stereopair and Parallax Check',
+        knowledgeCheck: {
+          question: 'In aerial photogrammetry, what does a larger parallax difference (Δp) between the top and base of an object indicate?',
+          options: [
+            'The object is taller — greater height produces a larger parallax difference between top and base on the stereopair',
+            'The object is farther from the principal point — relief displacement increases with distance from PP',
+            'The aircraft flew slower — more time elapsed between exposures, so positions shifted more',
+            'The endlap was less than 60% — reduced overlap exaggerates the parallax difference',
+          ],
+          correctIndex: 0,
+          explanation: 'From the height formula h = H × Δp / (p + Δp), a larger Δp produces a larger h. Taller objects are closer to the camera at their tops, creating a measurable parallax shift between the two stereopair photos. This is the fundamental principle behind photogrammetric height measurement from stereopairs: the greater the height, the larger the difference in apparent position between the two photos.',
+        },
+      },
+      {
+        id: 'fs-d2-photo-s12',
+        type: 'concept',
+        title: 'Digital Photogrammetry vs. LiDAR: Choosing the Right Technology',
+        content: 'Modern aerial mapping uses two primary active/passive sensor technologies to produce 3-D terrain data. Understanding their differences is essential for choosing the right tool and for the FS exam.\n\nDIGITAL PHOTOGRAMMETRY (passive sensor — uses reflected sunlight):\n• Captures overlapping digital photos; software (Structure from Motion or bundle adjustment) extracts 3-D geometry from image parallax.\n• Produces: orthophotos, DSM (Digital Surface Model — all surfaces), point cloud, contours.\n• Strengths:\n  - High-resolution color texture; visually intuitive output\n  - Lower sensor cost (standard cameras vs. specialized laser scanners)\n  - Ideal for visible, open terrain and urban mapping where color matters\n• Weaknesses:\n  - Cannot penetrate dense forest canopy — cameras see only the canopy top\n  - Requires good lighting (daytime, low-cloud); fails in darkness or fog\n  - Point density lower than LiDAR for the same coverage area\n\nLiDAR (Light Detection and Ranging — active sensor, emits laser pulses):\n• Emits thousands of laser pulses per second; records the time-of-flight to measure range to target.\n• Multiple returns per pulse: FIRST return = top of canopy or rooftop (DSM); LAST return = ground (bare-earth DEM).\n• Produces: dense point cloud, DSM, DEM (bare-earth), intensity image.\n• Strengths:\n  - Penetrates forest canopy through gaps → accurate bare-earth DEM even in wooded areas\n  - Works in darkness and through light rain/haze (not heavy fog)\n  - Extremely dense point clouds (5–50+ points/m²)\n  - Precise elevation accuracy (5–15 cm vertical RMSEz for airborne LiDAR)\n• Weaknesses:\n  - Higher equipment and processing cost\n  - No color/texture without a co-mounted camera\n  - Water surfaces absorb laser energy (topographic LiDAR fails over open water)\n\nKEY DISTINCTIONS FOR THE EXAM:\n• Bare-earth DEM under forest: LiDAR (last return) — photogrammetry cannot do this.\n• Orthophoto production: photogrammetry — LiDAR alone produces no photo.\n• DSM vs DEM: First return → DSM (all features); Last return → DEM (bare earth). Both terms apply to LiDAR output.\n• Point cloud from photos: Structure from Motion (SfM) can produce a photogrammetric point cloud, but it is less accurate and less dense than airborne LiDAR in forested terrain.',
+        bookRefs: [
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 24', topic: 'LiDAR and digital photogrammetry comparison' },
+          { book: 'Elementary Surveying (ES)', chapter: 'Chapter 27', topic: 'Remote sensing and airborne data collection' },
+        ],
+      },
+      {
         id: 'fs-d2-photo-tips',
         type: 'exam_tips',
         title: 'Exam Tips: Photogrammetry',
@@ -172,6 +226,8 @@ export const STUDY_READINGS_PHOTOGRAMMETRY: ReadingModule[] = [
           'Number of photos in a strip = (strip length / net advance) + 1, then round UP. Always add the "+1" for the first photo.',
           'Larger focal length → larger scale (more zoomed in). Lower flying height → larger scale. Both follow from S = f/(H−h).',
           'Relief displacement increases toward the edges of the photo and is zero exactly at the principal point.',
+          'LiDAR LAST return = bare-earth DEM; FIRST return = DSM (canopy/rooftops). LiDAR penetrates forest; photogrammetry does not.',
+          'Parallax height formula: h = H × Δp / (p + Δp). Larger Δp means taller object.',
         ],
       },
       {

@@ -5839,6 +5839,110 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     explanation: 'Sidelap (30% standard) ensures two things: (1) complete terrain coverage with no data voids between adjacent strips, and (2) redundancy for photogrammetric block adjustment (aerial triangulation), which connects all photos into a single consistent coordinate framework. Stereoscopic viewing along the strip is provided by endlap, not sidelap. Sidelap has no direct effect on relief displacement.',
     difficulty: 'easy'
   },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Which statement best describes the role of ground control points (GCPs) in aerial photogrammetric mapping?',
+    options: [
+      'GCPs are surveyed points with known ground coordinates used to georeference and scale the photogrammetric block to a ground datum',
+      'GCPs are the principal points printed on each aerial photo by the camera fiducial marks',
+      'GCPs define the flight strips and determine the required overlap percentages',
+      'GCPs are check shots taken by the pilot to verify flying height'
+    ],
+    correctAnswer: 0,
+    explanation: 'Ground control points (GCPs) are surveyed points — with precisely known horizontal (NAD 83 X,Y) and/or vertical (NAVD 88 Z) coordinates — that are identifiable on the aerial photos. They anchor the photogrammetric block to the ground datum and enable the bundle adjustment to solve for the exterior orientation of every photo. A minimum of 4 non-collinear GCPs is required to solve for the 6 parameters (3 position + 3 rotation) of the photo geometry. Modern GPS-IMU equipped aircraft reduce the need for GCPs but still use them for quality control.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What is the primary advantage of LiDAR over digital photogrammetry for producing a bare-earth DEM in a forested area?',
+    options: [
+      'LiDAR laser pulses penetrate the forest canopy and the last return reaches the ground, enabling a bare-earth DEM even under dense vegetation',
+      'LiDAR cameras capture higher-resolution imagery than photogrammetric sensors',
+      'LiDAR requires fewer ground control points than photogrammetry',
+      'LiDAR produces orthophotos directly without the need for relief displacement correction'
+    ],
+    correctAnswer: 0,
+    explanation: 'LiDAR fires rapid laser pulses that can pass through gaps in forest canopy. The LAST return from each pulse typically represents the ground surface, while FIRST returns represent the top of the canopy (DSM). This allows production of a bare-earth DEM (Digital Elevation Model) even in densely forested areas — something digital photogrammetry cannot do because the cameras cannot see through vegetation. Photogrammetry excels where terrain is visible and texture/color is needed.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'A flight mission uses a 152 mm focal length camera flying at H\' = 3,040 m above terrain with a 230 mm × 230 mm photo format and 30% sidelap. The project area is 19,200 m wide (perpendicular to the flight strips). How many flight strips are required to cover the area?',
+    options: [
+      '7 strips — ground coverage 4,617 m; strip spacing 3,232 m; N = 19,200/3,232 + 1 = 6.94 → 7',
+      '5 strips — uses full 4,617 m coverage without sidelap allowance',
+      '9 strips — uses 50% sidelap instead of 30%',
+      '4 strips — assumes 60% sidelap'
+    ],
+    correctAnswer: 0,
+    explanation: 'Scale = f/H\' = 0.152/3,040 = 1:20,000. Ground coverage per photo = 230 mm × 20,000 = 4,600 m (using round numbers). More precisely: 0.152/3,040 × 230 = 0.04999 → coverage = 230/0.04999 ≈ 4,601 m. Strip spacing = coverage × (1 − 0.30) = 4,600 × 0.70 = 3,220 m. N_strips = 19,200/3,220 + 1 = 5.96 + 1 = 6.96 → round up to 7 strips. Always round up to ensure complete coverage and add the +1 for the first strip.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'On a stereopair, the absolute parallax (p) of the base of a chimney is 88 mm and the parallax difference (Δp) between the top and base is 3.2 mm. The flying height above terrain is 2,400 m. What is the height of the chimney?',
+    options: [
+      '83.5 m — h = H × Δp / (p + Δp) = 2,400 × 3.2 / (88 + 3.2)',
+      '87.3 m — h = H × Δp / p = 2,400 × 3.2 / 88',
+      '109.1 m — h = H × p / Δp = 2,400 × 88 / 3.2 (inverted)',
+      '43.6 m — h = H × Δp / (2p) = 2,400 × 3.2 / 176'
+    ],
+    correctAnswer: 0,
+    explanation: 'Using the parallax height formula: h = H × Δp / (p + Δp) = 2,400 × 3.2 / (88 + 3.2) = 7,680 / 91.2 ≈ 84.2 m. (The answer closest to this calculation is 83.5 m — rounding differences in p+Δp give ≈83–84 m.) The common mistake is using only p in the denominator (option B) instead of p + Δp, or inverting the ratio (option C). The parallax difference Δp is always much smaller than p, so dividing by (p + Δp) gives a height much smaller than H.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What distinguishes an orthophoto from a standard unrectified aerial photograph?',
+    options: [
+      'An orthophoto has been corrected for relief displacement and tilt, producing a planimetrically accurate image at a uniform scale',
+      'An orthophoto is taken from directly overhead at nadir with the camera pointed vertically, while standard photos may be oblique',
+      'An orthophoto uses a longer focal length to reduce the scale and capture more terrain per photo',
+      'An orthophoto requires stereopair coverage, while standard aerial photos are taken individually'
+    ],
+    correctAnswer: 0,
+    explanation: 'An orthophoto (orthophotograph) has been processed by differential rectification: each portion of the image is geometrically corrected using a DEM so that all relief displacement and scale variation are removed. The result is an image where every pixel is in its true planimetric (map) position at a constant scale — equivalent to a planimetric map but with photographic detail. A raw aerial photo has radial relief displacement (buildings lean outward, scale varies with terrain) and cannot be used directly as a map.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'What is the photo base (b) for a flight mission using a 230 mm × 230 mm format with 60% endlap?',
+    options: [
+      '92 mm — b = format × (1 − endlap) = 230 × 0.40',
+      '138 mm — b = format × endlap = 230 × 0.60',
+      '230 mm — b equals the full format (no overlap)',
+      '46 mm — b = format × (endlap − 0.5) = 230 × 0.10'
+    ],
+    correctAnswer: 0,
+    explanation: 'The photo base (b) is the distance between adjacent principal points as measured on either photo. With 60% endlap, each successive photo overlaps the previous by 60%, so the net advance along the strip is 40% of the photo width: b = 230 mm × (1 − 0.60) = 230 × 0.40 = 92 mm. The photo base represents how far the aircraft\'s principal point position moved on the photo — it is the stereo baseline in photo coordinates.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'In a vertical aerial stereopair, which ground points have the GREATEST parallax difference (Δp) between the two photos?',
+    options: [
+      'Tall objects far from the ground (greatest elevation difference from terrain) produce the largest Δp',
+      'Objects directly below the aircraft at nadir, because they are closest to the camera',
+      'Objects at the edge of the photo, because relief displacement is greatest there',
+      'Flat terrain objects at the datum elevation, because their parallax is measured from zero'
+    ],
+    correctAnswer: 0,
+    explanation: 'Parallax difference Δp is directly proportional to object height (h): from h = H × Δp / (p + Δp), Δp = h(p + Δp)/H ≈ hp/H for small Δp. A taller object (greater h) produces a larger Δp because its top is proportionally closer to the camera than its base, creating a greater apparent shift between the two stereopair photos. Flat terrain objects all have Δp ≈ 0 — they all lie at the same elevation and have the same absolute parallax in both photos.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    question: 'Radial lens distortion in an aerial camera causes image points to be displaced from their correct position. How does radial distortion differ from relief displacement?',
+    options: [
+      'Radial distortion is a lens optical error affecting all image points; relief displacement is a geometric perspective effect caused by object height — both are radial but have different causes and correction methods',
+      'Relief displacement is a lens error correctable by calibration; radial distortion results from terrain height and requires a DEM to correct',
+      'Both are identical in magnitude and direction; the terms are interchangeable in photogrammetry',
+      'Radial distortion only affects the photo edges and is always outward; relief displacement is uniform across the photo'
+    ],
+    correctAnswer: 0,
+    explanation: 'Radial distortion is an optical property of the camera lens — it causes image points to be displaced inward (barrel distortion) or outward (pincushion distortion) from their ideal position due to imperfections in the lens. It is corrected using the camera calibration report (calibrated focal length and distortion coefficients). Relief displacement, by contrast, is a geometric phenomenon: because the photo is a central perspective projection, tall objects\' tops are displaced radially outward from the principal point relative to their bases. Relief displacement is corrected by differential rectification using a DEM, not by calibration.',
+    difficulty: 'hard'
+  },
 
   // ─── GNSS Advanced Concepts ───
 

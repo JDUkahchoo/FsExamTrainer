@@ -968,6 +968,48 @@ const FS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     category: 'concept',
     examTrack: 'fs'
   },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Stereoscopic Parallax and Height Formula: h = H × Δp / (p + Δp)',
+    back: 'Height of an object measured from its parallax difference in a stereopair:\n\nh = H × Δp / (p + Δp)\n\nh = object height above terrain (m)\nH = flying height above terrain (m)\nΔp = parallax difference: parallax of object top − parallax of base (mm)\np = absolute parallax of the base = xL + xR (mm)\n\nKey facts:\n• Taller objects have LARGER parallax differences (Δp)\n• Objects at terrain level have Δp = 0\n• Measured with a parallax bar or floating mark on a stereoscope\n• Alternative to relief displacement for height determination from stereopairs\n\nExample: H=3,000m, p=92mm, Δp=2.8mm\n→ h = 3,000 × 2.8 / (92 + 2.8) = 8,400 / 94.8 ≈ 88.6 m',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Photo Base (b) and Air Base (B)',
+    back: 'Two related distances in aerial photogrammetry:\n\nPHOTO BASE (b):\n• Distance between adjacent principal points as measured ON THE PHOTO (mm)\n• For 60% endlap and 230 mm format: b = 230 × (1 − 0.60) = 92 mm\n• Also called the image base\n\nAIR BASE (B):\n• Actual ground distance flown between successive exposures (m)\n• B = b × scale_denominator = b / S_fraction\n• Or: B = ground_coverage × (1 − endlap)\n• For b = 92 mm at scale 1:20,000: B = 92 × 20,000 = 1,840,000 mm = 1,840 m\n\nRelationship:\n• B = b × (H/f)\n• The air base is the stereo baseline — longer B = stronger depth perception (more parallax)',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Number of Flight Strips Formula',
+    back: 'How many parallel flight strips are needed to cover a project area:\n\nN_strips = (W / (Pw × (1 − q))) + 1, round UP\n\nW = project width (perpendicular to flight direction, m)\nPw = ground coverage per photo in the cross-strip direction (m)\nq = sidelap fraction (0.30 standard)\n(1 − q) = net strip spacing fraction = 0.70\n\nStrip spacing = Pw × (1 − q)\n\nExample:\n• f=150mm, H\'=3,000m → scale 1:20,000\n• 230mm format → Pw = 230 × 20,000 = 4,600m\n• Strip spacing = 4,600 × 0.70 = 3,220m\n• W = 16,000m → N = 16,000/3,220 + 1 = 4.97 + 1 = 5.97 → 6 strips\n\nTotal photos ≈ N_photos_per_strip × N_strips',
+    category: 'formula',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Orthophoto: Correcting Relief Displacement',
+    back: 'An ORTHOPHOTO is an aerial photo that has been geometrically corrected to remove relief displacement, tilt, and scale variation, producing a planimetrically accurate map-like image.\n\nHow it\'s made:\n• Differential rectification: each small photo patch is rectified individually using a DEM/DSM\n• The DEM provides the elevation at every pixel → displacement is computed and removed\n• Result: every pixel is in its true ground (planimetric) position\n\nContrast with unrectified aerial photo:\n• Raw photo: buildings lean outward, scale varies with terrain elevation\n• Orthophoto: buildings show true footprint position, uniform scale everywhere\n\nDigital Orthophoto Quarter Quadrangle (DOQQ):\n• USGS standard 1:12,000-scale orthophoto product\n• 1-meter pixel resolution, NAD 83 / UTM coordinates\n• Can be used as a GIS base layer with other geospatial data\n\nRule: Only an ORTHOPHOTO, not a raw aerial photo, can serve directly as a planimetric map.',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Ground Control Points (GCPs) for Aerial Photogrammetry',
+    back: 'Ground control points (GCPs) are surveyed points with precisely known coordinates that appear on aerial photos, used to tie the photo block to a ground datum.\n\nTYPES:\n• Horizontal GCPs: Known X, Y (NAD 83)\n• Vertical GCPs: Known elevation (NAVD 88)\n• Full control: Known X, Y, Z\n\nMINIMUM (traditional):\n• 4 non-collinear GCPs to solve 6 exterior orientation parameters (3 position + 3 rotation)\n• Block adjustment: GCPs at perimeter + center\n\nMODERN (with GPS-IMU aboard aircraft):\n• Direct georeferencing reduces GCP requirement to 4–6 for the entire block\n• Independent check points (not used in adjustment) verify final accuracy\n\nSoftware: Agisoft Metashape, Pix4D — use Structure from Motion (SfM) or bundle adjustment',
+    category: 'concept',
+    examTrack: 'fs'
+  },
+  {
+    domain: 'Mapping, GIS, and CAD',
+    front: 'Digital Photogrammetry vs. LiDAR',
+    back: 'Two modern methods for producing 3-D terrain data from aerial platforms:\n\nDIGITAL PHOTOGRAMMETRY (aerial or drone images):\n• Uses overlapping photos + Structure from Motion (SfM) or bundle adjustment\n• Produces: orthophotos, DSM (Digital Surface Model), 3-D point cloud\n• Strengths: high visual texture, lower sensor cost\n• Weaknesses: fails under dense canopy; needs good lighting; slower point density\n\nLiDAR (Light Detection and Ranging):\n• Fires laser pulses, records time-of-flight to measure distance\n• First return → DSM (tree tops, rooftops); Last return → DEM (bare earth)\n• Strengths: penetrates canopy, works at night, very dense point clouds\n• Weaknesses: higher equipment cost; no texture/color without separate camera\n\nKey rule: LiDAR uses LAST returns for bare-earth DEM; FIRST returns for DSM.',
+    category: 'concept',
+    examTrack: 'fs'
+  },
 
   // ─── GNSS Advanced Concepts ───
 
