@@ -296,7 +296,7 @@ export default function ReferenceCompanion() {
 
         {sortedDomains.map((domainNum) => {
           const topics = groupedByDomain[domainNum];
-          const domainName = NCEES_DOMAINS[domainNum] || `Domain ${domainNum}`;
+          const domainName = NCEES_DOMAINS[domainNum as keyof typeof NCEES_DOMAINS] || `Domain ${domainNum}`;
           
           return (
             <Card key={domainNum} className="p-4" data-testid={`card-ssp-domain-${domainNum}`}>

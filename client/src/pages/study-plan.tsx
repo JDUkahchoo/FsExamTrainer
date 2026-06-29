@@ -450,7 +450,7 @@ export default function StudyPlan() {
       let bestExtra = Infinity;
       let isTied = false;
       baseStudyPlan.forEach(plan => {
-        const weekDomainSet = new Set(plan.domains || []);
+        const weekDomainSet = new Set<string>(plan.domains || []);
         if (!sessionDomains.every(d => weekDomainSet.has(d))) return; // session not a subset
         const extra = weekDomainSet.size - sessionDomains.length; // fewer extra = more specific
         if (extra < bestExtra) {
@@ -540,7 +540,7 @@ export default function StudyPlan() {
       let bestExtra = Infinity;
       let isTied = false;
       baseStudyPlan.forEach(plan => {
-        const weekDomainSet = new Set(plan.domains || []);
+        const weekDomainSet = new Set<string>(plan.domains || []);
         if (!sessionDomains.every(d => weekDomainSet.has(d))) return;
         const extra = weekDomainSet.size - sessionDomains.length;
         if (extra < bestExtra) {
@@ -975,7 +975,7 @@ export default function StudyPlan() {
     if (!weekProgressData || weekCompleteMutation.isPending) return;
     allWeeks.forEach(plan => {
       const progress = weekProgressData.find(wp => wp.week === plan.week && wp.examTrack === examTrack);
-      if (progress && progress.percentage === 100 && !memoryHealthMap.has(plan.week)) {
+      if (progress && calculateWeekProgress(plan.week, plan) === 100 && !memoryHealthMap.has(plan.week)) {
         weekCompleteMutation.mutate({ weekNumber: plan.week, domains: plan.domains as string[] });
       }
     });

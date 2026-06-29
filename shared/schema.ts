@@ -572,6 +572,7 @@ export const practiceExams = pgTable("practice_exams", {
   correctAnswers: integer("correct_answers").notNull(),
   timeSpentMinutes: integer("time_spent_minutes").notNull(),
   domainScores: jsonb("domain_scores").notNull(), // { domain: { correct, total } }
+  examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'tx' - which exam this attempt belongs to
   completedAt: timestamp("completed_at").notNull().defaultNow(),
 });
 
@@ -863,6 +864,8 @@ export type WeekPlan = {
   focus: string[];
   apply: string[];
   reinforce: string[];
+  isCustom?: boolean;
+  customId?: string;
 };
 
 export type DomainStats = {
@@ -1623,9 +1626,7 @@ export const weekMemoryHealthRelations = relations(weekMemoryHealth, ({ one }) =
   }),
 }));
 
-export const insertWeekMemoryHealthSchema = createInsertSchema(weekMemoryHealth).omit({
-  id: true,
-});
+export const insertWeekMemoryHealthSchema = createInsertSchema(weekMemoryHealth);
 
 export type WeekMemoryHealth = typeof weekMemoryHealth.$inferSelect;
 export type InsertWeekMemoryHealth = z.infer<typeof insertWeekMemoryHealthSchema>;

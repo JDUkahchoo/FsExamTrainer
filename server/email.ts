@@ -88,14 +88,14 @@ export async function checkAndSendReminder(
     }
 
     const recentGrants = await db
-      .select({ createdAt: xpGrants.createdAt })
+      .select({ grantedAt: xpGrants.grantedAt })
       .from(xpGrants)
       .where(eq(xpGrants.userId, userId))
-      .orderBy(desc(xpGrants.createdAt))
+      .orderBy(desc(xpGrants.grantedAt))
       .limit(1);
 
     if (recentGrants.length > 0) {
-      const lastActivity = new Date(recentGrants[0].createdAt);
+      const lastActivity = new Date(recentGrants[0].grantedAt);
       const hoursSince = (now.getTime() - lastActivity.getTime()) / (1000 * 60 * 60);
       if (hoursSince < 20) return;
     }

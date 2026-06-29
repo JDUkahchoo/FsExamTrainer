@@ -303,8 +303,8 @@ export interface IStorage {
   }>;
 
   // Practice Exam methods
-  getPracticeExams(userId: string): Promise<PracticeExam[]>;
-  getLatestPracticeExam(userId: string): Promise<PracticeExam | undefined>;
+  getPracticeExams(userId: string, examTrack?: string): Promise<PracticeExam[]>;
+  getLatestPracticeExam(userId: string, examTrack?: string): Promise<PracticeExam | undefined>;
   getPracticeExamWithResults(examId: string): Promise<{ exam: PracticeExam; results: PracticeExamResult[] } | undefined>;
   createPracticeExam(exam: InsertPracticeExam): Promise<PracticeExam>;
   createPracticeExamResult(result: InsertPracticeExamResult): Promise<PracticeExamResult>;
@@ -397,7 +397,7 @@ export interface IStorage {
   getLessonProgress(userId: string, lessonId: string): Promise<LessonProgress | undefined>;
   getAllLessonProgress(userId: string, examTrack?: string): Promise<LessonProgress[]>;
   upsertLessonProgress(progress: InsertLessonProgress): Promise<LessonProgress>;
-  createLesson(lesson: InsertLesson): Promise<Lesson>;
+  createLesson(lesson: InsertLesson & { id: string }): Promise<Lesson>;
   createLessonQuestion(question: InsertLessonQuestion): Promise<LessonQuestion>;
 
   // Feedback methods
@@ -916,16 +916,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Practice Exam methods
-  async getPracticeExams(userId: string): Promise<PracticeExam[]> {
+  async getPracticeExams(userId: string, examTrack?: string): Promise<PracticeExam[]> {
+    const conditions = [eq(practiceExams.userId, userId)];
+    if (examTrack) conditions.push(eq(practiceExams.examTrack, examTrack));
     return await db
       .select()
       .from(practiceExams)
-      .where(eq(practiceExams.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(practiceExams.completedAt));
   }
 
-  async getLatestPracticeExam(userId: string): Promise<PracticeExam | undefined> {
-    const exams = await this.getPracticeExams(userId);
+  async getLatestPracticeExam(userId: string, examTrack?: string): Promise<PracticeExam | undefined> {
+    const exams = await this.getPracticeExams(userId, examTrack);
     return exams[0];
   }
 
@@ -2075,7 +2077,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async createLesson(lessonData: InsertLesson): Promise<Lesson> {
+  async createLesson(lessonData: InsertLesson & { id: string }): Promise<Lesson> {
     const [lesson] = await db
       .insert(lessons)
       .values(lessonData)

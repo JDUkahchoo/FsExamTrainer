@@ -26,7 +26,7 @@ interface ReinforceRetentionBoosterProps {
   domains?: string[];
   examTrack?: string;
   studyMode?: string;
-  examDate?: string | null;
+  examDate?: string | Date | null;
   checklistItems?: string[];
   completedSet?: Set<string>;
   autoSet?: Set<string>;
@@ -40,7 +40,7 @@ interface ReinforceRetentionBoosterProps {
 
 // Returns the daily review cap based on the user's study mode and exam proximity.
 // Caps are intentionally modest — exhausting review queues leads to burnout.
-function getDailySessionCap(studyMode: string | undefined, examDate: string | null | undefined, week: number): number {
+function getDailySessionCap(studyMode: string | undefined, examDate: string | Date | null | undefined, week: number): number {
   let cap: number;
 
   if (studyMode === 'working-professional') {

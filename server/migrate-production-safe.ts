@@ -305,7 +305,7 @@ async function safeProductionMigration() {
         const { questions: questionData, ...lessonInfo } = lessonData;
         
         console.log(`📚 Creating lesson: ${lessonInfo.title}`);
-        const [lesson] = await tx.insert(lessons).values(lessonInfo).returning();
+        const [lesson] = await tx.insert(lessons).values({ ...lessonInfo, id: `d${lessonInfo.domainNumber}-lesson-${String(lessonInfo.orderIndex).padStart(2, '0')}` }).returning();
         
         // Insert questions
         for (let i = 0; i < questionData.length; i++) {

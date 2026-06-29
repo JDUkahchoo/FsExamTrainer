@@ -2593,7 +2593,7 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     domain: 'Math & Basic Science',
     front: 'Witness Tree / Bearing Tree — Restoration',
     back: 'GLO field notes record FROM the corner TO the tree:\n"W. Oak, 18 in dia, bears N 45 E, 35 lks"\n\nTo restore the corner:\n• Reverse the bearing: S 45 W\n• Convert distance: 35 × 0.66 = 23.1 ft\n• Measure S 45 W, 23.1 ft from the tree\n\nSurviving witness tree = obliterated corner evidence\nCorner can be restored without proportionate measurement',
-    category: 'procedure'
+    category: 'concept'
   },
   {
     domain: 'Math & Basic Science',
@@ -2711,7 +2711,7 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     domain: 'Professional Practice',
     front: 'Change Order Process',
     back: 'Triggered when: scope of work changes beyond original contract\n\nProcess:\n1. Discover changed scope or unforeseen conditions\n2. STOP work on changed items (or flag the additional effort)\n3. Notify client immediately — in writing\n4. Prepare written change order describing: scope, cost, schedule impact\n5. Obtain signed client approval BEFORE proceeding\n6. Never perform out-of-scope work on verbal agreement alone\n\nKey principle: all scope changes → written change order\nRisk of skipping: no legal basis for additional compensation',
-    category: 'procedure'
+    category: 'concept'
   },
 
   // Least Squares & Positional Accuracy (Task #12)
@@ -2823,7 +2823,7 @@ export const COMPREHENSIVE_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
     domain: 'Mapping, GIS, and CAD',
     front: 'LiDAR Boresight Calibration',
     back: 'Purpose: corrects the angular misalignment between the laser scanner and the IMU (roll, pitch, and yaw offsets)\n\nProcedure:\n1. Fly calibration strip(s) over flat, well-defined surfaces (airports, rooftops, or known-flat terrain) in multiple directions (e.g., opposing flight lines)\n2. Compare LiDAR returns from overlapping swaths — systematic offsets indicate boresight error\n3. Derive correction angles for scanner-to-IMU mounting misalignment\n4. Apply corrections to raw data before generating point cloud\n\nWithout proper calibration: DEM shows swath-to-swath offsets (steps or ridges along flight line boundaries)\n\nFlight strip overlap: typically 20–30% to enable boresight calibration and gap detection',
-    category: 'procedure'
+    category: 'concept'
   },
   {
     domain: 'Mapping, GIS, and CAD',

@@ -636,7 +636,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/quiz/results", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const results = await storage.getQuizResults(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const trackDomains: string[] = examTrack === 'ps' ? [...PS_DOMAINS] : [...FS_DOMAINS];
+      const allResults = await storage.getQuizResults(userId);
+      const results = allResults.filter(r => trackDomains.includes(r.domain));
       res.json(results);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch quiz results" });
@@ -1535,14 +1539,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const prefs = await storage.getUserPreferences(userId);
       const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
-      const trackDomains = examTrack === 'ps' ? PS_DOMAINS : FS_DOMAINS;
-      const allExams = await storage.getPracticeExams(userId);
-      const filteredExams = allExams.filter(exam => {
-        if (!exam.domainScores || typeof exam.domainScores !== 'object') return examTrack === 'fs';
-        const domainKeys = Object.keys(exam.domainScores as Record<string, unknown>);
-        return domainKeys.some(d => (trackDomains as readonly string[]).includes(d));
-      });
-      res.json(filteredExams);
+      const exams = await storage.getPracticeExams(userId, examTrack);
+      res.json(exams);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch practice exams" });
     }
@@ -1551,7 +1549,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/exams/latest", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const exam = await storage.getLatestPracticeExam(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const exam = await storage.getLatestPracticeExam(userId, examTrack);
       res.json(exam || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch latest exam" });
@@ -1561,10 +1561,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/exams", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       const { questionResults, ...summaryData } = req.body;
       
-      // Save exam summary
-      const data = insertPracticeExamSchema.parse({ ...summaryData, userId });
+      // Save exam summary (examTrack derived server-side, never trusted from client)
+      const data = insertPracticeExamSchema.parse({ ...summaryData, userId, examTrack });
       const exam = await storage.createPracticeExam(data);
       
       // Validate and save individual question results if provided
@@ -1737,7 +1739,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         storage.getAllWeekProgress(userId, examTrack),
         storage.getQuizResults(userId),
         storage.getAllFlashcardMastery(userId),
-        storage.getPracticeExams(userId),
+        storage.getPracticeExams(userId, examTrack),
         storage.getCustomWeeks(userId)
       ]);
       const quizResults = allQuizResults.filter(r => trackDomains.includes(r.domain));
