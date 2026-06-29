@@ -48,6 +48,10 @@ const referenceItems = (examTrack: string) => [
   { id: `/app/${examTrack}/formulas`, icon: Calculator, label: 'Formula Reference', testId: 'nav-formulas' },
 ];
 
+const toolsItems = (examTrack: string) => [
+  { id: `/app/${examTrack}/calculators/scientific`, icon: Calculator, label: 'Scientific Calculator', testId: 'nav-scientific-calculator' },
+];
+
 const trackItems = (examTrack: string) => [
   { id: `/app/${examTrack}/progress`, icon: BarChart3, label: 'Progress', testId: 'nav-progress' },
   { id: `/app/${examTrack}/notes`, icon: FileText, label: 'Study Notes', testId: 'nav-notes' },
@@ -123,6 +127,7 @@ function ExamSidebar({ examTrack }: { examTrack: string }) {
         <NavGroup label="Learn" items={learnItems(examTrack)} location={location} />
         <NavGroup label="Practice" items={practiceItems(examTrack)} location={location} />
         <NavGroup label="Reference" items={referenceItems(examTrack)} location={location} />
+        <NavGroup label="Tools" items={toolsItems(examTrack)} location={location} />
         <NavGroup label="Track" items={trackItems(examTrack)} location={location} />
       </SidebarContent>
 
