@@ -686,7 +686,7 @@ export default function PracticeQuizPage() {
             </div>
             <div className="bg-muted/50 p-4 rounded-lg text-center">
               <div className="text-2xl font-bold text-foreground">{formatTime(elapsedSeconds)}</div>
-              <div className="text-sm text-muted-foreground">Time</div>
+              <div className="text-sm text-muted-foreground">Time Spent</div>
             </div>
           </div>
 
@@ -775,8 +775,9 @@ export default function PracticeQuizPage() {
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-foreground" data-testid="heading-practice-quiz">Practice Quiz</h1>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-muted-foreground" data-testid="text-timer">
+            <div className="flex items-center gap-2 text-muted-foreground" data-testid="text-timer" title="Elapsed study time — quizzes are untimed, so take as long as you need.">
               <Clock className="w-4 h-4" />
+              <span className="text-xs font-medium uppercase tracking-wide">Elapsed</span>
               <span className="font-mono text-lg">{formatTime(elapsedSeconds)}</span>
             </div>
           </div>
