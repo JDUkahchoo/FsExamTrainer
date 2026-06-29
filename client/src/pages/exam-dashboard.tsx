@@ -54,12 +54,29 @@ export default function ExamDashboard() {
     }
   };
 
-  const handleReviewClick = (review: ReviewSchedule) => {
-    navigateByItemType(review.itemType, review.domain);
+  // Jump straight to the exact item being reviewed when we can resolve it from
+  // the itemId; otherwise fall back to the domain-filtered area page.
+  const navigateToReviewItem = (itemType: string, itemId: string | null, domain: string | null) => {
+    if (itemType === 'lesson' && itemId && itemId.startsWith('lesson:')) {
+      const lessonId = itemId.slice('lesson:'.length);
+      if (lessonId) {
+        setLocation(`/app/${examTrack}/lesson/${lessonId}`);
+        return;
+      }
+    }
+    if (itemType === 'flashcard' && itemId) {
+      setLocation(`/app/${examTrack}/flashcards?card=${encodeURIComponent(itemId)}`);
+      return;
+    }
+    navigateByItemType(itemType, domain);
   };
 
-  const handleRetentionItemClick = (item: { domain: string | null; itemType: string }) => {
-    navigateByItemType(item.itemType, item.domain);
+  const handleReviewClick = (review: ReviewSchedule) => {
+    navigateToReviewItem(review.itemType, review.itemId, review.domain);
+  };
+
+  const handleRetentionItemClick = (item: { domain: string | null; itemType: string; itemId?: string | null }) => {
+    navigateToReviewItem(item.itemType, item.itemId ?? null, item.domain);
   };
 
   const examInfo = EXAM_TRACKS.find(t => t.id === examTrack);

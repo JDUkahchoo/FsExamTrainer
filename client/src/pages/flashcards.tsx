@@ -24,6 +24,19 @@ import { useExamTrack } from '@/contexts/exam-track-context';
 
 type FlashcardDeck = 'original' | 'comprehensive';
 
+// Parse a review itemId (e.g. "comp-card-42" / "card-7") back to its deck + index.
+function parseCardId(cardId: string): { deck: FlashcardDeck; index: number } | null {
+  if (cardId.startsWith('comp-card-')) {
+    const n = parseInt(cardId.slice('comp-card-'.length), 10);
+    return isNaN(n) ? null : { deck: 'comprehensive', index: n };
+  }
+  if (cardId.startsWith('card-')) {
+    const n = parseInt(cardId.slice('card-'.length), 10);
+    return isNaN(n) ? null : { deck: 'original', index: n };
+  }
+  return null;
+}
+
 interface SessionStats {
   cardsReviewed: number;
   masteryRatings: number[];
@@ -36,6 +49,10 @@ export default function FlashcardsPage() {
   const urlParams = new URLSearchParams(searchString);
   const domainsFromUrl = urlParams.get('domains');
   const weekFromUrl = urlParams.get('week') ? parseInt(urlParams.get('week')!, 10) : undefined;
+  const cardFromUrl = urlParams.get('card');
+  const cardInit = cardFromUrl ? parseCardId(cardFromUrl) : null;
+  // Holds the deep-linked cardId until we successfully position to it (once).
+  const pendingCardId = useRef<string | null>(cardFromUrl);
   const { examTrack, domains: examDomains, examName } = useExamTrack();
   
   const getSavedFlashcardState = () => {
@@ -59,13 +76,13 @@ export default function FlashcardsPage() {
   const savedPageState = useRef(getSavedFlashcardState());
 
   const [selectedDeck, setSelectedDeck] = useState<FlashcardDeck>(
-    savedPageState.current?.deck || (examTrack === 'fs' ? 'comprehensive' : 'original')
+    cardInit?.deck || savedPageState.current?.deck || (examTrack === 'fs' ? 'comprehensive' : 'original')
   );
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>(
-    savedPageState.current?.domain || 'all'
+    cardFromUrl ? 'all' : (savedPageState.current?.domain || 'all')
   );
   const [selectedDomains, setSelectedDomains] = useState<Domain[]>(
-    savedPageState.current?.domains || []
+    cardFromUrl ? [] : (savedPageState.current?.domains || [])
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -397,9 +414,39 @@ export default function FlashcardsPage() {
       ? activeFlashcards
       : activeFlashcards.filter(card => card.domain === selectedDomain);
 
+  // Keep the deep-link reactive: if the ?card= query changes while the page is
+  // already mounted, re-arm the jump and reset deck/domain so it can be found.
+  useEffect(() => {
+    if (!cardFromUrl) return;
+    const parsed = parseCardId(cardFromUrl);
+    if (!parsed) return;
+    pendingCardId.current = cardFromUrl;
+    setSelectedDeck(parsed.deck);
+    setSelectedDomain('all');
+    setSelectedDomains([]);
+  }, [cardFromUrl]);
+
   useEffect(() => {
     setShuffledIndices(filteredCards.map((_, i) => i));
-    setCurrentIndex(0);
+
+    // If we arrived via a deep-linked review item, position to that exact card
+    // (once). Otherwise start at the beginning as usual.
+    let targetIndex = 0;
+    if (pendingCardId.current) {
+      const parsed = parseCardId(pendingCardId.current);
+      if (parsed && parsed.deck === selectedDeck) {
+        const card = activeFlashcards[parsed.index];
+        const pos = card ? filteredCards.indexOf(card) : -1;
+        if (pos >= 0) {
+          targetIndex = pos;
+          pendingCardId.current = null;
+        }
+      } else if (!parsed) {
+        pendingCardId.current = null;
+      }
+    }
+
+    setCurrentIndex(targetIndex);
     setIsFlipped(false);
   }, [selectedDomain, selectedDomains.length, selectedDeck, filteredCards.length]);
 

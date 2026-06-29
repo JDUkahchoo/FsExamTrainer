@@ -177,6 +177,49 @@ function getLocalMidnight(timezone: string = 'America/Chicago'): { today: Date; 
   return { today, tomorrow };
 }
 
+/**
+ * Get the start of the current week (Monday 00:00) in the user's timezone.
+ * Returned as a UTC Date representing that local instant. Used to give the
+ * review card a fresh weekly slate that resets every Monday.
+ * @param timezone IANA timezone string (e.g., 'America/Chicago')
+ */
+function getLocalWeekStart(timezone: string = 'America/Chicago'): Date {
+  const now = new Date();
+
+  // Determine the local weekday (Sun..Sat) in the user's timezone
+  const weekdayStr = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    weekday: 'short',
+  }).format(now);
+  const weekdayMap: Record<string, number> = {
+    Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+  };
+  const dow = weekdayMap[weekdayStr] ?? 1;
+  const mondayOffset = dow === 0 ? -6 : 1 - dow;
+
+  // Local calendar date today
+  const localDateStr = new Intl.DateTimeFormat('en-CA', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now);
+  const [y, m, d] = localDateStr.split('-').map((v) => parseInt(v, 10));
+
+  // Local Monday calendar date (handles month/year rollover)
+  const mondayLocal = new Date(y, m - 1, d + mondayOffset);
+  const my = mondayLocal.getFullYear();
+  const mm = mondayLocal.getMonth();
+  const md = mondayLocal.getDate();
+
+  // Convert local midnight to the correct UTC instant (DST-safe)
+  const tempDate = new Date(Date.UTC(my, mm, md, 0, 0, 0));
+  const localMidnightInTz = new Date(tempDate.toLocaleString('en-US', { timeZone: timezone }));
+  const utcMidnight = new Date(tempDate.toLocaleString('en-US', { timeZone: 'UTC' }));
+  const offsetMs = utcMidnight.getTime() - localMidnightInTz.getTime();
+  return new Date(tempDate.getTime() + offsetMs);
+}
+
 export interface IStorage {
   // User methods (required for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
@@ -3113,6 +3156,49 @@ export class DatabaseStorage implements IStorage {
         lte(reviewSchedule.nextReviewAt, now)
       ))
       .orderBy(reviewSchedule.nextReviewAt);
+  }
+
+  // Weekly fresh-slate view for the Daily Coaching review card.
+  // Only items that came due during the CURRENT week are shown; items that went
+  // overdue in prior weeks are cleared from the list (not deleted — their rows
+  // and retention data stay intact so the forgetting-curve keeps decaying).
+  async getWeeklyReviewSlate(
+    userId: string,
+    examTrack: string = 'fs',
+    timezone: string = 'America/Chicago'
+  ): Promise<{ items: ReviewSchedule[]; done: number; remaining: number; target: number }> {
+    const now = new Date();
+    const weekStart = getLocalWeekStart(timezone);
+    const weekStartMs = weekStart.getTime();
+    const nowMs = now.getTime();
+
+    const rows = await db
+      .select()
+      .from(reviewSchedule)
+      .where(and(
+        eq(reviewSchedule.userId, userId),
+        eq(reviewSchedule.examTrack, examTrack)
+      ));
+
+    // Due THIS week and not yet reviewed: nextReviewAt within [weekStart, now]
+    const items = rows
+      .filter((r) => {
+        const next = new Date(r.nextReviewAt).getTime();
+        return next >= weekStartMs && next <= nowMs;
+      })
+      .sort((a, b) => new Date(a.nextReviewAt).getTime() - new Date(b.nextReviewAt).getTime());
+
+    // Refreshed THIS week: reviewed since the week started and now scheduled ahead
+    const done = rows.filter((r) => {
+      const last = new Date(r.lastReviewedAt).getTime();
+      const next = new Date(r.nextReviewAt).getTime();
+      return last >= weekStartMs && next > nowMs;
+    }).length;
+
+    const remaining = items.length;
+    const target = remaining + done;
+
+    return { items, done, remaining, target };
   }
 
   async updateReviewScheduleById(id: string, userId: string, quality: number): Promise<ReviewSchedule | null> {

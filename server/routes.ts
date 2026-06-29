@@ -826,8 +826,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
         return res.status(400).json({ error: "Valid examTrack (fs or ps) is required" });
       }
-      const reviews = await storage.getDueReviews(userId, examTrack);
-      res.json(reviews);
+      const prefs = await storage.getUserPreferences(userId);
+      const timezone = prefs?.timezone || 'America/Chicago';
+      const slate = await storage.getWeeklyReviewSlate(userId, examTrack, timezone);
+      res.json(slate);
     } catch (error) {
       console.error("Error fetching due reviews:", error);
       res.status(500).json({ error: "Failed to fetch due reviews" });
