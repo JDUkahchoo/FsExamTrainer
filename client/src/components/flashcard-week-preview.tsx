@@ -190,7 +190,22 @@ function DomainCoverageBreakdown({
   reviewedDomains: string[];
   missingDomains: string[];
 }) {
-  const [expanded, setExpanded] = useState(missingDomains.length > 0);
+  const storageKey = `flashcard-coverage-expanded-${week}`;
+  const [expanded, setExpanded] = useState(() => {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored !== null) return stored === 'true';
+    } catch {}
+    return missingDomains.length > 0;
+  });
+
+  const toggle = () => {
+    setExpanded(v => {
+      const next = !v;
+      try { localStorage.setItem(storageKey, String(next)); } catch {}
+      return next;
+    });
+  };
   const total = reviewedDomains.length + missingDomains.length;
 
   if (total === 0) return null;
@@ -204,7 +219,7 @@ function DomainCoverageBreakdown({
     >
       {/* Toggle header */}
       <button
-        onClick={() => setExpanded(v => !v)}
+        onClick={toggle}
         className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-yellow-700 dark:text-yellow-400 hover:bg-yellow-100/50 dark:hover:bg-yellow-900/20 transition-colors"
         data-testid={`button-domain-coverage-toggle-${week}`}
       >
