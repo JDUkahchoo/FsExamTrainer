@@ -54,7 +54,13 @@ app.use((req, res, next) => {
   next();
 });
 
+let seedingInProgress = false;
+
 async function autoSeedIfNeeded() {
+  // Guard against overlapping seed runs (e.g. rapid restarts) that could race
+  // the delete-then-insert seeders against each other.
+  if (seedingInProgress) return;
+  seedingInProgress = true;
   try {
     const lessonResult = await db.select({ count: count() }).from(lessons);
     const lessonCount = lessonResult[0]?.count || 0;
@@ -62,10 +68,12 @@ async function autoSeedIfNeeded() {
     const questionResult = await db.select({ count: count() }).from(lessonQuestions);
     const questionCount = questionResult[0]?.count || 0;
     
-    const needsFSSeeding = lessonCount === 0 || questionCount < 1000;
+    // Only seed when the data is truly absent. seedLessons() wipes ALL lessons
+    // (FS + PS) before re-inserting, so it must not run when lessons already exist.
+    const needsFSSeeding = lessonCount === 0 || questionCount === 0;
     
     if (needsFSSeeding) {
-      log(`Database needs FS seeding (lessons: ${lessonCount}, questions: ${questionCount}). Auto-seeding...`);
+      log(`Database empty (lessons: ${lessonCount}, questions: ${questionCount}). Auto-seeding FS...`);
       await seedLessons();
       log(`FS seeding completed.`);
     }
@@ -73,8 +81,8 @@ async function autoSeedIfNeeded() {
     const psLessonResult = await db.select({ count: count() }).from(lessons).where(eq(lessons.examTrack, 'ps'));
     const psLessonCount = psLessonResult[0]?.count || 0;
 
-    if (psLessonCount < 50) {
-      log(`Database needs PS seeding (PS lessons: ${psLessonCount}). Auto-seeding PS lessons...`);
+    if (psLessonCount === 0) {
+      log(`No PS lessons found. Auto-seeding PS lessons...`);
       await seedPSLessons();
       log(`PS seeding completed.`);
     }
@@ -84,6 +92,8 @@ async function autoSeedIfNeeded() {
     log(`Database ready with ${finalLessonResult[0]?.count} lessons and ${finalQuestionResult[0]?.count} questions`);
   } catch (error) {
     console.error("Error checking/seeding lessons:", error);
+  } finally {
+    seedingInProgress = false;
   }
 }
 
@@ -92,10 +102,22 @@ async function autoSeedIfNeeded() {
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    const isProduction = app.get("env") === "production";
+    // Never leak internal error details for server errors in production.
+    const message =
+      status >= 500 && isProduction
+        ? "Internal Server Error"
+        : err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
-    throw err;
+    // Log server errors here; do NOT re-throw after responding (that would crash
+    // the process and can attempt to send the response twice).
+    if (status >= 500) {
+      console.error("Unhandled request error:", err);
+    }
+
+    if (!res.headersSent) {
+      res.status(status).json({ message });
+    }
   });
 
   if (app.get("env") === "development") {

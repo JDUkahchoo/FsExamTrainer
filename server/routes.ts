@@ -264,19 +264,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const timezone = prefs?.timezone || 'America/Chicago';
         
         if (data.readCompleted && data.readCompleted.length > 0) {
-          await storage.logDailyActivity(userId, 'read');
+          await storage.logDailyActivity(userId, 'read', examTrack);
           await storage.updatePillarQuestProgress(userId, 'read', examTrack, timezone);
         }
         if (data.focusCompleted && data.focusCompleted.length > 0) {
-          await storage.logDailyActivity(userId, 'focus');
+          await storage.logDailyActivity(userId, 'focus', examTrack);
           await storage.updatePillarQuestProgress(userId, 'focus', examTrack, timezone);
         }
         if (data.applyCompleted && data.applyCompleted.length > 0) {
-          await storage.logDailyActivity(userId, 'apply');
+          await storage.logDailyActivity(userId, 'apply', examTrack);
           await storage.updatePillarQuestProgress(userId, 'apply', examTrack, timezone);
         }
         if (data.reinforceCompleted && data.reinforceCompleted.length > 0) {
-          await storage.logDailyActivity(userId, 'reinforce');
+          await storage.logDailyActivity(userId, 'reinforce', examTrack);
           await storage.updatePillarQuestProgress(userId, 'reinforce', examTrack, timezone);
         }
       }
@@ -382,16 +382,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.json({ ...progress, isNewCompletion: false });
         }
         
-        // Log daily activity for streak tracking
-        await storage.logDailyActivity(userId, 'reading');
-        
-        // Update daily quest progress for lesson/reading completion
+        // Resolve exam track for streak + quest attribution
         const prefs = await storage.getUserPreferences(userId);
         let examTrack = req.body.examTrack;
-        if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
+        if (!examTrack || !['fs', 'ps', 'tx'].includes(examTrack)) {
           examTrack = prefs?.preferredExamTrack || 'fs';
         }
         const timezone = prefs?.timezone || 'America/Chicago';
+
+        // Log daily activity for streak tracking (scoped per exam track)
+        await storage.logDailyActivity(userId, 'reading', examTrack);
         await storage.updateQuestProgress(userId, 'complete_lesson', 1, examTrack, timezone);
         await storage.updatePillarQuestProgress(userId, 'read', examTrack, timezone);
       }
@@ -480,13 +480,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.awardXp(userId, 75, activityKey);
       }
       
-      // Log daily activity for streak tracking
-      await storage.logDailyActivity(userId, 'apply_challenge');
-      
       // Update Daily Discipline quest - APPLY pillar
       const applyPrefs = await storage.getUserPreferences(userId);
       const applyExamTrack = req.body.examTrack || applyPrefs?.preferredExamTrack || 'fs';
       const applyTimezone = applyPrefs?.timezone || 'America/Chicago';
+
+      // Log daily activity for streak tracking (scoped per exam track)
+      await storage.logDailyActivity(userId, 'apply_challenge', applyExamTrack);
       await storage.updatePillarQuestProgress(userId, 'apply', applyExamTrack, applyTimezone);
       
       res.json(attempt);
@@ -622,8 +622,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.awardXp(userId, 15, activityKey);
       }
       
-      // Log daily activity for streak tracking
-      await storage.logDailyActivity(userId, 'retention_review');
+      // Log daily activity for streak tracking (scoped per exam track)
+      const reviewPrefs = await storage.getUserPreferences(userId);
+      const reviewExamTrack = getValidExamTrack(req.body.examTrack, reviewPrefs?.preferredExamTrack);
+      await storage.logDailyActivity(userId, 'retention_review', reviewExamTrack);
       
       res.json(updated);
     } catch (error) {
@@ -795,7 +797,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Log daily activity for streak tracking when quest is completed
       if (updated?.isCompleted) {
-        await storage.logDailyActivity(userId, 'daily_quest');
+        await storage.logDailyActivity(userId, 'daily_quest', examTrack);
       }
       
       res.json({ updated, awarded: updated?.isCompleted });
@@ -927,6 +929,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const data = insertQuizSessionSchema.parse({ ...req.body, userId });
       const session = await storage.createQuizSession(data);
+
+      // Resolve exam track once for quest + streak + review attribution
+      const prefs = await storage.getUserPreferences(userId);
+      let examTrack = req.body.examTrack;
+      if (!examTrack || !['fs', 'ps', 'tx'].includes(examTrack)) {
+        examTrack = prefs?.preferredExamTrack || 'fs';
+      }
+      const timezone = prefs?.timezone || 'America/Chicago';
       
       // Award XP for quiz completion (50 XP per quiz session, idempotent)
       if (session) {
@@ -934,13 +944,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.awardXp(userId, 50, activityKey);
         
         // Update daily quest progress for quiz completion
-        // Get examTrack from request body, fallback to user preferences
-        const prefs = await storage.getUserPreferences(userId);
-        let examTrack = req.body.examTrack;
-        if (!examTrack || !['fs', 'ps'].includes(examTrack)) {
-          examTrack = prefs?.preferredExamTrack || 'fs';
-        }
-        const timezone = prefs?.timezone || 'America/Chicago';
         await storage.updateQuestProgress(userId, 'complete_quiz', 1, examTrack, timezone);
         await storage.updatePillarQuestProgress(userId, 'focus', examTrack, timezone);
         
@@ -958,21 +961,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const quizAccuracy = data.totalQuestions > 0 ? data.correctAnswers / data.totalQuestions : 0;
           const quality = quizAccuracy >= 0.9 ? 5 : quizAccuracy >= 0.7 ? 4 : quizAccuracy >= 0.5 ? 3 : quizAccuracy >= 0.3 ? 2 : 1;
-          const quizPrefs = await storage.getUserPreferences(userId);
-          const quizExamTrack = req.body.examTrack && ['fs', 'ps'].includes(req.body.examTrack) ? req.body.examTrack : (quizPrefs?.preferredExamTrack || 'fs');
           await storage.createOrUpdateReviewItem(
             userId, 'concept', `quiz-domain:${data.domain}`,
             `${data.domain} Quiz Review`,
             data.domain,
-            quality, quizExamTrack
+            quality, examTrack
           );
         } catch (reviewErr) {
           console.error("Non-critical: Failed to update review schedule for quiz:", reviewErr);
         }
       }
 
-      // Log daily activity for streak tracking
-      await storage.logDailyActivity(userId, 'quiz');
+      // Log daily activity for streak tracking (scoped per exam track)
+      await storage.logDailyActivity(userId, 'quiz', examTrack);
       
       res.json(session);
     } catch (error) {
@@ -1075,7 +1076,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/flashcards/mastery", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const mastery = await storage.getAllFlashcardMastery(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const mastery = await storage.getAllFlashcardMastery(userId, examTrack);
       res.json(mastery);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch flashcard mastery" });
@@ -1085,7 +1088,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/flashcards/mastery/:flashcardId", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const mastery = await storage.getFlashcardMastery(userId, req.params.flashcardId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const mastery = await storage.getFlashcardMastery(userId, req.params.flashcardId, examTrack);
       res.json(mastery || null);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch flashcard mastery" });
@@ -1095,14 +1100,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/flashcards/mastery", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      console.log("[Flashcard POST] userId:", userId, "body:", req.body);
-      const data = insertFlashcardMasterySchema.parse({ ...req.body, userId });
-      console.log("[Flashcard POST] Parsed data:", data);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const data = insertFlashcardMasterySchema.parse({ ...req.body, userId, examTrack });
       const mastery = await storage.upsertFlashcardMastery(data);
-      console.log("[Flashcard POST] Upserted mastery:", mastery);
       
       // Log daily activity for streak tracking
-      await storage.logDailyActivity(userId, 'flashcard_review');
+      await storage.logDailyActivity(userId, 'flashcard_review', examTrack);
       
       res.json(mastery);
     } catch (error) {
@@ -1114,7 +1118,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/flashcards/mastery", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      await storage.deleteAllFlashcardMastery(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      await storage.deleteAllFlashcardMastery(userId, examTrack);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete flashcard mastery" });
@@ -1125,7 +1131,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/flashcards/stats", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const mastery = await storage.getAllFlashcardMastery(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const mastery = await storage.getAllFlashcardMastery(userId, examTrack);
       const totalReviewed = mastery.length;
       const totalMastered = mastery.filter(m => m.masteryLevel >= 4).length;
       const masteryPercentage = totalReviewed > 0 ? (totalMastered / totalReviewed) * 100 : 0;
@@ -1141,14 +1149,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Flashcard Challenge Mode routes
+  const challengeCompleteSchema = z.object({
+    examTrack: z.enum(['fs', 'ps', 'tx']).optional(),
+    deck: z.string().optional(),
+    domain: z.string().nullable().optional(),
+    totalCards: z.number().int().nonnegative(),
+    correctFirstTry: z.number().int().nonnegative(),
+    totalAttempts: z.number().int().nonnegative(),
+    incorrectAttempts: z.number().int().nonnegative(),
+    accuracy: z.number().min(0).max(100),
+    roundsCompleted: z.number().int().positive().optional(),
+    totalRounds: z.number().int().positive().optional(),
+    domainBreakdown: z.any().optional(),
+  });
+
   app.post("/api/flashcards/challenge/complete", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { examTrack, deck, domain, totalCards, correctFirstTry, totalAttempts, incorrectAttempts, accuracy, roundsCompleted, totalRounds, domainBreakdown } = req.body;
+      const parsed = challengeCompleteSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid challenge session data" });
+      }
+      const { examTrack, deck, domain, totalCards, correctFirstTry, totalAttempts, incorrectAttempts, accuracy, roundsCompleted, totalRounds, domainBreakdown } = parsed.data;
+      const track = examTrack || 'fs';
       
       const session = await storage.createFlashcardChallengeSession({
         userId,
-        examTrack: examTrack || 'fs',
+        examTrack: track,
         deck: deck || 'comprehensive',
         domain: domain || null,
         totalCards,
@@ -1166,7 +1193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activityKey = `challenge:flashcard:${session.id}`;
       await storage.awardXp(userId, xpAmount, activityKey);
 
-      await storage.logDailyActivity(userId, 'flashcard_challenge');
+      await storage.logDailyActivity(userId, 'flashcard_challenge', track);
 
       res.json({ ...session, xpAwarded: true, xpAmount });
     } catch (error) {
@@ -1594,8 +1621,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.awardXp(userId, 100, activityKey);
       }
       
-      // Log daily activity for streak tracking
-      await storage.logDailyActivity(userId, 'practice_exam');
+      // Log daily activity for streak tracking (scoped per exam track)
+      await storage.logDailyActivity(userId, 'practice_exam', examTrack);
       
       res.json(exam);
     } catch (error) {
@@ -1738,7 +1765,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const [weekProgress, allQuizResults, flashcardMastery, practiceExams, customWeeks] = await Promise.all([
         storage.getAllWeekProgress(userId, examTrack),
         storage.getQuizResults(userId),
-        storage.getAllFlashcardMastery(userId),
+        storage.getAllFlashcardMastery(userId, examTrack),
         storage.getPracticeExams(userId, examTrack),
         storage.getCustomWeeks(userId)
       ]);
@@ -1787,7 +1814,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         : 0;
 
       // Study streak (use proper calculation from storage)
-      const streakData = await storage.calculateStreak(userId);
+      const streakData = await storage.calculateStreak(userId, examTrack);
       const currentStreak = streakData.currentStreak;
       const longestStreak = streakData.longestStreak;
 
@@ -1814,8 +1841,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/activity/daily", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       const days = parseInt(req.query.days as string) || 30;
-      const activity = await storage.getDailyActivity(userId, days);
+      const activity = await storage.getDailyActivity(userId, days, examTrack);
       res.json(activity);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch daily activity" });
@@ -1825,8 +1854,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/activity/log", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       const { activityType } = req.body;
-      await storage.logDailyActivity(userId, activityType);
+      await storage.logDailyActivity(userId, activityType, examTrack);
       res.json({ success: true });
     } catch (error) {
       console.error("Error logging activity:", error);
@@ -1838,7 +1869,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/activity/streak", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const streak = await storage.calculateStreak(userId);
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
+      const streak = await storage.calculateStreak(userId, examTrack);
       res.json(streak);
     } catch (error) {
       res.status(500).json({ error: "Failed to calculate streak" });
@@ -1918,9 +1951,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const [weekProgressData, quizSessionsData, flashcardMastery, customWeeks, streak] = await Promise.all([
         storage.getAllWeekProgress(userId, examTrack),
         storage.getQuizSessions(userId, examTrack),
-        storage.getAllFlashcardMastery(userId),
+        storage.getAllFlashcardMastery(userId, examTrack),
         storage.getCustomWeeks(userId),
-        storage.calculateStreak(userId)
+        storage.calculateStreak(userId, examTrack)
       ]);
 
       const coreWeeksCompleted = weekProgressData.filter(w => {
@@ -2127,11 +2160,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/daily-logs", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const prefs = await storage.getUserPreferences(userId);
+      const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       const data = insertDailyLogSchema.parse({ ...req.body, userId });
-      const log = await storage.createDailyLog(data);
+      const log = await storage.createDailyLog(data, examTrack);
       
       // Log daily activity for streak tracking
-      await storage.logDailyActivity(userId, 'daily_log');
+      await storage.logDailyActivity(userId, 'daily_log', examTrack);
       
       res.json(log);
     } catch (error) {
@@ -2324,7 +2359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const totalXp = xpData.xp;
       
       // Calculate streak from daily_activity table (auto-logged activities)
-      const streakData = await storage.calculateStreak(userId);
+      const streakData = await storage.calculateStreak(userId, examTrack);
       const currentStreak = streakData.currentStreak;
       
       // Calculate total hours spent from lesson progress (auto-tracked time during lessons)
@@ -2618,8 +2653,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Log daily activity for streak tracking (any lesson attempt counts)
-      await storage.logDailyActivity(userId, 'lesson');
+      // Log daily activity for streak tracking (scoped to the lesson's exam track)
+      await storage.logDailyActivity(userId, 'lesson', lesson.examTrack || 'fs');
 
       res.json({
         progress,
@@ -2729,18 +2764,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  const awardXpSchema = z.object({
+    amount: z.number().positive(),
+    activityKey: z.string().min(1),
+    reason: z.string().optional(),
+  });
+
   app.post("/api/xp/award", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { amount, reason, activityKey } = req.body;
-      
-      if (typeof amount !== 'number' || amount <= 0) {
-        return res.status(400).json({ error: "Invalid XP amount" });
+      const parsed = awardXpSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid XP award data" });
       }
-      
-      if (!activityKey || typeof activityKey !== 'string') {
-        return res.status(400).json({ error: "Activity key required for XP award" });
-      }
+      const { amount, reason, activityKey } = parsed.data;
       
       const result = await storage.awardXp(userId, amount, activityKey);
       res.json({ ...result, reason });

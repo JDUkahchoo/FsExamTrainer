@@ -223,7 +223,9 @@ export const weekProgress = pgTable("week_progress", {
   reinforceCompleted: text("reinforce_completed").array().notNull().default(sql`'{}'::text[]`),
   coverageCelebrated: boolean("coverage_celebrated").notNull().default(false),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => ({
+  userTrackIdx: index("week_progress_user_track_idx").on(table.userId, table.examTrack),
+}));
 
 export const weekProgressRelations = relations(weekProgress, ({ one }) => ({
   user: one(users, {
@@ -251,7 +253,10 @@ export const quizResults = pgTable("quiz_results", {
   selectedAnswer: integer("selected_answer").notNull(),
   isCorrect: boolean("is_correct").notNull(),
   completedAt: timestamp("completed_at").notNull().defaultNow(),
-});
+}, (table) => ({
+  userIdx: index("quiz_results_user_idx").on(table.userId),
+  sessionIdx: index("quiz_results_session_idx").on(table.sessionId),
+}));
 
 export const quizResultsRelations = relations(quizResults, ({ one }) => ({
   user: one(users, {
@@ -283,7 +288,9 @@ export const quizSessions = pgTable("quiz_sessions", {
   correctAnswers: integer("correct_answers").notNull(),
   timeSpentSeconds: integer("time_spent_seconds").notNull(),
   completedAt: timestamp("completed_at").notNull().defaultNow(),
-});
+}, (table) => ({
+  userTrackIdx: index("quiz_sessions_user_track_idx").on(table.userId, table.examTrack),
+}));
 
 export const quizSessionsRelations = relations(quizSessions, ({ one, many }) => ({
   user: one(users, {
@@ -307,10 +314,13 @@ export const flashcardMastery = pgTable("flashcard_mastery", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   flashcardId: varchar("flashcard_id").notNull(),
+  examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'tx' - track this card belongs to
   masteryLevel: integer("mastery_level").notNull().default(0), // 0-5
   lastReviewedAt: timestamp("last_reviewed_at").notNull().defaultNow(),
   reviewCount: integer("review_count").notNull().default(0),
-});
+}, (table) => ({
+  userTrackIdx: index("flashcard_mastery_user_track_idx").on(table.userId, table.examTrack),
+}));
 
 export const flashcardMasteryRelations = relations(flashcardMastery, ({ one }) => ({
   user: one(users, {
@@ -574,7 +584,9 @@ export const practiceExams = pgTable("practice_exams", {
   domainScores: jsonb("domain_scores").notNull(), // { domain: { correct, total } }
   examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'tx' - which exam this attempt belongs to
   completedAt: timestamp("completed_at").notNull().defaultNow(),
-});
+}, (table) => ({
+  userTrackIdx: index("practice_exams_user_track_idx").on(table.userId, table.examTrack),
+}));
 
 export const practiceExamsRelations = relations(practiceExams, ({ one, many }) => ({
   user: one(users, {
@@ -889,10 +901,11 @@ export const dailyActivity = pgTable("daily_activity", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   date: text("date").notNull(), // YYYY-MM-DD format
+  examTrack: varchar("exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'tx' - streak/activity is tracked per exam
   activityTypes: text("activity_types").array().notNull().default(sql`'{}'::text[]`), // ['quiz', 'flashcard', 'notes', 'week_complete']
   createdAt: timestamp("created_at").notNull().defaultNow(),
 }, (table) => ({
-  userDateIdx: uniqueIndex('daily_activity_user_date_idx').on(table.userId, table.date),
+  userDateTrackIdx: uniqueIndex('daily_activity_user_date_track_idx').on(table.userId, table.date, table.examTrack),
 }));
 
 export const dailyActivityRelations = relations(dailyActivity, ({ one }) => ({

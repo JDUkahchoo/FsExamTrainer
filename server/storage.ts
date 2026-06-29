@@ -251,10 +251,10 @@ export interface IStorage {
   createQuizSession(session: InsertQuizSession): Promise<QuizSession>;
 
   // Flashcard Mastery methods
-  getFlashcardMastery(userId: string, flashcardId: string): Promise<FlashcardMastery | undefined>;
-  getAllFlashcardMastery(userId: string): Promise<FlashcardMastery[]>;
+  getFlashcardMastery(userId: string, flashcardId: string, examTrack?: string): Promise<FlashcardMastery | undefined>;
+  getAllFlashcardMastery(userId: string, examTrack?: string): Promise<FlashcardMastery[]>;
   upsertFlashcardMastery(mastery: InsertFlashcardMastery): Promise<FlashcardMastery>;
-  deleteAllFlashcardMastery(userId: string): Promise<void>;
+  deleteAllFlashcardMastery(userId: string, examTrack?: string): Promise<void>;
   
   // Flashcard Feynman Mode methods
   getFlashcardFeynmanScore(userId: string, flashcardId: string): Promise<FlashcardFeynmanScore | undefined>;
@@ -340,9 +340,9 @@ export interface IStorage {
   updateReviewScheduleById(id: string, userId: string, quality: number): Promise<ReviewSchedule | null>;
 
   // Daily Activity methods
-  getDailyActivity(userId: string, days: number): Promise<DailyActivity[]>;
-  logDailyActivity(userId: string, activityType: string): Promise<void>;
-  calculateStreak(userId: string): Promise<StudyStreak>;
+  getDailyActivity(userId: string, days: number, examTrack?: string): Promise<DailyActivity[]>;
+  logDailyActivity(userId: string, activityType: string, examTrack?: string): Promise<void>;
+  calculateStreak(userId: string, examTrack?: string): Promise<StudyStreak>;
 
   // Achievement methods
   getUserAchievements(userId: string): Promise<Achievement[]>;
@@ -702,27 +702,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Flashcard Mastery methods
-  async getFlashcardMastery(userId: string, flashcardId: string): Promise<FlashcardMastery | undefined> {
+  async getFlashcardMastery(userId: string, flashcardId: string, examTrack?: string): Promise<FlashcardMastery | undefined> {
+    // flashcardId (e.g. "card-5") is positional within a track-filtered deck, so it is
+    // NOT unique across exam tracks. Scope by examTrack to avoid FS/PS collisions.
+    const conditions = [
+      eq(flashcardMastery.userId, userId),
+      eq(flashcardMastery.flashcardId, flashcardId)
+    ];
+    if (examTrack) conditions.push(eq(flashcardMastery.examTrack, examTrack));
     const [mastery] = await db
       .select()
       .from(flashcardMastery)
-      .where(and(
-        eq(flashcardMastery.userId, userId),
-        eq(flashcardMastery.flashcardId, flashcardId)
-      ));
+      .where(and(...conditions));
     return mastery || undefined;
   }
 
-  async getAllFlashcardMastery(userId: string): Promise<FlashcardMastery[]> {
+  async getAllFlashcardMastery(userId: string, examTrack?: string): Promise<FlashcardMastery[]> {
+    const conditions = [eq(flashcardMastery.userId, userId)];
+    if (examTrack) conditions.push(eq(flashcardMastery.examTrack, examTrack));
     return await db
       .select()
       .from(flashcardMastery)
-      .where(eq(flashcardMastery.userId, userId));
+      .where(and(...conditions));
   }
 
   async upsertFlashcardMastery(mastery: InsertFlashcardMastery): Promise<FlashcardMastery> {
     console.log("[Storage] upsertFlashcardMastery called with:", mastery);
-    const existing = await this.getFlashcardMastery(mastery.userId, mastery.flashcardId);
+    const existing = await this.getFlashcardMastery(mastery.userId, mastery.flashcardId, mastery.examTrack);
     console.log("[Storage] Existing record:", existing, "typeof:", typeof existing, "isArray:", Array.isArray(existing));
     
     // Check if existing is a valid object (not null, undefined, or array)
@@ -764,8 +770,10 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async deleteAllFlashcardMastery(userId: string): Promise<void> {
-    await db.delete(flashcardMastery).where(eq(flashcardMastery.userId, userId));
+  async deleteAllFlashcardMastery(userId: string, examTrack?: string): Promise<void> {
+    const conditions = [eq(flashcardMastery.userId, userId)];
+    if (examTrack) conditions.push(eq(flashcardMastery.examTrack, examTrack));
+    await db.delete(flashcardMastery).where(and(...conditions));
   }
 
   // Flashcard Feynman Mode methods
@@ -1242,30 +1250,42 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Daily Activity methods
-  async getDailyActivity(userId: string, days: number): Promise<DailyActivity[]> {
+  async getDailyActivity(userId: string, days: number, examTrack?: string): Promise<DailyActivity[]> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
     const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
 
+    const conditions = [
+      eq(dailyActivity.userId, userId),
+      gte(dailyActivity.date, cutoffDateStr)
+    ];
+    if (examTrack) conditions.push(eq(dailyActivity.examTrack, examTrack));
+
     return await db
       .select()
       .from(dailyActivity)
-      .where(and(
-        eq(dailyActivity.userId, userId),
-        gte(dailyActivity.date, cutoffDateStr)
-      ))
+      .where(and(...conditions))
       .orderBy(desc(dailyActivity.date));
   }
 
-  async logDailyActivity(userId: string, activityType: string): Promise<void> {
+  async logDailyActivity(userId: string, activityType: string, examTrack?: string): Promise<void> {
     const today = new Date().toISOString().split('T')[0];
 
-    // Use atomic upsert with array_append to prevent race conditions
-    // The unique index on (userId, date) ensures only one row per user per day
+    // Resolve the exam track this activity belongs to so streaks are tracked per exam.
+    // When not passed explicitly, fall back to the user's currently-selected (preferred) track.
+    let track = examTrack;
+    if (!track) {
+      const prefs = await this.getUserPreferences(userId);
+      track = prefs?.preferredExamTrack || 'fs';
+    }
+    if (track !== 'fs' && track !== 'ps' && track !== 'tx') track = 'fs';
+
+    // Use atomic upsert with array_append to prevent race conditions.
+    // The unique index on (userId, date, examTrack) ensures one row per user/day/track.
     await db.execute(sql`
-      INSERT INTO daily_activity (id, user_id, date, activity_types, created_at)
-      VALUES (gen_random_uuid(), ${userId}, ${today}, ARRAY[${activityType}]::text[], NOW())
-      ON CONFLICT (user_id, date)
+      INSERT INTO daily_activity (id, user_id, date, exam_track, activity_types, created_at)
+      VALUES (gen_random_uuid(), ${userId}, ${today}, ${track}, ARRAY[${activityType}]::text[], NOW())
+      ON CONFLICT (user_id, date, exam_track)
       DO UPDATE SET activity_types = 
         CASE 
           WHEN ${activityType} = ANY(daily_activity.activity_types) THEN daily_activity.activity_types
@@ -1274,11 +1294,14 @@ export class DatabaseStorage implements IStorage {
     `);
   }
 
-  async calculateStreak(userId: string): Promise<StudyStreak> {
+  async calculateStreak(userId: string, examTrack: string = 'fs'): Promise<StudyStreak> {
     const allActivity = await db
       .select()
       .from(dailyActivity)
-      .where(eq(dailyActivity.userId, userId))
+      .where(and(
+        eq(dailyActivity.userId, userId),
+        eq(dailyActivity.examTrack, examTrack)
+      ))
       .orderBy(desc(dailyActivity.date));
 
     if (allActivity.length === 0) {
@@ -1648,20 +1671,21 @@ export class DatabaseStorage implements IStorage {
     return log || undefined;
   }
 
-  async createDailyLog(logData: InsertDailyLog): Promise<DailyLog> {
+  async createDailyLog(logData: InsertDailyLog, examTrack: string = 'fs'): Promise<DailyLog> {
     const [log] = await db
       .insert(dailyLogs)
       .values(logData)
       .returning();
     
-    // Also create/update dailyActivity for streak tracking
+    // Also create/update dailyActivity for streak tracking (scoped to the exam track)
     const dateStr = new Date(logData.date).toISOString().split('T')[0];
     const existingActivity = await db
       .select()
       .from(dailyActivity)
       .where(and(
         eq(dailyActivity.userId, logData.userId),
-        eq(dailyActivity.date, dateStr)
+        eq(dailyActivity.date, dateStr),
+        eq(dailyActivity.examTrack, examTrack)
       ))
       .limit(1);
     
@@ -1669,6 +1693,7 @@ export class DatabaseStorage implements IStorage {
       await db.insert(dailyActivity).values({
         userId: logData.userId,
         date: dateStr,
+        examTrack,
       });
     }
     
