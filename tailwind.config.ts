@@ -63,6 +63,12 @@ export default {
           DEFAULT: "hsl(var(--success) / <alpha-value>)",
           foreground: "hsl(var(--success-foreground) / <alpha-value>)",
         },
+        brass: {
+          DEFAULT: "hsl(var(--brass) / <alpha-value>)",
+          foreground: "hsl(var(--brass-fg) / <alpha-value>)",
+        },
+        survey: "hsl(var(--survey-orange) / <alpha-value>)",
+        instrument: "hsl(var(--instrument-teal) / <alpha-value>)",
         domain: {
           math: "hsl(var(--domain-math) / <alpha-value>)",
           "math-fg": "hsl(var(--domain-math-fg) / <alpha-value>)",
@@ -105,6 +111,7 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
+        display: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
       },
       keyframes: {

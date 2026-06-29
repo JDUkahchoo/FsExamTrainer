@@ -1,1 +1,2 @@
 - [Exam track scoping](exam-track-scoping.md) — how FS/PS/TX tracks are isolated; quiz/exam scoped by domain string only, flashcards/readings by examTrack field; deck/URL-domain leakage traps.
+- [Design system — Field Book to Point Cloud](design-system.md) — paper content + dark instrument-panel sidebar; never use text-muted-foreground on the dark rail; survey-orange needs dark text.

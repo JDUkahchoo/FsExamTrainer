@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import {
   BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3,
   GraduationCap, BookMarked, Library, ArrowLeft, Settings, ScrollText,
-  Target, Calculator, LayoutDashboard
+  Target, Calculator, LayoutDashboard, Compass
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -89,12 +89,12 @@ function ExamSidebar({ examTrack }: { examTrack: string }) {
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="h-6 w-6" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground ring-1 ring-sidebar-primary/40">
+            <Compass className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-sidebar-foreground">{examName}</h2>
-            <p className="text-xs text-muted-foreground">Study Guide</p>
+            <h2 className="font-serif text-lg font-bold leading-tight text-sidebar-foreground">{examName}</h2>
+            <p className="label-coord text-[10px] text-sidebar-foreground/60">Field Book → Point Cloud</p>
           </div>
         </div>
       </SidebarHeader>
@@ -139,7 +139,7 @@ function ExamSidebar({ examTrack }: { examTrack: string }) {
           </Button>
         </Link>
         <Link href="/getting-started">
-          <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-muted-foreground" data-testid="button-back-to-selection">
+          <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-sidebar-foreground/70" data-testid="button-back-to-selection">
             <ArrowLeft className="h-4 w-4" />
             Change Exam
           </Button>

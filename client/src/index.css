@@ -14,67 +14,70 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 0 0% 100%;
+  /* Field-book paper base */
+  --background: 40 30% 96%;
 
-  --foreground: 222 47% 11%;
+  --foreground: 200 33% 14%;
 
-  --border: 214 32% 91%;
+  --border: 38 22% 84%;
 
-  --card: 0 0% 98%;
+  --card: 42 40% 98%;
 
-  --card-foreground: 222 47% 11%;
+  --card-foreground: 200 33% 14%;
 
-  --card-border: 214 32% 88%;
+  --card-border: 38 22% 86%;
 
-  --sidebar: 0 0% 96%;
+  /* Dark instrument-panel navigation rail */
+  --sidebar: 197 30% 13%;
 
-  --sidebar-foreground: 222 47% 11%;
+  --sidebar-foreground: 40 28% 90%;
 
-  --sidebar-border: 214 32% 85%;
+  --sidebar-border: 197 22% 22%;
 
-  --sidebar-primary: 217 92% 76%;
+  --sidebar-primary: 28 88% 53%;
 
-  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-primary-foreground: 200 40% 10%;
 
-  --sidebar-accent: 214 20% 88%;
+  --sidebar-accent: 197 22% 22%;
 
-  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-accent-foreground: 40 28% 92%;
 
-  --sidebar-ring: 217 92% 76%;
+  --sidebar-ring: 188 70% 45%;
 
-  --popover: 0 0% 94%;
+  --popover: 42 40% 98%;
 
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 200 33% 14%;
 
-  --popover-border: 214 32% 82%;
+  --popover-border: 38 22% 84%;
 
-  --primary: 217 92% 55%;
+  /* Instrument teal */
+  --primary: 190 74% 27%;
 
-  --primary-foreground: 0 0% 100%;
+  --primary-foreground: 42 44% 97%;
 
-  --secondary: 214 20% 85%;
+  --secondary: 38 26% 88%;
 
-  --secondary-foreground: 222 47% 11%;
+  --secondary-foreground: 200 33% 16%;
 
-  --muted: 214 15% 89%;
+  --muted: 40 22% 90%;
 
-  --muted-foreground: 215 16% 47%;
+  --muted-foreground: 200 12% 40%;
 
-  --accent: 214 18% 86%;
+  --accent: 36 42% 87%;
 
-  --accent-foreground: 222 47% 11%;
+  --accent-foreground: 200 33% 16%;
 
-  --destructive: 0 84% 60%;
+  --destructive: 4 72% 48%;
 
   --destructive-foreground: 0 0% 100%;
 
-  --input: 214 32% 75%;
-  --ring: 217 92% 76%;
-  --chart-1: 217 92% 45%;
-  --chart-2: 142 71% 35%;
-  --chart-3: 239 84% 50%;
-  --chart-4: 271 81% 55%;
-  --chart-5: 38 92% 40%;
+  --input: 38 22% 80%;
+  --ring: 188 70% 38%;
+  --chart-1: 190 74% 32%;
+  --chart-2: 142 50% 34%;
+  --chart-3: 28 86% 50%;
+  --chart-4: 36 52% 44%;
+  --chart-5: 200 45% 28%;
 
   /* FS Exam Domain Colors */
   --domain-math: 217 92% 76%;
@@ -96,8 +99,15 @@
   --success: 142 76% 36%;
   --success-foreground: 0 0% 100%;
 
+  /* Surveying heritage → geospatial brand accents */
+  --brass: 36 54% 44%;
+  --brass-fg: 36 60% 26%;
+  --survey-orange: 24 90% 50%;
+  --instrument-teal: 188 74% 28%;
+  --paper-line: 38 26% 78%;
+
   --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif: Georgia, serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono", "Courier New", monospace;
   --radius: .5rem; /* 8px */
   --shadow-2xs: 0px 1px 2px 0px hsl(222 47% 11% / 0.05);
@@ -152,67 +162,68 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 222 47% 11%;
+  /* Night field — instrument readout */
+  --background: 200 40% 8%;
 
-  --foreground: 210 40% 98%;
+  --foreground: 40 28% 92%;
 
-  --border: 217 33% 24%;
+  --border: 200 22% 20%;
 
-  --card: 217 33% 17%;
+  --card: 200 34% 12%;
 
-  --card-foreground: 210 40% 98%;
+  --card-foreground: 40 28% 92%;
 
-  --card-border: 217 33% 22%;
+  --card-border: 200 24% 18%;
 
-  --sidebar: 220 40% 14%;
+  --sidebar: 200 44% 7%;
 
-  --sidebar-foreground: 210 40% 98%;
+  --sidebar-foreground: 40 28% 90%;
 
-  --sidebar-border: 217 33% 19%;
+  --sidebar-border: 200 24% 15%;
 
-  --sidebar-primary: 217 50% 30%;
+  --sidebar-primary: 28 88% 55%;
 
-  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-primary-foreground: 200 45% 10%;
 
-  --sidebar-accent: 217 25% 22%;
+  --sidebar-accent: 200 24% 17%;
 
-  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-accent-foreground: 40 28% 92%;
 
-  --sidebar-ring: 217 92% 76%;
+  --sidebar-ring: 188 64% 50%;
 
-  --popover: 217 35% 20%;
+  --popover: 200 34% 13%;
 
-  --popover-foreground: 210 40% 98%;
+  --popover-foreground: 40 28% 92%;
 
-  --popover-border: 217 33% 26%;
+  --popover-border: 200 24% 20%;
 
-  --primary: 217 85% 35%;
+  --primary: 188 64% 38%;
 
-  --primary-foreground: 0 0% 100%;
+  --primary-foreground: 40 40% 96%;
 
-  --secondary: 217 20% 24%;
+  --secondary: 200 22% 20%;
 
-  --secondary-foreground: 210 40% 98%;
+  --secondary-foreground: 40 28% 92%;
 
-  --muted: 217 18% 22%;
+  --muted: 200 20% 18%;
 
-  --muted-foreground: 215 16% 65%;
+  --muted-foreground: 200 12% 62%;
 
-  --accent: 217 15% 25%;
+  --accent: 200 22% 20%;
 
-  --accent-foreground: 210 40% 98%;
+  --accent-foreground: 40 28% 92%;
 
-  --destructive: 0 75% 35%;
+  --destructive: 4 65% 42%;
 
   --destructive-foreground: 0 0% 100%;
 
-  --input: 217 33% 35%;
-  --ring: 217 92% 76%;
-  --chart-1: 217 92% 76%;
-  --chart-2: 142 71% 65%;
-  --chart-3: 239 84% 75%;
-  --chart-4: 271 81% 80%;
-  --chart-5: 38 92% 70%;
+  --input: 200 24% 26%;
+  --ring: 188 64% 48%;
+  --chart-1: 188 64% 52%;
+  --chart-2: 142 50% 55%;
+  --chart-3: 28 86% 60%;
+  --chart-4: 36 56% 58%;
+  --chart-5: 200 40% 60%;
 
   /* FS Exam Domain Colors - Dark Mode */
   --domain-math: 217 35% 30%;
@@ -233,6 +244,13 @@
   /* Success/Complete color - Dark Mode */
   --success: 142 56% 42%;
   --success-foreground: 0 0% 100%;
+
+  /* Surveying heritage → geospatial brand accents - Dark Mode */
+  --brass: 36 58% 56%;
+  --brass-fg: 36 60% 70%;
+  --survey-orange: 26 92% 58%;
+  --instrument-teal: 186 64% 52%;
+  --paper-line: 200 24% 20%;
 
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.30);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.40);
@@ -364,5 +382,42 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
+  }
+}
+
+@layer utilities {
+  /* Field-book graph paper — the surveyor's heritage surface */
+  .bg-fieldbook {
+    background-color: hsl(var(--background));
+    background-image:
+      linear-gradient(hsl(var(--paper-line) / 0.6) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--paper-line) / 0.6) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .bg-fieldbook-fine {
+    background-color: hsl(var(--background));
+    background-image:
+      linear-gradient(hsl(var(--paper-line) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--paper-line) / 0.4) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+
+  /* Point-cloud / geospatial dot field — where the craft is headed */
+  .bg-pointcloud {
+    background-image: radial-gradient(hsl(var(--instrument-teal) / 0.28) 1px, transparent 1.6px);
+    background-size: 16px 16px;
+  }
+
+  /* Coordinate-readout label styling (mono, tracked, caps) */
+  .label-coord {
+    font-family: var(--font-mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Brass hairline rule */
+  .rule-brass {
+    border-color: hsl(var(--brass) / 0.5);
   }
 }
