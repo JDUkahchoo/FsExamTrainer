@@ -23,3 +23,7 @@ The app supports multiple exam tracks (`'fs' | 'ps' | 'tx'`). Adding a track tou
 
 ## Combined pools
 `shared/data/flashcards.ts`, `quizQuestions.ts`, `studyReadings.ts` each spread per-track arrays into one combined export consumed app-wide; per-track files (e.g. `txFlashcards.ts`, `txQuizQuestions.ts`, `txExamQuestions.ts`, `studyReadingsTx.ts`, `TX_STUDY_PLAN` in `studyPlan.ts`) hold the content.
+
+## /api/progress/analytics is NOT exam-track scoped
+`getPersonalAnalytics(userId)` (storage.ts) takes no examTrack and loads ALL of a user's quiz/exam data across tracks; the route `/api/progress/analytics` passes no track. `PersonalAnalyticsDashboard` consumes it unscoped (pre-existing).
+**How to apply:** For any per-track Progress visualization, derive from already-track-scoped endpoints (`/api/quiz/sessions?examTrack=`, `/api/exams?examTrack=`) — e.g. the study-activity heatmap builds its day×hour matrix client-side from those props — instead of `/api/progress/analytics`, or FS data leaks into the PS view.

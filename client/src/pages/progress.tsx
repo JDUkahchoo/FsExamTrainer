@@ -34,6 +34,7 @@ import { Link } from 'wouter';
 import { DailyLogForm } from '@/components/daily-log-form';
 import { DailyLogList } from '@/components/daily-log-list';
 import { PersonalAnalyticsDashboard } from '@/components/personal-analytics-dashboard';
+import { ScoreTrendChart, DomainMasteryRadar, DomainAccuracyBar, StudyActivityHeatmap } from '@/components/progress-charts';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { formatMinutes } from '@/lib/time-utils';
@@ -489,6 +490,8 @@ export default function ProgressPage() {
 
         {/* Personal Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
+          <ScoreTrendChart quizSessions={quizSessions || []} examHistory={examHistory || []} />
+          <StudyActivityHeatmap quizSessions={quizSessions || []} examHistory={examHistory || []} />
           <PersonalAnalyticsDashboard />
         </TabsContent>
 
@@ -647,6 +650,12 @@ export default function ProgressPage() {
 
         {/* Domain Mastery Tab */}
         <TabsContent value="domain" className="space-y-4">
+          {domainMastery && domainMastery.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <DomainMasteryRadar domainMastery={domainMastery} />
+              <DomainAccuracyBar domainMastery={domainMastery} />
+            </div>
+          )}
           {domainMastery && domainMastery.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {domainMastery.map((item) => {
