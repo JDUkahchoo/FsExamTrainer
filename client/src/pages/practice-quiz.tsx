@@ -21,6 +21,18 @@ import { getVariedQuizQuestions, getSessionSeed, incrementDailySessionCount } fr
 
 type QuizState = 'setup' | 'active' | 'completed';
 
+// Shape persisted to the quiz draft for resume.
+type QuizDraftPayload = {
+  domain: string;
+  examTrack: string;
+  sessionId: string;
+  questionIds: string[];
+  currentQuestionIndex: number;
+  userAnswers: Record<number, number>;
+  timeSpentSeconds: number;
+  shuffleSeed: number;
+};
+
 export default function PracticeQuizPage() {
   const searchString = useSearch();
   const urlParams = new URLSearchParams(searchString);
@@ -65,6 +77,8 @@ export default function PracticeQuizPage() {
   // Refs for pause-aware elapsed time (tab visibility tracking)
   const hiddenSinceRef = useRef<number | null>(null);
   const accumulatedHiddenMsRef = useRef<number>(0);
+  // Always-fresh snapshot of the draft payload for leave-time saves (no stale closure).
+  const quizDraftSnapshotRef = useRef<QuizDraftPayload | null>(null);
   const [draftSaveWarning, setDraftSaveWarning] = useState(false);
   // Auth-expiry: true when a quiz API call returns 401 mid-session
   const [authExpired, setAuthExpired] = useState(false);
@@ -194,25 +208,63 @@ export default function PracticeQuizPage() {
     }
   }, [domainsFromUrl, quizState]);
 
-  const saveDraft = (indexOverride?: number) => {
-    if (quizState === 'active' && quizQuestions.length > 0 && quizSessionId) {
-      const userAnswers: Record<number, number> = {};
-      Object.entries(answeredQuestions).forEach(([index, answer]) => {
-        userAnswers[parseInt(index)] = answer.selected;
-      });
-
-      saveDraftMutation.mutate({
-        domain: selectedDomain,
-        examTrack,
-        sessionId: quizSessionId,
-        questionIds: quizQuestions.map(q => q.id),
-        currentQuestionIndex: indexOverride !== undefined ? indexOverride : currentQuestionIndex,
-        userAnswers,
-        timeSpentSeconds: elapsedSeconds,
-        shuffleSeed: shuffleSeedBase
-      });
+  // Save the current draft using the freshest snapshot (no stale closures).
+  const saveDraft = () => {
+    if (quizDraftSnapshotRef.current) {
+      saveDraftMutation.mutate(quizDraftSnapshotRef.current);
     }
   };
+
+  // Keep a fresh snapshot of the draft payload so leave-time saves are always current.
+  useEffect(() => {
+    if (quizState !== 'active' || quizQuestions.length === 0 || !quizSessionId) {
+      quizDraftSnapshotRef.current = null;
+      return;
+    }
+    const userAnswers: Record<number, number> = {};
+    Object.entries(answeredQuestions).forEach(([index, answer]) => {
+      userAnswers[parseInt(index)] = answer.selected;
+    });
+    quizDraftSnapshotRef.current = {
+      domain: selectedDomain,
+      examTrack,
+      sessionId: quizSessionId,
+      questionIds: quizQuestions.map(q => q.id),
+      currentQuestionIndex,
+      userAnswers,
+      timeSpentSeconds: elapsedSeconds,
+      shuffleSeed: shuffleSeedBase,
+    };
+  }, [quizState, quizQuestions, quizSessionId, answeredQuestions, currentQuestionIndex, elapsedSeconds, shuffleSeedBase, selectedDomain, examTrack]);
+
+  // Best-effort synchronous save for page-teardown events (tab hidden, unload, unmount).
+  const flushDraft = () => {
+    const payload = quizDraftSnapshotRef.current;
+    if (!payload) return;
+    try {
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      const ok = navigator.sendBeacon('/api/quiz/draft', blob);
+      if (!ok) saveDraft();
+    } catch {
+      saveDraft();
+    }
+  };
+
+  // Persist a draft whenever the user leaves an in-progress quiz (tab switch,
+  // page unload, or navigating away/unmount) — not just when answering.
+  useEffect(() => {
+    if (quizState !== 'active') return;
+    const onVisibility = () => { if (document.visibilityState === 'hidden') flushDraft(); };
+    const onPageHide = () => flushDraft();
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', onPageHide);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', onPageHide);
+      flushDraft();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizState]);
 
   // Shuffle array helper
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -393,6 +445,18 @@ export default function PracticeQuizPage() {
     setShowExplanation(false);
     setAnsweredQuestions({});
     setElapsedSeconds(0);
+
+    // Save a draft immediately so an interruption before the first answer still resumes.
+    saveDraftMutation.mutate({
+      domain: selectedDomain,
+      examTrack,
+      sessionId: newSessionId,
+      questionIds: variedQuestions.map(q => q.id),
+      currentQuestionIndex: 0,
+      userAnswers: {},
+      timeSpentSeconds: 0,
+      shuffleSeed: seedBase,
+    });
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -446,7 +510,7 @@ export default function PracticeQuizPage() {
         setShowExplanation(false);
       }
       
-      setTimeout(() => saveDraft(nextIndex), 100);
+      setTimeout(() => saveDraft(), 100);
     }
   };
 
@@ -483,6 +547,8 @@ export default function PracticeQuizPage() {
       ? (selectedAnswer === currentCorrectIndex ? correctCount + 1 : correctCount)
       : correctCount;
     
+    // Clear the snapshot first so the leave/unmount flush can't re-create a deleted draft
+    quizDraftSnapshotRef.current = null;
     clearActiveSession();
     deleteDraftMutation.mutate();
     
@@ -498,6 +564,7 @@ export default function PracticeQuizPage() {
   };
 
   const handleRestart = () => {
+    quizDraftSnapshotRef.current = null;
     clearActiveSession();
     resumeInProgressRef.current = false;
     setQuizSessionId(null);

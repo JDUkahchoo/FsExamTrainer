@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +35,18 @@ type ExamMode = 'standard' | 'ncees-style';
 // Extended answer type to support different question formats
 type ExtendedAnswer = number | number[];
 
+// Shape persisted to the exam draft so any mode (standard or NCEES-style) can be rebuilt
+type ExamDraftPayload = {
+  questionIds: string[];
+  currentQuestionIndex: number;
+  userAnswers: Record<number, ExtendedAnswer>;
+  timeSpentMinutes: number;
+  timeSpentSeconds: number;
+  examMode: ExamMode;
+  examTrack: string;
+  shuffleSeed: number;
+};
+
 // Get PS exam questions from quiz questions pool
 const PS_EXAM_QUESTIONS = QUIZ_QUESTIONS.filter(q => 
   (PS_DOMAINS as readonly string[]).includes(q.domain)
@@ -56,13 +68,17 @@ export default function PracticeExamPage() {
   const [examQuestions, setExamQuestions] = useState<Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>>([]);
   const [shuffledOptionsMap, setShuffledOptionsMap] = useState<Record<number, { options: string[]; shuffledToOriginal: number[] }>>({});
   const [showResumeDialog, setShowResumeDialog] = useState(false);
+  const [shuffleSeedBase, setShuffleSeedBase] = useState<number>(0);
   const { logActivity } = useActivityLogger();
 
-  // Query to detect existing draft on page load
+  // Always-fresh snapshot of the draft payload so leave-time saves never use a stale closure.
+  const draftSnapshotRef = useRef<ExamDraftPayload | null>(null);
+
+  // Query to detect existing draft on page load (track-scoped)
   const { data: draftData, isLoading: isDraftLoading } = useQuery<ExamDraft | null>({
-    queryKey: ['/api/exam/draft'],
+    queryKey: ['/api/exam/draft', examTrack],
     queryFn: async () => {
-      const response = await fetch('/api/exam/draft');
+      const response = await fetch(`/api/exam/draft?examTrack=${examTrack}`);
       if (!response.ok) return null;
       return response.json();
     }
@@ -70,18 +86,18 @@ export default function PracticeExamPage() {
 
   // Mutation to save draft
   const saveDraftMutation = useMutation({
-    mutationFn: (draft: { questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentMinutes: number }) =>
+    mutationFn: (draft: ExamDraftPayload) =>
       apiRequest('POST', '/api/exam/draft', draft),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/exam/draft'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/exam/draft', examTrack] });
     }
   });
 
   // Mutation to delete draft
   const deleteDraftMutation = useMutation({
-    mutationFn: () => apiRequest('DELETE', '/api/exam/draft', {}),
+    mutationFn: () => apiRequest('DELETE', `/api/exam/draft?examTrack=${examTrack}`, {}),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/exam/draft'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/exam/draft', examTrack] });
     }
   });
 
@@ -137,93 +153,124 @@ export default function PracticeExamPage() {
     return () => clearInterval(timer);
   }, [examState]);
 
-  // Helper function to save draft
-  // Note: For NCEES-style exams, we skip draft saving as the answer format is incompatible
-  // with the current draft schema. This is a known limitation.
-  const saveDraft = (indexOverride?: number) => {
-    // Only save drafts for standard exams - NCEES style has complex answer types
-    if (examState === 'active' && examQuestions.length > 0 && examMode === 'standard') {
-      const elapsedSeconds = EXAM_DURATION_MINUTES * 60 - timeRemaining;
-      const timeSpentMinutes = Math.floor(elapsedSeconds / 60);
+  // Keep a fresh snapshot of everything needed to rebuild the in-progress exam,
+  // so leave-time saves never rely on a stale closure. Covers ALL modes.
+  useEffect(() => {
+    if (examState !== 'active' || examQuestions.length === 0) {
+      draftSnapshotRef.current = null;
+      return;
+    }
+    const elapsedSeconds = Math.max(0, EXAM_DURATION_MINUTES * 60 - timeRemaining);
+    draftSnapshotRef.current = {
+      questionIds: examQuestions.map(q => q.id),
+      currentQuestionIndex,
+      userAnswers: answers,
+      timeSpentMinutes: Math.floor(elapsedSeconds / 60),
+      timeSpentSeconds: elapsedSeconds,
+      examMode,
+      examTrack,
+      shuffleSeed: shuffleSeedBase,
+    };
+  }, [examState, examQuestions, currentQuestionIndex, answers, timeRemaining, examMode, examTrack, shuffleSeedBase, EXAM_DURATION_MINUTES]);
 
-      saveDraftMutation.mutate({
-        questionIds: examQuestions.map(q => q.id),
-        currentQuestionIndex: indexOverride !== undefined ? indexOverride : currentQuestionIndex,
-        userAnswers: answers as Record<number, number>,
-        timeSpentMinutes
-      });
+  // Save the current draft (all modes) using the freshest snapshot.
+  const saveDraft = () => {
+    if (draftSnapshotRef.current) {
+      saveDraftMutation.mutate(draftSnapshotRef.current);
     }
   };
+
+  // Best-effort synchronous save for page-teardown events (tab hidden, unload, unmount).
+  const flushDraft = () => {
+    const payload = draftSnapshotRef.current;
+    if (!payload) return;
+    try {
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      const ok = navigator.sendBeacon(`/api/exam/draft?examTrack=${examTrack}`, blob);
+      if (!ok) saveDraft();
+    } catch {
+      saveDraft();
+    }
+  };
+
+  // Persist a draft whenever the user leaves an in-progress exam (tab switch,
+  // page unload, or navigating away/unmount) — not just when answering.
+  useEffect(() => {
+    if (examState !== 'active') return;
+    const onVisibility = () => { if (document.visibilityState === 'hidden') flushDraft(); };
+    const onPageHide = () => flushDraft();
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', onPageHide);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', onPageHide);
+      flushDraft();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examState]);
 
   const handleResumeDraft = () => {
     if (!draftData) return;
 
-    const examQuestionMap = new Map(
-      EXAM_QUESTIONS.map((q, i) => [`exam-${i}`, q])
-    );
-    const quizQuestionMap = new Map(
-      QUIZ_QUESTIONS.map((q, i) => [`quiz-${i}`, q])
-    );
-    const txExamQuestionMap = new Map(
-      TX_EXAM_QUESTIONS.map((q, i) => [`tx-exam-${i}`, q])
-    );
+    const resumedMode = (draftData.examMode as ExamMode) || 'standard';
 
-    const reconstructedQuestions = draftData.questionIds.map(id => {
-      const question = examQuestionMap.get(id) || quizQuestionMap.get(id) || txExamQuestionMap.get(id);
-      if (!question) {
-        console.error(`Question ${id} not found`);
-        return null;
-      }
-      return { ...question, id };
-    }).filter(Boolean) as Array<typeof EXAM_QUESTIONS[0] & { id: string }>;
+    let reconstructedQuestions: Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>;
 
-    // Create shuffled options using stable seed based on question IDs
-    const seedBase = draftData.questionIds.reduce((acc, id) => 
-      acc + id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0), 0
-    );
-    const shuffledMap = createShuffledOptionsMapFromQuestions(reconstructedQuestions, seedBase);
+    if (resumedMode === 'ncees-style') {
+      // NCEES-style questions live in their own pool and already carry stable ids.
+      const nceesMap = new Map(NCEES_STYLE_QUESTIONS.map(q => [q.id, q]));
+      reconstructedQuestions = draftData.questionIds
+        .map(id => {
+          const question = nceesMap.get(id);
+          if (!question) {
+            console.error(`NCEES question ${id} not found`);
+            return null;
+          }
+          return question;
+        })
+        .filter(Boolean) as NCEESQuestion[];
+    } else {
+      const examQuestionMap = new Map(
+        EXAM_QUESTIONS.map((q, i) => [`exam-${i}`, q])
+      );
+      const quizQuestionMap = new Map(
+        QUIZ_QUESTIONS.map((q, i) => [`quiz-${i}`, q])
+      );
+      const txExamQuestionMap = new Map(
+        TX_EXAM_QUESTIONS.map((q, i) => [`tx-exam-${i}`, q])
+      );
+
+      reconstructedQuestions = draftData.questionIds.map(id => {
+        const question = examQuestionMap.get(id) || quizQuestionMap.get(id) || txExamQuestionMap.get(id);
+        if (!question) {
+          console.error(`Question ${id} not found`);
+          return null;
+        }
+        return { ...question, id };
+      }).filter(Boolean) as Array<typeof EXAM_QUESTIONS[0] & { id: string }>;
+    }
+
+    // Reproduce the exact option ordering using the seed stored with the draft.
+    const savedSeed = draftData.shuffleSeed || 0;
+    const shuffledMap = createShuffledOptionsMap(reconstructedQuestions, savedSeed);
 
     // Restore state
+    setShuffleSeedBase(savedSeed);
+    setExamMode(resumedMode);
     setShuffledOptionsMap(shuffledMap);
     setExamQuestions(reconstructedQuestions);
     setCurrentQuestionIndex(draftData.currentQuestionIndex);
-    setAnswers(draftData.userAnswers as Record<number, number>);
-    
-    // Convert minutes back to seconds for timer
-    const elapsedSeconds = draftData.timeSpentMinutes * 60;
-    setTimeRemaining(EXAM_DURATION_MINUTES * 60 - elapsedSeconds);
-    
+    setAnswers((draftData.userAnswers || {}) as Record<number, ExtendedAnswer>);
+
+    // Prefer second-precision elapsed time, falling back to legacy minutes.
+    const elapsedSeconds = draftData.timeSpentSeconds || draftData.timeSpentMinutes * 60;
+    setTimeRemaining(Math.max(0, EXAM_DURATION_MINUTES * 60 - elapsedSeconds));
+
     setExamState('active');
     setShowResumeDialog(false);
 
     // Delete the draft since we're resuming
     deleteDraftMutation.mutate();
-  };
-  
-  // Helper to create shuffled options map from reconstructed questions
-  const createShuffledOptionsMapFromQuestions = (questions: Array<any>, seedBase: number) => {
-    const shuffledMap: Record<number, { options: string[]; shuffledToOriginal: number[] }> = {};
-    
-    questions.forEach((q, index) => {
-      if (Array.isArray(q.options) && q.options.length > 0) {
-        // Use question id + index as seed for consistent shuffling
-        const seed = q.id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) + index;
-        const fakeQuestion = { options: q.options as string[], correctAnswer: q.correctAnswer || 0 };
-        const shuffled = shuffleQuestionOptions(fakeQuestion, seed);
-        
-        const shuffledToOriginal: number[] = [];
-        shuffled.originalToShuffledMap.forEach((shuffledIdx, originalIdx) => {
-          shuffledToOriginal[shuffledIdx] = originalIdx;
-        });
-        
-        shuffledMap[index] = {
-          options: shuffled.shuffledOptions,
-          shuffledToOriginal
-        };
-      }
-    });
-    
-    return shuffledMap;
   };
 
   const handleStartFresh = () => {
@@ -264,6 +311,7 @@ export default function PracticeExamPage() {
   const startExam = (mode: ExamMode = 'standard') => {
     setExamMode(mode);
     const seedBase = Date.now();
+    setShuffleSeedBase(seedBase);
     
     if (mode === 'standard') {
       const questionPool = examTrack === 'ps' ? PS_EXAM_QUESTIONS : examTrack === 'tx' ? TX_EXAM_QUESTIONS : EXAM_QUESTIONS;
@@ -316,6 +364,9 @@ export default function PracticeExamPage() {
     setAnswers({});
     setCurrentQuestionIndex(0);
     setTimeRemaining(EXAM_DURATION_MINUTES * 60);
+
+    // Save a draft immediately so an interruption before the first answer still resumes.
+    setTimeout(() => saveDraft(), 300);
   };
   
   // Check if current question is NCEES-style
@@ -348,8 +399,8 @@ export default function PracticeExamPage() {
     if (currentQuestionIndex < examQuestions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(nextIndex);
-      // Auto-save draft when user moves to next question (use nextIndex to avoid stale closure)
-      setTimeout(() => saveDraft(nextIndex), 100);
+      // Auto-save draft when user moves to next question (snapshot ref is fresh post-render)
+      setTimeout(() => saveDraft(), 100);
     }
   };
 
@@ -360,6 +411,8 @@ export default function PracticeExamPage() {
   };
 
   const handleSubmitExam = () => {
+    // Clear the snapshot first so the unmount/leave flush can't re-create a deleted draft
+    draftSnapshotRef.current = null;
     // Delete the draft before saving exam
     deleteDraftMutation.mutate();
     
@@ -593,7 +646,7 @@ export default function PracticeExamPage() {
                       <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30">New</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Mirrors actual NCEES format with alternative item types: scenarios, select-all, priority ranking, and computational questions. Note: Resume not available for this mode.
+                      Mirrors actual NCEES format with alternative item types: scenarios, select-all, priority ranking, and computational questions.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="secondary">{NCEES_TOTAL_QUESTIONS} Questions</Badge>

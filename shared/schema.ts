@@ -810,8 +810,12 @@ export const examDrafts = pgTable("exam_drafts", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   questionIds: text("question_ids").array().notNull(), // Array of exam question IDs
   currentQuestionIndex: integer("current_question_index").notNull().default(0),
-  userAnswers: jsonb("user_answers").notNull().default(sql`'{}'::jsonb`), // { [index]: answerIndex }
+  userAnswers: jsonb("user_answers").notNull().default(sql`'{}'::jsonb`), // { [index]: answerIndex | answerIndex[] }
   timeSpentMinutes: integer("time_spent_minutes").notNull().default(0),
+  timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  examTrack: text("exam_track").notNull().default('fs'),
+  examMode: text("exam_mode").notNull().default('standard'),
+  shuffleSeed: integer("shuffle_seed").notNull().default(0),
   startedAt: timestamp("started_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

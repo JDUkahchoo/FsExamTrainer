@@ -360,9 +360,9 @@ export interface IStorage {
   deleteQuizDraft(userId: string, examTrack?: string): Promise<void>;
 
   // Exam Draft methods (for resume functionality)
-  getActiveExamDraft(userId: string): Promise<ExamDraft | undefined>;
+  getActiveExamDraft(userId: string, examTrack?: string): Promise<ExamDraft | undefined>;
   saveExamDraft(draft: InsertExamDraft): Promise<ExamDraft>;
-  deleteExamDraft(userId: string): Promise<void>;
+  deleteExamDraft(userId: string, examTrack?: string): Promise<void>;
 
   // Pretest methods
   getLatestPretestResult(userId: string): Promise<PretestResult | undefined>;
@@ -1559,19 +1559,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Exam Draft methods (for resume functionality)
-  async getActiveExamDraft(userId: string): Promise<ExamDraft | undefined> {
+  async getActiveExamDraft(userId: string, examTrack?: string): Promise<ExamDraft | undefined> {
+    const conditions = [eq(examDrafts.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(examDrafts.examTrack, examTrack));
+    }
     const [draft] = await db
       .select()
       .from(examDrafts)
-      .where(eq(examDrafts.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(examDrafts.startedAt))
       .limit(1);
     return draft || undefined;
   }
 
   async saveExamDraft(draftData: InsertExamDraft): Promise<ExamDraft> {
-    // Delete any existing draft for this user first (one draft at a time)
-    await this.deleteExamDraft(draftData.userId);
+    // Delete any existing draft for this user + track first (one draft at a time per track)
+    await this.deleteExamDraft(draftData.userId, draftData.examTrack);
     
     const [draft] = await db
       .insert(examDrafts)
@@ -1580,10 +1584,14 @@ export class DatabaseStorage implements IStorage {
     return draft;
   }
 
-  async deleteExamDraft(userId: string): Promise<void> {
+  async deleteExamDraft(userId: string, examTrack?: string): Promise<void> {
+    const conditions = [eq(examDrafts.userId, userId)];
+    if (examTrack) {
+      conditions.push(eq(examDrafts.examTrack, examTrack));
+    }
     await db
       .delete(examDrafts)
-      .where(eq(examDrafts.userId, userId));
+      .where(and(...conditions));
   }
 
   // Pretest methods
