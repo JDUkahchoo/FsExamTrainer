@@ -5,6 +5,8 @@ export interface QuizQuestion {
   correctAnswer: number;
   explanation: string;
   difficulty: 'easy' | 'medium' | 'hard';
+  topic?: string;
+  skill?: string;
 }
 
 import { PS_QUIZ_QUESTIONS } from './psQuizQuestions';
@@ -5682,6 +5684,8 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Combined Factor (CF = SF × EF)',
     question: 'A State Plane survey has SF = 0.999952 and average elevation H = 300 m. Using R = 6,372,000 m, what is the combined factor CF?',
     options: [
       'CF ≈ 0.999905',
@@ -5695,6 +5699,8 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Grid → Ground',
     question: 'A design plan shows a State Plane grid distance of 2,345.670 m between two points. The combined factor for the survey area is 0.999882. What is the ground distance the survey crew must lay out in the field?',
     options: [
       '2,345.947 m — Ground = Grid / CF = 2,345.670 / 0.999882',
@@ -5731,6 +5737,96 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     correctAnswer: 0,
     explanation: 'This is the classic CF discrepancy. Old plats record ground distances (what was physically measured). State Plane coordinates produce grid distances. Grid = Ground × CF. If CF ≈ 0.999875 (1 part in 8,000 below 1), then every ground distance converts to a grid distance that is shorter by 1 part in 8,000. This is not an error — it is the expected and correct behavior of the SPCS reduction.',
     difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Elevation Factor (EF = R/(R+H))',
+    question: 'A survey site sits at an average elevation H = 1,500 ft above the ellipsoid. Using an earth radius R = 20,906,000 ft, what is the elevation (sea-level) factor EF?',
+    options: [
+      'EF ≈ 0.99992826',
+      'EF ≈ 1.00007174',
+      'EF ≈ 0.99985652',
+      'EF ≈ 0.99999283'
+    ],
+    correctAnswer: 0,
+    explanation: 'Step 1 — write the elevation factor: EF = R / (R + H). Step 2 — substitute: EF = 20,906,000 / (20,906,000 + 1,500) = 20,906,000 / 20,907,500. Step 3 — divide: EF ≈ 0.99992826. Because the site is above the ellipsoid, EF is slightly less than 1 — ground distances measured up high reduce to shorter distances on the ellipsoid.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Combined Factor (CF = SF × EF)',
+    question: 'A survey area has a grid scale factor SF = 1.0000384 and an elevation factor EF = 0.9999283. What is the combined factor CF?',
+    options: [
+      'CF ≈ 0.9999667',
+      'CF ≈ 1.0000384',
+      'CF ≈ 0.9999283',
+      'CF ≈ 1.0000917'
+    ],
+    correctAnswer: 0,
+    explanation: 'Step 1 — write the combined factor: CF = SF × EF. Step 2 — multiply: CF = 1.0000384 × 0.9999283. Step 3 — evaluate: CF ≈ 0.9999667. Here SF is greater than 1 (site is outside the standard parallels) while EF is less than 1 (site is above the ellipsoid); the two partly offset, leaving CF just below 1.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Ground → Grid',
+    question: 'A ground distance of 1,852.000 ft was measured between two monuments. The combined factor for the project is CF = 0.9999236. What is the corresponding State Plane grid distance?',
+    options: [
+      '1,851.859 ft — Grid = Ground × CF',
+      '1,852.141 ft — Grid = Ground / CF',
+      '1,852.000 ft — no reduction needed',
+      '1,851.717 ft — Grid = Ground × CF²'
+    ],
+    correctAnswer: 0,
+    explanation: 'Step 1 — to go from ground to grid you multiply by the combined factor: Grid = Ground × CF. Step 2 — substitute: Grid = 1,852.000 × 0.9999236. Step 3 — evaluate: Grid ≈ 1,851.859 ft. Dividing instead (option B) is the grid-to-ground direction and would make the distance longer, which is wrong here.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Grid → Ground',
+    question: 'A line has a grid distance of 5,000.00 ft and the combined factor for the area is CF = 0.9998500. What ground distance should the field crew stake out?',
+    options: [
+      '5,000.75 ft — Ground = Grid / CF',
+      '4,999.25 ft — Ground = Grid × CF',
+      '5,000.00 ft — grid and ground are equal',
+      '5,001.50 ft — Ground = Grid × (2 − CF)'
+    ],
+    correctAnswer: 0,
+    explanation: 'Step 1 — grid-to-ground means dividing by the combined factor: Ground = Grid / CF. Step 2 — substitute: Ground = 5,000.00 / 0.9998500. Step 3 — evaluate: Ground ≈ 5,000.75 ft. Since CF < 1, the ground distance is longer than the grid distance by about 0.75 ft over this 5,000-ft line.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Grid Distance from Coordinates',
+    question: 'Two control points have State Plane coordinates A (N = 1,200,000.00, E = 500,000.00) and B (N = 1,203,000.00, E = 504,000.00), all in U.S. survey feet. What is the grid distance between A and B?',
+    options: [
+      '5,000.00 ft',
+      '7,000.00 ft',
+      '3,500.00 ft',
+      '4,000.00 ft'
+    ],
+    correctAnswer: 0,
+    explanation: 'Step 1 — compute the coordinate differences: ΔN = 1,203,000.00 − 1,200,000.00 = 3,000.00 ft; ΔE = 504,000.00 − 500,000.00 = 4,000.00 ft. Step 2 — apply the distance (Pythagorean) formula: D = √(ΔN² + ΔE²) = √(3,000² + 4,000²). Step 3 — evaluate: D = √(9,000,000 + 16,000,000) = √25,000,000 = 5,000.00 ft. This is a grid distance because it comes straight from grid coordinates.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Applied Mathematics & Statistics',
+    topic: 'State Plane',
+    skill: 'Grid → Ground',
+    question: 'A baseline has a grid distance of 12,000.00 ft. The grid scale factor is SF = 0.9999000 and the elevation factor is EF = 0.9999500. What ground distance corresponds to this line?',
+    options: [
+      '12,001.80 ft',
+      '11,998.20 ft',
+      '12,000.00 ft',
+      '12,003.60 ft'
+    ],
+    correctAnswer: 0,
+    explanation: 'Step 1 — combine the two factors: CF = SF × EF = 0.9999000 × 0.9999500 ≈ 0.9998500. Step 2 — grid-to-ground divides by CF: Ground = Grid / CF = 12,000.00 / 0.9998500. Step 3 — evaluate: Ground ≈ 12,001.80 ft. Both factors are below 1, so the combined factor is further below 1 and the ground distance is about 1.8 ft longer than the grid distance.',
+    difficulty: 'hard'
   },
 
   // ─── Photogrammetry ───

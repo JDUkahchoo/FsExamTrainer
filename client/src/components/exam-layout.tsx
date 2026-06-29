@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import {
   BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3,
   GraduationCap, BookMarked, Library, ArrowLeft, Settings, ScrollText,
-  Target, Calculator, LayoutDashboard, Compass
+  Target, Calculator, LayoutDashboard, Compass, Ruler
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -39,6 +39,8 @@ const learnItems = (examTrack: string) => [
 const practiceItems = (examTrack: string) => [
   { id: `/app/${examTrack}/quiz`, icon: Brain, label: 'Practice Quiz', testId: 'nav-quiz' },
   { id: `/app/${examTrack}/drill`, icon: Target, label: 'Weak Area Drill', testId: 'nav-drill' },
+  // State Plane computation drill is FS-only content
+  ...(examTrack === 'fs' ? [{ id: `/app/${examTrack}/state-plane-drill`, icon: Ruler, label: 'State Plane Drill', testId: 'nav-state-plane-drill' }] : []),
   { id: `/app/${examTrack}/flashcards`, icon: ClipboardCheck, label: 'Flashcards', testId: 'nav-flashcards' },
   { id: `/app/${examTrack}/exam`, icon: GraduationCap, label: 'Practice Exam', testId: 'nav-exam' },
 ];

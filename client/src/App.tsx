@@ -37,6 +37,7 @@ import FormulaReferencePage from "@/pages/formula-reference";
 import StudyReadingsPage from "@/pages/study-readings";
 import StudyReadingPage from "@/pages/study-reading";
 import WeakAreaDrillPage from "@/pages/weak-area-drill";
+import StatePlaneDrillPage from "@/pages/state-plane-drill";
 import ScientificCalculatorPage from "@/pages/scientific-calculator";
 
 function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' | 'tx' }) {
@@ -96,6 +97,7 @@ function Router() {
       <Route path="/app/fs/readings/:id" component={withExamTrack(StudyReadingPage, 'fs')} />
       <Route path="/app/fs/quiz" component={withExamTrack(PracticeQuizPage, 'fs')} />
       <Route path="/app/fs/drill" component={withExamTrack(WeakAreaDrillPage, 'fs')} />
+      <Route path="/app/fs/state-plane-drill" component={withExamTrack(StatePlaneDrillPage, 'fs')} />
       <Route path="/app/fs/flashcards" component={withExamTrack(FlashcardsPage, 'fs')} />
       <Route path="/app/fs/exam" component={withExamTrack(PracticeExamPage, 'fs')} />
       <Route path="/app/fs/notes" component={withExamTrack(NotesPage, 'fs')} />

@@ -37,6 +37,7 @@ export default function PracticeQuizPage() {
   const searchString = useSearch();
   const urlParams = new URLSearchParams(searchString);
   const domainsFromUrl = urlParams.get('domains');
+  const topicFromUrl = urlParams.get('topic');
   const { examTrack, examName, domains: examDomains } = useExamTrack();
   
   // Get appropriate domains based on exam track
@@ -61,6 +62,7 @@ export default function PracticeQuizPage() {
   const [quizState, setQuizState] = useState<QuizState>('setup');
   const [selectedDomain, setSelectedDomain] = useState<Domain | 'all'>('all');
   const [selectedDomains, setSelectedDomains] = useState<Domain[]>([]);
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -192,6 +194,13 @@ export default function PracticeQuizPage() {
 
     return () => clearInterval(interval);
   }, [quizState, startTime]);
+
+  // Initialize topic filter from URL parameter
+  useEffect(() => {
+    if (topicFromUrl && quizState === 'setup') {
+      setSelectedTopic(topicFromUrl);
+    }
+  }, [topicFromUrl, quizState]);
 
   // Initialize domains from URL parameters
   useEffect(() => {
@@ -393,7 +402,11 @@ export default function PracticeQuizPage() {
       (availableDomains as readonly string[]).includes(q.domain)
     );
     
-    if (selectedDomains.length > 0) {
+    if (selectedTopic) {
+      // Topic mode from URL: filter to a specific computation topic (e.g. State Plane)
+      const filtered = examQuestions.filter(q => q.topic === selectedTopic);
+      questionsForQuiz = shuffleArray(filtered).slice(0, Math.min(50, filtered.length));
+    } else if (selectedDomains.length > 0) {
       // Multi-domain mode from URL: filter by selected domains
       const filtered = examQuestions.filter(q => selectedDomains.includes(q.domain as Domain));
       questionsForQuiz = shuffleArray(filtered).slice(0, Math.min(50, filtered.length));
@@ -620,11 +633,29 @@ export default function PracticeQuizPage() {
           </div>
 
           <div className="space-y-6">
+            {selectedTopic && (
+              <Alert data-testid="alert-topic-filter">
+                <AlertDescription className="flex items-center justify-between gap-3">
+                  <span>
+                    Pre-filtered to <strong>{selectedTopic}</strong> problems. Start the quiz to practice only this topic.
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedTopic(null)}
+                    data-testid="button-clear-topic"
+                  >
+                    Clear filter
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
             <div>
               <label className="block text-sm font-medium mb-2">Select Domain</label>
-              <Select value={selectedDomain} onValueChange={(value) => {
+              <Select value={selectedDomain} disabled={!!selectedTopic} onValueChange={(value) => {
                 setSelectedDomain(value as Domain | 'all');
                 setSelectedDomains([]); // Clear URL-based multi-domain filter when user manually selects
+                setSelectedTopic(null); // Clear topic filter when user manually selects a domain
               }}>
                 <SelectTrigger className="w-full" data-testid="select-domain">
                   <SelectValue placeholder="Select domain" />
