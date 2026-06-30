@@ -20,6 +20,7 @@ import {
   AlertTriangle,
   Star,
   ListOrdered,
+  Calculator,
 } from "lucide-react";
 import { useExamTrack } from "@/contexts/exam-track-context";
 import { STUDY_READINGS } from "@shared/data/studyReadings";
@@ -696,6 +697,8 @@ export default function StudyReadingPage() {
 
   const domainConfig = getDomainConfig(reading.domain);
 
+  const showStatePlaneDrill = examTrack === 'fs' && reading.id === 'fs-d7-state-plane';
+
   const renderSection = (section: ReadingSection, index: number) => {
     const isCompleted = completedSections.has(section.id);
     const isKnowledgeCheck = section.type === 'knowledge_check';
@@ -827,6 +830,19 @@ export default function StudyReadingPage() {
           </h1>
         </div>
 
+        {showStatePlaneDrill && (
+          <Link href={`/app/${examTrack}/state-plane-drill`}>
+            <Button
+              size="sm"
+              className="gap-2 bg-survey text-zinc-950 border border-survey hover-elevate active-elevate-2"
+              data-testid="button-state-plane-drill"
+            >
+              <Calculator className="h-4 w-4" />
+              Drill these computations
+            </Button>
+          </Link>
+        )}
+
         <PrerequisiteBanner
           prerequisites={reading.prerequisites}
           examTrack={examTrack}
@@ -918,12 +934,25 @@ export default function StudyReadingPage() {
             <p className="text-sm text-muted-foreground">
               You've completed all {totalSections} sections of this reading.
             </p>
-            <Link href={backPath}>
-              <Button data-testid="button-back-to-readings-complete">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {backLabel}
-              </Button>
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {showStatePlaneDrill && (
+                <Link href={`/app/${examTrack}/state-plane-drill`}>
+                  <Button
+                    className="gap-2 bg-survey text-zinc-950 border border-survey hover-elevate active-elevate-2"
+                    data-testid="button-state-plane-drill-complete"
+                  >
+                    <Calculator className="h-4 w-4" />
+                    Drill these computations
+                  </Button>
+                </Link>
+              )}
+              <Link href={backPath}>
+                <Button variant={showStatePlaneDrill ? "outline" : "default"} data-testid="button-back-to-readings-complete">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  {backLabel}
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       )}
