@@ -397,6 +397,19 @@ export default function FlashcardsPage() {
     }
   });
 
+  // Auto-mark a deep-linked Daily Coaching review alert as done once the user
+  // rates the exact card it pointed to. Defined before the early return so the
+  // hook order stays stable even when no cards match the current filter.
+  const markReviewMutation = useMutation({
+    mutationFn: async ({ reviewId, quality }: { reviewId: string; quality: number }) => {
+      return apiRequest('PATCH', `/api/reviews/${reviewId}`, { quality });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/reviews/due', examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/reviews/upcoming', examTrack] });
+    },
+  });
+
   const masteredCards = new Set((masteryData || []).filter(m => m.masteryLevel >= 4).map(m => m.flashcardId));
 
   useEffect(() => {
@@ -539,16 +552,6 @@ export default function FlashcardsPage() {
   // Auto-mark a deep-linked Daily Coaching review alert as done once the user
   // rates the exact card it pointed to. Fires once per alert; uses the user's
   // real rating (1-5) mapped onto the review quality scale (0-5).
-  const markReviewMutation = useMutation({
-    mutationFn: async ({ reviewId, quality }: { reviewId: string; quality: number }) => {
-      return apiRequest('PATCH', `/api/reviews/${reviewId}`, { quality });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/reviews/due', examTrack] });
-      queryClient.invalidateQueries({ queryKey: ['/api/reviews/upcoming', examTrack] });
-    },
-  });
-
   const maybeMarkDeepLinkedReview = (ratedCardId: string, rating: number) => {
     if (!reviewIdFromUrl || !cardFromUrl) return;
     if (markedReviewId.current === reviewIdFromUrl) return;
