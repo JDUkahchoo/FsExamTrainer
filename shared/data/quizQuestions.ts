@@ -3168,24 +3168,30 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'An aerial camera with a 152.4 mm (6 in) focal length photographs terrain at elevation 800 ft. The flying height above datum is 10,800 ft. What is the photo scale?',
     options: ['1:20,000', '1:12,000', '1:10,800', '1:15,000'],
     correctAnswer: 0,
-    explanation: 'Photo scale = f / (H - h) where f = 0.5 ft (152.4 mm = 6 in = 0.5 ft), H = 10,800 ft, h = 800 ft. Scale = 0.5 / (10,800 - 800) = 0.5 / 10,000 = 1/20,000 = 1:20,000.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — convert the focal length to feet: f = 152.4 mm = 6 in = 0.5 ft. Step 2 — find the flying height above the terrain: H − h = 10,800 − 800 = 10,000 ft. Step 3 — apply S = f/(H−h) = 0.5 / 10,000 = 1/20,000 = 1:20,000.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Photo Scale (S = f/(H−h))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'An aerial camera with a 152.4 mm focal length photographs terrain at an average elevation of 500 ft above MSL. The flying height above MSL is 6,500 ft. What is the photo scale?',
     options: ['1:12,000', '1:10,000', '1:6,500', '1:8,000'],
     correctAnswer: 0,
-    explanation: 'Photo scale = f / (H - h). f = 152.4 mm = 0.5 ft. H - h = 6,500 - 500 = 6,000 ft. Scale = 0.5 / 6,000 = 1/12,000 = 1:12,000.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — convert focal length: f = 152.4 mm = 0.5 ft. Step 2 — flying height above terrain: H − h = 6,500 − 500 = 6,000 ft. Step 3 — apply S = f/(H−h) = 0.5 / 6,000 = 1/12,000 = 1:12,000.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Photo Scale (S = f/(H−h))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'On a vertical aerial photograph, a building base is 75.0 mm from the principal point and the top is displaced 4.5 mm outward. If the flying height above ground is 4,000 ft, what is the building height?',
     options: ['240 ft', '200 ft', '300 ft', '180 ft'],
     correctAnswer: 0,
-    explanation: 'Relief displacement formula: d = h·r/H, solving for h: h = d·H/r. d = 4.5 mm, r = 75.0 mm (radial distance to top = 75.0 mm), H = 4,000 ft. h = (4.5 × 4,000) / 75.0 = 18,000 / 75.0 = 240 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — start from the relief displacement formula d = rh/H and rearrange for object height: h = dH/r. Step 2 — substitute d = 4.5 mm, r = 75.0 mm, H = 4,000 ft: h = (4.5 × 4,000) / 75.0. Step 3 — evaluate: h = 18,000 / 75.0 = 240 ft.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Relief Displacement (d = rh/H)'
   },
   {
     domain: 'Survey Computations & Applications',
@@ -3200,8 +3206,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'An aerial photograph is taken with a 6-inch focal length camera. To achieve a photo scale of 1:20,000 over terrain at elevation 1,200 ft MSL, what must the flying height above MSL be?',
     options: ['11,200 ft', '10,000 ft', '12,000 ft', '9,800 ft'],
     correctAnswer: 0,
-    explanation: 'Scale = f / (H - h). 1/20,000 = 0.5 / (H - 1,200). Solving: H - 1,200 = 0.5 × 20,000 = 10,000. H = 10,000 + 1,200 = 11,200 ft MSL.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write S = f/(H−h): 1/20,000 = 0.5 / (H − 1,200). Step 2 — solve for the height above terrain: H − 1,200 = 0.5 × 20,000 = 10,000 ft. Step 3 — add back the terrain elevation: H = 10,000 + 1,200 = 11,200 ft MSL.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Photo Scale (S = f/(H−h))'
   },
   {
     domain: 'Survey Computations & Applications',
@@ -3224,16 +3232,20 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'A vertical aerial photo has a focal length of 210 mm. The flying height above MSL is 3,500 m. Point A (elevation 350 m) appears 65 mm from the principal point. What is the relief displacement of point A?',
     options: ['6.5 mm', '7.2 mm', '8.0 mm', '5.5 mm'],
     correctAnswer: 0,
-    explanation: 'Relief displacement d = h × r / H, where h = ground elevation = 350 m, r = radial distance = 65 mm, H = flying height above datum = 3,500 m. d = (350 × 65) / 3,500 = 22,750 / 3,500 = 6.5 mm.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — apply d = rh/H with h = 350 m (object elevation), r = 65 mm (radial distance), H = 3,500 m (flying height above datum). Step 2 — substitute: d = (65 × 350) / 3,500. Step 3 — evaluate: d = 22,750 / 3,500 = 6.5 mm.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Relief Displacement (d = rh/H)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'An aerial survey requires 60% forward overlap and 30% sidelap. The photo format is 23 cm × 23 cm and the scale is 1:10,000. What is the ground distance between successive flight line exposures (air base)?',
     options: ['920 m', '1,150 m', '1,380 m', '2,300 m'],
     correctAnswer: 0,
-    explanation: 'Ground coverage per photo side = 23 cm × 10,000 = 230,000 cm = 2,300 m. With 60% forward overlap, the advance per photo = (1 - 0.60) × 2,300 = 0.40 × 2,300 = 920 m.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — ground coverage per photo side = 23 cm × 10,000 = 230,000 cm = 2,300 m. Step 2 — the air base B is the net advance after 60% endlap: B = (1 − 0.60) × 2,300 = 0.40 × 2,300 = 920 m. This air base B is the spacing used in the flight-planning count N = strip/B + 1.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Flight Planning (N = strip/B + 1)'
   },
   {
     domain: 'Survey Computations & Applications',
@@ -3256,8 +3268,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'A camera with 6-inch focal length is used at a flying height of 15,000 ft above MSL. A smokestack at ground elevation 800 ft has its base 82 mm from the photo center and its top displaced 3.5 mm radially outward. What is the smokestack height?',
     options: ['606 ft', '500 ft', '450 ft', '700 ft'],
     correctAnswer: 0,
-    explanation: 'Relief displacement: d = h × r / H, solving for h = d × H / r. H = flying height above ground = 15,000 - 800 = 14,200 ft. d = 3.5 mm (displacement), r = 82 mm (radial distance to base). h = 3.5 × 14,200 / 82 = 49,700 / 82 = 606 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — rearrange d = rh/H for height: h = dH/r. Step 2 — use flying height above the ground: H = 15,000 − 800 = 14,200 ft, with d = 3.5 mm and r = 82 mm. Step 3 — evaluate: h = 3.5 × 14,200 / 82 = 49,700 / 82 = 606 ft.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Relief Displacement (d = rh/H)'
   },
 
   // ============================================================
@@ -5841,8 +5855,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
       '1:24,342 — S = f/(H+h) = 0.152/4,100'
     ],
     correctAnswer: 0,
-    explanation: 'S = f/(H−h) = 0.152 m / (3,800 − 300) m = 0.152/3,500 = 1/23,026 ≈ 1:23,000. The critical step is computing the flying height above the terrain (H−h = 3,500 m), not the flying height above datum. Using H alone (option B) ignores terrain elevation and gives the wrong scale.',
-    difficulty: 'medium'
+    explanation: 'Step 1 — find the flying height above the terrain: H − h = 3,800 − 300 = 3,500 m. Step 2 — apply S = f/(H−h) = 0.152 / 3,500. Step 3 — evaluate: 0.152/3,500 = 1/23,026 ≈ 1:23,000. The critical step is using H−h (3,500 m), not the flying height above datum — using H alone (option B) ignores terrain elevation and gives the wrong scale.',
+    difficulty: 'medium',
+    topic: 'Photogrammetry',
+    skill: 'Photo Scale (S = f/(H−h))'
   },
   {
     domain: 'Mapping, GIS, and CAD',
@@ -5854,8 +5870,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
       '2.00 mm — d = rH/h = 90 × 3,000 / 60 (inverted formula)'
     ],
     correctAnswer: 0,
-    explanation: 'd = rh/H = (90 mm × 60 m) / 3,000 m = 5,400/3,000 = 1.80 mm. The top of the tower is displaced 1.80 mm radially outward from the principal point on the photo. The tower appears to "lean away" from the center of the photo by this amount.',
-    difficulty: 'medium'
+    explanation: 'Step 1 — apply d = rh/H with r = 90 mm (radial distance), h = 60 m (tower height), H = 3,000 m. Step 2 — substitute: d = (90 × 60) / 3,000. Step 3 — evaluate: d = 5,400/3,000 = 1.80 mm. The tower top is displaced 1.80 mm radially outward and appears to "lean away" from the center of the photo.',
+    difficulty: 'medium',
+    topic: 'Photogrammetry',
+    skill: 'Relief Displacement (d = rh/H)'
   },
   {
     domain: 'Mapping, GIS, and CAD',
@@ -5880,8 +5898,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
       '14 photos'
     ],
     correctAnswer: 0,
-    explanation: 'Ground coverage per photo = 230 mm × 20,000 = 4,600 m. Net advance B = 4,600 × (1 − 0.60) = 4,600 × 0.40 = 1,840 m. Number of photos = (15,000 / 1,840) + 1 = 8.15 + 1 = 9.15 → round up to 10. The "+1" accounts for the first photo at the start of the strip before any advance occurs.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — ground coverage per photo = 230 mm × 20,000 = 4,600 m. Step 2 — net advance (air base) B = 4,600 × (1 − 0.60) = 0.40 × 4,600 = 1,840 m. Step 3 — apply N = strip/B + 1 = (15,000 / 1,840) + 1 = 8.15 + 1 = 9.15 → round up to 10 photos. The "+1" accounts for the first photo at the start of the strip before any advance occurs.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Flight Planning (N = strip/B + 1)'
   },
   {
     domain: 'Mapping, GIS, and CAD',
@@ -5906,8 +5926,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
       '0.056 m — h = d/r/H (wrong unit handling)'
     ],
     correctAnswer: 0,
-    explanation: 'Rearranging d = rh/H to solve for h: h = dH/r = 2.25 mm × 3,000 m / 75 mm = 6,750/75 = 90 m. This is one of the most useful applications of the relief displacement formula — measuring object heights from displacement without ever visiting the site.',
-    difficulty: 'medium'
+    explanation: 'Step 1 — rearrange d = rh/H to solve for height: h = dH/r. Step 2 — substitute d = 2.25 mm, H = 3,000 m, r = 75 mm: h = 2.25 × 3,000 / 75. Step 3 — evaluate: h = 6,750/75 = 90 m. This is one of the most useful applications of the relief displacement formula — measuring object heights from displacement without ever visiting the site.',
+    difficulty: 'medium',
+    topic: 'Photogrammetry',
+    skill: 'Relief Displacement (d = rh/H)'
   },
   {
     domain: 'Mapping, GIS, and CAD',
@@ -5971,8 +5993,10 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
       '4 strips — assumes 60% sidelap'
     ],
     correctAnswer: 0,
-    explanation: 'Scale = f/H\' = 0.152/3,040 = 1:20,000. Ground coverage per photo = 230 mm × 20,000 = 4,600 m (using round numbers). More precisely: 0.152/3,040 × 230 = 0.04999 → coverage = 230/0.04999 ≈ 4,601 m. Strip spacing = coverage × (1 − 0.30) = 4,600 × 0.70 = 3,220 m. N_strips = 19,200/3,220 + 1 = 5.96 + 1 = 6.96 → round up to 7 strips. Always round up to ensure complete coverage and add the +1 for the first strip.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — scale = f/H\' = 0.152/3,040 = 1:20,000, so ground coverage per photo = 230 mm × 20,000 = 4,600 m. Step 2 — strip spacing accounts for 30% sidelap: B = coverage × (1 − 0.30) = 4,600 × 0.70 = 3,220 m. Step 3 — apply N = strip/B + 1 = 19,200/3,220 + 1 = 5.96 + 1 = 6.96 → round up to 7 strips. Always round up for complete coverage and add the +1 for the first strip.',
+    difficulty: 'hard',
+    topic: 'Photogrammetry',
+    skill: 'Flight Planning (N = strip/B + 1)'
   },
   {
     domain: 'Mapping, GIS, and CAD',

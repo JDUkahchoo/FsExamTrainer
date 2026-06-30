@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Target, AlertTriangle, CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy, Zap, TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import { Target, AlertTriangle, CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy, Zap, TrendingUp, TrendingDown, BarChart3, Plane, BookOpen } from 'lucide-react';
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -15,6 +16,22 @@ import { shuffleQuestionOptions } from '@/lib/shuffleOptions';
 import { useActivityLogger } from '@/hooks/use-activity-logger';
 
 type DrillState = 'analysis' | 'active' | 'complete';
+type DrillMode = 'weak' | 'photogrammetry';
+
+const PHOTOGRAMMETRY_TOPIC = 'Photogrammetry';
+const PHOTOGRAMMETRY_READING_ID = 'fs-d2-photogrammetry';
+
+function parseSolutionSteps(explanation: string): string[] {
+  const parts = explanation
+    .split(/(?=Step\s*\d+\s*[—:\-])/i)
+    .map(s => s.trim())
+    .filter(Boolean);
+  const stepCount = parts.filter(p => /^Step\s*\d+/i.test(p)).length;
+  if (stepCount < 2) {
+    return [explanation.trim()];
+  }
+  return parts;
+}
 
 interface DomainStat {
   domain: string;
@@ -36,6 +53,7 @@ export default function WeakAreaDrillPage() {
   const { logActivity } = useActivityLogger();
 
   const [drillState, setDrillState] = useState<DrillState>('analysis');
+  const [drillMode, setDrillMode] = useState<DrillMode>('weak');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -100,6 +118,11 @@ export default function WeakAreaDrillPage() {
 
   const hasEnoughData = domainStatsList.some(d => d.answered >= 1);
 
+  const photogrammetryQuestions = useMemo(
+    () => QUIZ_QUESTIONS.filter(q => q.topic === PHOTOGRAMMETRY_TOPIC),
+    []
+  );
+
   const shuffleArray = <T,>(array: T[]): T[] => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -109,21 +132,14 @@ export default function WeakAreaDrillPage() {
     return shuffled;
   };
 
-  const handleStartDrill = () => {
-    const weak = identifiedWeakDomains;
-    setWeakDomains(weak);
-
-    const weakDomainNames = weak.map(d => d.domain);
-    const examQuestions = QUIZ_QUESTIONS.filter(q =>
-      (availableDomains as readonly string[]).includes(q.domain)
-    );
-    const filtered = examQuestions.filter(q => weakDomainNames.includes(q.domain));
-    const shuffled = shuffleArray(filtered);
-    const selected = shuffled.slice(0, 15);
-
+  const beginDrill = (
+    selected: Array<typeof QUIZ_QUESTIONS[0]>,
+    idPrefix: string,
+    mode: DrillMode
+  ) => {
     const questionsWithIds = selected.map(q => ({
       ...q,
-      id: `drill-${QUIZ_QUESTIONS.indexOf(q)}`
+      id: `${idPrefix}-${QUIZ_QUESTIONS.indexOf(q)}`
     }));
 
     const seedBase = Date.now();
@@ -136,6 +152,7 @@ export default function WeakAreaDrillPage() {
       };
     });
 
+    setDrillMode(mode);
     setShuffledOptionsMap(optionsMap);
     setDrillQuestions(questionsWithIds);
     setCurrentQuestionIndex(0);
@@ -143,6 +160,26 @@ export default function WeakAreaDrillPage() {
     setShowExplanation(false);
     setAnsweredQuestions({});
     setDrillState('active');
+  };
+
+  const handleStartDrill = () => {
+    const weak = identifiedWeakDomains;
+    setWeakDomains(weak);
+
+    const weakDomainNames = weak.map(d => d.domain);
+    const examQuestions = QUIZ_QUESTIONS.filter(q =>
+      (availableDomains as readonly string[]).includes(q.domain)
+    );
+    const filtered = examQuestions.filter(q => weakDomainNames.includes(q.domain));
+    const selected = shuffleArray(filtered).slice(0, 15);
+
+    beginDrill(selected, 'drill', 'weak');
+  };
+
+  const handleStartPhotogrammetryDrill = () => {
+    setWeakDomains([]);
+    const selected = shuffleArray(photogrammetryQuestions);
+    beginDrill(selected, 'photo-drill', 'photogrammetry');
   };
 
   const currentQuestion = drillQuestions[currentQuestionIndex];
@@ -209,7 +246,7 @@ export default function WeakAreaDrillPage() {
       : correctCount;
 
     saveSessionMutation.mutate({
-      domain: 'all',
+      domain: drillMode === 'photogrammetry' ? 'Mapping, GIS, and CAD' : 'all',
       examTrack,
       totalQuestions: drillQuestions.length,
       correctAnswers: finalCorrectCount,
@@ -221,6 +258,7 @@ export default function WeakAreaDrillPage() {
 
   const handleRestart = () => {
     setDrillState('analysis');
+    setDrillMode('weak');
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setShowExplanation(false);
@@ -264,6 +302,7 @@ export default function WeakAreaDrillPage() {
           Weak Area Drill
         </h1>
 
+        <div className="space-y-6">
         {statsLoading ? (
           <Card className="p-8">
             <div className="text-center text-muted-foreground">Loading your performance data...</div>
@@ -362,6 +401,44 @@ export default function WeakAreaDrillPage() {
             </Card>
           </div>
         )}
+
+        {examTrack === 'fs' && photogrammetryQuestions.length > 0 && (
+          <Card data-testid="card-photogrammetry-drill">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <Plane className="w-5 h-5 text-primary" />
+                <CardTitle className="text-lg">Targeted Drill Set: Photogrammetry Computations</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Photogrammetry is a high-stakes FS Domain 2 topic with several formula chains. This focused
+                set drills all three computation types, with a step-by-step worked solution after every answer.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline" className="font-mono text-xs">Photo Scale — S = f/(H−h)</Badge>
+                <Badge variant="outline" className="font-mono text-xs">Relief Displacement — d = rh/H</Badge>
+                <Badge variant="outline" className="font-mono text-xs">Flight Planning — N = strip/B + 1</Badge>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <Button
+                  onClick={handleStartPhotogrammetryDrill}
+                  data-testid="button-start-photogrammetry-drill"
+                >
+                  <Plane className="w-4 h-4 mr-2" />
+                  Start Photogrammetry Drill ({photogrammetryQuestions.length} questions)
+                </Button>
+                <Link href={`/app/${examTrack}/readings/${PHOTOGRAMMETRY_READING_ID}`}>
+                  <Button variant="outline" data-testid="link-photogrammetry-reading">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Review the Reading
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        </div>
       </div>
     );
   }
@@ -377,8 +454,10 @@ export default function WeakAreaDrillPage() {
       <div className="p-8 max-w-4xl mx-auto">
         <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
           <div className="flex items-center gap-3">
-            <Target className="w-5 h-5 text-primary" />
-            <h1 className="text-xl font-bold text-foreground" data-testid="heading-drill-active">Weak Area Drill</h1>
+            {drillMode === 'photogrammetry' ? <Plane className="w-5 h-5 text-primary" /> : <Target className="w-5 h-5 text-primary" />}
+            <h1 className="text-xl font-bold text-foreground" data-testid="heading-drill-active">
+              {drillMode === 'photogrammetry' ? 'Photogrammetry Drill' : 'Weak Area Drill'}
+            </h1>
           </div>
           <div className="flex items-center gap-3">
             <Badge variant="outline" className={`${config.bgColor} ${config.textColor} border-transparent`}>
@@ -455,7 +534,45 @@ export default function WeakAreaDrillPage() {
               })}
             </div>
 
-            {showExplanation && (
+            {showExplanation && drillMode === 'photogrammetry' ? (
+              <div className="mt-6 rounded-md border border-muted bg-muted/40 p-4" data-testid="explanation-card">
+                <div className="flex items-center gap-2 mb-3">
+                  {answeredQuestions[currentQuestionIndex]?.correct ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  ) : (
+                    <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                  )}
+                  <p className="text-sm font-semibold">
+                    {answeredQuestions[currentQuestionIndex]?.correct ? 'Correct!' : 'Not quite — here is the worked solution'}
+                  </p>
+                  {currentQuestion.skill && (
+                    <Badge variant="outline" className="font-mono text-[11px] ml-auto">{currentQuestion.skill}</Badge>
+                  )}
+                </div>
+                <ol className="space-y-2">
+                  {parseSolutionSteps(currentQuestion.explanation).map((step, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-3 text-sm text-foreground/90"
+                      data-testid={`solution-step-${i}`}
+                    >
+                      <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-primary/15 text-[11px] font-bold text-primary">
+                        {i + 1}
+                      </span>
+                      <span className="font-mono leading-relaxed">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+                <Link
+                  href={`/app/${examTrack}/readings/${PHOTOGRAMMETRY_READING_ID}`}
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                  data-testid="link-reading-from-explanation"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  Review this in the Photogrammetry reading
+                </Link>
+              </div>
+            ) : showExplanation ? (
               <div className="mt-6 p-4 rounded-md bg-muted/50 border border-muted" data-testid="explanation-card">
                 <div className="flex items-start gap-2">
                   {answeredQuestions[currentQuestionIndex]?.correct ? (
@@ -471,7 +588,7 @@ export default function WeakAreaDrillPage() {
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
           </CardContent>
         </Card>
 
@@ -509,11 +626,25 @@ export default function WeakAreaDrillPage() {
     const totalAnswered = Object.keys(answeredQuestions).length;
     const totalCorrect = Object.values(answeredQuestions).filter(a => a.correct).length;
     const drillAccuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+    const isPhoto = drillMode === 'photogrammetry';
+
+    const skillBreakdown = (() => {
+      const map: Record<string, { total: number; correct: number }> = {};
+      drillQuestions.forEach((q, idx) => {
+        const skill = q.skill || 'Other photogrammetry';
+        if (!map[skill]) map[skill] = { total: 0, correct: 0 };
+        map[skill].total++;
+        if (answeredQuestions[idx]?.correct) map[skill].correct++;
+      });
+      return Object.entries(map)
+        .map(([skill, s]) => ({ skill, ...s }))
+        .sort((a, b) => a.correct / a.total - b.correct / b.total);
+    })();
 
     return (
       <div className="p-8 max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-foreground mb-6" data-testid="heading-drill-results">
-          Drill Results
+          {isPhoto ? 'Photogrammetry Drill Results' : 'Drill Results'}
         </h1>
 
         <Card className="mb-6">
@@ -542,6 +673,53 @@ export default function WeakAreaDrillPage() {
             </div>
           </CardContent>
         </Card>
+
+        {isPhoto && (
+          <Card className="mb-6">
+            <CardHeader className="flex flex-row items-center gap-2 pb-2">
+              <BarChart3 className="w-5 h-5 text-primary" />
+              <CardTitle className="text-lg">Formula Type — Right vs. Missed</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                How you performed on each photogrammetry computation type.
+              </p>
+              <div className="space-y-2">
+                {skillBreakdown.map(({ skill, total, correct }) => {
+                  const mastered = correct === total;
+                  return (
+                    <div
+                      key={skill}
+                      data-testid={`skill-row-${skill}`}
+                      className={`flex items-center justify-between gap-3 rounded-md border p-3 ${
+                        mastered
+                          ? 'border-green-500/40 bg-green-50/50 dark:bg-green-950/20'
+                          : 'border-amber-500/40 bg-amber-50/50 dark:bg-amber-950/20'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        {mastered ? (
+                          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                        )}
+                        <span className="text-sm font-medium font-mono truncate">{skill}</span>
+                      </div>
+                      <span
+                        className={`text-sm font-semibold flex-shrink-0 ${
+                          mastered ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'
+                        }`}
+                        data-testid={`skill-score-${skill}`}
+                      >
+                        {correct}/{total} {mastered ? 'mastered' : 'review'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="mb-6">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
@@ -587,15 +765,30 @@ export default function WeakAreaDrillPage() {
           </CardContent>
         </Card>
 
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-3 flex-wrap">
           <Button variant="outline" onClick={handleRestart} data-testid="button-new-analysis">
             <RotateCcw className="w-4 h-4 mr-2" />
-            New Analysis
+            {isPhoto ? 'Back to Overview' : 'New Analysis'}
           </Button>
-          <Button onClick={handleStartDrill} data-testid="button-drill-again">
-            <Target className="w-4 h-4 mr-2" />
-            Drill Again
-          </Button>
+          {isPhoto ? (
+            <>
+              <Button onClick={handleStartPhotogrammetryDrill} data-testid="button-drill-again">
+                <Plane className="w-4 h-4 mr-2" />
+                Drill Again
+              </Button>
+              <Link href={`/app/${examTrack}/readings/${PHOTOGRAMMETRY_READING_ID}`}>
+                <Button variant="outline" data-testid="link-photogrammetry-reading-results">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Review the Reading
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <Button onClick={handleStartDrill} data-testid="button-drill-again">
+              <Target className="w-4 h-4 mr-2" />
+              Drill Again
+            </Button>
+          )}
         </div>
       </div>
     );
