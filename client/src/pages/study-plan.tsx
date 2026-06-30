@@ -266,6 +266,15 @@ export default function StudyPlan() {
     },
   });
 
+  // Mutation to clear a week's recorded completion (used when reconciling a remapped week)
+  const clearWeekMemoryMutation = useMutation({
+    mutationFn: ({ weekNumber }: { weekNumber: number }) =>
+      apiRequest('DELETE', `/api/plan/week-complete/${weekNumber}?examTrack=${examTrack}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/plan/memory-health', examTrack] });
+    },
+  });
+
   // Identify weak domains from pretest results (accuracy < 60%)
   const weakDomains = useMemo(() => {
     if (!pretestResult?.domainScores) return new Set<Domain>();
@@ -630,6 +639,13 @@ export default function StudyPlan() {
       queryClient.invalidateQueries({ queryKey: ['/api/progress/overall', examTrack] });
     }
   });
+
+  // Reconcile a remapped week: clear the legacy completion items and the stale completion record so
+  // the week leaves the reconcile state and can be tracked fresh against its current topics.
+  const reconcileWeek = (week: number) => {
+    saveProgressMutation.mutate({ week, completed: new Set<string>() });
+    clearWeekMemoryMutation.mutate({ weekNumber: week });
+  };
 
   // Mutation to create custom week
   const createCustomWeekMutation = useMutation({
@@ -1525,11 +1541,25 @@ export default function StudyPlan() {
                       // reconcile note instead of a misleading memory bar against the wrong content.
                       if (isWeekRemapped(plan.week, plan.domains as string[])) {
                         return (
-                          <div className="flex items-start gap-2 rounded-md px-2 py-1.5 bg-amber-100 dark:bg-amber-900/30" data-testid={`note-week-remapped-${plan.week}`}>
-                            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-700 dark:text-amber-300" />
-                            <span className="text-xs text-amber-800 dark:text-amber-200">
-                              These topics changed when your plan resized, so your earlier completion of Week {plan.week} was for different content. The progress bar above reflects this week's current topics.
-                            </span>
+                          <div className="rounded-md px-2 py-1.5 bg-amber-100 dark:bg-amber-900/30 space-y-1.5" data-testid={`note-week-remapped-${plan.week}`}>
+                            <div className="flex items-start gap-2">
+                              <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-700 dark:text-amber-300" />
+                              <span className="text-xs text-amber-800 dark:text-amber-200">
+                                These topics changed when your plan resized, so your earlier completion of Week {plan.week} was for different content. Reset this week to track its current topics from scratch.
+                              </span>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                reconcileWeek(plan.week);
+                              }}
+                              disabled={saveProgressMutation.isPending || clearWeekMemoryMutation.isPending}
+                              className="text-xs font-medium px-2 py-0.5 rounded border border-amber-400 text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-200 dark:hover:bg-amber-800/40 disabled:opacity-50"
+                              data-testid={`button-reconcile-week-${plan.week}`}
+                            >
+                              <RefreshCw className="h-3 w-3 inline mr-1" />
+                              Reset this week to current topics
+                            </button>
                           </div>
                         );
                       }

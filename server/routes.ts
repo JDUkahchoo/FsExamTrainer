@@ -2998,6 +2998,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/plan/week-complete/:weekNumber", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const weekNumber = parseInt(req.params.weekNumber);
+      const examTrack = (req.query.examTrack as string) || (req.body?.examTrack) || 'fs';
+
+      if (isNaN(weekNumber) || weekNumber < 1) {
+        return res.status(400).json({ error: "Invalid week number" });
+      }
+
+      await storage.deleteWeekCompletion(userId, examTrack, weekNumber);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error clearing week completion:", error);
+      res.status(500).json({ error: "Failed to clear week completion" });
+    }
+  });
+
   app.post("/api/plan/week-review/:weekNumber", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
