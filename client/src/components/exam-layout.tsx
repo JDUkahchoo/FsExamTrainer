@@ -182,7 +182,7 @@ export function ExamLayout({ children, examTrack: examTrackProp }: ExamLayoutPro
               <span className="font-serif text-sm font-bold text-foreground" data-testid="text-header-exam">{examName}</span>
               <span className="label-coord ml-auto hidden text-[10px] text-muted-foreground sm:inline">NCEES Surveying Exam Prep</span>
             </header>
-            <main className="flex-1 overflow-auto bg-fieldbook-fine">
+            <main className="flex-1 overflow-auto bg-fieldbook-pointcloud">
               {children}
             </main>
           </div>

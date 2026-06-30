@@ -415,6 +415,30 @@
     background-size: 16px 16px;
   }
 
+  /* Combined "Field Book → Point Cloud" surface for the in-app content area.
+     Layers (painted top → bottom): teal point-cloud dots, a downward wash that
+     fades the grid out toward the bottom while the dots persist (the grid →
+     dots transition), then the fine field-book grid. Anchored to the viewport
+     so it reads as a stable backdrop behind scrolling content. */
+  .bg-fieldbook-pointcloud {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(hsl(var(--instrument-teal) / 0.18) 1px, transparent 1.6px),
+      linear-gradient(to bottom, transparent 0%, transparent 35%, hsl(var(--background) / 0.9) 100%),
+      linear-gradient(hsl(var(--paper-line) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--paper-line) / 0.4) 1px, transparent 1px);
+    background-size: 16px 16px, 100% 100%, 14px 14px, 14px 14px;
+    background-repeat: repeat, no-repeat, repeat, repeat;
+    background-attachment: fixed;
+  }
+
+  /* Avoid background-attachment: fixed jank on touch/mobile browsers. */
+  @media (max-width: 768px) {
+    .bg-fieldbook-pointcloud {
+      background-attachment: scroll;
+    }
+  }
+
   /* Coordinate-readout label styling (mono, tracked, caps) */
   .label-coord {
     font-family: var(--font-mono);
