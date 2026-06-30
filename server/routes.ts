@@ -1513,11 +1513,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Award XP (idempotent per period per day)
       const xpResult = await storage.awardFlashcardReviewXp(userId, sessionId, session.period);
-      
+
+      // Auto-clear still-due FLASHCARD review alerts in the domains studied this
+      // session. Only flashcard-type alerts are affected (lesson/concept alerts
+      // are left for the user). Per-card rating (from a deep link) already
+      // advances its alert and removes it from the due set, so getDueReviews —
+      // which returns only currently-due items — won't re-process it here.
+      let reviewsCleared = 0;
+      try {
+        // domainBreakdown is normally { [domain]: { reviewed, avgRating } } but
+        // older/legacy clients may send a plain count number per domain — handle both.
+        type BreakdownVal = number | { reviewed?: number; avgRating?: number };
+        const breakdown = (domainBreakdown || {}) as Record<string, BreakdownVal>;
+        const reviewedCount = (v: BreakdownVal | undefined): number =>
+          typeof v === 'number' ? v : (v?.reviewed ?? 0);
+        const domainQuality = (v: BreakdownVal | undefined): number => {
+          // Prefer per-domain avg; for numeric (legacy) entries fall back to the
+          // session-wide average rating, then to a neutral default.
+          const avg = typeof v === 'number' ? avgMasteryRating : v?.avgRating;
+          return Number.isFinite(avg) ? Math.max(0, Math.min(5, Math.round(avg as number))) : 3;
+        };
+        const studiedDomains = new Set(
+          Object.entries(breakdown)
+            .filter(([, v]) => reviewedCount(v) > 0)
+            .map(([domain]) => domain)
+        );
+        if (studiedDomains.size > 0) {
+          const dueReviews = await storage.getDueReviews(userId, session.examTrack);
+          for (const review of dueReviews) {
+            if (review.itemType !== 'flashcard') continue;
+            if (!review.domain || !studiedDomains.has(review.domain)) continue;
+            const quality = domainQuality(breakdown[review.domain]);
+            await storage.updateReviewScheduleById(review.id, userId, quality);
+            reviewsCleared += 1;
+          }
+        }
+      } catch (clearErr) {
+        // Never let auto-clear failures break session completion.
+        console.error("Error auto-clearing flashcard review alerts:", clearErr);
+      }
+
       res.json({ 
         session, 
         xpAwarded: xpResult.awarded,
-        xpAmount: xpResult.xp 
+        xpAmount: xpResult.xp,
+        reviewsCleared,
       });
     } catch (error) {
       console.error("Error completing review session:", error);

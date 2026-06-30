@@ -37,10 +37,27 @@ function parseCardId(cardId: string): { deck: FlashcardDeck; index: number } | n
   return null;
 }
 
+// Convert the per-domain running tally into the { reviewed, avgRating } shape the
+// server (and stored domain breakdown) expects.
+function toDomainBreakdown(
+  tally: Record<string, { reviewed: number; ratingSum: number }>
+): Record<string, { reviewed: number; avgRating: number }> {
+  const out: Record<string, { reviewed: number; avgRating: number }> = {};
+  for (const [domain, v] of Object.entries(tally)) {
+    out[domain] = {
+      reviewed: v.reviewed,
+      avgRating: v.reviewed > 0 ? v.ratingSum / v.reviewed : 0,
+    };
+  }
+  return out;
+}
+
 interface SessionStats {
   cardsReviewed: number;
   masteryRatings: number[];
-  domainsReviewed: Record<string, number>;
+  // Per-domain tally: how many cards reviewed and the sum of their ratings, so
+  // we can send a real average rating per domain on session completion.
+  domainsReviewed: Record<string, { reviewed: number; ratingSum: number }>;
   startTime: number;
 }
 
@@ -204,7 +221,7 @@ export default function FlashcardsPage() {
       const res = await apiRequest('POST', `/api/flashcards/sessions/${sessionId}/complete`, {
         cardsReviewed: stats.cardsReviewed,
         avgMasteryRating: avgMastery,
-        domainBreakdown: stats.domainsReviewed,
+        domainBreakdown: toDomainBreakdown(stats.domainsReviewed),
         timeSpentSeconds: timeSpent,
         ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
       });
@@ -300,7 +317,7 @@ export default function FlashcardsPage() {
           const completeBlob = new Blob([JSON.stringify({
             cardsReviewed: stats.cardsReviewed,
             avgMasteryRating: avgMastery,
-            domainBreakdown: stats.domainsReviewed,
+            domainBreakdown: toDomainBreakdown(stats.domainsReviewed),
             timeSpentSeconds: timeSpent,
             ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
           })], { type: 'application/json' });
@@ -555,8 +572,11 @@ export default function FlashcardsPage() {
       sessionStatsRef.current.cardsReviewed += 1;
       sessionStatsRef.current.masteryRatings.push(newMasteryLevel);
       const domain = card.domain;
-      sessionStatsRef.current.domainsReviewed[domain] = 
-        (sessionStatsRef.current.domainsReviewed[domain] || 0) + 1;
+      const prevDomain = sessionStatsRef.current.domainsReviewed[domain] || { reviewed: 0, ratingSum: 0 };
+      sessionStatsRef.current.domainsReviewed[domain] = {
+        reviewed: prevDomain.reviewed + 1,
+        ratingSum: prevDomain.ratingSum + newMasteryLevel,
+      };
       console.log('Card reviewed in session:', currentSessionId, 'Total:', sessionStatsRef.current.cardsReviewed);
       
       // Log review event for accurate tracking
@@ -715,8 +735,11 @@ export default function FlashcardsPage() {
         sessionStatsRef.current.cardsReviewed += 1;
         sessionStatsRef.current.masteryRatings.push(3); // Default rating for enhanced modes
         const domain = safeCurrentCard.domain;
-        sessionStatsRef.current.domainsReviewed[domain] = 
-          (sessionStatsRef.current.domainsReviewed[domain] || 0) + 1;
+        const prevDomain = sessionStatsRef.current.domainsReviewed[domain] || { reviewed: 0, ratingSum: 0 };
+        sessionStatsRef.current.domainsReviewed[domain] = {
+          reviewed: prevDomain.reviewed + 1,
+          ratingSum: prevDomain.ratingSum + 3,
+        };
         
         logReviewEventMutation.mutate({
           sessionId: currentSessionId,
