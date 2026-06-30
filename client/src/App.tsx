@@ -38,6 +38,7 @@ import StudyReadingsPage from "@/pages/study-readings";
 import StudyReadingPage from "@/pages/study-reading";
 import WeakAreaDrillPage from "@/pages/weak-area-drill";
 import StatePlaneDrillPage from "@/pages/state-plane-drill";
+import TopicDrillPage from "@/pages/topic-drill";
 import ScientificCalculatorPage from "@/pages/scientific-calculator";
 
 function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' | 'tx' }) {
@@ -98,6 +99,7 @@ function Router() {
       <Route path="/app/fs/quiz" component={withExamTrack(PracticeQuizPage, 'fs')} />
       <Route path="/app/fs/drill" component={withExamTrack(WeakAreaDrillPage, 'fs')} />
       <Route path="/app/fs/state-plane-drill" component={withExamTrack(StatePlaneDrillPage, 'fs')} />
+      <Route path="/app/fs/topic-drill/:topicId" component={withExamTrack(TopicDrillPage, 'fs')} />
       <Route path="/app/fs/flashcards" component={withExamTrack(FlashcardsPage, 'fs')} />
       <Route path="/app/fs/exam" component={withExamTrack(PracticeExamPage, 'fs')} />
       <Route path="/app/fs/notes" component={withExamTrack(NotesPage, 'fs')} />
@@ -123,6 +125,7 @@ function Router() {
       <Route path="/app/ps/readings/:id" component={withExamTrack(StudyReadingPage, 'ps')} />
       <Route path="/app/ps/quiz" component={withExamTrack(PracticeQuizPage, 'ps')} />
       <Route path="/app/ps/drill" component={withExamTrack(WeakAreaDrillPage, 'ps')} />
+      <Route path="/app/ps/topic-drill/:topicId" component={withExamTrack(TopicDrillPage, 'ps')} />
       <Route path="/app/ps/flashcards" component={withExamTrack(FlashcardsPage, 'ps')} />
       <Route path="/app/ps/exam" component={withExamTrack(PracticeExamPage, 'ps')} />
       <Route path="/app/ps/notes" component={withExamTrack(NotesPage, 'ps')} />
@@ -147,6 +150,7 @@ function Router() {
       <Route path="/app/tx/readings/:id" component={withExamTrack(StudyReadingPage, 'tx')} />
       <Route path="/app/tx/quiz" component={withExamTrack(PracticeQuizPage, 'tx')} />
       <Route path="/app/tx/drill" component={withExamTrack(WeakAreaDrillPage, 'tx')} />
+      <Route path="/app/tx/topic-drill/:topicId" component={withExamTrack(TopicDrillPage, 'tx')} />
       <Route path="/app/tx/flashcards" component={withExamTrack(FlashcardsPage, 'tx')} />
       <Route path="/app/tx/exam" component={withExamTrack(PracticeExamPage, 'tx')} />
       <Route path="/app/tx/notes" component={withExamTrack(NotesPage, 'tx')} />
