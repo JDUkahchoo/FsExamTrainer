@@ -56,7 +56,12 @@ export default function ExamDashboard() {
 
   // Jump straight to the exact item being reviewed when we can resolve it from
   // the itemId; otherwise fall back to the domain-filtered area page.
-  const navigateToReviewItem = (itemType: string, itemId: string | null, domain: string | null) => {
+  const navigateToReviewItem = (
+    itemType: string,
+    itemId: string | null,
+    domain: string | null,
+    reviewId?: string | null,
+  ) => {
     if (itemType === 'lesson' && itemId && itemId.startsWith('lesson:')) {
       const lessonId = itemId.slice('lesson:'.length);
       if (lessonId) {
@@ -65,14 +70,16 @@ export default function ExamDashboard() {
       }
     }
     if (itemType === 'flashcard' && itemId) {
-      setLocation(`/app/${examTrack}/flashcards?card=${encodeURIComponent(itemId)}`);
+      // Pass the alert id so rating the linked card auto-clears it.
+      const reviewParam = reviewId ? `&reviewId=${encodeURIComponent(reviewId)}` : '';
+      setLocation(`/app/${examTrack}/flashcards?card=${encodeURIComponent(itemId)}${reviewParam}`);
       return;
     }
     navigateByItemType(itemType, domain);
   };
 
   const handleReviewClick = (review: ReviewSchedule) => {
-    navigateToReviewItem(review.itemType, review.itemId, review.domain);
+    navigateToReviewItem(review.itemType, review.itemId, review.domain, review.id);
   };
 
   const handleRetentionItemClick = (item: { domain: string | null; itemType: string; itemId?: string | null }) => {

@@ -53,6 +53,10 @@ export default function FlashcardsPage() {
   const cardInit = cardFromUrl ? parseCardId(cardFromUrl) : null;
   // Holds the deep-linked cardId until we successfully position to it (once).
   const pendingCardId = useRef<string | null>(cardFromUrl);
+  // When arriving from a Daily Coaching Review Alert, this is the alert's id so
+  // we can auto-mark it done once the user rates the linked card (fire-once).
+  const reviewIdFromUrl = urlParams.get('reviewId');
+  const markedReviewId = useRef<string | null>(null);
   const { examTrack, domains: examDomains, examName } = useExamTrack();
   
   const getSavedFlashcardState = () => {
@@ -515,6 +519,28 @@ export default function FlashcardsPage() {
     setIsFlipped(false);
   };
 
+  // Auto-mark a deep-linked Daily Coaching review alert as done once the user
+  // rates the exact card it pointed to. Fires once per alert; uses the user's
+  // real rating (1-5) mapped onto the review quality scale (0-5).
+  const markReviewMutation = useMutation({
+    mutationFn: async ({ reviewId, quality }: { reviewId: string; quality: number }) => {
+      return apiRequest('PATCH', `/api/reviews/${reviewId}`, { quality });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/reviews/due', examTrack] });
+      queryClient.invalidateQueries({ queryKey: ['/api/reviews/upcoming', examTrack] });
+    },
+  });
+
+  const maybeMarkDeepLinkedReview = (ratedCardId: string, rating: number) => {
+    if (!reviewIdFromUrl || !cardFromUrl) return;
+    if (markedReviewId.current === reviewIdFromUrl) return;
+    if (ratedCardId !== cardFromUrl) return;
+    markedReviewId.current = reviewIdFromUrl;
+    const quality = Math.max(0, Math.min(5, Math.round(rating)));
+    markReviewMutation.mutate({ reviewId: reviewIdFromUrl, quality });
+  };
+
   const handleToggleMastered = () => {
     const cardIndex = shuffledIndices[currentIndex];
     const card = filteredCards[cardIndex];
@@ -544,6 +570,9 @@ export default function FlashcardsPage() {
     } else {
       console.log('No active session - card review not tracked');
     }
+
+    // If this card was opened from a Daily Coaching review alert, clear it.
+    maybeMarkDeepLinkedReview(cardId, newMasteryLevel);
     
     saveMasteryMutation.mutate({
       flashcardId: cardId,
@@ -697,6 +726,9 @@ export default function FlashcardsPage() {
           rating: 3
         });
       }
+
+      // If this card was opened from a Daily Coaching review alert, clear it.
+      maybeMarkDeepLinkedReview(currentCardId, 3);
       
       // Record progress for the current card in this mode
       recordProgressMutation.mutate({ cardId: currentCardId, mode: studyMode });
