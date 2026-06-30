@@ -851,6 +851,48 @@ export const PS_FLASHCARDS: Omit<Flashcard, 'id'>[] = [
   },
   {
     domain: 'Areas of Practice',
+    front: 'Photo Scale at Terrain Elevation: S = f / (H − h)',
+    back: 'The exact scale of a vertical aerial photo accounts for terrain elevation:\n\nS = f / (H − h)\n\nf = camera focal length (convert mm → ft or m)\nH = flying height above datum\nh = terrain elevation above datum at that point\nH − h = height above the LOCAL ground\n\nRules:\n• Higher flight → smaller scale (more ground per photo)\n• Longer focal length → larger scale (more zoomed in)\n• Scale VARIES across a photo wherever terrain varies\n\nExample (PS): f = 6 in = 0.5 ft, H = 10,800 ft, h = 800 ft\n→ S = 0.5 / (10,800 − 800) = 1:20,000',
+    category: 'formula',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Areas of Practice',
+    front: 'Relief Displacement: d = r·h / H',
+    back: 'The radial outward shift of a tall object\'s top from its true planimetric position on a vertical photo:\n\nd = r × h / H\n\nd = displacement on the photo (mm)\nr = radial distance from principal point to the TOP of the object (mm)\nh = HEIGHT of the object (not terrain elevation)\nH = flying height above the BASE of the object\n\nKey facts:\n• Direction: always radially OUTWARD from the principal point\n• At the principal point: d = 0; at photo edges: d is maximum\n• Object height from displacement: h = d·H / r\n• This is why a raw aerial photo is NOT a planimetric map — it must be orthorectified',
+    category: 'formula',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Areas of Practice',
+    front: 'Stereopair Overlap: 60% Endlap / 30% Sidelap',
+    back: 'Standard overlap requirements for aerial photogrammetry:\n\nENDLAP (forward overlap — along the flight strip):\n• Standard: 60% minimum\n• Provides full stereoscopic coverage along the strip\n\nSIDELAP (lateral overlap — between adjacent strips):\n• Standard: 30% minimum\n• Prevents data voids between strips and ties the block together for aerial triangulation\n\nMemory: "60/30" — sixty forward, thirty side.\n\nThe stereo model occupies the central ~40% of each photo, so overlap is needed on both sides to view the whole area in 3-D.',
+    category: 'concept',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Areas of Practice',
+    front: 'Orthophoto vs. Raw Aerial Photo',
+    back: 'An ORTHOPHOTO is an aerial image geometrically corrected to remove relief displacement, tilt, and scale variation — producing a planimetrically accurate, map-like image.\n\nHow it\'s made:\n• Differential rectification using a DEM/DSM removes displacement pixel by pixel\n• Result: every pixel sits in its true ground position, uniform scale everywhere\n\nRaw aerial photo:\n• Buildings lean outward (relief displacement); scale varies with terrain\n• Cannot be used directly as a planimetric map\n\nRule for the PS exam: only an ORTHOPHOTO, not a raw photo, can serve directly as a map base layer (e.g., in GIS).',
+    category: 'concept',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Areas of Practice',
+    front: 'Digital Photogrammetry vs. LiDAR',
+    back: 'Two methods for producing 3-D terrain data from aerial/drone platforms:\n\nDIGITAL PHOTOGRAMMETRY (overlapping photos + Structure from Motion):\n• Produces orthophotos, DSM, and a 3-D point cloud\n• Strengths: color/texture, lower sensor cost\n• Weakness: cannot see through dense canopy; needs good lighting\n\nLiDAR (laser pulses, time-of-flight):\n• First return → DSM (tree tops, rooftops)\n• Last return → bare-earth DEM (penetrates canopy gaps)\n• Strengths: works at night, very dense point clouds\n• Weakness: higher cost; no color without a separate camera\n\nKey rule: for a bare-earth DEM under forest, choose LiDAR (last returns).',
+    category: 'concept',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Areas of Practice',
+    front: 'DSM vs. DEM (vs. DTM)',
+    back: 'DSM — Digital Surface Model:\n• Top of ALL features (buildings, trees, structures)\n• Typically from first returns / photogrammetric surface\n\nDEM — Digital Elevation Model:\n• Bare-earth surface only (above-ground objects removed)\n• From ground-classified returns\n\nDTM — Digital Terrain Model:\n• Bare-earth like a DEM but adds breaklines/spot features for terrain shape\n\nnDSM (normalized DSM) = DSM − DEM → heights of objects above ground.',
+    category: 'concept',
+    examTrack: 'ps'
+  },
+  {
+    domain: 'Areas of Practice',
     front: 'Subdivision Platting Requirements',
     back: 'Typical state requirements:\n\n• Licensed surveyor signature\n• Monument locations\n• Lot dimensions and areas\n• Easement locations\n• Dedications (roads, etc.)\n• Required certifications',
     category: 'concept',

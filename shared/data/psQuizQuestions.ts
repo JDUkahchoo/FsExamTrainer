@@ -1259,6 +1259,87 @@ export const PS_QUIZ_QUESTIONS: PSQuizQuestion[] = [
   },
   {
     domain: 'Areas of Practice',
+    question: 'An aerial camera with a 6 in (0.5 ft) focal length photographs terrain at elevation 800 ft from a flying height of 10,800 ft above datum. What is the photo scale?',
+    options: ['1:20,000', '1:21,600', '1:12,000', '1:10,000'],
+    correctAnswer: 0,
+    explanation: 'Photo scale = f / (H − h), where f = 0.5 ft, H = 10,800 ft, and h = 800 ft. Scale = 0.5 / (10,800 − 800) = 0.5 / 10,000 = 1/20,000, i.e. 1:20,000. Scale must be computed above the LOCAL ground (H − h), not the full flying height.',
+    difficulty: 'hard'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'On a vertical aerial photograph, relief displacement of a tall object is:',
+    options: [
+      'Directed radially inward toward the principal point and greatest at the photo center',
+      'Directed radially outward from the principal point and greatest near the photo edges',
+      'Constant across the entire photo regardless of position',
+      'Zero for all objects taller than the camera focal length',
+    ],
+    correctAnswer: 1,
+    explanation: 'Relief displacement (d = r·h/H) is directed radially OUTWARD from the principal point and increases with both object height (h) and radial distance from the center (r). It is zero at the principal point and maximum near the photo edges. This is why a raw aerial photo cannot serve as a planimetric map until it is orthorectified.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Standard overlap requirements for aerial photogrammetric mapping are approximately:',
+    options: ['30% endlap and 60% sidelap', '60% endlap and 30% sidelap', '50% endlap and 50% sidelap', '90% endlap and 10% sidelap'],
+    correctAnswer: 1,
+    explanation: 'The standard is 60% endlap (forward overlap along the flight strip) and 30% sidelap (lateral overlap between adjacent strips). Endlap provides full stereoscopic coverage along the strip, while sidelap prevents data voids and ties adjacent strips together for block aerial triangulation. Remember "60/30."',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'Why can a raw (unrectified) vertical aerial photograph NOT be used directly as a planimetric map?',
+    options: [
+      'It is always taken in black and white',
+      'It contains relief displacement, tilt, and scale variation that must be removed by orthorectification',
+      'It cannot show any ground features',
+      'Its scale is always larger than the design map scale',
+    ],
+    correctAnswer: 1,
+    explanation: 'A raw aerial photo contains relief displacement (objects lean outward), camera tilt, and scale that varies with terrain elevation. Producing an orthophoto removes these distortions via differential rectification using a DEM, placing every pixel in its true ground position so the image can serve as a uniform-scale planimetric base.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'A surveyor must produce a bare-earth digital elevation model (DEM) of a densely forested corridor. Which method is most appropriate?',
+    options: [
+      'Digital photogrammetry, because it sees through the canopy',
+      'LiDAR, using last returns that penetrate canopy gaps to reach the ground',
+      'Single-frequency GPS static observations only',
+      'Standard total station traverse along the road centerline',
+    ],
+    correctAnswer: 1,
+    explanation: 'LiDAR pulses pass through gaps in the canopy; the LAST returns typically reach the bare ground, allowing a bare-earth DEM under forest cover. Digital photogrammetry cannot see through vegetation, so it captures the canopy surface (DSM) rather than the ground. First returns give the DSM; last returns give the bare-earth DEM.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'What is the difference between a Digital Surface Model (DSM) and a Digital Elevation Model (DEM)?',
+    options: [
+      'A DSM is always in feet; a DEM is always in meters',
+      'A DSM represents the top of all features (buildings, vegetation); a DEM represents the bare-earth surface only',
+      'A DSM is produced only by GPS; a DEM is produced only by leveling',
+      'They are identical and the terms are interchangeable',
+    ],
+    correctAnswer: 1,
+    explanation: 'A DSM (Digital Surface Model) represents the top surface of all features including buildings and vegetation, typically from first returns. A DEM (Digital Elevation Model) represents the bare-earth surface only, after above-ground objects are removed. The difference (nDSM = DSM − DEM) gives the height of objects above the ground.',
+    difficulty: 'easy'
+  },
+  {
+    domain: 'Areas of Practice',
+    question: 'In a photogrammetric block adjustment, the primary role of ground control points (GCPs) is to:',
+    options: [
+      'Increase the resolution of each individual photograph',
+      'Georeference and scale the photo block to a known ground datum',
+      'Eliminate the need for any overlap between photos',
+      'Replace the camera calibration parameters',
+    ],
+    correctAnswer: 1,
+    explanation: 'GCPs are surveyed points with precisely known coordinates (X, Y, and/or Z) that are identifiable on the photos. They tie the photogrammetric block to a ground datum (e.g., NAD 83 / NAVD 88) and constrain the bundle/block adjustment so the entire model is correctly positioned, scaled, and oriented. Independent check points (not used in the adjustment) verify the final accuracy.',
+    difficulty: 'medium'
+  },
+  {
+    domain: 'Areas of Practice',
     question: 'GIS applications in surveying include:',
     options: ['Only creating paper maps', 'Spatial analysis, data management, mapping, and decision support', 'Only GPS data collection', 'Only CAD drafting'],
     correctAnswer: 1,
