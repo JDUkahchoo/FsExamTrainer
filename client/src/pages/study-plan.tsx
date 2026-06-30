@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame, Trophy, Info, ShieldCheck } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -243,6 +243,19 @@ export default function StudyPlan() {
     memoryHealthData.forEach(r => map.set(r.weekNumber, r));
     return map;
   }, [memoryHealthData]);
+
+  // Plan-resize safeguard. week_progress and week_memory_health are keyed by absolute week
+  // number, but a resize (e.g. moving the exam date) can make that week number cover different
+  // domains than when it was completed. We can't tell which legacy completions still apply, so a
+  // week is "remapped" when its recorded memory-health domains no longer match its current domains.
+  // Remapped weeks are shown in a reconcile state (progress reset, items unchecked) instead of
+  // displaying stale completions against the wrong content.
+  const isWeekRemapped = useCallback((week: number, planDomains: string[]) => {
+    const health = memoryHealthMap.get(week);
+    if (!health) return false;
+    const norm = (arr: string[]) => [...(arr || [])].map(d => String(d)).sort().join('|');
+    return norm(health.domains) !== norm(planDomains);
+  }, [memoryHealthMap]);
 
   // Mutation to record week completion
   const weekCompleteMutation = useMutation({
@@ -843,6 +856,9 @@ export default function StudyPlan() {
   };
 
   const calculateWeekProgress = (week: number, plan: WeekPlan) => {
+    // Remapped weeks (plan resized so this week now covers different content) are reset to a
+    // reconcile state — legacy completions can't be trusted against the new topics.
+    if (isWeekRemapped(week, plan.domains as string[])) return 0;
     const weekKey = `week-${week}`;
     const manualCompleted = completedItems[weekKey] || new Set();
     const autoCompleted = autoCompletedItems[weekKey] || new Set();
@@ -1142,6 +1158,34 @@ export default function StudyPlan() {
             );
           })()}
 
+          {/* Orphaned completion guard: when the plan shrinks, completed weeks beyond the new
+              length are no longer rendered. Surface them so finished work isn't silently hidden. */}
+          {(() => {
+            const planWeekNumbers = new Set(allWeeks.map(w => w.week));
+            // Surface ANY saved progress for week numbers outside the current (resized) plan, from
+            // both memory-health records and week_progress, so a shorter plan never silently hides
+            // finished or in-progress work.
+            const orphanedWeeks = new Set<number>();
+            memoryHealthData.forEach(r => { if (!planWeekNumbers.has(r.weekNumber)) orphanedWeeks.add(r.weekNumber); });
+            (weekProgressData || []).forEach(wp => {
+              if (wp.examTrack !== examTrack) return;
+              const hasProgress = wp.readCompleted.length + wp.focusCompleted.length + wp.applyCompleted.length + wp.reinforceCompleted.length > 0;
+              if (hasProgress && !planWeekNumbers.has(wp.week)) orphanedWeeks.add(wp.week);
+            });
+            const orphaned = [...orphanedWeeks].sort((a, b) => a - b);
+            if (orphaned.length === 0) return null;
+            return (
+              <div className="mt-3 p-4 rounded-lg border border-blue-300 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20" data-testid="note-orphaned-weeks">
+                <div className="flex items-start gap-2 text-sm text-blue-800 dark:text-blue-200">
+                  <Info className="w-4 h-4 mt-0.5 shrink-0" />
+                  <p>
+                    You have saved progress for {orphaned.length} {orphaned.length === 1 ? 'week' : 'weeks'} ({orphaned.map(w => `Week ${w}`).join(', ')}) that fall outside your current {adaptiveMeta.totalWeeks}-week plan. This progress isn't lost — choosing a later exam date or a longer plan will bring {orphaned.length === 1 ? 'it' : 'them'} back into view.
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Overall Progress Indicator */}
           {overallProgressData && (
             <div className="mt-4 p-4 rounded-lg border border-border bg-muted/30">
@@ -1354,6 +1398,11 @@ export default function StudyPlan() {
         {allWeeks.map((plan, idx) => {
           const progress = calculateWeekProgress(plan.week, plan);
           const isExpanded = expandedWeek === plan.week;
+          // When a week is remapped by a plan resize, hide its legacy completions so checkmarks
+          // never appear against content the user hasn't actually completed under the new plan.
+          const weekRemapped = isWeekRemapped(plan.week, plan.domains as string[]);
+          const weekCompletedSet: Set<string> = weekRemapped ? new Set<string>() : (completedItems[`week-${plan.week}`] || new Set<string>());
+          const weekAutoSet: Set<string> = weekRemapped ? new Set<string>() : (autoCompletedItems[`week-${plan.week}`] || new Set<string>());
 
           const ltPhases = 'longTermPhases' in adaptiveMeta ? adaptiveMeta.longTermPhases : undefined;
           const phaseInfo = adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(plan.week, ltPhases) : null;
@@ -1470,6 +1519,20 @@ export default function StudyPlan() {
                     {(() => {
                       const health = memoryHealthMap.get(plan.week);
                       if (!health) return null;
+                      // Guard against plan-resize remapping: a memory-health record is keyed by
+                      // absolute week number, so after the plan length changes this week number can
+                      // now cover different domains than when it was completed. If so, show a
+                      // reconcile note instead of a misleading memory bar against the wrong content.
+                      if (isWeekRemapped(plan.week, plan.domains as string[])) {
+                        return (
+                          <div className="flex items-start gap-2 rounded-md px-2 py-1.5 bg-amber-100 dark:bg-amber-900/30" data-testid={`note-week-remapped-${plan.week}`}>
+                            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-700 dark:text-amber-300" />
+                            <span className="text-xs text-amber-800 dark:text-amber-200">
+                              These topics changed when your plan resized, so your earlier completion of Week {plan.week} was for different content. The progress bar above reflects this week's current topics.
+                            </span>
+                          </div>
+                        );
+                      }
                       const healthColor = health.status === 'fresh' ? 'bg-green-500' : health.status === 'fading' ? 'bg-yellow-500' : 'bg-red-500';
                       const healthBg = health.status === 'fresh' ? 'bg-green-100 dark:bg-green-950' : health.status === 'fading' ? 'bg-yellow-100 dark:bg-yellow-950' : 'bg-red-100 dark:bg-red-950';
                       const healthText = health.status === 'fresh' ? 'text-green-700 dark:text-green-300' : health.status === 'fading' ? 'text-yellow-700 dark:text-yellow-300' : 'text-red-700 dark:text-red-300';
@@ -1523,13 +1586,12 @@ export default function StudyPlan() {
                     colorClass="text-domain-computations-fg"
                     examTrack={examTrack}
                     checklistItems={plan.focus}
-                    completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('focus-')))}
-                    autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('focus-')))}
+                    completedSet={new Set([...weekCompletedSet].filter(k => k.startsWith('focus-')))}
+                    autoSet={new Set([...weekAutoSet].filter(k => k.startsWith('focus-')))}
                     onToggle={(i) => toggleItem(plan.week, `focus-${i}`)}
                     onDrillComplete={() => {
-                      const weekKey = `week-${plan.week}`;
-                      const manual = completedItems[weekKey] || new Set<string>();
-                      const auto = autoCompletedItems[weekKey] || new Set<string>();
+                      const manual = weekCompletedSet;
+                      const auto = weekAutoSet;
                       for (let i = 0; i < plan.focus.length; i++) {
                         const key = `focus-${i}`;
                         if (!manual.has(key) && !auto.has(key)) { toggleItem(plan.week, key); break; }
@@ -1542,13 +1604,12 @@ export default function StudyPlan() {
                     colorClass="text-domain-boundary-fg"
                     examTrack={examTrack}
                     checklistItems={plan.apply}
-                    completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('apply-')))}
-                    autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('apply-')))}
+                    completedSet={new Set([...weekCompletedSet].filter(k => k.startsWith('apply-')))}
+                    autoSet={new Set([...weekAutoSet].filter(k => k.startsWith('apply-')))}
                     onToggle={(i) => toggleItem(plan.week, `apply-${i}`)}
                     onChallengeComplete={() => {
-                      const weekKey = `week-${plan.week}`;
-                      const manual = completedItems[weekKey] || new Set<string>();
-                      const auto = autoCompletedItems[weekKey] || new Set<string>();
+                      const manual = weekCompletedSet;
+                      const auto = weekAutoSet;
                       for (let i = 0; i < plan.apply.length; i++) {
                         const key = `apply-${i}`;
                         if (!manual.has(key) && !auto.has(key)) { toggleItem(plan.week, key); break; }
@@ -1562,17 +1623,16 @@ export default function StudyPlan() {
                     studyMode={preferences?.studyMode}
                     examDate={preferences?.examDate}
                     checklistItems={plan.reinforce}
-                    completedSet={new Set([...(completedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
-                    autoSet={new Set([...(autoCompletedItems[`week-${plan.week}`] || new Set())].filter(k => k.startsWith('reinforce-')))}
+                    completedSet={new Set([...weekCompletedSet].filter(k => k.startsWith('reinforce-')))}
+                    autoSet={new Set([...weekAutoSet].filter(k => k.startsWith('reinforce-')))}
                     coveredDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.covered ?? 0}
                     totalDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.total ?? 0}
                     reviewedDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.reviewedDomains ?? []}
                     missingDomains={flashcardCoverageByWeek[`week-${plan.week}`]?.missingDomains ?? []}
                     onToggle={(i) => toggleItem(plan.week, `reinforce-${i}`)}
                     onSessionComplete={() => {
-                      const weekKey = `week-${plan.week}`;
-                      const manual = completedItems[weekKey] || new Set<string>();
-                      const auto = autoCompletedItems[weekKey] || new Set<string>();
+                      const manual = weekCompletedSet;
+                      const auto = weekAutoSet;
                       for (let i = 0; i < plan.reinforce.length; i++) {
                         const key = `reinforce-${i}`;
                         if (!manual.has(key) && !auto.has(key)) { toggleItem(plan.week, key); break; }
@@ -1618,9 +1678,8 @@ export default function StudyPlan() {
 
                   {/* Compact week summary bar — replaces old checklist collapsible */}
                   {(() => {
-                    const weekKey = `week-${plan.week}`;
-                    const manualItems = completedItems[weekKey] || new Set<string>();
-                    const autoItems = autoCompletedItems[weekKey] || new Set<string>();
+                    const manualItems = weekCompletedSet;
+                    const autoItems = weekAutoSet;
                     const mergedItems = new Set([...manualItems, ...autoItems]);
                     const interactiveCount = getWeekInteractiveCount(examTrack, plan.week);
                     const readTotal = plan.read.length + interactiveCount;
