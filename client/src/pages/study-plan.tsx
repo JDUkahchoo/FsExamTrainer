@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame, Trophy } from 'lucide-react';
+import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame, Trophy, Info, ShieldCheck } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -1056,7 +1056,92 @@ export default function StudyPlan() {
               ) : null;
             })()}
           </div>
-          
+
+          {/* Plan sizing + reassurance note: explains how the exam date shapes the plan */}
+          {(() => {
+            const isLongTerm = adaptiveMeta.planType === 'long-term';
+            const isCustomDomains = preferences?.studyMode === 'custom'
+              && preferences?.customWeeklyDomains
+              && typeof preferences.customWeeklyDomains === 'object'
+              && Object.keys(preferences.customWeeklyDomains).length > 0;
+            const examDate = adaptiveMeta.examDate;
+            const dateActive = !!examDate && examDate.getTime() > Date.now() && !isLongTerm && !isCustomDomains;
+            const datePast = !!examDate && examDate.getTime() <= Date.now() && !isLongTerm && !isCustomDomains;
+
+            const examDateLabel = examDate
+              ? examDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })
+              : null;
+
+            if (isLongTerm) {
+              return (
+                <div className="mt-4 p-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20" data-testid="note-plan-sizing">
+                  <div className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-200">
+                    <Info className="w-4 h-4 mt-0.5 shrink-0" />
+                    <p>
+                      The 24-Month Pathway uses a fixed {adaptiveMeta.totalWeeks}-week structure, so changing your exam date won't resize these weeks. Switch to <span className="font-medium">Standard</span>, <span className="font-medium">Result-Driven</span>, or <span className="font-medium">Working Professional</span> mode for a plan that automatically sizes itself to your exam date.
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            if (isCustomDomains) {
+              return (
+                <div className="mt-4 p-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20" data-testid="note-plan-sizing">
+                  <div className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-200">
+                    <Info className="w-4 h-4 mt-0.5 shrink-0" />
+                    <p>
+                      Your Custom Plan uses the week layout you built, so changing your exam date won't resize these weeks. Switch to a built-in mode (Standard, Result-Driven, or Working Professional) if you want the plan to automatically fit your exam date.
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            if (dateActive) {
+              return (
+                <div className="mt-4 p-4 rounded-lg border border-border bg-muted/30" data-testid="note-plan-sizing">
+                  <div className="flex items-start gap-2 text-sm text-foreground">
+                    <Calendar className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                    <p>
+                      This plan is sized to <span className="font-medium">{adaptiveMeta.totalWeeks} weeks</span> to fit your <span className="font-medium">{examDateLabel}</span> exam date. Change the date in Settings and these weeks rescale automatically.
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2 text-sm text-muted-foreground mt-2">
+                    <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0 text-green-600 dark:text-green-400" />
+                    <p>
+                      Your XP, achievements, flashcard mastery, and spaced-repetition reviews are tied to dates and stay exactly as they are. Resizing only changes how topics are spread across weeks, so a week you already completed may show its topics under a different week number afterward.
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            if (datePast) {
+              return (
+                <div className="mt-4 p-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20" data-testid="note-plan-sizing">
+                  <div className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-200">
+                    <Info className="w-4 h-4 mt-0.5 shrink-0" />
+                    <p>
+                      Your exam date ({examDateLabel}) has already passed, so the plan is showing its default {adaptiveMeta.totalWeeks}-week layout. Update your exam date in <span className="font-medium">Settings</span> to a future date and these weeks will resize to fit the time you have left.
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="mt-4 p-4 rounded-lg border border-border bg-muted/30" data-testid="note-plan-sizing">
+                <div className="flex items-start gap-2 text-sm text-foreground">
+                  <Info className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                  <p>
+                    Add your exam date in <span className="font-medium">Settings</span> and this plan will automatically resize its weeks to fit the time you have left. Your earned XP, achievements, mastery, and reviews aren't affected.
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Overall Progress Indicator */}
           {overallProgressData && (
             <div className="mt-4 p-4 rounded-lg border border-border bg-muted/30">
