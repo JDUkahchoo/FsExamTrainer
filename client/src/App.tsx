@@ -210,17 +210,39 @@ function AppContent() {
     setSessionExpiredCallback(handleSessionExpired);
   }, [handleSessionExpired]);
 
+  // One-time-per-session sweep that removes localStorage keys whose source of
+  // truth has moved to the server. These keys are no longer read by any code;
+  // without this sweep, returning users keep accumulating dead entries.
+  //
+  // Canonical localStorage keys that are STILL actively needed (do NOT remove):
+  //   - 'theme', 'fontSize'                          (device UI preferences)
+  //   - `flashcard-page-state-${examTrack}`          (flashcard filter UI state)
+  //   - `studyPlan_expandedWeek_${examTrack}`        (study-plan expand UI state)
+  //   - `flashcard-coverage-expanded-${week}`        (coverage list expand UI state)
+  //   - 'challenge-session-progress'                 (active challenge resume, local-only)
+  //   - `retention-booster-completed:${user}:w${n}`  (daily local completion gate)
   useEffect(() => {
-    if (sessionStorage.getItem('_fc_cov_cleaned')) return;
+    if (sessionStorage.getItem('_ls_cleanup_v2')) return;
+    // Exact-match legacy keys: superseded by server-side progress/results storage.
+    const LEGACY_EXACT_KEYS = new Set([
+      'fs-exam-week-progress',
+      'fs-exam-quiz-results',
+      'fs-exam-flashcard-mastery',
+      'fs-exam-practice-exams',
+      'fs-exam-study-notes',
+    ]);
+    // Prefix-match legacy flags: now backed by server flags (e.g. coverageCelebrated).
+    const LEGACY_PREFIXES = ['fc-coverage-celebrated:'];
     const staleKeys: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('fc-coverage-celebrated:')) {
+      if (!key) continue;
+      if (LEGACY_EXACT_KEYS.has(key) || LEGACY_PREFIXES.some(p => key.startsWith(p))) {
         staleKeys.push(key);
       }
     }
     staleKeys.forEach(k => localStorage.removeItem(k));
-    sessionStorage.setItem('_fc_cov_cleaned', '1');
+    sessionStorage.setItem('_ls_cleanup_v2', '1');
   }, []);
 
   if (isLoading) {
