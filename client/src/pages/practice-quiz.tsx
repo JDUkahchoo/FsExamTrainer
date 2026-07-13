@@ -110,8 +110,8 @@ export default function PracticeQuizPage() {
   };
 
   const saveDraftMutation = useMutation({
-    mutationFn: (draft: { domain: string; examTrack: string; sessionId: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number; shuffleSeed: number }) =>
-      apiRequest('POST', '/api/quiz/draft', draft),
+    mutationFn: ({ beaconFallback, ...draft }: { domain: string; examTrack: string; sessionId: string; questionIds: string[]; currentQuestionIndex: number; userAnswers: Record<number, number>; timeSpentSeconds: number; shuffleSeed: number; beaconFallback?: boolean }) =>
+      apiRequest('POST', beaconFallback ? '/api/quiz/draft?beaconFallback=1' : '/api/quiz/draft', draft),
     retry: 2,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
     onSuccess: () => setDraftSaveWarning(false),
@@ -219,9 +219,11 @@ export default function PracticeQuizPage() {
   }, [domainsFromUrl, quizState]);
 
   // Save the current draft using the freshest snapshot (no stale closures).
-  const saveDraft = () => {
+  // `beaconFallback` marks saves that ran because navigator.sendBeacon failed,
+  // so the server can log how often leave-time beacons are failing.
+  const saveDraft = (beaconFallback = false) => {
     if (quizDraftSnapshotRef.current) {
-      saveDraftMutation.mutate(quizDraftSnapshotRef.current);
+      saveDraftMutation.mutate({ ...quizDraftSnapshotRef.current, beaconFallback });
     }
   };
 
@@ -254,9 +256,13 @@ export default function PracticeQuizPage() {
     try {
       const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
       const ok = navigator.sendBeacon('/api/quiz/draft', blob);
-      if (!ok) saveDraft();
-    } catch {
-      saveDraft();
+      if (!ok) {
+        console.warn('[beacon-fallback] sendBeacon rejected quiz draft; falling back to fetch save');
+        saveDraft(true);
+      }
+    } catch (err) {
+      console.warn('[beacon-fallback] sendBeacon threw for quiz draft; falling back to fetch save', err);
+      saveDraft(true);
     }
   };
 

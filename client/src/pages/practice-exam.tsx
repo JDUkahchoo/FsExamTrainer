@@ -86,8 +86,8 @@ export default function PracticeExamPage() {
 
   // Mutation to save draft
   const saveDraftMutation = useMutation({
-    mutationFn: (draft: ExamDraftPayload) =>
-      apiRequest('POST', '/api/exam/draft', draft),
+    mutationFn: ({ beaconFallback, ...draft }: ExamDraftPayload & { beaconFallback?: boolean }) =>
+      apiRequest('POST', beaconFallback ? '/api/exam/draft?beaconFallback=1' : '/api/exam/draft', draft),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/exam/draft', examTrack] });
     }
@@ -174,9 +174,11 @@ export default function PracticeExamPage() {
   }, [examState, examQuestions, currentQuestionIndex, answers, timeRemaining, examMode, examTrack, shuffleSeedBase, EXAM_DURATION_MINUTES]);
 
   // Save the current draft (all modes) using the freshest snapshot.
-  const saveDraft = () => {
+  // `beaconFallback` marks saves that ran because navigator.sendBeacon failed,
+  // so the server can log how often leave-time beacons are failing.
+  const saveDraft = (beaconFallback = false) => {
     if (draftSnapshotRef.current) {
-      saveDraftMutation.mutate(draftSnapshotRef.current);
+      saveDraftMutation.mutate({ ...draftSnapshotRef.current, beaconFallback });
     }
   };
 
@@ -187,9 +189,13 @@ export default function PracticeExamPage() {
     try {
       const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
       const ok = navigator.sendBeacon(`/api/exam/draft?examTrack=${examTrack}`, blob);
-      if (!ok) saveDraft();
-    } catch {
-      saveDraft();
+      if (!ok) {
+        console.warn('[beacon-fallback] sendBeacon rejected exam draft; falling back to fetch save');
+        saveDraft(true);
+      }
+    } catch (err) {
+      console.warn('[beacon-fallback] sendBeacon threw for exam draft; falling back to fetch save', err);
+      saveDraft(true);
     }
   };
 

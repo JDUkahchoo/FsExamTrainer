@@ -1004,6 +1004,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Telemetry: counts leave-time draft saves that had to fall back from
+  // navigator.sendBeacon (beacon returned false or threw on the client).
+  // A rising count signals that beacon saves are failing in the wild.
+  const beaconFallbackCounts = { quiz: 0, exam: 0 };
+  const recordBeaconFallback = (kind: "quiz" | "exam", req: any) => {
+    if (req.query.beaconFallback === "1") {
+      beaconFallbackCounts[kind]++;
+      console.warn(
+        `[beacon-fallback] ${kind} draft saved via fetch fallback (user=${req.user?.claims?.sub}, totals: quiz=${beaconFallbackCounts.quiz}, exam=${beaconFallbackCounts.exam})`
+      );
+    }
+  };
+
   // Quiz Draft routes (for resume functionality)
   app.get("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
     try {
@@ -1018,6 +1031,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/quiz/draft", isAuthenticated, async (req: any, res) => {
     try {
+      recordBeaconFallback("quiz", req);
       const userId = req.user.claims.sub;
       const data = insertQuizDraftSchema.parse({ ...req.body, userId });
       const draft = await storage.saveQuizDraft(data);
@@ -1053,6 +1067,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/exam/draft", isAuthenticated, async (req: any, res) => {
     try {
+      recordBeaconFallback("exam", req);
       const userId = req.user.claims.sub;
       const data = insertExamDraftSchema.parse({ ...req.body, userId });
       const draft = await storage.saveExamDraft(data);
