@@ -3,3 +3,4 @@
 - [Design system — Field Book to Point Cloud](design-system.md) — paper content + dark instrument-panel sidebar; never use text-muted-foreground on the dark rail; survey-orange needs dark text.
 - [Flashcard session domainBreakdown contract](flashcard-domain-breakdown-contract.md) — jsonb has no type enforcement; keep client emit + server/study-plan readers in sync, tolerate legacy numeric counts.
 - [Topic worked-solution drills](topic-drills.md) — configurable per-topic drill via registry; filter quiz questions by `topic` ONLY (a topic can span domains; topic tags are FS-only so it stays track-safe).
+- [Draft int32 seed trap](draft-int32-seed.md) — client values saved to integer columns must fit int32; raw Date.now() seeds silently 400'd every quiz/exam draft save.

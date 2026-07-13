@@ -16,6 +16,7 @@ import { DOMAINS, FS_DOMAINS, PS_DOMAINS } from '@shared/schema';
 import type { Domain, QuizDraft } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { shuffleQuestionOptions, type ShuffledQuestion } from '@/lib/shuffleOptions';
+import { reconstructQuizSession } from '@/lib/session-resume';
 import { ProblemSolvingLoop } from '@/components/problem-solving-loop';
 import { getVariedQuizQuestions, getSessionSeed, incrementDailySessionCount } from '@shared/data/quizVariationSystem';
 
@@ -313,57 +314,21 @@ export default function PracticeQuizPage() {
   const handleResumeDraft = () => {
     if (!draftData) return;
 
-    // Create a map of ID -> question from original array for efficient lookup
-    const questionMap = new Map(
-      QUIZ_QUESTIONS.map((q, i) => [`quiz-${i}`, q])
-    );
-
-    // Reconstruct quiz questions from stable question IDs
-    const reconstructedQuestions = draftData.questionIds.map(id => {
-      const question = questionMap.get(id);
-      if (!question) {
-        console.error(`Question ${id} not found in QUIZ_QUESTIONS`);
-        return null;
-      }
-      return { ...question, id };
-    }).filter(Boolean) as Array<typeof QUIZ_QUESTIONS[0] & { id: string }>;
-
-    // Use the saved shuffle seed from the draft to reproduce the exact same option ordering
-    const savedSeed = draftData.shuffleSeed || 0;
-    setShuffleSeedBase(savedSeed);
-    const shuffledMap: Record<number, { options: string[]; correctIndex: number }> = {};
-    reconstructedQuestions.forEach((q, index) => {
-      const shuffled = shuffleQuestionOptions(q, savedSeed + index);
-      shuffledMap[index] = {
-        options: shuffled.shuffledOptions,
-        correctIndex: shuffled.shuffledCorrectIndex
-      };
-    });
-
-    // Reconstruct answered questions using shuffled correct indices
-    const reconstructedAnswers: Record<number, { selected: number; correct: boolean }> = {};
-    Object.entries(draftData.userAnswers as Record<string, number>).forEach(([indexStr, selectedAnswer]) => {
-      const index = parseInt(indexStr);
-      const question = reconstructedQuestions[index];
-      const shuffledData = shuffledMap[index];
-      if (question && shuffledData) {
-        reconstructedAnswers[index] = {
-          selected: selectedAnswer,
-          correct: selectedAnswer === shuffledData.correctIndex
-        };
-      }
-    });
+    // Rebuild the session exactly as it was saved (shared, tested logic):
+    // same questions, same seeded option ordering, restored answers/index/time.
+    const restored = reconstructQuizSession(draftData, QUIZ_QUESTIONS);
 
     // Restore state
-    setShuffledOptionsMap(shuffledMap);
-    setQuizQuestions(reconstructedQuestions);
+    setShuffleSeedBase(restored.shuffleSeed);
+    setShuffledOptionsMap(restored.shuffledOptionsMap);
+    setQuizQuestions(restored.questions);
     setSelectedDomain(draftData.domain as Domain | 'all');
-    setCurrentQuestionIndex(draftData.currentQuestionIndex);
-    setAnsweredQuestions(reconstructedAnswers);
-    setElapsedSeconds(draftData.timeSpentSeconds);
+    setCurrentQuestionIndex(restored.currentQuestionIndex);
+    setAnsweredQuestions(restored.answeredQuestions);
+    setElapsedSeconds(restored.elapsedSeconds);
     
     // Check if current question was already answered
-    const currentAnswer = reconstructedAnswers[draftData.currentQuestionIndex];
+    const currentAnswer = restored.answeredQuestions[restored.currentQuestionIndex];
     if (currentAnswer) {
       setSelectedAnswer(currentAnswer.selected);
       setShowExplanation(true);
@@ -431,7 +396,9 @@ export default function PracticeQuizPage() {
     const variedQuestions = getVariedQuizQuestions(questionsWithIds, sessionSeed);
     
     const shuffledMap: Record<number, { options: string[]; correctIndex: number }> = {};
-    const seedBase = Date.now();
+    // Keep the seed within int32 range — the draft column is a 32-bit integer,
+    // so a raw Date.now() would fail validation and silently break resume saves.
+    const seedBase = Date.now() % 2147483647;
     setShuffleSeedBase(seedBase);
     variedQuestions.forEach((q, index) => {
       const shuffled = shuffleQuestionOptions(q, seedBase + index);

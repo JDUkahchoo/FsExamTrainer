@@ -18,7 +18,7 @@ import { useActivityLogger } from '@/hooks/use-activity-logger';
 import type { Domain, ExamDraft } from '@shared/schema';
 import { PS_DOMAINS, FS_DOMAINS } from '@shared/schema';
 import { useExamTrack } from '@/contexts/exam-track-context';
-import { shuffleQuestionOptions } from '@/lib/shuffleOptions';
+import { createExamShuffledOptionsMap, reconstructExamSession } from '@/lib/session-resume';
 import { getVariedQuizQuestions, getSessionSeed } from '@shared/data/quizVariationSystem';
 
 const FS_EXAM_DURATION_MINUTES = 360; // 6 hours = 360 minutes
@@ -212,59 +212,28 @@ export default function PracticeExamPage() {
   const handleResumeDraft = () => {
     if (!draftData) return;
 
-    const resumedMode = (draftData.examMode as ExamMode) || 'standard';
-
-    let reconstructedQuestions: Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>;
-
-    if (resumedMode === 'ncees-style') {
-      // NCEES-style questions live in their own pool and already carry stable ids.
-      const nceesMap = new Map(NCEES_STYLE_QUESTIONS.map(q => [q.id, q]));
-      reconstructedQuestions = draftData.questionIds
-        .map(id => {
-          const question = nceesMap.get(id);
-          if (!question) {
-            console.error(`NCEES question ${id} not found`);
-            return null;
-          }
-          return question;
-        })
-        .filter(Boolean) as NCEESQuestion[];
-    } else {
-      const examQuestionMap = new Map(
-        EXAM_QUESTIONS.map((q, i) => [`exam-${i}`, q])
-      );
-      const quizQuestionMap = new Map(
-        QUIZ_QUESTIONS.map((q, i) => [`quiz-${i}`, q])
-      );
-      const txExamQuestionMap = new Map(
-        TX_EXAM_QUESTIONS.map((q, i) => [`tx-exam-${i}`, q])
-      );
-
-      reconstructedQuestions = draftData.questionIds.map(id => {
-        const question = examQuestionMap.get(id) || quizQuestionMap.get(id) || txExamQuestionMap.get(id);
-        if (!question) {
-          console.error(`Question ${id} not found`);
-          return null;
-        }
-        return { ...question, id };
-      }).filter(Boolean) as Array<typeof EXAM_QUESTIONS[0] & { id: string }>;
-    }
-
-    // Reproduce the exact option ordering using the seed stored with the draft.
-    const savedSeed = draftData.shuffleSeed || 0;
-    const shuffledMap = createShuffledOptionsMap(reconstructedQuestions, savedSeed);
+    // Rebuild the session exactly as it was saved (shared, tested logic):
+    // same questions/mode, same seeded option ordering, restored answers
+    // (numbers and select-all / priority-ranking arrays), and remaining time.
+    const restored = reconstructExamSession(
+      draftData,
+      {
+        examQuestions: EXAM_QUESTIONS,
+        quizQuestions: QUIZ_QUESTIONS,
+        txExamQuestions: TX_EXAM_QUESTIONS,
+        nceesQuestions: NCEES_STYLE_QUESTIONS,
+      },
+      EXAM_DURATION_MINUTES,
+    );
 
     // Restore state
-    setShuffleSeedBase(savedSeed);
-    setExamMode(resumedMode);
-    setShuffledOptionsMap(shuffledMap);
-    setExamQuestions(reconstructedQuestions);
-    setCurrentQuestionIndex(draftData.currentQuestionIndex);
-    setAnswers((draftData.userAnswers || {}) as Record<number, ExtendedAnswer>);
-
-    // Prefer second-precision elapsed time, falling back to legacy minutes.
-    const elapsedSeconds = draftData.timeSpentSeconds || draftData.timeSpentMinutes * 60;
-    setTimeRemaining(Math.max(0, EXAM_DURATION_MINUTES * 60 - elapsedSeconds));
+    setShuffleSeedBase(restored.shuffleSeed);
+    setExamMode(restored.examMode as ExamMode);
+    setShuffledOptionsMap(restored.shuffledOptionsMap);
+    setExamQuestions(restored.questions as Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>);
+    setCurrentQuestionIndex(restored.currentQuestionIndex);
+    setAnswers(restored.answers as Record<number, ExtendedAnswer>);
+    setTimeRemaining(restored.timeRemaining);
 
     setExamState('active');
     setShowResumeDialog(false);
@@ -280,37 +249,16 @@ export default function PracticeExamPage() {
   };
 
   // Helper to create shuffled options map for a set of questions
-  const createShuffledOptionsMap = (questions: Array<any>, seedBase: number) => {
-    const shuffledMap: Record<number, { options: string[]; shuffledToOriginal: number[] }> = {};
-    
-    questions.forEach((q, index) => {
-      // Only shuffle standard MCQ questions (not select-all, priority-ranking, etc.)
-      const isStandardMCQ = !isNCEESQuestion(q) || q.questionType === 'multiple_choice' || q.questionType === 'scenario_based' || q.questionType === 'computational';
-      if (isStandardMCQ && Array.isArray(q.options) && q.options.length > 0) {
-        const seed = seedBase + index;
-        const fakeQuestion = { options: q.options as string[], correctAnswer: q.correctAnswer || 0 };
-        const shuffled = shuffleQuestionOptions(fakeQuestion, seed);
-        
-        // Create reverse mapping: shuffled index -> original index
-        const shuffledToOriginal: number[] = [];
-        shuffled.originalToShuffledMap.forEach((shuffledIdx, originalIdx) => {
-          shuffledToOriginal[shuffledIdx] = originalIdx;
-        });
-        
-        shuffledMap[index] = {
-          options: shuffled.shuffledOptions,
-          shuffledToOriginal
-        };
-      }
-    });
-    
-    return shuffledMap;
-  };
+  // (shared, tested logic — only standard MCQs are shuffled).
+  const createShuffledOptionsMap = (questions: Array<any>, seedBase: number) =>
+    createExamShuffledOptionsMap(questions, seedBase);
 
   // Generate exam questions when starting
   const startExam = (mode: ExamMode = 'standard') => {
     setExamMode(mode);
-    const seedBase = Date.now();
+    // Keep the seed within int32 range — the draft column is a 32-bit integer,
+    // so a raw Date.now() would fail validation and silently break resume saves.
+    const seedBase = Date.now() % 2147483647;
     setShuffleSeedBase(seedBase);
     
     if (mode === 'standard') {
