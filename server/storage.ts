@@ -183,9 +183,7 @@ function getLocalMidnight(timezone: string = 'America/Chicago'): { today: Date; 
  * review card a fresh weekly slate that resets every Monday.
  * @param timezone IANA timezone string (e.g., 'America/Chicago')
  */
-function getLocalWeekStart(timezone: string = 'America/Chicago'): Date {
-  const now = new Date();
-
+export function getLocalWeekStart(timezone: string = 'America/Chicago', now: Date = new Date()): Date {
   // Determine the local weekday (Sun..Sat) in the user's timezone
   const weekdayStr = new Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
@@ -218,6 +216,43 @@ function getLocalWeekStart(timezone: string = 'America/Chicago'): Date {
   const utcMidnight = new Date(tempDate.toLocaleString('en-US', { timeZone: 'UTC' }));
   const offsetMs = utcMidnight.getTime() - localMidnightInTz.getTime();
   return new Date(tempDate.getTime() + offsetMs);
+}
+
+/**
+ * Pure computation behind the weekly fresh-slate review card. Given all of a
+ * user's review rows, the start of the current week, and the current instant,
+ * returns the items due THIS week (not yet reviewed), the count refreshed this
+ * week ('done'), the remaining count, and the weekly target (remaining + done).
+ * Kept separate from the DB query so the Monday/timezone boundary math is unit
+ * testable.
+ */
+export function computeWeeklyReviewSlate(
+  rows: ReviewSchedule[],
+  weekStart: Date,
+  now: Date,
+): { items: ReviewSchedule[]; done: number; remaining: number; target: number } {
+  const weekStartMs = weekStart.getTime();
+  const nowMs = now.getTime();
+
+  // Due THIS week and not yet reviewed: nextReviewAt within [weekStart, now]
+  const items = rows
+    .filter((r) => {
+      const next = new Date(r.nextReviewAt).getTime();
+      return next >= weekStartMs && next <= nowMs;
+    })
+    .sort((a, b) => new Date(a.nextReviewAt).getTime() - new Date(b.nextReviewAt).getTime());
+
+  // Refreshed THIS week: reviewed since the week started and now scheduled ahead
+  const done = rows.filter((r) => {
+    const last = new Date(r.lastReviewedAt).getTime();
+    const next = new Date(r.nextReviewAt).getTime();
+    return last >= weekStartMs && next > nowMs;
+  }).length;
+
+  const remaining = items.length;
+  const target = remaining + done;
+
+  return { items, done, remaining, target };
 }
 
 export interface IStorage {
@@ -3204,9 +3239,7 @@ export class DatabaseStorage implements IStorage {
     timezone: string = 'America/Chicago'
   ): Promise<{ items: ReviewSchedule[]; done: number; remaining: number; target: number }> {
     const now = new Date();
-    const weekStart = getLocalWeekStart(timezone);
-    const weekStartMs = weekStart.getTime();
-    const nowMs = now.getTime();
+    const weekStart = getLocalWeekStart(timezone, now);
 
     const rows = await db
       .select()
@@ -3216,25 +3249,7 @@ export class DatabaseStorage implements IStorage {
         eq(reviewSchedule.examTrack, examTrack)
       ));
 
-    // Due THIS week and not yet reviewed: nextReviewAt within [weekStart, now]
-    const items = rows
-      .filter((r) => {
-        const next = new Date(r.nextReviewAt).getTime();
-        return next >= weekStartMs && next <= nowMs;
-      })
-      .sort((a, b) => new Date(a.nextReviewAt).getTime() - new Date(b.nextReviewAt).getTime());
-
-    // Refreshed THIS week: reviewed since the week started and now scheduled ahead
-    const done = rows.filter((r) => {
-      const last = new Date(r.lastReviewedAt).getTime();
-      const next = new Date(r.nextReviewAt).getTime();
-      return last >= weekStartMs && next > nowMs;
-    }).length;
-
-    const remaining = items.length;
-    const target = remaining + done;
-
-    return { items, done, remaining, target };
+    return computeWeeklyReviewSlate(rows, weekStart, now);
   }
 
   async updateReviewScheduleById(id: string, userId: string, quality: number): Promise<ReviewSchedule | null> {
