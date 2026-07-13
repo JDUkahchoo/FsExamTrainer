@@ -22,20 +22,7 @@ import { FlashcardChallengeMode } from '@/components/flashcard-challenge-mode';
 import { useToast } from '@/hooks/use-toast';
 import { useExamTrack } from '@/contexts/exam-track-context';
 
-type FlashcardDeck = 'original' | 'comprehensive';
-
-// Parse a review itemId (e.g. "comp-card-42" / "card-7") back to its deck + index.
-function parseCardId(cardId: string): { deck: FlashcardDeck; index: number } | null {
-  if (cardId.startsWith('comp-card-')) {
-    const n = parseInt(cardId.slice('comp-card-'.length), 10);
-    return isNaN(n) ? null : { deck: 'comprehensive', index: n };
-  }
-  if (cardId.startsWith('card-')) {
-    const n = parseInt(cardId.slice('card-'.length), 10);
-    return isNaN(n) ? null : { deck: 'original', index: n };
-  }
-  return null;
-}
+import { parseCardId, resolveDeepLinkPosition, type FlashcardDeck } from '@/lib/flashcard-deeplink';
 
 // Convert the per-domain running tally into the { reviewed, avgRating } shape the
 // server (and stored domain breakdown) expects.
@@ -467,15 +454,14 @@ export default function FlashcardsPage() {
     // (once). Otherwise start at the beginning as usual.
     let targetIndex = 0;
     if (pendingCardId.current) {
-      const parsed = parseCardId(pendingCardId.current);
-      if (parsed && parsed.deck === selectedDeck) {
-        const card = activeFlashcards[parsed.index];
-        const pos = card ? filteredCards.indexOf(card) : -1;
-        if (pos >= 0) {
-          targetIndex = pos;
-          pendingCardId.current = null;
-        }
-      } else if (!parsed) {
+      const resolution = resolveDeepLinkPosition(
+        pendingCardId.current,
+        selectedDeck,
+        activeFlashcards,
+        filteredCards,
+      );
+      targetIndex = resolution.targetIndex;
+      if (resolution.status !== 'unresolved') {
         pendingCardId.current = null;
       }
     }
