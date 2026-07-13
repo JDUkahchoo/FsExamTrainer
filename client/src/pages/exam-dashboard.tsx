@@ -107,7 +107,7 @@ export default function ExamDashboard() {
   });
 
   const { data: preferences } = useQuery<UserPreferences>({
-    queryKey: ['/api/preferences'],
+    queryKey: ['/api/preferences', examTrack],
   });
 
   const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[] } | null>(null);

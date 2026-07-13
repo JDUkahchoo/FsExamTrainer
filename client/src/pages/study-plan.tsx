@@ -119,9 +119,9 @@ export default function StudyPlan() {
     queryKey: ['/api/custom-weeks']
   });
 
-  // Fetch user preferences
+  // Fetch user preferences (plan settings are scoped to the active exam track)
   const { data: preferences } = useQuery<UserPreferences>({
-    queryKey: ['/api/preferences'],
+    queryKey: ['/api/preferences', examTrack],
   });
 
   // Fetch latest pretest results
@@ -711,7 +711,7 @@ export default function StudyPlan() {
   // Mutation to save study mode preference
   const setStudyModeMutation = useMutation({
     mutationFn: async (mode: import('@shared/schema').StudyMode) => {
-      return apiRequest('PATCH', '/api/preferences', { studyMode: mode });
+      return apiRequest('PATCH', '/api/preferences', { studyMode: mode, examTrack });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
@@ -721,7 +721,7 @@ export default function StudyPlan() {
   // Mutation to save base study days per week
   const setBaseDaysMutation = useMutation({
     mutationFn: async (days: number) => {
-      return apiRequest('PATCH', '/api/preferences', { baseDaysPerWeek: days });
+      return apiRequest('PATCH', '/api/preferences', { baseDaysPerWeek: days, examTrack });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
@@ -734,7 +734,8 @@ export default function StudyPlan() {
       return apiRequest('PATCH', '/api/preferences', {
         studyMode: 'custom',
         customWeeklyDomains: weeklyDomains,
-        customTimeline: timeline
+        customTimeline: timeline,
+        examTrack
       });
     },
     onSuccess: () => {

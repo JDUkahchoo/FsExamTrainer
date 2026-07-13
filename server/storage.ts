@@ -125,8 +125,10 @@ import {
   userDifficultySettings,
   studyReadingProgress,
   weekMemoryHealth,
+  examTrackSettings,
   DOMAINS
 } from "@shared/schema";
+import type { ExamTrackSettings, InsertExamTrackSettings } from "@shared/schema";
 import { eq, and, desc, gte, lte, lt, sql, inArray } from "drizzle-orm";
 
 /**
@@ -408,6 +410,11 @@ export interface IStorage {
   // User Preferences methods
   getUserPreferences(userId: string): Promise<UserPreferences | undefined>;
   upsertUserPreferences(prefs: InsertUserPreferences): Promise<UserPreferences>;
+
+  // Per-track exam settings methods
+  getExamTrackSettings(userId: string, examTrack: string): Promise<ExamTrackSettings | undefined>;
+  getAllExamTrackSettings(userId: string): Promise<ExamTrackSettings[]>;
+  upsertExamTrackSettings(settings: InsertExamTrackSettings): Promise<ExamTrackSettings>;
 
   // Daily Log methods
   getDailyLogs(userId: string): Promise<DailyLog[]>;
@@ -1695,6 +1702,37 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return prefs;
+  }
+
+  // Per-track exam settings methods
+  async getExamTrackSettings(userId: string, examTrack: string): Promise<ExamTrackSettings | undefined> {
+    const [settings] = await db
+      .select()
+      .from(examTrackSettings)
+      .where(and(eq(examTrackSettings.userId, userId), eq(examTrackSettings.examTrack, examTrack)));
+    return settings || undefined;
+  }
+
+  async getAllExamTrackSettings(userId: string): Promise<ExamTrackSettings[]> {
+    return await db
+      .select()
+      .from(examTrackSettings)
+      .where(eq(examTrackSettings.userId, userId));
+  }
+
+  async upsertExamTrackSettings(settingsData: InsertExamTrackSettings): Promise<ExamTrackSettings> {
+    const [settings] = await db
+      .insert(examTrackSettings)
+      .values(settingsData)
+      .onConflictDoUpdate({
+        target: [examTrackSettings.userId, examTrackSettings.examTrack],
+        set: {
+          ...settingsData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return settings;
   }
 
   // Daily Log methods

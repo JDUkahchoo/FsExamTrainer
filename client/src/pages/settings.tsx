@@ -199,7 +199,7 @@ export default function SettingsPage() {
   });
 
   const { data: preferences } = useQuery<UserPreferences>({
-    queryKey: ['/api/preferences'],
+    queryKey: ['/api/preferences', examTrack],
   });
 
   const { data: user } = useQuery<{ id: string; email?: string; firstName?: string; lastName?: string; profileImageUrl?: string }>({
@@ -207,7 +207,7 @@ export default function SettingsPage() {
   });
 
   const updatePreferencesMutation = useMutation({
-    mutationFn: (data: Partial<UserPreferences>) => apiRequest('PATCH', '/api/preferences', data),
+    mutationFn: (data: Partial<UserPreferences>) => apiRequest('PATCH', '/api/preferences', { ...data, examTrack }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
       toast({ title: "Settings saved", description: "Your preferences have been updated." });

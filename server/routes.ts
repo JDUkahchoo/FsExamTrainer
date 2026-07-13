@@ -3,7 +3,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod, FS_DOMAINS, PS_DOMAINS } from "@shared/schema";
+import { insertWeekProgressSchema, insertQuizResultSchema, insertQuizSessionSchema, insertFlashcardMasterySchema, insertFlashcardFeynmanScoreSchema, insertFlashcardMnemonicSchema, insertFlashcardTriadProgressSchema, insertFlashcardReviewSessionSchema, insertPracticeExamSchema, insertStudyNoteSchema, insertReadingProgressSchema, insertQuizDraftSchema, insertExamDraftSchema, insertDailyActivitySchema, insertAchievementSchema, insertCustomWeekSchema, insertPretestResultSchema, insertUserPreferencesSchema, insertExamTrackSettingsSchema, insertDailyLogSchema, insertStudyCycleSchema, insertFeedbackSchema, insertTestimonialSchema, insertApplyChallengeAttemptSchema, insertRetentionReviewSchema, getReviewPeriod, FS_DOMAINS, PS_DOMAINS } from "@shared/schema";
 import { seedLessons } from "./seed-lessons";
 import { seedPSLessons } from "./seed-ps-lessons";
 import { checkAndSendReminder } from "./email";
@@ -1813,12 +1813,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ]);
       const quizResults = allQuizResults.filter(r => trackDomains.includes(r.domain));
 
-      // Determine total weeks based on study mode (same logic as /api/progress/overall)
+      // Determine total weeks based on the track's own study mode (same logic as /api/progress/overall)
+      const trackSettings = await storage.getExamTrackSettings(userId, examTrack);
+      const studyMode = trackSettings?.studyMode ?? prefs?.studyMode;
+      const customTimeline = trackSettings?.customTimeline ?? prefs?.customTimeline;
       let coreWeekCount = examTrack === 'ps' ? 12 : 16;
-      if (prefs?.studyMode === 'long-term' && examTrack === 'fs') {
+      if (studyMode === 'long-term' && examTrack === 'fs') {
         coreWeekCount = 96;
-      } else if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
-        coreWeekCount = prefs.customTimeline;
+      } else if (studyMode === 'custom' && customTimeline) {
+        coreWeekCount = customTimeline;
       }
       const totalWeeks = coreWeekCount + customWeeks.length;
 
@@ -1983,11 +1986,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const prefs = await storage.getUserPreferences(userId);
       const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       
+      // Use the track's own study mode for plan length
+      const trackSettings = await storage.getExamTrackSettings(userId, examTrack);
+      const studyMode = trackSettings?.studyMode ?? prefs?.studyMode;
+      const customTimeline = trackSettings?.customTimeline ?? prefs?.customTimeline;
       let coreWeekCount = examTrack === 'ps' ? 12 : 16;
-      if (prefs?.studyMode === 'long-term' && examTrack === 'fs') {
+      if (studyMode === 'long-term' && examTrack === 'fs') {
         coreWeekCount = 96;
-      } else if (prefs?.studyMode === 'custom' && prefs?.customTimeline) {
-        coreWeekCount = prefs.customTimeline;
+      } else if (studyMode === 'custom' && customTimeline) {
+        coreWeekCount = customTimeline;
       }
       
       const [weekProgressData, quizSessionsData, flashcardMastery, customWeeks, streak] = await Promise.all([
@@ -2119,22 +2126,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User Preferences routes
-  app.get("/api/preferences", isAuthenticated, async (req: any, res) => {
+  // --- Per-track preferences ---
+  // Plan settings (exam date, study mode, custom plan, weekly hours, study days)
+  // live per exam track in exam_track_settings. Account-wide settings (timezone,
+  // preferred track, state code, reminders, onboarding flags) stay on user_preferences.
+  const VALID_EXAM_TRACKS = ['fs', 'ps', 'tx'];
+  const CLEAN_TRACK_DEFAULTS = {
+    examDate: null as Date | null,
+    studyMode: 'standard',
+    customWeeklyDomains: null as unknown,
+    customTimeline: 12 as number | null,
+    weeklyHoursGoal: null as number | null,
+    baseDaysPerWeek: 5,
+  };
+
+  const pickTrackPlanFields = (row: { examDate: Date | null; studyMode: string; customWeeklyDomains: unknown; customTimeline: number | null; weeklyHoursGoal: number | null; baseDaysPerWeek: number }) => ({
+    examDate: row.examDate,
+    studyMode: row.studyMode,
+    customWeeklyDomains: row.customWeeklyDomains,
+    customTimeline: row.customTimeline,
+    weeklyHoursGoal: row.weeklyHoursGoal,
+    baseDaysPerWeek: row.baseDaysPerWeek,
+  });
+
+  // One-time lazy migration: if the user has no per-track rows yet, copy their
+  // legacy plan settings (from user_preferences) into their preferred track so
+  // nothing is lost. Other tracks start clean.
+  const ensureLegacySettingsMigrated = async (userId: string, prefs: any) => {
+    const existingRows = await storage.getAllExamTrackSettings(userId);
+    if (existingRows.length > 0) return existingRows;
+    const preferred = prefs.preferredExamTrack || 'fs';
+    const seeded = await storage.upsertExamTrackSettings({
+      userId,
+      examTrack: preferred,
+      examDate: prefs.examDate ?? null,
+      studyMode: prefs.studyMode || 'standard',
+      customWeeklyDomains: prefs.customWeeklyDomains ?? null,
+      customTimeline: prefs.customTimeline ?? 12,
+      weeklyHoursGoal: prefs.weeklyHoursGoal ?? null,
+      baseDaysPerWeek: prefs.baseDaysPerWeek ?? 5,
+    });
+    return [seeded];
+  };
+
+  const getMergedPreferences = async (userId: string, requestedTrack?: string) => {
+    let preferences = await storage.getUserPreferences(userId);
+    if (!preferences) {
+      preferences = await storage.upsertUserPreferences({
+        userId,
+        studyMode: 'standard',
+        hasCompletedPretest: false,
+        hasSeenWelcome: false,
+      });
+    }
+    const trackRows = await ensureLegacySettingsMigrated(userId, preferences);
+    const track = requestedTrack && VALID_EXAM_TRACKS.includes(requestedTrack)
+      ? requestedTrack
+      : (preferences.preferredExamTrack || 'fs');
+    const trackRow = trackRows.find(r => r.examTrack === track);
+    const planFields = trackRow ? pickTrackPlanFields(trackRow) : CLEAN_TRACK_DEFAULTS;
+    return { ...preferences, ...planFields, examTrack: track };
+  };
+
+  const getPreferencesHandler = async (req: any, res: any) => {
     try {
       const userId = req.user.claims.sub;
-      let preferences = await storage.getUserPreferences(userId);
-      
-      // Create default preferences if they don't exist
-      if (!preferences) {
-        preferences = await storage.upsertUserPreferences({ 
-          userId, 
-          studyMode: 'standard', 
-          hasCompletedPretest: false,
-          hasSeenWelcome: false
-        });
+      const requestedTrack = req.params.track ?? req.query.track;
+      if (requestedTrack && !VALID_EXAM_TRACKS.includes(requestedTrack)) {
+        return res.status(400).json({ error: "Invalid exam track. Please select FS, PS, or Texas." });
       }
-      
-      res.json(preferences);
+      const merged = await getMergedPreferences(userId, requestedTrack);
+      res.json(merged);
 
       // Fire-and-forget reminder check (non-blocking, after response sent)
       checkAndSendReminder(userId, storage).catch(() => {});
@@ -2142,7 +2204,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error fetching user preferences:", error);
       res.status(500).json({ error: "Failed to fetch user preferences" });
     }
-  });
+  };
+
+  app.get("/api/preferences", isAuthenticated, getPreferencesHandler);
+  app.get("/api/preferences/:track", isAuthenticated, getPreferencesHandler);
 
   // Shared handler for PUT and PATCH
   const updatePreferences = async (req: any, res: any) => {
@@ -2151,33 +2216,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Validate exam track - fs, ps, and tx (Texas state-specific) are available
       const requestedExamTrack = req.body.preferredExamTrack;
-      if (requestedExamTrack && !['fs', 'ps', 'tx'].includes(requestedExamTrack)) {
+      if (requestedExamTrack && !VALID_EXAM_TRACKS.includes(requestedExamTrack)) {
+        return res.status(400).json({ error: "Invalid exam track. Please select FS, PS, or Texas." });
+      }
+      // Optional target track for plan settings (which track this write applies to)
+      const bodyTrack = req.body.examTrack;
+      if (bodyTrack && !VALID_EXAM_TRACKS.includes(bodyTrack)) {
         return res.status(400).json({ error: "Invalid exam track. Please select FS, PS, or Texas." });
       }
       
       // Get existing preferences to merge with partial updates
-      const existing = await storage.getUserPreferences(userId);
-      const merged = {
+      let existing = await storage.getUserPreferences(userId);
+      if (!existing) {
+        existing = await storage.upsertUserPreferences({
+          userId,
+          studyMode: 'standard',
+          hasCompletedPretest: false,
+          hasSeenWelcome: false,
+        });
+      }
+      // Migrate legacy plan settings BEFORE any preferred-track change so they
+      // land on the track they belonged to.
+      await ensureLegacySettingsMigrated(userId, existing);
+
+      // Account-wide fields (legacy plan columns are frozen as-is)
+      const accountMerged = {
         userId,
-        studyMode: req.body.studyMode ?? existing?.studyMode ?? 'standard',
-        hasCompletedPretest: req.body.hasCompletedPretest ?? existing?.hasCompletedPretest ?? false,
-        hasSeenWelcome: req.body.hasSeenWelcome ?? existing?.hasSeenWelcome ?? false,
-        examDate: req.body.examDate !== undefined ? req.body.examDate : existing?.examDate,
-        currentCycle: req.body.currentCycle ?? existing?.currentCycle ?? 1,
-        customWeeklyDomains: req.body.customWeeklyDomains !== undefined ? req.body.customWeeklyDomains : existing?.customWeeklyDomains,
-        customTimeline: req.body.customTimeline ?? existing?.customTimeline ?? 12,
-        preferredExamTrack: req.body.preferredExamTrack ?? existing?.preferredExamTrack ?? 'fs',
-        stateCode: req.body.stateCode ?? existing?.stateCode ?? 'TX',
-        reminderEmailEnabled: req.body.reminderEmailEnabled ?? existing?.reminderEmailEnabled ?? false,
-        reminderEmail: req.body.reminderEmail !== undefined ? req.body.reminderEmail : existing?.reminderEmail,
-        lastReminderSent: req.body.lastReminderSent !== undefined ? req.body.lastReminderSent : existing?.lastReminderSent,
-        weeklyHoursGoal: req.body.weeklyHoursGoal !== undefined ? req.body.weeklyHoursGoal : existing?.weeklyHoursGoal,
-        baseDaysPerWeek: Math.min(7, Math.max(3, Number(req.body.baseDaysPerWeek ?? existing?.baseDaysPerWeek ?? 5))) || 5,
+        studyMode: existing.studyMode ?? 'standard',
+        hasCompletedPretest: req.body.hasCompletedPretest ?? existing.hasCompletedPretest ?? false,
+        hasSeenWelcome: req.body.hasSeenWelcome ?? existing.hasSeenWelcome ?? false,
+        examDate: existing.examDate,
+        currentCycle: req.body.currentCycle ?? existing.currentCycle ?? 1,
+        customWeeklyDomains: existing.customWeeklyDomains,
+        customTimeline: existing.customTimeline ?? 12,
+        preferredExamTrack: req.body.preferredExamTrack ?? existing.preferredExamTrack ?? 'fs',
+        stateCode: req.body.stateCode ?? existing.stateCode ?? 'TX',
+        timezone: req.body.timezone ?? existing.timezone ?? 'America/Chicago',
+        reminderEmailEnabled: req.body.reminderEmailEnabled ?? existing.reminderEmailEnabled ?? false,
+        reminderEmail: req.body.reminderEmail !== undefined ? req.body.reminderEmail : existing.reminderEmail,
+        lastReminderSent: req.body.lastReminderSent !== undefined ? req.body.lastReminderSent : existing.lastReminderSent,
+        weeklyHoursGoal: existing.weeklyHoursGoal,
+        baseDaysPerWeek: existing.baseDaysPerWeek ?? 5,
       };
-      
-      const data = insertUserPreferencesSchema.parse(merged);
-      const preferences = await storage.upsertUserPreferences(data);
-      res.json(preferences);
+      const accountData = insertUserPreferencesSchema.parse(accountMerged);
+      const preferences = await storage.upsertUserPreferences(accountData);
+
+      // Per-track plan fields: write to the target track (body.examTrack, else
+      // the newly-set preferred track, else the existing preferred track)
+      const targetTrack = bodyTrack ?? requestedExamTrack ?? existing.preferredExamTrack ?? 'fs';
+      const hasPlanFieldUpdates = ['examDate', 'studyMode', 'customWeeklyDomains', 'customTimeline', 'weeklyHoursGoal', 'baseDaysPerWeek']
+        .some((key) => req.body[key] !== undefined);
+      let trackRow = await storage.getExamTrackSettings(userId, targetTrack);
+      if (hasPlanFieldUpdates) {
+        const base = trackRow ?? { ...CLEAN_TRACK_DEFAULTS };
+        const planMerged = {
+          userId,
+          examTrack: targetTrack,
+          examDate: req.body.examDate !== undefined ? req.body.examDate : base.examDate,
+          studyMode: req.body.studyMode ?? base.studyMode ?? 'standard',
+          customWeeklyDomains: req.body.customWeeklyDomains !== undefined ? req.body.customWeeklyDomains : base.customWeeklyDomains,
+          customTimeline: req.body.customTimeline ?? base.customTimeline ?? 12,
+          weeklyHoursGoal: req.body.weeklyHoursGoal !== undefined ? req.body.weeklyHoursGoal : base.weeklyHoursGoal,
+          baseDaysPerWeek: Math.min(7, Math.max(3, Number(req.body.baseDaysPerWeek ?? base.baseDaysPerWeek ?? 5))) || 5,
+        };
+        const planData = insertExamTrackSettingsSchema.parse(planMerged);
+        trackRow = await storage.upsertExamTrackSettings(planData);
+      }
+
+      const planFields = trackRow ? pickTrackPlanFields(trackRow) : CLEAN_TRACK_DEFAULTS;
+      res.json({ ...preferences, ...planFields, examTrack: targetTrack });
     } catch (error) {
       console.error("Error updating user preferences:", error);
       res.status(400).json({ error: "Invalid preferences data" });

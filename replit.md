@@ -46,6 +46,7 @@ The application features a responsive UI/UX with domain-specific color coding an
 -   Flashcard Challenge Mode for term-matching, tracking accuracy and proficiency.
 -   PS Exam Track Content Scoping to ensure relevant content is displayed.
 -   Exam Track Data Isolation for all progress data (`weekProgress`, `quizSessions`, etc.) via an `examTrack` column.
+-   Per-Track Plan Settings: exam date, study mode, custom plan, weekly hours, and study days are stored per exam track in `exam_track_settings` (account-wide settings remain on `user_preferences`; legacy plan columns are frozen and lazily migrated to the preferred track).
 -   Retention Booster User Ownership for data security.
 -   Timezone-Aware Quest System for accurate daily quest resets based on user's local time.
 -   Comprehensive Domain Mastery calculation aggregating 8 data sources per domain.

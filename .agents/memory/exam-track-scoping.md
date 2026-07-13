@@ -34,6 +34,11 @@ The app supports multiple exam tracks (`'fs' | 'ps' | 'tx'`). Adding a track tou
 **Why:** upserting mastery by `(userId, flashcardId)` alone collides FS/PS rows and overwrites the wrong card's mastery.
 **How to apply:** resolve existing mastery rows via `getFlashcardMastery(userId, flashcardId, examTrack)` and always persist `examTrack`. TX/FS share the FS quiz domain set (no `TX_DOMAINS`), so `tx` resolving to `FS_DOMAINS` for quiz-result filtering is intentional, not leakage.
 
+## Plan settings live per track in exam_track_settings
+Plan fields (examDate, studyMode, customWeeklyDomains, customTimeline, weeklyHoursGoal, baseDaysPerWeek) live in `exam_track_settings` keyed `(userId, examTrack)`; account-wide fields (timezone, preferredExamTrack, stateCode, reminders, onboarding flags, currentCycle) stay on `user_preferences`, whose legacy plan columns are FROZEN (kept only as the one-time migration source — do not read or write them for plan logic).
+**Why:** a single shared examDate/studyMode leaked FS settings into PS/TX views.
+**How to apply:** read merged prefs via `GET /api/preferences/:track` (client queryKey `['/api/preferences', examTrack]`); PATCH/PUT plan fields must include `examTrack` in the body or they land on the preferred track. Server-side plan logic must read `storage.getExamTrackSettings(userId, examTrack)` (legacy prefs only as fallback). Migration is lazy: first preferences read/write seeds legacy plan columns into the preferred track when the user has zero track rows.
+
 ## /api/progress/analytics is NOT exam-track scoped
 `getPersonalAnalytics(userId)` (storage.ts) takes no examTrack and loads ALL of a user's quiz/exam data across tracks; the route `/api/progress/analytics` passes no track. `PersonalAnalyticsDashboard` consumes it unscoped (pre-existing).
 **How to apply:** For any per-track Progress visualization, derive from already-track-scoped endpoints (`/api/quiz/sessions?examTrack=`, `/api/exams?examTrack=`) — e.g. the study-activity heatmap builds its day×hour matrix client-side from those props — instead of `/api/progress/analytics`, or FS data leaks into the PS view.

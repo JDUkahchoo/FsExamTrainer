@@ -114,7 +114,7 @@ export default function ProgressPage() {
   });
 
   const { data: preferences } = useQuery<UserPreferences>({
-    queryKey: ['/api/preferences'],
+    queryKey: ['/api/preferences', examTrack],
     refetchOnMount: 'always'
   });
 
@@ -208,7 +208,7 @@ export default function ProgressPage() {
 
   const updateExamDateMutation = useMutation({
     mutationFn: (examDate: string | null) => 
-      apiRequest('PUT', '/api/preferences', { examDate }),
+      apiRequest('PUT', '/api/preferences', { examDate, examTrack }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
       toast({

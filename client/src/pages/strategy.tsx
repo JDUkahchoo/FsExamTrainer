@@ -11,7 +11,7 @@ export default function Strategy() {
   const [, setLocation] = useLocation();
   const { examTrack } = useExamTrack();
   const { data: preferences } = useQuery<UserPreferences>({
-    queryKey: ['/api/preferences'],
+    queryKey: ['/api/preferences', examTrack],
   });
 
   const strategies = [

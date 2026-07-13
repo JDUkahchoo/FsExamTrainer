@@ -1094,6 +1094,46 @@ export const insertUserPreferencesSchema = createInsertSchema(userPreferences).o
 export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
 export type UserPreferences = typeof userPreferences.$inferSelect;
 
+// --- Per-Track Exam Settings ---
+// Each exam track (fs/ps/tx) is an independent entity with its own exam date
+// and plan configuration. Account-wide settings (timezone, preferred track,
+// state code, reminders) stay on user_preferences.
+
+export const examTrackSettings = pgTable("exam_track_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  examTrack: text("exam_track").notNull(), // 'fs' | 'ps' | 'tx'
+  examDate: timestamp("exam_date"),
+  studyMode: text("study_mode").notNull().default('standard'), // 'standard' | 'result-driven' | 'working-professional' | 'custom' | 'long-term'
+  customWeeklyDomains: jsonb("custom_weekly_domains"),
+  customTimeline: integer("custom_timeline").default(12),
+  weeklyHoursGoal: integer("weekly_hours_goal"),
+  baseDaysPerWeek: integer("base_days_per_week").notNull().default(5),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  userTrackIdx: uniqueIndex("exam_track_settings_user_track_unique").on(table.userId, table.examTrack),
+}));
+
+export const insertExamTrackSettingsSchema = createInsertSchema(examTrackSettings).omit({
+  id: true,
+  updatedAt: true,
+}).extend({
+  examTrack: z.enum(["fs", "ps", "tx"]),
+  examDate: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return null;
+      if (typeof val === 'string' && val.trim() === '') return null;
+      if (val instanceof Date) return val;
+      if (typeof val === 'string') return new Date(val);
+      return val;
+    },
+    z.date().nullable()
+  ).optional(),
+});
+
+export type InsertExamTrackSettings = z.infer<typeof insertExamTrackSettingsSchema>;
+export type ExamTrackSettings = typeof examTrackSettings.$inferSelect;
+
 // --- Daily Logs ---
 
 export const dailyLogs = pgTable("daily_logs", {
