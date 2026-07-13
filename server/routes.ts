@@ -1814,9 +1814,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const quizResults = allQuizResults.filter(r => trackDomains.includes(r.domain));
 
       // Determine total weeks based on the track's own study mode (same logic as /api/progress/overall)
-      const trackSettings = await storage.getExamTrackSettings(userId, examTrack);
-      const studyMode = trackSettings?.studyMode ?? prefs?.studyMode;
-      const customTimeline = trackSettings?.customTimeline ?? prefs?.customTimeline;
+      const { studyMode, customTimeline } = await resolveTrackPlan(userId, prefs, examTrack);
       let coreWeekCount = examTrack === 'ps' ? 12 : 16;
       if (studyMode === 'long-term' && examTrack === 'fs') {
         coreWeekCount = 96;
@@ -1987,9 +1985,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const examTrack = getValidExamTrack(req.query.examTrack, prefs?.preferredExamTrack);
       
       // Use the track's own study mode for plan length
-      const trackSettings = await storage.getExamTrackSettings(userId, examTrack);
-      const studyMode = trackSettings?.studyMode ?? prefs?.studyMode;
-      const customTimeline = trackSettings?.customTimeline ?? prefs?.customTimeline;
+      const { studyMode, customTimeline } = await resolveTrackPlan(userId, prefs, examTrack);
       let coreWeekCount = examTrack === 'ps' ? 12 : 16;
       if (studyMode === 'long-term' && examTrack === 'fs') {
         coreWeekCount = 96;
@@ -2167,6 +2163,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       baseDaysPerWeek: prefs.baseDaysPerWeek ?? 5,
     });
     return [seeded];
+  };
+
+  // Resolve a track's plan settings for server-side plan sizing. Runs the lazy
+  // legacy migration (so a legacy user's preferred track keeps its settings)
+  // and returns clean defaults for tracks that have no row — never the legacy
+  // shared columns, which would leak one track's plan into another.
+  const resolveTrackPlan = async (userId: string, prefs: any, examTrack: string) => {
+    const trackRows = prefs
+      ? await ensureLegacySettingsMigrated(userId, prefs)
+      : await storage.getAllExamTrackSettings(userId);
+    const row = trackRows.find((r) => r.examTrack === examTrack);
+    return row ? pickTrackPlanFields(row) : { ...CLEAN_TRACK_DEFAULTS };
   };
 
   const getMergedPreferences = async (userId: string, requestedTrack?: string) => {
