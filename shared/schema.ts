@@ -1012,6 +1012,7 @@ export type CustomWeek = typeof customWeeks.$inferSelect;
 export const pretestResults = pgTable("pretest_results", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  examTrack: text("exam_track").notNull().default('fs'), // 'fs' | 'ps' | 'tx' — legacy rows were all FS
   domainScores: jsonb("domain_scores").notNull(), // { domain: { correct: number, total: number } }
   totalCorrect: integer("total_correct").notNull(),
   totalQuestions: integer("total_questions").notNull(),
@@ -1109,6 +1110,8 @@ export const examTrackSettings = pgTable("exam_track_settings", {
   customTimeline: integer("custom_timeline").default(12),
   weeklyHoursGoal: integer("weekly_hours_goal"),
   baseDaysPerWeek: integer("base_days_per_week").notNull().default(5),
+  examPassed: boolean("exam_passed").notNull().default(false), // self-reported "I passed this exam"
+  examPassedAt: timestamp("exam_passed_at"), // when the user marked it passed
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (table) => ({
   userTrackIdx: uniqueIndex("exam_track_settings_user_track_unique").on(table.userId, table.examTrack),
@@ -1120,6 +1123,16 @@ export const insertExamTrackSettingsSchema = createInsertSchema(examTrackSetting
 }).extend({
   examTrack: z.enum(["fs", "ps", "tx"]),
   examDate: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return null;
+      if (typeof val === 'string' && val.trim() === '') return null;
+      if (val instanceof Date) return val;
+      if (typeof val === 'string') return new Date(val);
+      return val;
+    },
+    z.date().nullable()
+  ).optional(),
+  examPassedAt: z.preprocess(
     (val) => {
       if (val === null || val === undefined) return null;
       if (typeof val === 'string' && val.trim() === '') return null;

@@ -2052,7 +2052,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/pretest/latest", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const result = await storage.getLatestPretestResult(userId);
+      const rawTrack = req.query.examTrack;
+      const examTrack = rawTrack === 'fs' || rawTrack === 'ps' || rawTrack === 'tx' ? rawTrack : undefined;
+      const result = await storage.getLatestPretestResult(userId, examTrack);
       res.json(result || null);
     } catch (error) {
       console.error("Error fetching pretest result:", error);
@@ -2134,15 +2136,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     customTimeline: 12 as number | null,
     weeklyHoursGoal: null as number | null,
     baseDaysPerWeek: 5,
+    examPassed: false,
+    examPassedAt: null as Date | null,
   };
 
-  const pickTrackPlanFields = (row: { examDate: Date | null; studyMode: string; customWeeklyDomains: unknown; customTimeline: number | null; weeklyHoursGoal: number | null; baseDaysPerWeek: number }) => ({
+  const pickTrackPlanFields = (row: { examDate: Date | null; studyMode: string; customWeeklyDomains: unknown; customTimeline: number | null; weeklyHoursGoal: number | null; baseDaysPerWeek: number; examPassed?: boolean; examPassedAt?: Date | null }) => ({
     examDate: row.examDate,
     studyMode: row.studyMode,
     customWeeklyDomains: row.customWeeklyDomains,
     customTimeline: row.customTimeline,
     weeklyHoursGoal: row.weeklyHoursGoal,
     baseDaysPerWeek: row.baseDaysPerWeek,
+    examPassed: row.examPassed ?? false,
+    examPassedAt: row.examPassedAt ?? null,
   });
 
   // One-time lazy migration: if the user has no per-track rows yet, copy their
@@ -2272,11 +2278,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Per-track plan fields: write to the target track (body.examTrack, else
       // the newly-set preferred track, else the existing preferred track)
       const targetTrack = bodyTrack ?? requestedExamTrack ?? existing.preferredExamTrack ?? 'fs';
-      const hasPlanFieldUpdates = ['examDate', 'studyMode', 'customWeeklyDomains', 'customTimeline', 'weeklyHoursGoal', 'baseDaysPerWeek']
+      const hasPlanFieldUpdates = ['examDate', 'studyMode', 'customWeeklyDomains', 'customTimeline', 'weeklyHoursGoal', 'baseDaysPerWeek', 'examPassed']
         .some((key) => req.body[key] !== undefined);
       let trackRow = await storage.getExamTrackSettings(userId, targetTrack);
       if (hasPlanFieldUpdates) {
         const base = trackRow ?? { ...CLEAN_TRACK_DEFAULTS };
+        // Passed status: examPassedAt is always derived server-side — set when
+        // the user marks the exam passed, cleared when they undo it.
+        const nextExamPassed = req.body.examPassed !== undefined ? Boolean(req.body.examPassed) : (base.examPassed ?? false);
+        const nextExamPassedAt = nextExamPassed
+          ? ((base.examPassed ? base.examPassedAt : null) ?? new Date())
+          : null;
         const planMerged = {
           userId,
           examTrack: targetTrack,
@@ -2286,6 +2298,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           customTimeline: req.body.customTimeline ?? base.customTimeline ?? 12,
           weeklyHoursGoal: req.body.weeklyHoursGoal !== undefined ? req.body.weeklyHoursGoal : base.weeklyHoursGoal,
           baseDaysPerWeek: Math.min(7, Math.max(3, Number(req.body.baseDaysPerWeek ?? base.baseDaysPerWeek ?? 5))) || 5,
+          examPassed: nextExamPassed,
+          examPassedAt: nextExamPassedAt,
         };
         const planData = insertExamTrackSettingsSchema.parse(planMerged);
         trackRow = await storage.upsertExamTrackSettings(planData);
@@ -2301,6 +2315,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/preferences", isAuthenticated, updatePreferences);
   app.patch("/api/preferences", isAuthenticated, updatePreferences);
+
+  // Exam journey: passed status for every track (FS → PS → TX career path).
+  app.get("/api/exam-journey", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const rows = await storage.getAllExamTrackSettings(userId);
+      const journey: Record<string, { passed: boolean; passedAt: Date | null }> = {
+        fs: { passed: false, passedAt: null },
+        ps: { passed: false, passedAt: null },
+        tx: { passed: false, passedAt: null },
+      };
+      for (const row of rows) {
+        if (journey[row.examTrack]) {
+          journey[row.examTrack] = { passed: row.examPassed ?? false, passedAt: row.examPassedAt ?? null };
+        }
+      }
+      res.json(journey);
+    } catch (error) {
+      console.error("Error fetching exam journey:", error);
+      res.status(500).json({ error: "Failed to fetch exam journey" });
+    }
+  });
 
   // Daily Log routes
   app.get("/api/daily-logs", isAuthenticated, async (req: any, res) => {

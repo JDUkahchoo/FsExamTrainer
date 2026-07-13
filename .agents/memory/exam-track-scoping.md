@@ -39,6 +39,14 @@ Plan fields (examDate, studyMode, customWeeklyDomains, customTimeline, weeklyHou
 **Why:** a single shared examDate/studyMode leaked FS settings into PS/TX views.
 **How to apply:** read merged prefs via `GET /api/preferences/:track` (client queryKey `['/api/preferences', examTrack]`); PATCH/PUT plan fields must include `examTrack` in the body or they land on the preferred track. Server-side plan logic must read `storage.getExamTrackSettings(userId, examTrack)` (legacy prefs only as fallback). Migration is lazy: first preferences read/write seeds legacy plan columns into the preferred track when the user has zero track rows.
 
+## Pretests are track-scoped via query param (rows default 'fs')
+`pretest_results.exam_track` defaults `'fs'` (all legacy rows were FS). `GET /api/pretest/latest?examTrack=` filters when given a valid track; without the param it returns the newest pretest across ALL tracks.
+**Why:** the unscoped query let an old FS pretest masquerade as a PS pretest, blocking the FS→PS carryover steering and mis-adapting PS plans.
+**How to apply:** every client consumer must fetch with `?examTrack=` and key the query `['/api/pretest/latest', examTrack]`; pretest submissions must include `examTrack` in the POST body.
+
+## FS→PS carryover only fires when no PS pretest exists
+`shared/lib/fsCarryover.ts` maps FS domain mastery (`/api/progress/domain-mastery?examTrack=fs`) into pseudo pretest scores for the PS plan generator. A real PS pretest always wins; carryover also requires actual FS activity (`hasFsHistory`). Passed-exam state lives on `exam_track_settings.examPassed/examPassedAt` (PATCH /api/preferences derives the timestamp server-side); `GET /api/exam-journey` exposes {fs,ps,tx} passed status for journey UI.
+
 ## /api/progress/analytics is NOT exam-track scoped
 `getPersonalAnalytics(userId)` (storage.ts) takes no examTrack and loads ALL of a user's quiz/exam data across tracks; the route `/api/progress/analytics` passes no track. `PersonalAnalyticsDashboard` consumes it unscoped (pre-existing).
 **How to apply:** For any per-track Progress visualization, derive from already-track-scoped endpoints (`/api/quiz/sessions?examTrack=`, `/api/exams?examTrack=`) — e.g. the study-activity heatmap builds its day×hour matrix client-side from those props — instead of `/api/progress/analytics`, or FS data leaks into the PS view.

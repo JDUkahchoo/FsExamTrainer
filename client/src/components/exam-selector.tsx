@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle2, Lock, GraduationCap, FileText, MapPin, ArrowRight } from "lucide-react";
+import { CheckCircle2, Lock, GraduationCap, FileText, MapPin, ArrowRight, Trophy } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { EXAM_TRACKS, US_STATES, type ExamTrack, type UserPreferences } from "@shared/schema";
@@ -17,6 +17,17 @@ export function ExamSelector() {
   const { data: preferences } = useQuery<UserPreferences>({
     queryKey: ['/api/preferences'],
   });
+
+  const { data: journey } = useQuery<Record<'fs' | 'ps' | 'tx', { passed: boolean; passedAt: string | null }>>({
+    queryKey: ['/api/exam-journey'],
+  });
+
+  // Journey states: each track is passed, active (the next unpassed step), or upcoming.
+  const journeyOrder: ExamTrack[] = ['fs', 'ps', 'tx'];
+  const activeStep = journeyOrder.find(t => !journey?.[t]?.passed) ?? null;
+  const journeyState = (t: ExamTrack): 'passed' | 'active' | 'upcoming' =>
+    journey?.[t]?.passed ? 'passed' : t === activeStep ? 'active' : 'upcoming';
+  const anyPassed = journeyOrder.some(t => journey?.[t]?.passed);
 
   const updatePreferences = useMutation({
     mutationFn: async (data: { preferredExamTrack?: ExamTrack; stateCode?: string }) => {
@@ -115,11 +126,61 @@ export function ExamSelector() {
         <p className="text-sm text-muted-foreground">Select the exam you're preparing for, then enter your personalized study dashboard</p>
       </div>
 
+      {/* Journey path: FS → PS → TX with passed / active / upcoming states */}
+      <div className="rounded-lg border bg-muted/30 p-4" data-testid="journey-path">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Your Path to Licensure</p>
+        <div className="flex items-center gap-2">
+          {journeyOrder.map((t, i) => {
+            const state = journeyState(t);
+            const track = EXAM_TRACKS.find(tr => tr.id === t);
+            return (
+              <div key={t} className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="flex items-center gap-2 min-w-0" data-testid={`journey-step-${t}`}>
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 ${
+                    state === 'passed'
+                      ? 'border-green-500 bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400'
+                      : state === 'active'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-muted-foreground/30 text-muted-foreground'
+                  }`}>
+                    {state === 'passed' ? (
+                      <Trophy className="h-4 w-4" />
+                    ) : (
+                      <span className="text-xs font-bold">{i + 1}</span>
+                    )}
+                  </div>
+                  <div className="min-w-0 hidden sm:block">
+                    <p className={`text-sm font-medium truncate ${state === 'upcoming' ? 'text-muted-foreground' : ''}`}>
+                      {t === 'tx' ? 'State Exam' : track?.name || t.toUpperCase()}
+                    </p>
+                    <p className={`text-xs truncate ${
+                      state === 'passed' ? 'text-green-600 dark:text-green-400' : state === 'active' ? 'text-primary' : 'text-muted-foreground'
+                    }`} data-testid={`journey-status-${t}`}>
+                      {state === 'passed' ? 'Passed' : state === 'active' ? 'Your next step' : 'Upcoming'}
+                    </p>
+                  </div>
+                </div>
+                {i < journeyOrder.length - 1 && (
+                  <div className={`h-0.5 flex-1 rounded ${journeyState(journeyOrder[i]) === 'passed' ? 'bg-green-500' : 'bg-muted-foreground/20'}`} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {journey?.fs?.passed && !journey?.ps?.passed && (
+          <p className="text-xs text-muted-foreground mt-3" data-testid="text-journey-hint">
+            You passed the FS exam — the PS track is your recommended next step. Your FS results will help shape your PS study plan.
+          </p>
+        )}
+      </div>
+
       <div className="grid gap-4 md:grid-cols-3">
         {EXAM_TRACKS.map((track) => {
           const Icon = getExamIcon(track.id);
           const isSelected = currentExam === track.id;
           const isAvailable = track.status === 'ready';
+          const state = journeyState(track.id);
+          const isRecommendedNext = anyPassed && state === 'active';
 
           return (
             <Card
@@ -130,18 +191,31 @@ export function ExamSelector() {
                 isSelected && isAvailable
                   ? 'ring-2 ring-primary border-primary'
                   : ''
-              } ${!isAvailable ? 'opacity-60' : ''}`}
+              } ${state === 'passed' ? 'border-green-400 dark:border-green-700' : ''} ${!isAvailable ? 'opacity-60' : ''}`}
               onClick={isAvailable ? () => handleExamSelect(track.id) : undefined}
               data-testid={`exam-card-${track.id}`}
             >
-              <div className="absolute top-3 right-3">
+              <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                {state === 'passed' && (
+                  <Badge className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-green-300 dark:border-green-700" data-testid={`badge-passed-${track.id}`}>
+                    <Trophy className="h-3 w-3 mr-1" />
+                    Passed
+                  </Badge>
+                )}
+                {isRecommendedNext && (
+                  <Badge className="text-xs" data-testid={`badge-next-step-${track.id}`}>
+                    Next Step
+                  </Badge>
+                )}
                 {isAvailable ? (
                   isSelected ? (
                     <CheckCircle2 className="h-5 w-5 text-primary" />
                   ) : (
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                      Ready
-                    </Badge>
+                    state !== 'passed' && !isRecommendedNext && (
+                      <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                        Ready
+                      </Badge>
+                    )
                   )
                 ) : (
                   <Badge variant="outline" className="text-xs">

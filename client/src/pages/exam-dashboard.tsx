@@ -133,10 +133,46 @@ export default function ExamDashboard() {
     }
   });
 
+  const { data: examJourney } = useQuery<Record<'fs' | 'ps' | 'tx', { passed: boolean; passedAt: string | null }>>({
+    queryKey: ['/api/exam-journey'],
+  });
+
   const completedLessons = lessonsProgress?.completed || 0;
   const progressPercent = lessonCount > 0 ? Math.round((completedLessons / lessonCount) * 100) : 0;
 
   const nextStep = (() => {
+    // Passed-exam guidance overrides everything: steer toward the next exam
+    // in the FS → PS → TX journey.
+    if (examJourney?.[examTrack]?.passed) {
+      if (examTrack === 'fs') {
+        return {
+          label: 'You passed the FS exam — you\'re ready for the next step',
+          description: 'Your PS journey starts now. We\'ll use your FS results to focus your PS plan on the areas that need it most.',
+          href: '/app/ps/dashboard',
+          cta: 'Start PS Track',
+          icon: Trophy,
+          color: 'border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/40',
+        };
+      }
+      if (examTrack === 'ps') {
+        return {
+          label: 'You passed the PS exam — one step left',
+          description: 'If Texas is your licensure state, the state-specific exam is the final milestone on your path to PLS.',
+          href: '/app/tx/dashboard',
+          cta: 'Start Texas Track',
+          icon: Trophy,
+          color: 'border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/40',
+        };
+      }
+      return {
+        label: 'You\'ve completed the full journey',
+        description: 'FS, PS, and the Texas exam — all behind you. Congratulations, future PLS! Keep your knowledge sharp anytime.',
+        href: `/app/${examTrack}/flashcards`,
+        cta: 'Review Anytime',
+        icon: Trophy,
+        color: 'border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/40',
+      };
+    }
     const pretestDone = pretestResult && (pretestResult as any)?.id;
     if (!pretestDone) {
       return {

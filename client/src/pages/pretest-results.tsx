@@ -16,9 +16,14 @@ export default function PretestResultsPage() {
   const [, setLocation] = useLocation();
   const { examTrack } = useExamTrack();
 
-  // Fetch latest pretest result
+  // Fetch latest pretest result for the active exam track
   const { data: pretestResult, isLoading, isError, error } = useQuery<PretestResult>({
-    queryKey: ['/api/pretest/latest'],
+    queryKey: ['/api/pretest/latest', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/pretest/latest?examTrack=${examTrack}`);
+      if (!res.ok) throw new Error('Failed to load pretest results');
+      return res.json();
+    },
   });
 
   // Mutation to update user preferences (study mode)

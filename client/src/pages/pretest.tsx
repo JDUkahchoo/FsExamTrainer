@@ -58,7 +58,7 @@ export default function PretestPage() {
         explanation: string;
       }>;
     }) =>
-      apiRequest('POST', '/api/pretest/results', data),
+      apiRequest('POST', '/api/pretest/results', { ...data, examTrack }),
     onSuccess: () => {
       // Navigate to results page
       setLocation(`/app/${examTrack}/pretest/results`);

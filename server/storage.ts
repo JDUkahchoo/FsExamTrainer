@@ -402,7 +402,7 @@ export interface IStorage {
   deleteExamDraft(userId: string, examTrack?: string): Promise<void>;
 
   // Pretest methods
-  getLatestPretestResult(userId: string): Promise<PretestResult | undefined>;
+  getLatestPretestResult(userId: string, examTrack?: string): Promise<PretestResult | undefined>;
   getPretestWithResults(pretestId: string): Promise<{ pretest: PretestResult; results: PretestQuestionResult[] } | undefined>;
   savePretestResult(result: InsertPretestResult): Promise<PretestResult>;
   createPretestQuestionResult(result: InsertPretestQuestionResult): Promise<PretestQuestionResult>;
@@ -1638,11 +1638,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Pretest methods
-  async getLatestPretestResult(userId: string): Promise<PretestResult | undefined> {
+  async getLatestPretestResult(userId: string, examTrack?: string): Promise<PretestResult | undefined> {
     const [result] = await db
       .select()
       .from(pretestResults)
-      .where(eq(pretestResults.userId, userId))
+      .where(
+        examTrack
+          ? and(eq(pretestResults.userId, userId), eq(pretestResults.examTrack, examTrack))
+          : eq(pretestResults.userId, userId)
+      )
       .orderBy(desc(pretestResults.completedAt))
       .limit(1);
     return result || undefined;

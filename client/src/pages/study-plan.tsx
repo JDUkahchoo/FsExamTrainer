@@ -51,6 +51,7 @@ import { parseTimeToMinutes, formatMinutes } from '@/lib/time-utils';
 import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog, ReadingProgress, ApplyChallengeAttempt, FlashcardReviewSession, QuizSession } from '@shared/schema';
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
+import { computeFsCarryoverScores, hasFsHistory, type FsDomainMasteryLike } from '@shared/lib/fsCarryover';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
 import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
@@ -124,9 +125,14 @@ export default function StudyPlan() {
     queryKey: ['/api/preferences', examTrack],
   });
 
-  // Fetch latest pretest results
-  const { data: pretestResult } = useQuery<PretestResult>({
-    queryKey: ['/api/pretest/latest'],
+  // Fetch latest pretest results for the active exam track only
+  const { data: pretestResult } = useQuery<PretestResult | null>({
+    queryKey: ['/api/pretest/latest', examTrack],
+    queryFn: async () => {
+      const res = await fetch(`/api/pretest/latest?examTrack=${examTrack}`);
+      if (!res.ok) return null;
+      return res.json();
+    },
     enabled: preferences?.hasCompletedPretest === true,
   });
 
@@ -306,6 +312,26 @@ export default function StudyPlan() {
       };
     });
   }, [pretestResult]);
+
+  // FS → PS carry-over: when studying for PS with no PS pretest, use FS domain
+  // mastery as pseudo pretest scores so the plan prioritizes weak FS foundations.
+  const { data: fsMastery } = useQuery<FsDomainMasteryLike[]>({
+    queryKey: ['/api/progress/domain-mastery', 'fs'],
+    queryFn: async () => {
+      const res = await fetch('/api/progress/domain-mastery?examTrack=fs');
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: examTrack === 'ps',
+  });
+
+  const fsCarryoverScores = useMemo(() => {
+    if (examTrack !== 'ps') return null;
+    if (domainScores.length > 0) return null; // a real PS pretest always wins
+    if (!fsMastery || !hasFsHistory(fsMastery)) return null;
+    const scores = computeFsCarryoverScores(fsMastery);
+    return Object.keys(scores).length > 0 ? scores : null;
+  }, [examTrack, domainScores, fsMastery]);
 
   // Memoize custom plan builder props to prevent unnecessary re-renders
   // Use a stable empty object reference to avoid triggering useEffect in CustomPlanBuilder
@@ -953,6 +979,9 @@ export default function StudyPlan() {
 
     const pretestScoresMap: Record<number, number> = {};
     domainScores.forEach(ds => { pretestScoresMap[ds.domainNumber] = ds.percentage; });
+    if (fsCarryoverScores && Object.keys(pretestScoresMap).length === 0) {
+      Object.assign(pretestScoresMap, fsCarryoverScores);
+    }
 
     if (studyMode === 'long-term') {
       const { plan, meta } = generateLongTermPlan({
@@ -1000,7 +1029,7 @@ export default function StudyPlan() {
     });
     baseWeeks = fixedPlan;
     return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
-  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, preferences?.examDate, preferences?.weeklyHoursGoal, customWeeks, examTrack, baseStudyPlan, domainScores]);
+  }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, preferences?.examDate, preferences?.weeklyHoursGoal, customWeeks, examTrack, baseStudyPlan, domainScores, fsCarryoverScores]);
 
   // Auto-record week completions when they hit 100% for the first time
   // NOTE: placed here — after allWeeks, memoryHealthMap, weekCompleteMutation are all declared
@@ -1076,6 +1105,12 @@ export default function StudyPlan() {
               <Badge variant="outline" className="border-blue-300 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20">
                 <Brain className="w-3 h-3 mr-1" />
                 Adapted from your pretest
+              </Badge>
+            )}
+            {preferences?.studyMode !== 'custom' && domainScores.length === 0 && fsCarryoverScores && (
+              <Badge variant="outline" className="border-teal-300 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20" data-testid="badge-fs-carryover">
+                <Brain className="w-3 h-3 mr-1" />
+                Adapted from your FS results
               </Badge>
             )}
             {adaptiveMeta.examDate && (() => {

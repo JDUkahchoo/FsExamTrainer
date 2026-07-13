@@ -18,7 +18,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Settings, Palette, User, Bell, HelpCircle, Trash2, ExternalLink, Loader2, Sun, Moon, Monitor, Star, MessageSquare } from 'lucide-react';
+import { Settings, Palette, User, Bell, HelpCircle, Trash2, ExternalLink, Loader2, Sun, Moon, Monitor, Star, MessageSquare, Trophy, ArrowRight, PartyPopper } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -198,12 +199,30 @@ export default function SettingsPage() {
     return 'medium';
   });
 
-  const { data: preferences } = useQuery<UserPreferences>({
+  const { data: preferences } = useQuery<UserPreferences & { examPassed?: boolean; examPassedAt?: string | null }>({
     queryKey: ['/api/preferences', examTrack],
   });
 
   const { data: user } = useQuery<{ id: string; email?: string; firstName?: string; lastName?: string; profileImageUrl?: string }>({
     queryKey: ['/api/auth/user'],
+  });
+
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  const markPassedMutation = useMutation({
+    mutationFn: (passed: boolean) => apiRequest('PATCH', '/api/preferences', { examPassed: passed, examTrack }),
+    onSuccess: (_data, passed) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/preferences'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/exam-journey'] });
+      if (passed) {
+        setShowCelebration(true);
+      } else {
+        toast({ title: "Exam status updated", description: `The ${examName} is no longer marked as passed.` });
+      }
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update exam status.", variant: "destructive" });
+    },
   });
 
   const updatePreferencesMutation = useMutation({
@@ -305,6 +324,63 @@ export default function SettingsPage() {
         </TabsList>
 
         <TabsContent value="general" className="space-y-4">
+          <Card data-testid="card-exam-milestone">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-yellow-500" />
+                Exam Milestone
+              </CardTitle>
+              <CardDescription>Tell us when you pass the {examName} so we can guide your next step</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {preferences?.examPassed ? (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-950/40 p-4">
+                  <div className="flex items-center gap-3">
+                    <Trophy className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    <div>
+                      <p className="font-semibold text-green-800 dark:text-green-300" data-testid="text-exam-passed">
+                        You passed the {examName}!
+                      </p>
+                      {preferences.examPassedAt && (
+                        <p className="text-xs text-green-700 dark:text-green-400">
+                          Marked passed on {new Date(preferences.examPassedAt).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => markPassedMutation.mutate(false)}
+                    disabled={markPassedMutation.isPending}
+                    data-testid="button-clear-passed"
+                  >
+                    Undo
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    Already took and passed this exam? Mark it here to unlock your next step.
+                  </p>
+                  <Button
+                    onClick={() => markPassedMutation.mutate(true)}
+                    disabled={markPassedMutation.isPending}
+                    className="gap-2"
+                    data-testid="button-mark-passed"
+                  >
+                    {markPassedMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trophy className="h-4 w-4" />
+                    )}
+                    I passed my {examName}!
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Study Preferences</CardTitle>
@@ -614,6 +690,49 @@ export default function SettingsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={showCelebration} onOpenChange={setShowCelebration}>
+        <DialogContent data-testid="dialog-exam-celebration">
+          <DialogHeader>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900/40 mb-2">
+              <PartyPopper className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
+            </div>
+            <DialogTitle className="text-center text-2xl" data-testid="text-celebration-title">
+              Congratulations!
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              {examTrack === 'fs' ? (
+                <>You passed the FS exam — a huge milestone on your path to becoming a licensed surveyor. Your next step is the PS exam, and we'll use everything you learned here to give you a head start.</>
+              ) : examTrack === 'ps' ? (
+                <>You passed the PS exam — incredible work. If Texas is your licensure state, the state-specific exam is your final step.</>
+              ) : (
+                <>You passed the Texas state-specific exam — you've completed the full journey. Congratulations, future PLS!</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center gap-2">
+            <Button variant="outline" onClick={() => setShowCelebration(false)} data-testid="button-celebration-close">
+              Close
+            </Button>
+            {examTrack === 'fs' && (
+              <Link href="/app/ps/dashboard">
+                <Button className="gap-2" onClick={() => setShowCelebration(false)} data-testid="button-celebration-next-step">
+                  Start your PS journey
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
+            {examTrack === 'ps' && (
+              <Link href="/app/tx/dashboard">
+                <Button className="gap-2" onClick={() => setShowCelebration(false)} data-testid="button-celebration-next-step">
+                  Continue to the Texas exam
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
