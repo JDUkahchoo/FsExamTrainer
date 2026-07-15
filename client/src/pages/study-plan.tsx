@@ -58,6 +58,7 @@ import { ReadCheckpoint } from '@/components/read-checkpoint';
 import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
 import { ApplyScenarioLab } from '@/components/apply-scenario-lab';
 import { ReinforceRetentionBooster } from '@/components/reinforce-retention-booster';
+import { RetentionReviewDialog } from '@/components/retention-review-dialog';
 import { FlashcardWeekPreview } from '@/components/flashcard-week-preview';
 import { WeekStudyTip } from '@/components/week-study-tip';
 import { 
@@ -92,6 +93,7 @@ export default function StudyPlan() {
   const [newDomain, setNewDomain] = useState<Domain | ''>('');
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[]; domainKey?: string } | null>(null);
+  const [globalReviewOpen, setGlobalReviewOpen] = useState(false);
   const [expandedLessonId, setExpandedLessonId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
@@ -1194,6 +1196,11 @@ export default function StudyPlan() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
+      <RetentionReviewDialog
+        examTrack={examTrack}
+        open={globalReviewOpen}
+        onClose={() => setGlobalReviewOpen(false)}
+      />
       <div className="mb-8 flex items-start justify-between gap-4">
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="heading-study-plan">
@@ -1411,6 +1418,14 @@ export default function StudyPlan() {
         </div>
         
         <div className="flex flex-col gap-2">
+          <Button
+            onClick={() => setGlobalReviewOpen(true)}
+            className="gap-2 bg-purple-600 hover:bg-purple-700 text-white"
+            data-testid="button-open-global-review"
+          >
+            <Brain className="h-4 w-4" />
+            Review Now
+          </Button>
           <div className="flex gap-2 flex-wrap">
             <Select value={preferences?.studyMode || 'standard'} onValueChange={(val) => {
               setStudyModeMutation.mutate(val as import('@shared/schema').StudyMode);

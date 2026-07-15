@@ -12,6 +12,7 @@ import {
   RefreshCw, Activity, ArrowRight, Sparkles
 } from 'lucide-react';
 import { WeekReviewModal } from '@/components/week-review-modal';
+import { RetentionReviewDialog } from '@/components/retention-review-dialog';
 import { useExamTrack } from '@/contexts/exam-track-context';
 import { EXAM_TRACKS } from '@shared/schema';
 import { StudyCoachBriefing } from '@/components/study-coach-briefing';
@@ -111,6 +112,7 @@ export default function ExamDashboard() {
   });
 
   const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[]; domainKey?: string | null } | null>(null);
+  const [globalReviewOpen, setGlobalReviewOpen] = useState(false);
 
   const { data: memoryHealth } = useQuery<Array<{
     weekNumber: number; domains: string[]; health: number; status: 'fresh' | 'fading' | 'stale';
@@ -571,13 +573,29 @@ export default function ExamDashboard() {
         </TabsContent>
 
         <TabsContent value="coaching" className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
             <div>
               <h2 className="text-2xl font-bold">AI Study Coaching</h2>
               <p className="text-muted-foreground">Personalized guidance, quests, and review optimization</p>
             </div>
-            <Badge variant="outline">Personalized for you</Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline">Personalized for you</Badge>
+              <Button
+                onClick={() => setGlobalReviewOpen(true)}
+                className="gap-2 bg-purple-600 hover:bg-purple-700 text-white"
+                data-testid="button-open-global-review"
+              >
+                <Brain className="h-4 w-4" />
+                Review Now
+              </Button>
+            </div>
           </div>
+
+          <RetentionReviewDialog
+            examTrack={examTrack}
+            open={globalReviewOpen}
+            onClose={() => setGlobalReviewOpen(false)}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-1">
