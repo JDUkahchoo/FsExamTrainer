@@ -175,7 +175,7 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         title: 'Area Computation Methods',
         content: 'Surveyors use several methods to compute land areas depending on the data available:\n\nCoordinate Method (Shoelace Formula): When coordinates of all polygon corners are known, this is the most direct and accurate approach. Cross-multiply coordinates taken in sequence around the polygon and take half the absolute value of the sum.\n\nDouble Meridian Distance (DMD) Method: This classic technique uses the latitudes and departures of traverse legs. Each leg\'s DMD represents twice the perpendicular distance from the midpoint of that leg to a reference meridian (typically the meridian through the most westerly point). The area contribution of each leg equals its DMD multiplied by its latitude. The DMD method is systematic and well-suited for tabular computation.\n\nTrapezoidal Rule: Used when one boundary is irregular (such as a stream or road). The irregular boundary is divided into strips of equal width, and heights are measured at regular intervals. Each strip is treated as a trapezoid. This method is approximate but practical for irregular boundaries.\n\nThe coordinate method and DMD method yield identical results when applied to the same traverse data. The trapezoidal rule is an approximation that improves as strip width decreases.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 19', topic: 'Area computations' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 18', topic: 'Area computations' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 12', topic: 'Area and volume computations' },
         ],
       },
@@ -184,7 +184,7 @@ export const STUDY_READINGS_D2: ReadingModule[] = [
         type: 'formula',
         title: 'Double Meridian Distance (DMD) Method',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 6', topic: 'Area by DMD method' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 18', topic: 'Area by DMD method' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 12', topic: 'DMD area computations' },
         ],
         formula: {

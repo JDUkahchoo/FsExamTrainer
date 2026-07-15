@@ -100,7 +100,7 @@ export const STUDY_READINGS_LEAST_SQUARES: ReadingModule[] = [
           whenToUse: 'Use relative positional precision to assess whether adjacent monument pairs meet the ALTA/NSPS accuracy standard. The 2026 ALTA/NSPS Minimum Standard Detail Requirements specify that the relative positional precision of monuments that control boundary lines must not exceed 2 cm (0.07 ft) + 50 ppm. For most urban surveys, the 2 cm constant dominates; for long rural boundaries, the distance term becomes significant.',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 35', topic: 'ALTA/NSPS positional accuracy requirements' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX, Ch 41', topic: 'ALTA/NSPS positional accuracy requirements' },
         ],
       },
       {

@@ -103,7 +103,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'Bearings are expressed as angles from 0° to 90° measured from North or South toward East or West (e.g., N 47°30\'E, S 22°15\'W). Because bearings are not measured on a continuous 0–360° scale, you cannot simply subtract one bearing from another to find the angle between two lines — the quadrant matters.\n\nThe three rules below, drawn directly from surveying practice and James Coan\'s "Math for Surveyors," cover every possible combination of bearing quadrants. Mastering them means you can instantly compute interior angles of a traverse, check angular closure, or set up the angles needed for a Law of Sines intersection problem.\n\nThe quadrants are:\n• NE (North-East): bearing is N x° E, e.g., N 47°30\'E\n• SE (South-East): bearing is S x° E, e.g., S 36°15\'E\n• SW (South-West): bearing is S x° W, e.g., S 25°45\'W\n• NW (North-West): bearing is N x° W, e.g., N 18°34\'W',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Azimuths, Angles & Bearings', topic: 'Rules for finding angles between bearings' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II', topic: 'Traverse directions and angular relationships' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Traverse directions and angular relationships' },
         ],
       },
       {
@@ -113,7 +113,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: '**Rule 1 — Same quadrant: subtract**\nIf both bearings are in the same quadrant (both NE, both SE, both SW, or both NW), the angle between them equals the larger bearing angle minus the smaller bearing angle.\n\nExample: S 82°35\'40"E and S 25°15\'10"E are both SE bearings.\nAngle = 82°35\'40" − 25°15\'10" = 57°20\'30"\n\n**Rule 2 — Same hemisphere, adjacent quadrants: add**\n"Same hemisphere" means either the northern pair (NE + NW) or the southern pair (SE + SW). If both bearings are in adjacent quadrants on the same side of the E-W line, the angle between them equals the sum of the two bearing angles.\n\nExample: N 30°15\'26"E and N 21°10\'14"W are both north bearings.\nAngle = 30°15\'26" + 21°10\'14" = 51°25\'40"\n\n**Rule 3 — Cross-hemisphere (NE+SE or NW+SW): add, then subtract from 180°**\nIf one bearing is in the NE quadrant and the other is in the SE quadrant (or one NW and one SW), the two bearings are on opposite sides of the E-W line but both measured from the same meridian side. Add the two bearing angles together, then subtract the sum from 180°.\n\nExample: N 15°50\'25"W and S 20°10\'15"W are a NW and SW pair.\nAngle = 180° − (15°50\'25" + 20°10\'15") = 180° − 36°00\'40" = 143°59\'20"\n\n**The Azimuth Shortcut (works for any combination):**\nConvert both bearings to azimuths, subtract the smaller from the larger. If the result is greater than 180°, subtract it from 360° to get the interior angle. This method always works and avoids memorizing the three rules, but requires two conversions.',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Azimuths, Angles & Bearings', topic: 'Three bearing angle rules with examples' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II', topic: 'Bearings, azimuths, and angle measurement' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 16', topic: 'Bearings, azimuths, and angle measurement' },
         ],
       },
       {
@@ -177,7 +177,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'Bearing-bearing intersection and radiation (also called traversing or polar coordination) are both methods to locate an unknown point from known control, but they differ in what is observed and how the unknown point is computed.\n\n**Radiation (Polar Coordination):**\nFrom a single occupied control point, observe the bearing (or azimuth) to the unknown point and measure the distance to it. One control point is enough. You compute ΔN = dist × cos(bearing) and ΔE = dist × sin(bearing), then add to the known coordinates. No Law of Sines is needed — this is direct COGO from one point.\n\n**Bearing-Bearing Intersection:**\nFrom two known control points, observe the bearing from each toward the unknown point. No distance measurement to the unknown point is required. Instead, the Law of Sines uses the baseline distance and the observed angles to compute the distance. This is advantageous when physical access to the unknown point is not possible (e.g., a submerged corner, a point on the far side of a river, or an inaccessible structure corner).\n\n**When to use which:**\n• Use radiation when you can occupy a control point and measure a distance to the unknown point directly (EDM, tape, or GPS).\n• Use bearing-bearing intersection when distances to the unknown point cannot be measured directly but bearings or angles can be observed from multiple control stations — a classic triangulation scenario.\n• Both methods ultimately use COGO to compute coordinates; the difference is whether you use a single distance-bearing pair (radiation) or two observed bearings and a derived distance (intersection).',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Bearing; Bearing Intersections', topic: 'Intersection vs. radiation comparison' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II', topic: 'Coordinate geometry methods — traversing and intersection' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 17', topic: 'Coordinate geometry methods — traversing and intersection' },
         ],
       },
       {
@@ -445,7 +445,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Interpolation', topic: 'Applied interpolation for surveying' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV', topic: 'Topographic survey — contour interpolation methods' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Topographic survey — contour interpolation methods' },
         ],
       },
     ],
@@ -466,7 +466,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'Grade and slope both describe the steepness of a line, but they use different conventions:\n\n**Grade** measures the ratio of vertical change (elevation difference) to horizontal distance, going up or down along a road, pipe, or drainage channel. A positive grade (+) goes uphill; a negative grade (−) goes downhill.\n  Grade = ΔElevation / Horizontal Distance (expressed as ft/ft or as a percentage)\n  Grade % = (ΔElevation / Horizontal Distance) × 100\n\nExample: If a road rises 16.84 ft over 352.45 ft of horizontal distance, grade = 16.84/352.45 = 0.04778 ft/ft = 4.78%.\n\nGrade is also the tangent of the vertical angle: Grade = opposite/adjacent = tan(vertical angle). So a 6% grade corresponds to an angle of arctan(0.06) = 3°26\'06".\n\n**Slope** describes the same steepness but is expressed as a horizontal:vertical ratio. A 2:1 slope means 2 units horizontal for every 1 unit vertical. A 3:1 slope is flatter. Slopes are always stated as positive numbers regardless of direction.\n\nConversions:\n• Slope ratio H:V = 1 / (grade in ft/ft) [e.g., grade 0.50 = slope 2:1]\n• Grade % to slope: slope = 100 / grade%\n• Grade is a tangent; slope is the inverse (run/rise)',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Grades & Slopes', topic: 'Definitions, positive/negative grades, slope ratios' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Vertical alignment — grades, slopes, and grade lines' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Vertical alignment — grades, slopes, and grade lines' },
         ],
       },
       {
@@ -493,7 +493,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         content: 'When two road grades meet, they intersect at a point called the PVI (Point of Vertical Intersection). Finding its station and elevation is essential before designing the vertical curve that smoothly joins the two grades.\n\nThe two-step formula uses the equation of a line (y = mx + b) for each grade:\n\n**Step 1 — Compute b for each grade line:**\n  b₁ = Elevation₁ − (G₁/100) × Station₁\n  b₂ = Elevation₂ − (G₂/100) × Station₂\n\nWhere G₁ and G₂ are grades in percent (e.g., −1.00 for a downgrade of 1%) and stations are in feet (station 7+00 = 700 ft).\n\n**Step 2 — Set the two lines equal and solve for the PVI station:**\n  PVI Station = (b₁ − b₂) / (G₂/100 − G₁/100)\n\nUse the absolute value of the PVI Station to get the station number.\n\n**Step 3 — Compute PVI elevation:**\n  PVI Elevation = Elevation₁ + (G₁/100) × (PVI Station − Station₁)\n\nThis is just: starting elevation + grade × distance to PVI.',
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'The Intersection of Two Grades', topic: 'PVI formula derivation and procedure' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Vertical curve design — PVI computation and grade intersection' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Vertical curve design — PVI computation and grade intersection' },
         ],
       },
       {
@@ -512,7 +512,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'The Intersection of Two Grades', topic: 'Formulas and derivation' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Vertical curve design and PVI computation' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Vertical curve design and PVI computation' },
         ],
       },
       {
@@ -530,7 +530,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'The Intersection of Two Grades', topic: 'Full worked example' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Vertical curve design and PVI location' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Vertical curve design and PVI location' },
         ],
       },
       {
@@ -549,7 +549,7 @@ export const STUDY_READINGS_COAN_MATH: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Math for Surveyors (MFS)', chapter: 'Grades and Slopes', topic: 'Grade, slope distance, and intermediate elevation problems' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII', topic: 'Grade line elevation calculations' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Grade line elevation calculations' },
         ],
       },
     ],

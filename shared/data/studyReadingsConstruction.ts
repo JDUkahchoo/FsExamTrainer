@@ -17,7 +17,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         content: 'Construction surveying translates design plans from paper into physical stakes on the ground. The surveyor\'s role is to set control, establish grades, and guide earthwork and structure placement so that the finished product matches the engineer\'s design.\n\nThe three fundamental documents used during construction layout are:\n\n1. The Design Plans (roadway, grading, utility, or structural drawings) which specify horizontal alignment, vertical grades, finish elevations, and offsets.\n2. The Survey Control Network — a set of bench marks and horizontal control points established with higher accuracy than the construction staking.\n3. The Field Notes — systematic records of all set stakes, calculated values, and observations.\n\nConstruction surveyors work continuously through a project, from initial grading to final as-built verification. On the FS exam, the most heavily tested construction topics are grade rod calculation and cut-versus-fill determination.',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 23', topic: 'Construction surveying fundamentals' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Route surveying and construction layout' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VIII, Ch 38', topic: 'Route surveying and construction layout' },
         ],
       },
       {
@@ -39,7 +39,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         },
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 23', topic: 'Grade stakes and earthwork layout' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Grade rod and cut/fill calculations' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VIII, Ch 38', topic: 'Grade rod and cut/fill calculations' },
         ],
       },
       {
@@ -88,7 +88,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         content: 'Slope stakes mark the point on the natural ground where the constructed slope (cut or fill) will intersect the existing ground surface. Finding this intersection requires an iterative field process because the slope intercept depends on the ground elevation, which varies across the slope.\n\nSlope Staking Process (Trial-and-Error Method):\n\n1. Read the center-station grade rod to determine the cut or fill at centerline.\n2. Estimate a trial offset distance from centerline based on the roadway half-width plus the expected slope.\n3. Walk out to the trial offset and take a rod reading.\n4. Calculate what the cut or fill would be at that trial distance and check whether the slope intercept falls at that point.\n5. Adjust the offset inward or outward and repeat until the computed slope intercept matches the actual offset.\n\nThe slope ratio specifies the horizontal run per unit of vertical rise. Common ratios are:\n- Cut slopes: 1:1, 1.5:1, or 2:1 (horizontal:vertical)\n- Fill slopes: 1.5:1 or 2:1\n\nFor a cut slope with ratio z:1 and a cut depth of d feet at a trial offset, the required distance from centerline is:\n  Offset = HW + z × d\nwhere HW is the half-width of the roadway.\n\nSlope stakes are often set and marked on the uphill side of the intercept for cuts and the downhill side for fills, so they are not buried or disturbed during construction.',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 23', topic: 'Slope staking and earthwork' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Slope staking calculations' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VIII, Ch 38', topic: 'Slope staking calculations' },
         ],
       },
       {
@@ -120,7 +120,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         content: 'An as-built survey (also called a record survey or "red-line" survey) documents the actual locations and elevations of constructed improvements, which may differ from the design plans due to field adjustments, utility conflicts, or changed conditions.\n\nAs-built surveys are required by:\n- Government agencies and transportation departments to verify contract compliance\n- Engineers for post-construction analysis and maintenance planning\n- Property owners who need an accurate record of buried utilities, structures, and drainage\n\nTypical elements documented in an as-built survey:\n- Horizontal alignment of roads, curbs, and pavements\n- Invert and rim elevations of drainage structures (manholes, inlets)\n- Horizontal and vertical locations of underground utilities\n- Foundation and building footprint locations\n- Finish grades of graded areas and swales\n\nAs-built surveys use the same control network established at the start of the project, ensuring that as-built positions can be directly compared to the design coordinate system. Surveyors record field measurements and combine them with as-built plan revisions to produce final record drawings.',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 23', topic: 'As-built surveys and record drawings' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 21', topic: 'Construction surveys and as-built documentation' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VIII, Ch 38', topic: 'Construction surveys and as-built documentation' },
         ],
       },
       {
@@ -145,7 +145,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         title: 'Construction Surveying References',
         furtherReading: [
           { book: 'Elementary Surveying, 15th Edition (Ghilani & Wolf)', chapter: 'Chapter 23', topic: 'Construction surveying — grade stakes, slope staking, as-builts' },
-          { book: 'Surveyor Reference Manual', chapter: 'Topic III, Ch 21', topic: 'Route surveying and construction layout calculations' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic VIII, Ch 38', topic: 'Route surveying and construction layout calculations' },
         ],
       },
     ],
@@ -166,7 +166,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         content: 'Subdivision is the act of dividing a parcel of land into two or more smaller lots, tracts, or parcels. The process creates new legal parcels that can be individually sold, developed, or encumbered. In most jurisdictions, any division of land that meets the local definition of a subdivision triggers a regulated review and approval process.\n\nThe typical platting sequence:\n\n1. Conceptual/Sketch Plan: The developer prepares a rough layout showing proposed lots, streets, drainage, and open space. This is presented to the planning department for initial feedback.\n\n2. Preliminary Plat: A more detailed drawing prepared by a licensed surveyor or engineer, showing proposed lot boundaries, dimensions, areas, street alignments, utility easements, and setbacks. The preliminary plat is submitted for review by the planning commission, engineering department, and utility providers.\n\n3. Final Plat: After all preliminary plat conditions are satisfied, the surveyor prepares the final plat based on accurate field measurements. The final plat must be signed and sealed by the licensed surveyor, and is then reviewed and approved by the appropriate authority (city council, county commissioners, or planning commission).\n\n4. Filing and Recording: The approved final plat is filed in the county deed records or equivalent land records office. Once recorded, the plat creates the legal framework for ownership and conveyance of the individual lots.',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 22', topic: 'Subdivision and platting' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 28', topic: 'Land development and subdivision' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VI, Ch 32', topic: 'Land development and subdivision' },
         ],
       },
       {
@@ -201,7 +201,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         title: 'Lot-and-Block Legal Descriptions',
         content: 'Once a subdivision plat is recorded, individual lots are identified using the lot-and-block system. This is the most common method of legal description for urban and suburban residential parcels.\n\nA lot-and-block description has three essential components:\n\n1. Lot number: The specific lot within the block.\n2. Block number: The block within the subdivision (a group of lots enclosed by streets).\n3. Subdivision name and recorded plat reference: The name of the subdivision as shown on the recorded plat, plus the volume and page (or instrument number) of the recorded plat in the county deed records.\n\nExample of a complete lot-and-block description:\n"Lot 14, Block 3, Meadow Ridge Subdivision, as recorded in Volume 42, Pages 18-21, of the Plat Records of Travis County, Texas."\n\nThe lot-and-block description is complete because it fully identifies the parcel by reference to the recorded plat. The parcel\'s dimensions, area, and boundary coordinates are found by examining the plat itself, not repeated in the deed.\n\nThe system works because the act of recording the plat creates a public record that defines the lot boundaries. All subsequent conveyances of the lot refer back to that recorded instrument, giving every deed examiner a clear chain to the original survey.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 28', topic: 'Legal descriptions — lot and block method' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 30', topic: 'Legal descriptions — lot and block method' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 22', topic: 'Subdivision plats and legal descriptions' },
         ],
       },
@@ -234,7 +234,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         title: 'The Surveyor\'s Role in Land Development Projects',
         content: 'Licensed surveyors provide multiple services throughout the land development cycle:\n\nPre-Development Phase:\n- Boundary survey to confirm ownership and parcel dimensions before design begins\n- Topographic survey to support grading and drainage design\n- Research of easements, encumbrances, and title restrictions\n- Preparation of the preliminary plat or tract map\n\nDesign and Permitting Phase:\n- Preparation and signing of the final subdivision plat\n- Verification of lot areas, dimensions, and closures\n- Submission and coordination with governmental review agencies\n- Addressing agency comments and revising plat as needed\n\nConstruction Phase:\n- Setting horizontal and vertical control\n- Staking lot corners, building setback lines, and right-of-way lines\n- Construction staking for streets, utilities, drainage, and structures\n- Monitoring earthwork quantities and grades\n\nPost-Construction Phase:\n- Lot corner monumentation (setting required physical monuments at each lot corner)\n- As-built surveys of constructed improvements\n- Final plat amendments if any field changes occurred\n\nThe final plat must be prepared and sealed by a licensed surveyor because it establishes legal boundaries that will affect property rights for decades. The surveyor must verify that all lot corners close properly, that all required information is shown, and that the plat meets state and local statutory requirements before signing.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Ch 28', topic: 'Subdivision practice and surveyor\'s duties' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VI, Ch 32', topic: 'Subdivision practice and surveyor\'s duties' },
         ],
       },
       {
@@ -259,7 +259,7 @@ export const STUDY_READINGS_CONSTRUCTION: ReadingModule[] = [
         title: 'Land Development References',
         furtherReading: [
           { book: 'Elementary Surveying, 15th Edition (Ghilani & Wolf)', chapter: 'Chapter 22', topic: 'Subdivision surveys, platting, and land development' },
-          { book: 'Surveyor Reference Manual', chapter: 'Topic V, Chapters 24-28', topic: 'Boundary law, easements, and land development practice' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic V, Ch 24-25; Topic VI, Ch 32', topic: 'Boundary law, easements, and land development practice' },
         ],
       },
     ],

@@ -120,7 +120,7 @@ export const STUDY_READINGS_LIDAR_GRAPHICS: ReadingModule[] = [
         content: 'A contour line connects all points on a surface that have the same elevation. Understanding contour rules is essential for reading topographic maps and detecting errors in digital terrain products.\n\nThe eight fundamental contour rules:\n\n1. Every point on a contour line has the same elevation.\n2. Contour lines never cross or branch (the surface cannot have two elevations at one point).\n3. Every contour line eventually closes — either within the map area or beyond the map edges. No contour line simply ends in open space.\n4. Contour lines never merge, except at a vertical cliff face where multiple lines may appear to coincide.\n5. Closely spaced contours indicate steep terrain; widely spaced contours indicate gentle slopes.\n6. On a ridge, contour lines form V shapes pointing downhill (away from the high point). On a valley or stream, contour lines form V shapes pointing uphill (toward the high point).\n7. A closed contour with hachure marks (short tick marks pointing inward) is a depression.\n8. Contour lines cross streams perpendicularly at the water surface elevation, and the V always points upstream (uphill).\n\nContour interval (CI) is the constant vertical distance between adjacent contour lines. Index contours (every 5th line) are drawn heavier and labeled with their elevation.',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 17', topic: 'Topographic surveys and contour maps' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 35', topic: 'Topographic mapping and contour lines' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Topographic mapping and contour lines' },
         ],
       },
       {
@@ -138,7 +138,7 @@ export const STUDY_READINGS_LIDAR_GRAPHICS: ReadingModule[] = [
           whenToUse: 'Use the CI rule of thumb when selecting a contour interval for a new topographic map — the CI should be approximately 1/1,000 of the scale denominator (so a 1:24,000 map would use approximately a 24-foot CI, which rounds to 20 feet in practice). Use the ground distance formula to convert any map measurement to a real-world distance.',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 35', topic: 'Contour interval and map scale selection' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Contour interval and map scale selection' },
         ],
       },
       {
@@ -197,7 +197,7 @@ export const STUDY_READINGS_LIDAR_GRAPHICS: ReadingModule[] = [
         title: 'Map Accuracy Standards — NSSDA and ASPRS',
         content: 'Two major standards govern the positional accuracy of geospatial products used in surveying and mapping:\n\nNSSDA (National Standard for Spatial Data Accuracy):\nPublished by FGDC (Federal Geographic Data Committee), NSSDA quantifies geospatial accuracy at the 95% confidence level using RMSE (Root Mean Square Error) statistics.\n- Horizontal Accuracy (RMSEr): reported as the radius of a circle of uncertainty within which 95% of tested points fall. Horizontal Accuracy at 95% = 1.7308 × RMSEr\n- Vertical Accuracy (RMSEZ): reported as linear uncertainty. Vertical Accuracy at 95% = 1.9600 × RMSEZ\nBoth are compared against independent check points of higher accuracy.\n\nASPRS Positional Accuracy Standards for Digital Geospatial Data:\nA hierarchical set of accuracy classes (Class I through Class III, and higher) with specific RMSE thresholds for horizontal and vertical products from aerial photography, LiDAR, and photogrammetry. Each class defines a horizontal RMSEr and vertical RMSEZ. USGS LiDAR Quality Levels (QL1, QL2, QL3) align with these classes:\n- QL3: vertical RMSEZ ≤ 20 cm, min 1 pt/m²\n- QL2: vertical RMSEZ ≤ 10 cm, min 2 pts/m²\n- QL1: vertical RMSEZ ≤ 9.25 cm, min 8 pts/m²\n\nOn the FS exam, know: accuracy is always tested against independent check points, NSSDA reports at 95% confidence, and accuracy is distinct from precision (repeatability).',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 37', topic: 'Geospatial accuracy standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX, Ch 41', topic: 'Geospatial accuracy standards' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 17', topic: 'Map accuracy and quality standards' },
         ],
       },

@@ -147,7 +147,7 @@ export const STUDY_READINGS_D3: ReadingModule[] = [
         title: 'Further Reading',
         furtherReading: [
           { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 19', topic: 'Control Surveys and Geodetic Reductions' },
-          { book: 'Surveyor Reference Manual', chapter: 'Chapter 7', topic: 'Geodesy and Survey Astronomy' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic IV, Ch 22-23', topic: 'Geodesy and Survey Astronomy' },
           { book: 'NOAA National Geodetic Survey', chapter: 'Online Resources', topic: 'Geoid Models, CORS Network, and State Plane Coordinate Definitions' },
         ],
       },
@@ -269,7 +269,7 @@ export const STUDY_READINGS_D3: ReadingModule[] = [
         title: 'Further Reading',
         furtherReading: [
           { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapters 13-14', topic: 'Global Navigation Satellite Systems and Satellite Positioning' },
-          { book: 'Surveyor Reference Manual', chapter: 'Chapter 7 (GPS Section)', topic: 'GPS Surveying Methods and Error Analysis' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic IV, Ch 22 (GPS)', topic: 'GPS Surveying Methods and Error Analysis' },
         ],
       },
     ],

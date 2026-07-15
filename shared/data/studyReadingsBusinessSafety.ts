@@ -265,7 +265,7 @@ export const STUDY_READINGS_BUSINESS_SAFETY: ReadingModule[] = [
         title: 'Survey Field Notes — Standards and Required Content',
         content: 'Survey field notes are the primary legal record of field observations. They must be complete, legible, and permanent because they may be subpoenaed as evidence in boundary disputes, construction defect claims, and environmental cases.\n\nRequired Content in Field Notes:\n- Date of survey\n- Weather conditions (affects instrument performance and data quality)\n- Names of crew members and their roles\n- Instrument type and serial number (or equipment identifier)\n- Job name/number and client name\n- Sketch of the survey area (even rough sketches add context)\n- Observations: angles, distances, elevations, GPS coordinates\n- Point identifications (station numbers, point names, monument descriptions)\n- Benchmark identification and elevation\n- Any unusual field conditions, discrepancies, or decisions made in the field\n\nField Note Format:\nTraditionally kept in a bound field book with pre-printed grid pages. Some firms use digital data collectors, but digital records must be backed up and preserved with the same rigor as paper notes.\n\nLegibility Requirements:\n- Write clearly and in pen (pencil is erasable and not appropriate for a legal record)\n- Print rather than write in cursive when there is any chance of ambiguity\n- Numbers must be unambiguous — a "7" that could be read as a "1" can cause significant errors\n\nField Note Error Correction Procedure:\nWhen a mistake is made in paper field notes:\n1. Draw a single line through the incorrect entry so the original value remains readable\n2. Write the correct value above or beside the crossed-out entry\n3. Initial the correction\n\nNEVER erase, use correction fluid (white-out), or obliterate an entry. Erased or obscured field notes appear to be falsified records and undermine the surveyor\'s credibility in any legal proceeding. This single-line strike-through rule is one of the most commonly tested field notes concepts on the FS exam.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 1-2', topic: 'Field notes standards, required content, and error correction procedure' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 13-16', topic: 'Field notes standards, required content, and error correction procedure' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 3', topic: 'Field notes and data recording' },
         ],
       },
@@ -309,7 +309,7 @@ export const STUDY_READINGS_BUSINESS_SAFETY: ReadingModule[] = [
         type: 'further_reading',
         title: 'Professional Communication References',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic I, Ch 1-2; Topic X, Ch 42', topic: 'Field notes, professional communication, certifications, and record retention' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 13-16; Topic X, Ch 42', topic: 'Field notes, professional communication, certifications, and record retention' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 3', topic: 'Field data recording and note-keeping standards' },
           { book: 'State Surveying Board Rules (your jurisdiction)', chapter: 'Records Retention Section', topic: 'Minimum retention periods for professional surveying records' },
         ],

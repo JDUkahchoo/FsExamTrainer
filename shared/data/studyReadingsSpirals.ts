@@ -16,7 +16,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         title: 'Why Spiral Curves Are Used',
         content: 'A simple circular curve transitions abruptly from a tangent (straight alignment) to a constant-radius arc. At high speeds, this abrupt change forces drivers to steer instantaneously from zero curvature to full curve curvature, which can cause vehicle instability and skidding. Highway designers solve this problem with a spiral curve (also called a transition curve or clothoid curve) inserted between each tangent and the circular curve.\n\nThe spiral\'s defining property is that its curvature increases linearly from zero at the tangent end (the TS point — Tangent to Spiral) to the full circular curve curvature at the spiral-to-curve end (the SC point — Spiral to Curve). This gradual curvature increase allows vehicles to smoothly roll into and out of the circular arc while superelevation (road banking) is also applied gradually.\n\nOn the FS exam, spiral curves appear as computation problems: you are given the spiral length Ls and either the degree of circular curve D or the radius R, and you must compute the spiral\'s geometric elements. A spiral-curve-spiral (SCS) layout is the standard arrangement: tangent → spiral (TS to SC) → circular arc (SC to CS) → spiral (CS to ST) → tangent.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 25', topic: 'Spiral curves and transition curve design' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 20', topic: 'Spiral curves and transition curve design' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 25', topic: 'Spirals and route survey layout' },
         ],
       },
@@ -26,7 +26,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         title: 'Key Spiral Parameters and Definitions',
         content: 'Every spiral curve is described by a set of geometric parameters. Understanding these definitions is the foundation for all spiral computations:\n\n**Ls** — Spiral length. The arc length of the spiral, measured from the TS to the SC point. This is given by the designer or computed from design speed and superelevation requirements.\n\n**D** — Degree of the connecting circular curve (arc definition). R = 5729.578 / D.\n\n**θs** — Spiral angle. The total central angle subtended by the spiral arc. This is the key derived quantity: θs = Ls × D / 200 (degrees), or equivalently θs = Ls / (2R) (radians).\n\n**Xs** — Tangent distance. The x-coordinate (along the initial tangent) of the SC point, measured from the TS. Xs ≈ Ls × (1 – θs² / 10) for small angles, or exactly by the Fresnel integral series.\n\n**Ys** — Offset distance. The y-coordinate (perpendicular to the initial tangent) of the SC point, measured from the TS. Ys ≈ Ls × θs / 3 for small angles.\n\n**k** — Throw (also called the x-shift). The distance the circular curve center is shifted inward relative to the original tangent intersection. k ≈ Xs – R × sin(θs).\n\n**p** — Shift (also called the y-shift or offset). The perpendicular offset of the shifted circular curve center from the original tangent. p ≈ Ys – R × (1 – cos(θs)).\n\n**LT** — Long tangent. The distance from the TS to the projection of the SC onto the initial tangent (measured along the tangent direction).\n\n**ST** — Short tangent. The distance from the SC to the tangent point of the back-extended spiral tangent (perpendicular to the chord direction at the SC).',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 25', topic: 'Spiral parameter definitions' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 20', topic: 'Spiral parameter definitions' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 25', topic: 'Elements of a spiral' },
         ],
       },
@@ -55,7 +55,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
           whenToUse: 'Use θs = Ls × D / 200 first to get the spiral angle in degrees. Then compute Xs and Ys using the series (θs must be in radians for the series). Compute p and k to locate the shifted circular curve. Use Ts to find the TS and ST stations from the PI. The circular arc length formula gives the arc between SC and CS.',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 25', topic: 'Spiral formulas and worked examples' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 20', topic: 'Spiral formulas and worked examples' },
         ],
       },
       {
@@ -88,7 +88,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         title: 'Long Tangent and Short Tangent (Geometric Legs)',
         content: 'Important terminology note: "ST" is used two ways in spiral curve work. As a station point, ST means "Spiral to Tangent" — the end of the closing spiral. As a geometric measurement, the "short tangent" (sometimes written STg to avoid confusion) is a distance used to stake the SC. This section covers the geometric meaning.\n\nThe long tangent (LT) and short tangent (STg) are the two legs of the right-angle triangle formed between the TS, the SC point, and the foot of the perpendicular dropped from SC to the initial tangent.\n\nLT is the longer leg, running from the TS along the initial tangent to the foot of the perpendicular from the SC. It equals approximately 2/3 of Ls for typical highway spirals.\n\nSTg is the shorter leg, running from the foot of the perpendicular up to the SC point, perpendicular to the initial tangent. It equals approximately 1/3 of Ls.\n\nFormulas:\n- LT = Xs – Ys / tan(θs)\n- STg = Ys / sin(θs)\n\nThese quantities are used when staking the spiral by the tangent-offset method in the field: from the TS, you measure LT along the tangent, then turn 90° and measure STg to set the SC point.\n\nFor the worked example above (Ls = 200 ft, D = 4°, Xs = 199.90 ft, Ys = 4.65 ft, θs = 4°):\n- LT = 199.90 – 4.65 / tan(4°) = 199.90 – 4.65/0.06993 = 199.90 – 66.50 = 133.40 ft\n- STg = 4.65 / sin(4°) = 4.65 / 0.06976 = 66.66 ft\n\nNote that LT + STg > Ls because they are legs of a triangle, not arc lengths.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 25', topic: 'Staking spiral curves by tangent offset' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Ch 20', topic: 'Staking spiral curves by tangent offset' },
         ],
       },
       {
@@ -128,7 +128,7 @@ export const STUDY_READINGS_SPIRALS: ReadingModule[] = [
         type: 'further_reading',
         title: 'Spiral Curve References',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Chapter 25 (Spiral Curves)', topic: 'Complete spiral curve theory, formulas, and layout problems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Chapter 20 (Horizontal Curves)', topic: 'Complete spiral curve theory, formulas, and layout problems' },
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 25', topic: 'Horizontal curves with spirals, superelevation, and route surveying' },
           { book: 'Surveying Solved Problems (Buckner)', chapter: 'Spiral Curve Problems', topic: 'Step-by-step worked examples for FS exam spiral problems' },
         ],

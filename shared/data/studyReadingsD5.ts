@@ -105,7 +105,7 @@ export const STUDY_READINGS_D5: ReadingModule[] = [
         furtherReading: [
           { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 20', topic: 'Property surveys, legal descriptions, and boundary law principles' },
           { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 21', topic: 'Boundary surveys and conveyance documents' },
-          { book: 'Surveyor Reference Manual', chapter: 'Chapter 11', topic: 'Legal principles for property and boundary surveying' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic V, Ch 24-25', topic: 'Legal principles for property and boundary surveying' },
           { book: 'Brown\'s Boundary Control and Legal Principles', chapter: 'Various chapters', topic: 'Comprehensive boundary law reference covering hierarchy of calls, riparian rights, and adverse possession' },
         ],
       },
@@ -227,7 +227,7 @@ export const STUDY_READINGS_D5: ReadingModule[] = [
         title: 'Further Reading for the Public Land Survey System',
         furtherReading: [
           { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 22', topic: 'The U.S. Public Land Survey System and its application' },
-          { book: 'Surveyor Reference Manual', chapter: 'Chapter 12', topic: 'Public land surveys, section subdivision, and aliquot parts' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic V, Ch 28', topic: 'Public land surveys, section subdivision, and aliquot parts' },
           { book: 'BLM Manual of Surveying Instructions, 2009', chapter: 'Chapters 1-3', topic: 'History, organization, and execution of the PLSS rectangular surveys' },
         ],
       },

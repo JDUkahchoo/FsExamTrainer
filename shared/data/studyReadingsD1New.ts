@@ -301,7 +301,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Chapter 16 (Distance Measurement)', topic: 'EDM principles, atmospheric corrections, instrument constants, and slope to horizontal reduction' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Chapters 13-14 (Taping, EDM)', topic: 'EDM principles, atmospheric corrections, instrument constants, and slope to horizontal reduction' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 6', topic: 'Electronic distance measurement, corrections, and calibration' },
         ],
       },
@@ -399,7 +399,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic III, Chapters 14-15 (Leveling)', topic: 'Differential leveling methods, error sources, curvature and refraction, and closure standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Chapter 15 (Leveling)', topic: 'Differential leveling methods, error sources, curvature and refraction, and closure standards' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 4 and Chapter 5', topic: 'Leveling theory, errors in leveling, field procedures, and adjustment of leveling circuits' },
         ],
       },
@@ -420,7 +420,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         title: 'Why Field Notes Matter',
         content: 'Survey field notes are the official record of every measurement made in the field. They are the legal document that supports a survey plat, boundary description, or construction stakeout. Courts have relied on original field notes to resolve boundary disputes decades after a survey was completed.\n\nBecause field notes serve a legal function, they must meet professional standards for preparation, content, and storage. The USDA Engineering Field Handbook and NCEES reference materials identify specific features that every set of survey field notes must possess. Failure to maintain proper notes is considered professional negligence and can jeopardize a surveyor\'s license.\n\nField notes come in two broad categories:\n• Original notes: recorded in the field at the time of measurement, in the surveyor\'s own hand\n• Transcribed notes: a copy made later from originals — these are secondary evidence and carry less weight than originals',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Field notes — preparation and standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 13-16', topic: 'Field notes — preparation and standards' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 2', topic: 'Field notes and their importance as legal records' },
         ],
       },
@@ -430,7 +430,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         title: 'The Five Required Features of Field Notes',
         content: 'Professional survey field notes must possess all five of the following features. The FS exam may ask you to identify which feature is missing from a described scenario, or to recognize which action violates one of these standards.\n\n1. ACCURACY\nThe notes must correctly represent what was measured. Numbers must be recorded exactly as read — never "corrected" or rounded in the field book. If a measurement is suspect, record it and note the doubt; don\'t alter it to what you think it should be.\n\n2. INTEGRITY\nNotes must be a true, unaltered record. This means no erasures — ever. If a number is wrong, draw a single line through it and write the correct value above. The original value must remain legible so reviewers can see what was changed and why. Erasing is considered falsification of a legal record.\n\n3. LEGIBILITY\nNotes must be readable by anyone, not just the original recorder. Use clear block lettering (not cursive). Numbers should be formed carefully — a 1 that looks like a 7, or a 0 that looks like a 6, can cause serious errors when the notes are used later.\n\n4. ARRANGEMENT\nInformation must be organized in a consistent, logical way. Standard formats exist for traverse notes, leveling notes, cross-section notes, and so on. Following a standard arrangement allows another surveyor to pick up the notes and immediately understand what was done without asking questions.\n\n5. CLARITY\nThe notes must be complete enough that any competent surveyor can reproduce the survey from the notes alone, without additional explanation from the original crew. Sketches, labels, and explanatory notes are part of this requirement.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Five features of good field notes' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 13-16', topic: 'Five features of good field notes' },
         ],
       },
       {
@@ -511,7 +511,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         title: 'Field Notes References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 2', topic: 'Surveying field notes — requirements, formats, and conventions' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Field note-keeping standards and professional practice requirements' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 13-16', topic: 'Field note-keeping standards and professional practice requirements' },
         ],
       },
     ],
@@ -532,7 +532,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         content: 'The stadia method is an indirect distance measurement technique used with a transit, theodolite, or telescopic alidade. It was the standard method for measuring distances in tacheometry (rapid topographic surveying) before electronic distance meters (EDMs) became common in the 1970s.\n\nInside the telescope, two additional horizontal lines called stadia hairs (or stadia wires) are etched on the reticle — one above and one below the main horizontal cross-hair. When you sight a level rod through the telescope, these hairs intercept two different readings on the rod. The difference between those readings — called the stadia interval — relates directly to the distance from the instrument to the rod.\n\nWhy the FS exam covers stadia:\n• It appears on historic survey records and resurvey notes\n• The FS exam tests whether candidates understand the principles of indirect distance measurement\n• The formulas and concept are straightforward and frequently tested\n• Understanding stadia helps contextualize EDM accuracy improvements',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Stadia surveying principles and formulas' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Distance measurement by stadia' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Distance measurement by stadia' },
         ],
       },
       {
@@ -558,7 +558,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
           whenToUse: 'Use when the line of sight is horizontal (level) or when the terrain is flat. This is the simplest form of the stadia formula. For inclined sights, use the slope correction formulas.',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Stadia distance formula for level sights' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Stadia distance formula for level sights' },
         ],
       },
       {
@@ -593,7 +593,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
           whenToUse: 'Use when the instrument is aimed at a slope — that is, when the line of sight is not horizontal. Both formulas use the same inputs. HD gives the map distance; VD gives the elevation difference that you add to or subtract from the instrument height to find the rod point\'s elevation.',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Stadia reduction for inclined sights' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Stadia reduction for inclined sights' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Inclined stadia measurements and reduction formulas' },
         ],
       },
@@ -661,7 +661,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         title: 'Stadia References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 5', topic: 'Stadia surveying — principles, formulas, and field procedures' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 12', topic: 'Indirect distance measurement by stadia and tacheometry' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Ch 34', topic: 'Indirect distance measurement by stadia and tacheometry' },
         ],
       },
     ],
@@ -681,7 +681,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         title: 'What Are FGCS Survey Orders?',
         content: 'The Federal Geodetic Control Subcommittee (FGCS) established a hierarchy of accuracy standards for geodetic control surveys in the United States. These "orders" define how precisely a survey must close — the smaller the allowed error, the higher (better) the order.\n\nWhy orders matter:\n• Control surveys must meet a specified order before their coordinates are published in the National Spatial Reference System (NSRS)\n• Project specifications typically require a minimum order — if your survey does not meet it, the work must be redone\n• The FS exam tests whether you can calculate the allowable misclosure for a given order and compare it to a measured closure\n\nThe three main orders, from most to least precise:\n\n1. First Order — geodetic control, national networks, high-precision projects\n2. Second Order (Class I and Class II) — local control, state surveys, large engineering projects\n3. Third Order (Class I and Class II) — topographic surveys, smaller engineering projects, general-purpose control\n\nEach order has a K constant. You plug K and either the number of angles (N) or the distance (M) into the appropriate formula to get the maximum allowed closure error.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'FGCS accuracy standards and survey orders' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX, Ch 41', topic: 'FGCS accuracy standards and survey orders' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 4', topic: 'Survey accuracy, orders, and error standards' },
         ],
       },
@@ -691,7 +691,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         title: 'The FGCS K Constant Tables',
         content: 'Two separate K constant tables apply to two different types of surveys.\n\n── HORIZONTAL: K values for angle misclosure (c = K√N) ──\nK is in arc-seconds. N is the number of angles in the survey.\n\n• First Order:            K = 1.0"\n• Second Order Class I:   K = 1.7"\n• Second Order Class II:  K = 3.0"\n• Third Order Class I:    K = 6.0"\n• Third Order Class II:   K = 12.0"\n\n── VERTICAL: K values for level-loop closure (c = K√M) ──\nK is in millimeters. M is the total loop distance in kilometers.\n\n• First Order Class I:    K = 0.5 mm\n• First Order Class II:   K = 0.7 mm\n• Second Order Class I:   K = 1.0 mm\n• Second Order Class II:  K = 1.3 mm\n• Third Order:            K = 2.0 mm\n\nMemory tip: Both formulas use K × √(something). For horizontal, the "something" is N (number of angles). For vertical, the "something" is M (miles or kilometers of loop distance). Keep the units straight: horizontal gives seconds of arc, vertical gives millimeters.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'FGCS order K constants for horizontal and vertical surveys' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX, Ch 41', topic: 'FGCS order K constants for horizontal and vertical surveys' },
         ],
       },
       {
@@ -708,7 +708,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
           whenToUse: 'Use to find the maximum allowed angular closure error for a traverse or triangulation network. If the measured misclosure is less than or equal to c, the survey meets the specified order. If it exceeds c, the survey fails.',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Horizontal closure formula and FGCS standards' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX, Ch 41', topic: 'Horizontal closure formula and FGCS standards' },
         ],
       },
       {
@@ -756,7 +756,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
           whenToUse: 'Use to find the maximum allowed elevation misclosure for a differential leveling loop. Run your level loop back to the starting BM, compute the misclosure in millimeters, and compare to c. If M is in miles, use the corresponding K value from your reference (some texts give K in mm/√mile).',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'Vertical closure formula and FGCS leveling orders' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX, Ch 41', topic: 'Vertical closure formula and FGCS leveling orders' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 5', topic: 'Differential leveling accuracy and order standards' },
         ],
       },
@@ -815,7 +815,7 @@ export const STUDY_READINGS_D1_NEW: ReadingModule[] = [
         type: 'further_reading',
         title: 'FGCS Accuracy Standards References',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic II, Ch 11', topic: 'FGCS accuracy standards, survey orders, and closure tolerances' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IX, Ch 41', topic: 'FGCS accuracy standards, survey orders, and closure tolerances' },
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 4', topic: 'Survey accuracy, error propagation, and order standards' },
           { book: 'Standards and Specifications for Geodetic Control Networks (FGCS, 1984)', chapter: 'Full document', topic: 'Official FGCS order definitions, K constants, and test procedures' },
         ],

@@ -73,7 +73,7 @@ export const STUDY_READINGS_D7_NEW: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Chapter 34 (Property Law) and Chapter 35 (Boundary Retracement)', topic: 'Rules of evidence in boundary disputes, monument priority, and legal principles of boundary retracement' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Chapters 24-25 (Title, Transfer) and Chapter 29 (Corner Restoration)', topic: 'Rules of evidence in boundary disputes, monument priority, and legal principles of boundary retracement' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Property surveys, deed calls, boundary evidence, monuments, and adjoiners' },
         ],
       },
@@ -146,7 +146,7 @@ export const STUDY_READINGS_D7_NEW: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Chapter 33 (Land Description) and Chapter 34 (Property Law)', topic: 'Plats of subdivision, recording requirements, lot and block descriptions, and subdivision law' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Chapter 30 (Land Descriptions) and Topic VI, Chapter 32 (Subdivisions)', topic: 'Plats of subdivision, recording requirements, lot and block descriptions, and subdivision law' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 22', topic: 'Subdivision surveys, plat preparation, recording, and legal description by reference to plat' },
         ],
       },
@@ -212,7 +212,7 @@ export const STUDY_READINGS_D7_NEW: ReadingModule[] = [
         type: 'further_reading',
         title: 'Further Reading',
         furtherReading: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic VII, Chapter 34 (Property Law) and Chapter 35 (Boundary Retracement)', topic: 'Senior and junior rights, chain of title, and boundary conflict resolution' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic V, Chapters 24-25 (Title, Transfer) and Chapter 29 (Corner Restoration)', topic: 'Senior and junior rights, chain of title, and boundary conflict resolution' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 21', topic: 'Boundary retracement, conflicting calls, senior vs. junior rights, and property law fundamentals' },
         ],
       },

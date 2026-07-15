@@ -51,14 +51,30 @@ function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs
   );
 }
 
+// Cache wrapped components so their identity is stable across Router re-renders.
+// Without this, every re-render created a brand-new component for each route,
+// forcing React to unmount/remount the current page and wiping local state
+// (e.g. a just-finished lesson or drill results screen would disappear).
+const wrappedComponentCache = new WeakMap<ComponentType<any>, Partial<Record<'fs' | 'ps' | 'tx', ComponentType<any>>>>();
+
 function withExamTrack(Component: ComponentType<any>, examTrack: 'fs' | 'ps' | 'tx') {
-  return function WrappedComponent(props: any) {
+  let byTrack = wrappedComponentCache.get(Component);
+  if (!byTrack) {
+    byTrack = {};
+    wrappedComponentCache.set(Component, byTrack);
+  }
+  const cached = byTrack[examTrack];
+  if (cached) return cached;
+
+  function WrappedComponent(props: any) {
     return (
       <ExamPage examTrack={examTrack}>
         <Component {...props} />
       </ExamPage>
     );
-  };
+  }
+  byTrack[examTrack] = WrappedComponent;
+  return WrappedComponent;
 }
 
 function Router() {

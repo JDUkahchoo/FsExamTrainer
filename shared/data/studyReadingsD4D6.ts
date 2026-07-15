@@ -146,7 +146,7 @@ export const STUDY_READINGS_D4D6: ReadingModule[] = [
         furtherReading: [
           { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapter 16', topic: 'Mapping and map projections' },
           { book: 'Elementary Surveying, 15th Edition', chapter: 'Chapters 27-28', topic: 'Photogrammetry and remote sensing fundamentals' },
-          { book: 'Surveyor Reference Manual', chapter: 'Chapter 9', topic: 'Mapping, photogrammetry, and GIS operations' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic VII, Ch 34-36', topic: 'Mapping, photogrammetry, and GIS operations' },
         ],
       },
     ],
@@ -228,7 +228,7 @@ export const STUDY_READINGS_D4D6: ReadingModule[] = [
         title: 'Further Reading for Ethics & Professional Practice',
         furtherReading: [
           { book: 'NCEES FS Reference Handbook', chapter: 'Ethics Section', topic: 'NCEES Model Rules of Professional Conduct and ethical principles' },
-          { book: 'Surveyor Reference Manual', chapter: 'Chapter 13', topic: 'Professional practice, ethics, and business management' },
+          { book: 'Surveyor Reference Manual', chapter: 'Topic X, Ch 42-44', topic: 'Professional practice, ethics, and business management' },
           { book: 'State Board Rules', chapter: 'Codes of Ethics', topic: 'State-specific ethical rules and standards of professional conduct' },
         ],
       },

@@ -16,7 +16,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
         title: 'Three Surfaces: Topographic, Geoid, and Ellipsoid',
         content: 'Understanding GNSS heights requires keeping three distinct surfaces straight.\n\n1. TOPOGRAPHIC SURFACE — the actual ground you stand on. Elevations measured with a level rod refer to this surface.\n\n2. GEOID — an equipotential (equal-gravity) surface that approximates mean sea level globally. It is lumpy and irregular because Earth\'s mass is not uniformly distributed. Orthometric height (H) is the distance from the geoid upward to the ground surface, measured along the plumb line. This is the "elevation" that appears on USGS topo maps and most engineering drawings.\n\n3. ELLIPSOID — a mathematically smooth, rotating spheroid (GRS 80 for NAD 83 / WGS 84) that approximates Earth\'s shape. GNSS receivers compute ellipsoid height (h) directly from satellite signals. Ellipsoid height is purely geometric and has no physical meaning in terms of water flow.\n\nThe geoid does not coincide with the ellipsoid. The vertical distance between them at any point is the geoid height (also called geoid undulation), symbolized N. In the contiguous United States, N is negative and ranges from about −8 m to −53 m, meaning the geoid lies below the ellipsoid.\n\nCrucial rule: GNSS gives you h (ellipsoid height). Engineering work requires H (orthometric/elevation). To convert, you need N from a geoid model such as GEOID18 or GEOID12B published by NGS.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 20', topic: 'GPS height relationships and geoid models' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22', topic: 'GPS height relationships and geoid models' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 13', topic: 'GNSS surveying and height relationships' },
         ],
       },
@@ -34,7 +34,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
           whenToUse: 'Use any time you need to convert between GNSS ellipsoid height and usable elevation. Rearranged: H = h − N (to get elevation from GPS). In CONUS, N is negative, so H > h (elevation exceeds ellipsoid height).',
         },
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 20', topic: 'h = H + N relationship' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22', topic: 'h = H + N relationship' },
         ],
       },
       {
@@ -74,7 +74,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
         content: 'GNSS receivers extract range (distance) information from two very different parts of the satellite signal. Understanding the difference explains why accuracy varies so dramatically between GPS methods.\n\nCODE PHASE (Pseudorange):\n• The receiver times how long the satellite\'s PRN code (a digital ranging code modulated onto the signal) takes to arrive.\n• The PRN code chip length is about 300 m (C/A code) or 30 m (P-code).\n• Timing resolution: ~1–2% of chip length → range noise of ~3–6 m (C/A) or 0.3–0.6 m (P-code).\n• Accuracy: ±1–5 m (C/A code, standalone); ±0.3–1 m (P-code differential).\n• Used by: autonomous GPS receivers (phone, vehicle navigation, handheld).\n\nCARRIER PHASE:\n• The receiver measures the phase of the underlying radio carrier wave (L1 at 19 cm wavelength, L2 at 24 cm).\n• The carrier wave is much shorter and smoother than the code, so fractional phase measurements give millimeter-level precision.\n• Complication: there is an integer ambiguity — the receiver doesn\'t know how many whole cycles separate it from the satellite. Resolving this ambiguity (integer ambiguity resolution) is the key computational step in RTK, static, and kinematic GNSS.\n• Accuracy: ±5–20 mm (RTK with resolved ambiguity); ±1–5 mm (static post-processed).\n• Used by: RTK, static control, VRS, OPUS.\n\nSummary table:\n\nMethod              | Signal      | Typical accuracy\nStandalone GPS      | Code (C/A)  | ±3–5 m\nDGPS / SBAS         | Code        | ±0.3–1 m\nRTK (real-time)     | Carrier     | ±1–3 cm\nVRS / Network RTK   | Carrier     | ±1–2 cm\nStatic (post-proc)  | Carrier     | ±3–10 mm',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 13', topic: 'GPS signal structure, code and carrier phase' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 20', topic: 'GNSS accuracy and observation methods' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22', topic: 'GNSS accuracy and observation methods' },
         ],
       },
       {
@@ -83,7 +83,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
         title: 'CORS Network and HARN',
         content: 'CORS — Continuously Operating Reference Stations:\n• A nationwide network of permanently installed GPS reference stations maintained primarily by NOAA\'s National Geodetic Survey (NGS) and many cooperating agencies.\n• Each CORS station logs raw GPS/GNSS data continuously (24/7) and uploads it to NGS servers.\n• Surveys: Provides the base-station data that OPUS uses to compute precise coordinates for user observations — without the user needing their own base station.\n• Coverage: Over 2,000 CORS stations across the U.S. and territories, spaced typically 100–300 km apart.\n• Datum connection: CORS coordinates are tied to NAD 83 (and ITRF), providing a consistent datum for all users.\n• Cost to use: Free. Users submit their raw data file to the OPUS web service.\n\nHARN — High Accuracy Reference Network:\n• A passive geodetic control network established by NGS in the 1990s to upgrade the older NAD 83 network.\n• Passive control = monumented points (brass discs in the ground) — not continuously operating stations.\n• Horizontal accuracy: ±1 cm or better for HARN stations (a significant improvement over the original NAD 83 control).\n• Users perform GPS surveys and tie into HARN stations to establish high-accuracy local control.\n• Relationship to CORS: CORS is active (continuously operating electronic stations); HARN is passive (monuments you physically occupy with a GPS receiver).\n\nKey distinction on the exam: CORS provides real-time or archived electronic data; HARN provides physical control points. Use CORS for OPUS and post-processing; use HARN to verify or establish local control.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 20', topic: 'CORS, HARN, and geodetic networks' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22', topic: 'CORS, HARN, and geodetic networks' },
         ],
       },
       {
@@ -92,7 +92,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
         title: 'OPUS: Online Positioning User Service',
         content: 'OPUS (Online Positioning User Service) is a free NGS web service that processes raw static GNSS data and returns precise coordinates in NAD 83 and NAVD 88 (via GEOID).\n\nWhen to use OPUS:\n• When you need high-accuracy (cm-level) coordinates but cannot set up your own base station.\n• For establishing new control points without a second GPS receiver in the field.\n• For verifying existing control or recovering a benchmark position.\n\nOPUS workflow:\n1. COLLECT raw data — Occupy the point with a single dual-frequency GPS/GNSS receiver for at least 2 hours (OPUS-Static) or 15 minutes (OPUS-Rapid Static, shorter sessions, reduced accuracy).\n2. DOWNLOAD the raw data file (RINEX or proprietary format convertible to RINEX).\n3. SUBMIT to OPUS — Upload the file at geodesy.noaa.gov/OPUS. Enter the antenna type and antenna height.\n4. NOAA PROCESSES — OPUS automatically selects 3 or more nearby CORS stations, processes the baselines between each CORS and your receiver, and averages the results.\n5. RECEIVE RESULTS — An email arrives (usually within minutes) with NAD 83 latitude, longitude, ellipsoid height, orthometric height, and quality statistics.\n\nOPUS accuracy:\n• OPUS-Static (≥2 hours): Typically ±3–5 cm horizontal, ±5–8 cm vertical (95% confidence).\n• Accuracy improves with longer observation times and more CORS stations in range.\n\nKey facts for the exam:\n• OPUS uses the CORS network — no user-provided base station needed.\n• The user needs only ONE receiver (not two).\n• OPUS provides NAD 83 horizontal coordinates AND NAVD 88 elevations (using the geoid model).\n• RINEX is the standard exchange format for raw GNSS data.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 20', topic: 'OPUS workflow and applications' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22', topic: 'OPUS workflow and applications' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 13', topic: 'Post-processing and network-based GNSS' },
         ],
       },
@@ -109,7 +109,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
         content: 'Multipath occurs when satellite signals reach the receiver\'s antenna via multiple paths — one direct and one or more reflected off nearby surfaces (buildings, vehicles, water, pavement, hillsides). The reflected signal travels a longer path and arrives slightly delayed, corrupting the direct signal measurement.\n\nEffects:\n• Code multipath: causes range errors of 1–5 m.\n• Carrier phase multipath: errors typically less than a few centimeters, but can cause cycle slips and wrong ambiguity resolution.\n• Multipath is the dominant error source for high-accuracy GNSS work in urban or semi-urban environments.\n\nSources of severe multipath:\n• Buildings and walls near the antenna.\n• Chain-link fences and vehicles.\n• Water bodies and wet pavement.\n• Hillsides and rock outcrops.\n\nMitigation strategies (testable):\n1. Site selection — avoid reflective surfaces within 50 m of the antenna.\n2. Antenna design — choke-ring antennas and ground planes reject signals from low elevation angles where multipath is worst.\n3. Elevation mask — ignore satellites below 10–15° elevation angle; low-elevation signals travel near the ground where multipath is severe.\n4. Longer observation times — multipath is partially random; longer sessions average out some errors.\n5. Receiver algorithms — modern receivers have multipath-rejection filters.\n6. Avoid metal rooftops — do not mount antennas on metal surfaces that act as reflectors.',
         bookRefs: [
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 13', topic: 'GNSS error sources and multipath' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 20', topic: 'GPS error sources and mitigation' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22', topic: 'GPS error sources and mitigation' },
         ],
       },
       {
@@ -118,7 +118,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
         title: 'UTM Coordinate System: Zone Structure',
         content: 'The Universal Transverse Mercator (UTM) system divides Earth into 60 north-south zones, each 6° of longitude wide, numbered 1 through 60 eastward starting from 180°W.\n\nZone boundaries:\n• Zone 1: 180°W to 174°W\n• Zone 2: 174°W to 168°W\n• ... each zone = 6°\n• Zone 60: 174°E to 180°E\n\nZone numbering for any longitude:\nZone = ⌊(longitude + 180) / 6⌋ + 1  (where longitude is positive east, negative west)\n\nExamples:\n• 87°W = −87°: Zone = ⌊(−87 + 180)/6⌋ + 1 = ⌊93/6⌋ + 1 = 15 + 1 = 16\n• 105°W = −105°: Zone = ⌊(−105 + 180)/6⌋ + 1 = ⌊75/6⌋ + 1 = 12 + 1 = 13\n• 0° (prime meridian): Zone = ⌊180/6⌋ + 1 = 30 + 1 = 31\n\nProjection within each zone:\n• Transverse Mercator projection, with the central meridian at the center of each 6° strip.\n• False Easting: 500,000 m (placed at the central meridian so all eastings are positive).\n• False Northing: 0 m (north) or 10,000,000 m (south, to keep northings positive).\n• Scale factor at central meridian: 0.9996 (distortion grows toward zone edges).\n\nKey differences from State Plane:\n• UTM is a worldwide system; State Plane is U.S.-only and uses smaller zones for higher accuracy.\n• UTM coordinates are in meters; State Plane coordinates may be in feet or meters.\n• State Plane accuracy within a zone is typically better than UTM accuracy.',
         bookRefs: [
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 21', topic: 'UTM coordinate system and zone structure' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 23', topic: 'UTM coordinate system and zone structure' },
           { book: 'Elementary Surveying (ES)', chapter: 'Chapter 20', topic: 'Map projections and UTM' },
         ],
       },
@@ -158,7 +158,7 @@ export const STUDY_READINGS_GNSS: ReadingModule[] = [
         title: 'GNSS Advanced References',
         furtherReading: [
           { book: 'Elementary Surveying: An Introduction to Geomatics (Ghilani & Wolf)', chapter: 'Chapter 13', topic: 'GNSS surveying — signal types, methods, and error sources' },
-          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Chapters 20–21', topic: 'GNSS, geodetic control, and coordinate systems' },
+          { book: 'Surveyor Reference Manual (SRM)', chapter: 'Topic IV, Ch 22-23', topic: 'GNSS, geodetic control, and coordinate systems' },
           { book: 'NOAA/NGS OPUS User Guide', chapter: 'Full document', topic: 'Online Positioning User Service workflow and accuracy expectations' },
         ],
       },

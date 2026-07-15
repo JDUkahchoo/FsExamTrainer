@@ -1,6 +1,8 @@
-- [Exam track scoping](exam-track-scoping.md) — FS/PS/TX isolation; quiz/exam scoped by domain string, flashcards/readings by examTrack; /api/progress/analytics is NOT track-scoped; deck/URL-domain leakage traps.
-- [Spaced-repetition review items](review-items.md) — itemId conventions (lesson:/raw cardId/quiz-domain:), flashcard cardId = deckPrefix+stableIndex, weekly fresh-slate slate shape + deep-linking.
-- [Design system — Field Book to Point Cloud](design-system.md) — paper content + dark instrument-panel sidebar; never use text-muted-foreground on the dark rail; survey-orange needs dark text.
-- [Flashcard session domainBreakdown contract](flashcard-domain-breakdown-contract.md) — jsonb has no type enforcement; keep client emit + server/study-plan readers in sync, tolerate legacy numeric counts.
-- [Topic worked-solution drills](topic-drills.md) — configurable per-topic drill via registry; filter quiz questions by `topic` ONLY (a topic can span domains; topic tags are FS-only so it stays track-safe).
-- [Draft int32 seed trap](draft-int32-seed.md) — client values saved to integer columns must fit int32; raw Date.now() seeds silently 400'd every quiz/exam draft save.
+- [Exam track scoping](exam-track-scoping.md) — FS/PS/TX isolation; quiz/exam scoped by domain string, flashcards/readings by examTrack; analytics is NOT track-scoped.
+- [Spaced-repetition review items](review-items.md) — itemId conventions, flashcard cardId = deckPrefix+stableIndex, weekly fresh-slate shape + deep-linking.
+- [Design system — Field Book to Point Cloud](design-system.md) — paper content + dark instrument-panel sidebar; never text-muted-foreground on the dark rail.
+- [Flashcard session domainBreakdown contract](flashcard-domain-breakdown-contract.md) — jsonb unenforced; keep client emit + server readers in sync.
+- [Topic worked-solution drills](topic-drills.md) — per-topic drill registry; filter quiz questions by `topic` ONLY (topic tags are FS-only, track-safe).
+- [Draft int32 seed trap](draft-int32-seed.md) — client values saved to integer columns must fit int32; raw Date.now() seeds silently 400'd draft saves.
+- [SRM 7th Edition chapter map](srm-7th-edition-chapters.md) — authoritative Topic/chapter numbering for all Surveyor Reference Manual citations; never cite bare chapter numbers.
+- [Route remount trap](route-remount-trap.md) — route wrappers in App.tsx must have stable identity (cached), or pages unmount on every Router re-render and wipe results screens.
