@@ -3282,96 +3282,120 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'A simple circular curve has a degree of curve D = 6° (arc definition). What is the radius?',
     options: ['954.93 ft', '1,000.00 ft', '500.00 ft', '1,145.92 ft'],
     correctAnswer: 0,
-    explanation: 'Arc definition: D = 5,729.578 / R. R = 5,729.578 / D = 5,729.578 / 6 = 954.93 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the arc-definition relationship: D = 5,729.578 / R, so R = 5,729.578 / D. Step 2 — substitute D = 6°: R = 5,729.578 / 6. Step 3 — evaluate: R = 954.93 ft. A higher degree of curve means a sharper curve with a smaller radius.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Degree of Curve (R = 5729.58/D)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A horizontal curve has R = 800 ft and a deflection angle Δ = 50°. What is the tangent distance (T)?',
     options: ['372.86 ft', '400.00 ft', '350.00 ft', '425.50 ft'],
     correctAnswer: 0,
-    explanation: 'T = R × tan(Δ/2) = 800 × tan(25°) = 800 × 0.4663 = 372.86 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the tangent distance formula: T = R × tan(Δ/2). Step 2 — substitute R = 800 ft and Δ/2 = 25°: T = 800 × tan(25°) = 800 × 0.4663. Step 3 — evaluate: T = 372.86 ft.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Tangent Distance (T = R·tan(Δ/2))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A horizontal curve has R = 1,200 ft and Δ = 36°. What is the curve length (L)?',
     options: ['753.98 ft', '800.00 ft', '680.00 ft', '900.00 ft'],
     correctAnswer: 0,
-    explanation: 'L = (Δ/360°) × 2πR = (36/360) × 2π(1,200) = 0.1 × 7,539.82 = 753.98 ft. Or L = RΔ(radians) = 1,200 × 0.6283 = 753.98 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the arc length formula: L = (Δ/360°) × 2πR. Step 2 — substitute: L = (36/360) × 2π(1,200) = 0.1 × 7,539.82. Step 3 — evaluate: L = 753.98 ft. Check — the radian form gives the same result: L = R × Δ(rad) = 1,200 × 0.6283 = 753.98 ft.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Curve Length (L = RΔ or 100Δ/D)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A horizontal curve has R = 1,000 ft and Δ = 40°. What is the external distance (E)?',
     options: ['64.18 ft', '75.00 ft', '50.00 ft', '80.25 ft'],
     correctAnswer: 0,
-    explanation: 'E = R × (sec(Δ/2) - 1) = 1,000 × (sec(20°) - 1) = 1,000 × (1/cos(20°) - 1) = 1,000 × (1.06418 - 1) = 1,000 × 0.06418 = 64.18 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the external distance formula: E = R × (sec(Δ/2) − 1). Step 2 — substitute R = 1,000 ft and Δ/2 = 20°: E = 1,000 × (1/cos(20°) − 1) = 1,000 × (1.06418 − 1). Step 3 — evaluate: E = 1,000 × 0.06418 = 64.18 ft. E is measured from the PI radially inward to the midpoint of the curve.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'External Distance (E = R(sec(Δ/2)−1))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A horizontal curve has R = 600 ft and Δ = 60°. What is the middle ordinate (M)?',
     options: ['80.38 ft', '60.00 ft', '100.00 ft', '45.00 ft'],
     correctAnswer: 0,
-    explanation: 'M = R × [1 - cos(Δ/2)] = 600 × [1 - cos(30°)] = 600 × [1 - 0.8660] = 600 × 0.1340 = 80.38 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the middle ordinate formula: M = R × [1 − cos(Δ/2)]. Step 2 — substitute R = 600 ft and Δ/2 = 30°: M = 600 × [1 − 0.8660] = 600 × 0.1340. Step 3 — evaluate: M = 80.38 ft. M is measured from the midpoint of the long chord perpendicular to the curve.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Middle Ordinate (M = R(1−cos(Δ/2)))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A vertical curve connects a +4.0% grade to a -3.0% grade. The PVI is at Station 25+00, elevation 520.00 ft. The curve length is 700 ft. What is the elevation at the BVC?',
     options: ['506.00 ft', '510.00 ft', '515.00 ft', '520.00 ft'],
     correctAnswer: 0,
-    explanation: 'BVC is L/2 before PVI. BVC station = 25+00 - 3+50 = 21+50. Elevation at BVC = PVI elevation - g1 × (L/2) = 520.00 - 0.04 × 350 = 520.00 - 14.00 = 506.00 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — locate the BVC: it sits L/2 = 350 ft before the PVI, so BVC station = 25+00 − 3+50 = 21+50. Step 2 — walk back down the entering grade: Elev BVC = PVI elevation − g1 × (L/2) = 520.00 − 0.04 × 350. Step 3 — evaluate: Elev BVC = 520.00 − 14.00 = 506.00 ft.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Vertical Curve Elevation (y = y₀ + g₁x + (r/2)x²)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A 600-ft vertical curve connects g1 = +3.5% to g2 = -2.5%. The PVI is at Station 30+00, elevation 450.00 ft. At what station is the high point of the curve?',
     options: ['Station 30+50', 'Station 29+50', 'Station 30+00', 'Station 28+50'],
     correctAnswer: 0,
-    explanation: 'High/low point station from BVC: x = -g1 × L / (g2 - g1). BVC = 30+00 - 3+00 = 27+00. x = -0.035 × 600 / (-0.025 - 0.035) = -21 / (-0.06) = 350 ft from BVC. Station = 27+00 + 3+50 = 30+50.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the high/low point offset from the BVC: x = −g1 × L / (g2 − g1). Step 2 — locate the BVC: 30+00 − 3+00 = 27+00. Step 3 — substitute: x = −0.035 × 600 / (−0.025 − 0.035) = −21 / (−0.06) = 350 ft from BVC. Step 4 — add the offset: Station = 27+00 + 3+50 = 30+50.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'VC High/Low Point (x = −g₁L/(g₂−g₁))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A 400-ft vertical curve has g1 = +2.0% and g2 = -4.0%. The BVC elevation is 300.00 ft at Station 10+00. What is the curve elevation at Station 11+00?',
     options: ['301.25 ft', '302.00 ft', '300.00 ft', '299.50 ft'],
     correctAnswer: 0,
-    explanation: 'x = distance from BVC = 100 ft. r = (g2 - g1)/L = (-0.04 - 0.02)/400 = -0.00015 per ft. Tangent elevation at x: y_t = 300.00 + 0.02(100) = 302.00. Curve correction = (r/2)x² = (-0.00015/2)(100²) = -0.0000750 × 10,000 = -0.75 ft. Curve elevation = 302.00 - 0.75 = 301.25 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — find the distance from the BVC: x = Station 11+00 − Station 10+00 = 100 ft. Step 2 — compute the rate of grade change: r = (g2 − g1)/L = (−0.04 − 0.02)/400 = −0.00015 per ft. Step 3 — tangent elevation at x: y_t = 300.00 + 0.02(100) = 302.00 ft. Step 4 — curve correction: (r/2)x² = (−0.00015/2)(100²) = −0.75 ft. Step 5 — curve elevation = 302.00 − 0.75 = 301.25 ft.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Vertical Curve Elevation (y = y₀ + g₁x + (r/2)x²)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A horizontal curve has R = 2,000 ft and Δ = 24°. What is the long chord (LC)?',
     options: ['831.65 ft', '800.00 ft', '900.00 ft', '750.00 ft'],
     correctAnswer: 0,
-    explanation: 'LC = 2R × sin(Δ/2) = 2(2,000) × sin(12°) = 4,000 × 0.20791 = 831.65 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the long chord formula: LC = 2R × sin(Δ/2). Step 2 — substitute R = 2,000 ft and Δ/2 = 12°: LC = 2(2,000) × sin(12°) = 4,000 × 0.20791. Step 3 — evaluate: LC = 831.65 ft. The long chord connects the PC directly to the PT.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Long Chord (LC = 2R·sin(Δ/2))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A 500-ft sag vertical curve connects g1 = -3.0% and g2 = +2.0%. The BVC is at Station 20+00, elevation 350.00 ft. What is the elevation at the low point?',
     options: ['345.50 ft', '346.00 ft', '347.00 ft', '344.00 ft'],
     correctAnswer: 0,
-    explanation: 'Low point location from BVC: x = -g1 × L / (g2 - g1) = -(-0.03)(500) / (0.02 - (-0.03)) = 15 / 0.05 = 300 ft. Tangent elevation at x=300: 350.00 + (-0.03)(300) = 350.00 - 9.00 = 341.00 ft. r = (g2-g1)/L = (0.02-(-0.03))/500 = 0.0001. Curve correction = (r/2)(x²) = (0.0001/2)(300²) = 0.00005 × 90,000 = 4.50 ft. Curve elevation = 341.00 + 4.50 = 345.50 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — locate the low point from the BVC: x = −g1 × L / (g2 − g1) = −(−0.03)(500) / (0.02 − (−0.03)) = 15 / 0.05 = 300 ft. Step 2 — tangent elevation at x = 300: 350.00 + (−0.03)(300) = 341.00 ft. Step 3 — rate of grade change: r = (g2 − g1)/L = 0.05/500 = 0.0001 per ft. Step 4 — curve correction: (r/2)x² = (0.0001/2)(300²) = 4.50 ft. Step 5 — low point elevation = 341.00 + 4.50 = 345.50 ft.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'VC High/Low Point (x = −g₁L/(g₂−g₁))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'For a crest vertical curve with g1 = +5% and g2 = -3%, what minimum curve length is needed for stopping sight distance of 600 ft? Use L = A·S²/2158 for S ≤ L (h1=3.5 ft, h2=2.0 ft).',
     options: ['1,334 ft', '930 ft', '2,400 ft', '600 ft'],
     correctAnswer: 0,
-    explanation: 'A = |g1 - g2| = |5 - (-3)| = 8%. Assuming S ≤ L: L = A × S² / 2,158 = 8 × 600² / 2,158 = 8 × 360,000 / 2,158 = 2,880,000 / 2,158 = 1,334 ft. Check: S=600 < L=1,334, so the assumption is valid. Minimum curve length = 1,334 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — compute the algebraic grade difference: A = |g1 − g2| = |5 − (−3)| = 8%. Step 2 — assume S ≤ L and apply L = A × S² / 2,158 = 8 × 360,000 / 2,158. Step 3 — evaluate: L = 2,880,000 / 2,158 = 1,334 ft. Step 4 — check the assumption: S = 600 < L = 1,334, so it is valid. Minimum curve length = 1,334 ft.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Crest Curve Sight Distance (L = AS²/2158)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A horizontal curve has D = 4° (arc definition). The deflection angle is Δ = 52°. What is the curve length?',
     options: ['1,300 ft', '1,200 ft', '1,400 ft', '1,500 ft'],
     correctAnswer: 0,
-    explanation: 'L = 100 × Δ / D = 100 × 52 / 4 = 1,300 ft. This is because each 100-ft station subtends the degree of curve D.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — recall that each 100-ft station subtends D degrees of central angle, so L = 100 × Δ / D. Step 2 — substitute: L = 100 × 52 / 4. Step 3 — evaluate: L = 1,300 ft.',
+    difficulty: 'hard',
+    topic: 'Curves',
+    skill: 'Curve Length (L = RΔ or 100Δ/D)'
   },
 
   // ============================================================
@@ -3382,96 +3406,120 @@ const FS_QUIZ_QUESTIONS: QuizQuestion[] = [
     question: 'Point A has coordinates N 5,000.00, E 3,000.00 and Point B has coordinates N 5,400.00, E 3,300.00. What is the distance from A to B?',
     options: ['500.00 ft', '424.26 ft', '700.00 ft', '300.00 ft'],
     correctAnswer: 0,
-    explanation: 'ΔN = 5,400 - 5,000 = 400. ΔE = 3,300 - 3,000 = 300. Distance = √(400² + 300²) = √(160,000 + 90,000) = √250,000 = 500.00 ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — compute the coordinate differences: ΔN = 5,400 − 5,000 = 400 and ΔE = 3,300 − 3,000 = 300. Step 2 — apply the inverse distance formula: Distance = √(ΔN² + ΔE²) = √(160,000 + 90,000). Step 3 — evaluate: √250,000 = 500.00 ft.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Inverse — Distance (√(ΔN²+ΔE²))'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'Point A is at N 2,000.00, E 1,000.00. Point B is at N 2,500.00, E 1,500.00. What is the azimuth from A to B?',
     options: ['45° 00\'', '135° 00\'', '315° 00\'', '225° 00\''],
     correctAnswer: 0,
-    explanation: 'ΔN = 2,500 - 2,000 = +500 (north). ΔE = 1,500 - 1,000 = +500 (east). tan(Az) = ΔE/ΔN = 500/500 = 1.0. Az = arctan(1) = 45°. Since both ΔN and ΔE are positive (NE quadrant), azimuth = 45° 00\'.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — compute the coordinate differences: ΔN = 2,500 − 2,000 = +500 (north) and ΔE = 1,500 − 1,000 = +500 (east). Step 2 — apply the inverse direction formula: tan(Az) = ΔE/ΔN = 500/500 = 1.0, so Az = arctan(1) = 45°. Step 3 — check the quadrant: both ΔN and ΔE are positive (NE quadrant), so azimuth = 45° 00\'.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Inverse — Direction (from ΔN, ΔE)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'From Point A (N 1,000.00, E 2,000.00), a bearing of N 30° E is observed for a distance of 400.00 ft. What are the coordinates of Point B?',
     options: ['N 1,346.41, E 2,200.00', 'N 1,200.00, E 2,346.41', 'N 1,400.00, E 2,300.00', 'N 1,300.00, E 2,400.00'],
     correctAnswer: 0,
-    explanation: 'Latitude = 400 × cos(30°) = 400 × 0.8660 = 346.41. Departure = 400 × sin(30°) = 400 × 0.5000 = 200.00. N_B = 1,000.00 + 346.41 = 1,346.41. E_B = 2,000.00 + 200.00 = 2,200.00.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — compute the latitude (ΔN): Latitude = 400 × cos(30°) = 400 × 0.8660 = 346.41. Step 2 — compute the departure (ΔE): Departure = 400 × sin(30°) = 400 × 0.5000 = 200.00. Step 3 — add to the coordinates of A: N_B = 1,000.00 + 346.41 = 1,346.41 and E_B = 2,000.00 + 200.00 = 2,200.00.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Forward / Radiation (ΔN = d·cos, ΔE = d·sin)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'Point A is at (N 3,000, E 1,000) with bearing N 60° E. Point B is at (N 2,000, E 4,000) with bearing N 30° W. What is the Northing of the intersection point?',
-    options: ['3,634', '3,500', '3,800', '4,000'],
+    options: ['4,049', '3,634', '3,800', '4,000'],
     correctAnswer: 0,
-    explanation: 'From A: azimuth = 60°. Line A: N = 3,000 + d1×cos60°, E = 1,000 + d1×sin60°. From B: azimuth = 330°. Line B: N = 2,000 + d2×cos330°, E = 4,000 + d2×sin330°. Setting E equal: 1,000 + d1(0.8660) = 4,000 + d2(-0.5). Setting N: 3,000 + d1(0.5) = 2,000 + d2(0.8660). From N equation: d1(0.5) - d2(0.8660) = -1,000. From E equation: d1(0.8660) + d2(0.5) = 3,000. Solving: d1 = 0.5×3,000 + 0.8660×1,000)/(0.5×0.5 + 0.8660×0.8660) = (1,500 + 866)/(0.25 + 0.75) = 2,366/1.0 → d1 ≈ 1,268 ft. N_int = 3,000 + 1,268 × 0.5 = 3,634.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the parametric line equations. From A (azimuth 60°): N = 3,000 + d1·cos60°, E = 1,000 + d1·sin60°. From B (azimuth 330°): N = 2,000 + d2·cos330°, E = 4,000 + d2·sin330°. Step 2 — set the lines equal. N: 3,000 + 0.5·d1 = 2,000 + 0.8660·d2. E: 1,000 + 0.8660·d1 = 4,000 − 0.5·d2. Step 3 — solve the pair: from the N equation d1 = 1.7320·d2 − 2,000; substituting into the E equation gives 2·d2 = 4,732, so d2 = 2,366 ft and d1 = 2,098 ft. Step 4 — substitute back: N_int = 3,000 + 2,098 × 0.5 = 4,049. Check from B: 2,000 + 2,366 × 0.8660 = 4,049. ✓',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Bearing-Bearing Intersection'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A closed traverse has the following coordinates: A(1000,1000), B(1000,2000), C(2000,2000), D(2000,1000). What is the area by the coordinate method?',
     options: ['1,000,000 sq ft', '2,000,000 sq ft', '500,000 sq ft', '4,000,000 sq ft'],
     correctAnswer: 0,
-    explanation: 'Area = ½|Σ(Ni(Ei+1 - Ei-1))|. Using cross-multiply: Σ = N_A(E_B - E_D) + N_B(E_C - E_A) + N_C(E_D - E_B) + N_D(E_A - E_C) = 1000(2000-1000) + 1000(2000-1000) + 2000(1000-2000) + 2000(1000-2000) = 1,000,000 + 1,000,000 - 2,000,000 - 2,000,000 = -2,000,000. Area = ½|−2,000,000| = 1,000,000 sq ft. This is a 1,000×1,000 square = 1,000,000 sq ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the coordinate-method formula: Area = ½|Σ Ni(Ei+1 − Ei−1)|. Step 2 — substitute each vertex: Σ = 1000(2000−1000) + 1000(2000−1000) + 2000(1000−2000) + 2000(1000−2000) = 1,000,000 + 1,000,000 − 2,000,000 − 2,000,000 = −2,000,000. Step 3 — take half the absolute value: Area = ½|−2,000,000| = 1,000,000 sq ft. Check — this is a 1,000 × 1,000 square, so the answer is confirmed.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Area by Coordinates'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'Point A (N 5,000, E 2,000) and Point B (N 5,000, E 3,000). What is the bearing from A to B?',
     options: ['N 90° 00\' E (Due East)', 'S 90° 00\' E', 'N 0° 00\' E', 'S 0° 00\' W'],
     correctAnswer: 0,
-    explanation: 'ΔN = 5,000 - 5,000 = 0. ΔE = 3,000 - 2,000 = +1,000 (east). Since ΔN = 0 and ΔE is positive, the direction is due east = N 90° 00\' E (or azimuth 90°).',
-    difficulty: 'hard'
+    explanation: 'Step 1 — compute the coordinate differences: ΔN = 5,000 − 5,000 = 0 and ΔE = 3,000 − 2,000 = +1,000 (east). Step 2 — interpret: with no north-south change and a positive east change, the line points due east. Step 3 — express as a bearing: due east = N 90° 00\' E (azimuth 90°).',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Inverse — Direction (from ΔN, ΔE)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A triangle has vertices at A(100,200), B(500,200), C(300,600). What is the area using the coordinate method?',
     options: ['80,000 sq ft', '100,000 sq ft', '60,000 sq ft', '120,000 sq ft'],
     correctAnswer: 0,
-    explanation: 'Area = ½|x_A(y_B - y_C) + x_B(y_C - y_A) + x_C(y_A - y_B)| = ½|100(200-600) + 500(600-200) + 300(200-200)| = ½|100(-400) + 500(400) + 300(0)| = ½|-40,000 + 200,000 + 0| = ½|160,000| = 80,000 sq ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the triangle coordinate formula: Area = ½|x_A(y_B − y_C) + x_B(y_C − y_A) + x_C(y_A − y_B)|. Step 2 — substitute: ½|100(200−600) + 500(600−200) + 300(200−200)| = ½|−40,000 + 200,000 + 0|. Step 3 — evaluate: Area = ½ × 160,000 = 80,000 sq ft.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Area by Coordinates'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'Point P has coordinates (N 1,000, E 2,000). The coordinates are rotated 90° clockwise about the origin. What are the new coordinates of P?',
     options: ['N 2,000, E -1,000', 'N -2,000, E 1,000', 'N -1,000, E -2,000', 'N 1,000, E -2,000'],
     correctAnswer: 0,
-    explanation: 'For a 90° clockwise rotation: N\' = E_old = 2,000, E\' = -N_old = -1,000. New coordinates: (N 2,000, E -1,000). Rotation matrix for clockwise 90°: [cos(-90°) -sin(-90°); sin(-90°) cos(-90°)] = [0, 1; -1, 0].',
-    difficulty: 'hard'
+    explanation: 'Step 1 — write the 90° clockwise rotation rule: N\' = E_old and E\' = −N_old (rotation matrix [0, 1; −1, 0]). Step 2 — substitute: N\' = 2,000 and E\' = −1,000. Step 3 — state the result: new coordinates are (N 2,000, E −1,000).',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Coordinate Transformation'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'Point A is at N 10,000.00, E 5,000.00. Point B is at N 9,500.00, E 5,866.03. What is the bearing from A to B?',
     options: ['S 60° 00\' E', 'N 60° 00\' E', 'S 30° 00\' E', 'N 30° 00\' W'],
     correctAnswer: 0,
-    explanation: 'ΔN = 9,500 - 10,000 = -500 (south). ΔE = 5,866.03 - 5,000 = +866.03 (east). tan(angle) = |ΔE|/|ΔN| = 866.03/500 = 1.73206. Angle = arctan(1.73206) = 60°. Since direction is south and east: bearing = S 60° 00\' E.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — compute the coordinate differences: ΔN = 9,500 − 10,000 = −500 (south) and ΔE = 5,866.03 − 5,000 = +866.03 (east). Step 2 — find the bearing angle: tan(angle) = |ΔE|/|ΔN| = 866.03/500 = 1.73206, so angle = arctan(1.73206) = 60°. Step 3 — assign the quadrant: south and east gives bearing = S 60° 00\' E.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Inverse — Direction (from ΔN, ΔE)'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'A traverse has the following coordinates: A(0,0), B(400,0), C(400,300), D(0,300). Using the DMD (Double Meridian Distance) method, what is the area?',
     options: ['120,000 sq ft', '240,000 sq ft', '60,000 sq ft', '180,000 sq ft'],
     correctAnswer: 0,
-    explanation: 'This is a rectangle 400 × 300 = 120,000 sq ft. Using DMD: departures are AB=0, BC=300, CD=0, DA=-300. DMDs: AB=0, BC=0+0+300=300, CD=300+300+0=600, DA=600+0+(-300)=300. Double areas: AB(0×0)=0, BC(300×400)=120,000 (using latitudes), etc. Sum of double areas = 240,000. Area = 240,000/2 = 120,000 sq ft.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — compute the departures of each line: AB = 0, BC = 300, CD = 0, DA = −300. Step 2 — build the DMDs: DMD_AB = 0; DMD_BC = 0 + 0 + 300 = 300; DMD_CD = 300 + 300 + 0 = 600; DMD_DA = 600 + 0 + (−300) = 300. Step 3 — multiply each DMD by its latitude and sum the double areas: total = 240,000. Step 4 — Area = 240,000 / 2 = 120,000 sq ft. Check — the figure is a 400 × 300 rectangle = 120,000 sq ft.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Area by Coordinates'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'Point A coordinates are translated by ΔN = +150.00 and ΔE = -200.00. If A was originally at (N 3,000, E 4,000), what are the transformed coordinates?',
     options: ['N 3,150.00, E 3,800.00', 'N 2,850.00, E 4,200.00', 'N 3,200.00, E 3,800.00', 'N 3,150.00, E 4,200.00'],
     correctAnswer: 0,
-    explanation: 'Translation simply adds the offsets: N\' = 3,000 + 150 = 3,150.00. E\' = 4,000 + (-200) = 3,800.00. New coordinates: (N 3,150.00, E 3,800.00).',
-    difficulty: 'hard'
+    explanation: 'Step 1 — a translation simply adds the offsets to each coordinate. Step 2 — apply to Northing: N\' = 3,000 + 150 = 3,150.00. Step 3 — apply to Easting: E\' = 4,000 + (−200) = 3,800.00. New coordinates: (N 3,150.00, E 3,800.00).',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Coordinate Transformation'
   },
   {
     domain: 'Survey Computations & Applications',
     question: 'Points A(1000,1000) and B(2000,2000) define a baseline. Point C is at a perpendicular offset of 200 ft to the right of line AB at the midpoint. What is the Easting of Point C?',
     options: ['1,641.42', '1,500.00', '1,700.00', '1,358.58'],
     correctAnswer: 0,
-    explanation: 'Midpoint of AB: (1500, 1500). AB azimuth = 45° (ΔN=1000, ΔE=1000). Perpendicular to the right = azimuth 45° + 90° = 135°. Offset: ΔN = 200×cos(135°) = -141.42, ΔE = 200×sin(135°) = +141.42. C_E = 1,500 + 141.42 = 1,641.42.',
-    difficulty: 'hard'
+    explanation: 'Step 1 — find the midpoint of AB: (1500, 1500). Step 2 — find the azimuth of AB: ΔN = 1,000 and ΔE = 1,000, so azimuth = 45°. Step 3 — turn perpendicular to the right: 45° + 90° = 135°. Step 4 — radiate the 200-ft offset: ΔN = 200 × cos(135°) = −141.42 and ΔE = 200 × sin(135°) = +141.42. Step 5 — E_C = 1,500 + 141.42 = 1,641.42.',
+    difficulty: 'hard',
+    topic: 'COGO',
+    skill: 'Forward / Radiation (ΔN = d·cos, ΔE = d·sin)'
   },
 
   // ============================================================

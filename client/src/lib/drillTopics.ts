@@ -1,4 +1,4 @@
-import { Ruler, Plane, type LucideIcon } from 'lucide-react';
+import { Ruler, Plane, Spline, Compass, type LucideIcon } from 'lucide-react';
 
 export type DrillExamTrack = 'fs' | 'ps' | 'tx';
 
@@ -25,6 +25,8 @@ export interface DrillTopic {
   skillFallback: string;
   /** Short hint listing the computations to keep practicing (low-score badge). */
   keepDrillingHint: string;
+  /** Study reading module this drill links back to (route: /app/:track/readings/:readingId). */
+  readingId?: string;
 }
 
 export const DRILL_TOPICS: DrillTopic[] = [
@@ -41,6 +43,7 @@ export const DRILL_TOPICS: DrillTopic[] = [
       'A focused workout on the numeric State Plane problems — combined factor (CF = SF × EF), elevation factor, and grid-to-ground conversions — with the full worked solution shown after every answer.',
     skillFallback: 'Other State Plane computations',
     keepDrillingHint: 'CF, EF, and grid-to-ground',
+    readingId: 'fs-d7-state-plane',
   },
   {
     id: 'photogrammetry',
@@ -55,6 +58,37 @@ export const DRILL_TOPICS: DrillTopic[] = [
       'A focused workout on the numeric photogrammetry problems — photo scale (S = f/(H−h)), relief displacement (d = rh/H), and flight planning — with the full worked solution shown after every answer.',
     skillFallback: 'Other photogrammetry computations',
     keepDrillingHint: 'photo scale, relief displacement, and flight planning',
+    readingId: 'fs-d2-photogrammetry',
+  },
+  {
+    id: 'curves',
+    topic: 'Curves',
+    domain: 'Survey Computations & Applications',
+    examTracks: ['fs'],
+    navLabel: 'Curves Drill',
+    icon: Spline,
+    title: 'Curve Computation Drill',
+    badgeLabel: 'Curves',
+    description:
+      'A focused workout on horizontal and vertical curve problems — radius from degree of curve, tangent distance, curve length, external distance, middle ordinate, long chord, and vertical curve elevations — with the full worked solution shown after every answer.',
+    skillFallback: 'Other curve computations',
+    keepDrillingHint: 'curve elements (T, L, E, M, LC) and vertical curve elevations',
+    readingId: 'fs-d3-curves-comp',
+  },
+  {
+    id: 'cogo',
+    topic: 'COGO',
+    domain: 'Survey Computations & Applications',
+    examTracks: ['fs'],
+    navLabel: 'COGO Drill',
+    icon: Compass,
+    title: 'COGO Computation Drill',
+    badgeLabel: 'COGO',
+    description:
+      'A focused workout on coordinate geometry problems — inverses (distance and direction from coordinates), forward/radiation computations, bearing-bearing intersections, area by coordinates, and coordinate transformations — with the full worked solution shown after every answer.',
+    skillFallback: 'Other COGO computations',
+    keepDrillingHint: 'inverses, radiation, intersections, and area by coordinates',
+    readingId: 'fs-d3-cogo-comp',
   },
 ];
 

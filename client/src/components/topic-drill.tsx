@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, XCircle, ArrowRight, Trophy, Zap, BarChart3, ListChecks, RotateCcw } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, Trophy, Zap, BarChart3, ListChecks, RotateCcw, BookOpen } from 'lucide-react';
+import { Link } from 'wouter';
 import { getDomainConfig } from '@/lib/domains';
 import { QUIZ_QUESTIONS } from '@shared/data/quizQuestions';
 import { useMutation } from '@tanstack/react-query';
@@ -215,15 +216,25 @@ export function TopicDrill({ config }: { config: DrillTopic }) {
               After each answer you'll see a step-by-step solution, and a summary at the end shows exactly which
               problems you got right and which to revisit.
             </p>
-            <Button
-              size="lg"
-              onClick={handleStartDrill}
-              disabled={topicQuestions.length === 0}
-              data-testid="button-start-topic-drill"
-            >
-              <Icon className="w-4 h-4 mr-2" />
-              Start Drill
-            </Button>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button
+                size="lg"
+                onClick={handleStartDrill}
+                disabled={topicQuestions.length === 0}
+                data-testid="button-start-topic-drill"
+              >
+                <Icon className="w-4 h-4 mr-2" />
+                Start Drill
+              </Button>
+              {config.readingId && (
+                <Link href={`/app/${examTrack}/readings/${config.readingId}`}>
+                  <Button size="lg" variant="outline" data-testid="link-topic-reading">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Review the Reading
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </Card>
       </div>
@@ -345,6 +356,16 @@ export function TopicDrill({ config }: { config: DrillTopic }) {
                     </li>
                   ))}
                 </ol>
+                {config.readingId && (
+                  <Link
+                    href={`/app/${examTrack}/readings/${config.readingId}`}
+                    className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                    data-testid="link-topic-reading-solution"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    Review this in the {config.badgeLabel} reading
+                  </Link>
+                )}
               </div>
             )}
           </CardContent>
@@ -525,6 +546,14 @@ export function TopicDrill({ config }: { config: DrillTopic }) {
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Drill Again
               </Button>
+              {config.readingId && (
+                <Link href={`/app/${examTrack}/readings/${config.readingId}`}>
+                  <Button variant="outline" data-testid="link-topic-reading-results">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Review the Reading
+                  </Button>
+                </Link>
+              )}
               <Button variant="outline" onClick={handleRestart} data-testid="button-back-intro">
                 Back to Overview
               </Button>

@@ -12,3 +12,5 @@ A single configurable drill renders any computation topic tagged via `QuizQuesti
 **How to apply:** When adding a new drill topic, just tag questions with `topic` and add a registry entry. The config's `domain` is only the label used for the per-session save (`/api/quiz/sessions`); per-question results still record each question's own domain.
 
 To add a topic to the nav for a track, set its `examTracks` in the registry — the sidebar builds drill items from the registry filtered by current track.
+
+Registry entries may set an optional `readingId` pointing at a reading module id; when present, the drill component renders "review the reading" links (intro card, per-question solution card, results screen) to `/app/:track/readings/:readingId`. Keep the reading id track-prefixed (`fs-*`) and matching an existing module in the combined readings list.
