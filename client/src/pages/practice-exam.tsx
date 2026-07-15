@@ -73,6 +73,8 @@ export default function PracticeExamPage() {
   // Variation seed used at exam start (PS-track only); null = no variation.
   const [variationSeedBase, setVariationSeedBase] = useState<number | null>(null);
   const { logActivity } = useActivityLogger();
+  // Visible warning when draft auto-saves start failing (cleared on next success)
+  const [draftSaveWarning, setDraftSaveWarning] = useState(false);
 
   // Always-fresh snapshot of the draft payload so leave-time saves never use a stale closure.
   const draftSnapshotRef = useRef<ExamDraftPayload | null>(null);
@@ -91,8 +93,14 @@ export default function PracticeExamPage() {
   const saveDraftMutation = useMutation({
     mutationFn: ({ beaconFallback, ...draft }: ExamDraftPayload & { beaconFallback?: boolean }) =>
       apiRequest('POST', beaconFallback ? '/api/exam/draft?beaconFallback=1' : '/api/exam/draft', draft),
+    retry: 2,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
     onSuccess: () => {
+      setDraftSaveWarning(false);
       queryClient.invalidateQueries({ queryKey: ['/api/exam/draft', examTrack] });
+    },
+    onError: () => {
+      setDraftSaveWarning(true);
     }
   });
 
@@ -800,6 +808,14 @@ export default function PracticeExamPage() {
 
       {/* Question content */}
       <div className="p-8 max-w-4xl mx-auto">
+        {draftSaveWarning && (
+          <Alert className="mb-4 border-yellow-400 bg-yellow-50 dark:bg-yellow-950/30" data-testid="alert-draft-save-warning">
+            <AlertDescription className="text-yellow-800 dark:text-yellow-200 flex items-center justify-between">
+              <span>Progress auto-save failed. Your answers are safe in this tab — avoid closing it until the exam is complete.</span>
+              <Button variant="ghost" size="sm" className="ml-4 text-yellow-800 dark:text-yellow-200" onClick={() => setDraftSaveWarning(false)} data-testid="button-dismiss-draft-save-warning">Dismiss</Button>
+            </AlertDescription>
+          </Alert>
+        )}
         {/* Scenario context for scenario-based questions */}
         {currentQuestion && isNCEESQuestion(currentQuestion) && currentQuestion.scenarioId && (
           (() => {
