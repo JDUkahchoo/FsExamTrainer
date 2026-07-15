@@ -11,6 +11,9 @@ description: itemId conventions for reviewSchedule rows and how the review card 
 - quiz domain reviews → itemType `concept`, itemId `quiz-domain:<domain>` (no single-item page → only a domain-level fallback exists)
 - readings do NOT create review items
 
+## Drift guard for positional cardIds
+A committed checksum manifest (per-index sha1 of domain+front for each active deck list) fails CI on any insert/remove/reorder of flashcard deck data. Appending at deck END is the only safe edit; anything else requires migrating stored review ids, then regenerating the manifest via the regenerate script next to the tests. **Why:** cardIds are positional — reorders silently repoint every saved review/mastery/deep link.
+
 ## Flashcard cardId encoding
 `cardId = <deckPrefix><stableIndex>` where deckPrefix is `comp-card-` (comprehensive deck) or `card-` (original deck), and stableIndex = index of the card in the FULL active deck (`activeFlashcards.indexOf(card)`), NOT the filtered/visible list. With domain `all`, filtered == active so the position equals stableIndex. Deep-linking parses this back to deck + index (see `parseCardId` in flashcards.tsx and `?card=` handling).
 
