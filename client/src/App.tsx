@@ -40,6 +40,8 @@ import WeakAreaDrillPage from "@/pages/weak-area-drill";
 import StatePlaneDrillPage from "@/pages/state-plane-drill";
 import TopicDrillPage from "@/pages/topic-drill";
 import ScientificCalculatorPage from "@/pages/scientific-calculator";
+import TraverseCalculatorPage from "@/pages/traverse-calculator";
+import LevelLoopCalculatorPage from "@/pages/level-loop-calculator";
 
 function ExamPage({ children, examTrack }: { children: ReactNode; examTrack: 'fs' | 'ps' | 'tx' }) {
   return (
@@ -125,6 +127,8 @@ function Router() {
       <Route path="/app/fs/procedures" component={withExamTrack(ProceduresPage, 'fs')} />
       <Route path="/app/fs/formulas" component={withExamTrack(FormulaReferencePage, 'fs')} />
       <Route path="/app/fs/calculators/scientific" component={withExamTrack(ScientificCalculatorPage, 'fs')} />
+      <Route path="/app/fs/calculators/traverse" component={withExamTrack(TraverseCalculatorPage, 'fs')} />
+      <Route path="/app/fs/calculators/level-loop" component={withExamTrack(LevelLoopCalculatorPage, 'fs')} />
       <Route path="/app/fs/pretest" component={withExamTrack(PretestPage, 'fs')} />
       <Route path="/app/fs/pretest/results" component={withExamTrack(PretestResultsPage, 'fs')} />
       <Route path="/app/fs/settings" component={withExamTrack(SettingsPage, 'fs')} />
@@ -151,6 +155,8 @@ function Router() {
       <Route path="/app/ps/procedures" component={withExamTrack(ProceduresPage, 'ps')} />
       <Route path="/app/ps/formulas" component={withExamTrack(FormulaReferencePage, 'ps')} />
       <Route path="/app/ps/calculators/scientific" component={withExamTrack(ScientificCalculatorPage, 'ps')} />
+      <Route path="/app/ps/calculators/traverse" component={withExamTrack(TraverseCalculatorPage, 'ps')} />
+      <Route path="/app/ps/calculators/level-loop" component={withExamTrack(LevelLoopCalculatorPage, 'ps')} />
       <Route path="/app/ps/pretest" component={withExamTrack(PretestPage, 'ps')} />
       <Route path="/app/ps/pretest/results" component={withExamTrack(PretestResultsPage, 'ps')} />
       <Route path="/app/ps/settings" component={withExamTrack(SettingsPage, 'ps')} />
@@ -175,6 +181,8 @@ function Router() {
       <Route path="/app/tx/procedures" component={withExamTrack(ProceduresPage, 'tx')} />
       <Route path="/app/tx/formulas" component={withExamTrack(FormulaReferencePage, 'tx')} />
       <Route path="/app/tx/calculators/scientific" component={withExamTrack(ScientificCalculatorPage, 'tx')} />
+      <Route path="/app/tx/calculators/traverse" component={withExamTrack(TraverseCalculatorPage, 'tx')} />
+      <Route path="/app/tx/calculators/level-loop" component={withExamTrack(LevelLoopCalculatorPage, 'tx')} />
       <Route path="/app/tx/settings" component={withExamTrack(SettingsPage, 'tx')} />
       <Route path="/app/tx/testimonials" component={withExamTrack(TestimonialsPage, 'tx')} />
       <Route path="/app/tx/feedback" component={withExamTrack(FeedbackPage, 'tx')} />

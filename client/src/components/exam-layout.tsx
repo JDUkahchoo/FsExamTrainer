@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import {
   BookOpen, Brain, ClipboardCheck, ClipboardList, FileText, BarChart3,
   GraduationCap, BookMarked, Library, ArrowLeft, Settings, ScrollText,
-  Target, Calculator, LayoutDashboard, Compass
+  Target, Calculator, LayoutDashboard, Compass, Mountain
 } from 'lucide-react';
 import { getDrillTopicsForTrack } from '@/lib/drillTopics';
 import { Link } from 'wouter';
@@ -60,6 +60,8 @@ const referenceItems = (examTrack: string) => [
 
 const toolsItems = (examTrack: string) => [
   { id: `/app/${examTrack}/calculators/scientific`, icon: Calculator, label: 'Scientific Calculator', testId: 'nav-scientific-calculator' },
+  { id: `/app/${examTrack}/calculators/traverse`, icon: Compass, label: 'Traverse Calculator', testId: 'nav-traverse-calculator' },
+  { id: `/app/${examTrack}/calculators/level-loop`, icon: Mountain, label: 'Level-Loop Calculator', testId: 'nav-level-loop-calculator' },
 ];
 
 const trackItems = (examTrack: string) => [
