@@ -1,4 +1,5 @@
 import { shuffleQuestionOptions } from './shuffleOptions';
+import { getVariedQuizQuestions } from '@shared/data/quizVariationSystem';
 
 // ---------------------------------------------------------------------------
 // Pure resume-reconstruction logic shared by practice-quiz.tsx and
@@ -97,6 +98,12 @@ export type ExamDraftLike = {
   timeSpentMinutes: number;
   examMode: string | null;
   shuffleSeed: number | null;
+  /**
+   * Seed used by the quiz variation system when the exam started (PS-track
+   * exams). Null/undefined means no variation was applied at start (FS/TX/
+   * NCEES modes, or legacy drafts saved before this field existed).
+   */
+  variationSeed?: number | null;
 };
 
 export type ExamAnswer = number | number[];
@@ -190,35 +197,40 @@ export function reconstructExamSession<StdQ extends MaybeNCEES, NceesQ extends {
 ): ReconstructedExamSession<StdQ, NceesQ> {
   const examMode = draft.examMode || 'standard';
 
-  let questions: Array<(StdQ & { id: string }) | NceesQ>;
+  // Ids are disjoint across pools: `exam-${i}` (FS), `quiz-${i}` (PS, from the
+  // quiz pool), `tx-exam-${i}` (TX), and NCEES questions' own stable ids.
+  // Looking every id up across all pools handles both the FS NCEES-style
+  // branch (ncees ids) and the PS "NCEES-style" branch (quiz-N ids).
+  const nceesMap = new Map(pools.nceesQuestions.map((q) => [q.id, q]));
+  const examQuestionMap = new Map(pools.examQuestions.map((q, i) => [`exam-${i}`, q]));
+  const quizQuestionMap = new Map(pools.quizQuestions.map((q, i) => [`quiz-${i}`, q]));
+  const txExamQuestionMap = new Map(pools.txExamQuestions.map((q, i) => [`tx-exam-${i}`, q]));
 
-  if (examMode === 'ncees-style') {
-    const nceesMap = new Map(pools.nceesQuestions.map((q) => [q.id, q]));
-    questions = draft.questionIds
-      .map((id) => {
-        const question = nceesMap.get(id);
-        if (!question) {
-          console.error(`NCEES question ${id} not found`);
-          return null;
-        }
-        return question;
-      })
-      .filter(Boolean) as NceesQ[];
-  } else {
-    const examQuestionMap = new Map(pools.examQuestions.map((q, i) => [`exam-${i}`, q]));
-    const quizQuestionMap = new Map(pools.quizQuestions.map((q, i) => [`quiz-${i}`, q]));
-    const txExamQuestionMap = new Map(pools.txExamQuestions.map((q, i) => [`tx-exam-${i}`, q]));
+  let questions = draft.questionIds
+    .map((id) => {
+      if (examMode === 'ncees-style') {
+        const ncees = nceesMap.get(id);
+        if (ncees) return ncees;
+      }
+      const question = examQuestionMap.get(id) || quizQuestionMap.get(id) || txExamQuestionMap.get(id);
+      if (!question) {
+        console.error(`Question ${id} not found`);
+        return null;
+      }
+      return { ...question, id };
+    })
+    .filter(Boolean) as Array<(StdQ & { id: string }) | NceesQ>;
 
-    questions = draft.questionIds
-      .map((id) => {
-        const question = examQuestionMap.get(id) || quizQuestionMap.get(id) || txExamQuestionMap.get(id);
-        if (!question) {
-          console.error(`Question ${id} not found`);
-          return null;
-        }
-        return { ...question, id };
-      })
-      .filter(Boolean) as Array<StdQ & { id: string }>;
+  // Re-apply the variation system with the exact seed used at exam start
+  // (PS-track exams). Must happen BEFORE option shuffling below, since
+  // variations can reorder options and change wording/numbers — the user's
+  // saved answers were given against the varied questions. Questions whose
+  // ids don't match the variation id patterns pass through unchanged.
+  if (draft.variationSeed != null) {
+    questions = getVariedQuizQuestions(
+      questions as Array<any>,
+      draft.variationSeed,
+    ) as unknown as Array<(StdQ & { id: string }) | NceesQ>;
   }
 
   const shuffleSeed = draft.shuffleSeed || 0;

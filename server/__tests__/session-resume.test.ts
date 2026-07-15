@@ -11,6 +11,7 @@ import { QUIZ_QUESTIONS } from "../../shared/data/quizQuestions";
 import { EXAM_QUESTIONS } from "../../shared/data/examQuestions";
 import { TX_EXAM_QUESTIONS } from "../../shared/data/txExamQuestions";
 import { NCEES_STYLE_QUESTIONS } from "../../shared/data/nceesStyleQuestions";
+import { getVariedQuizQuestions } from "../../shared/data/quizVariationSystem";
 import { storage } from "../storage";
 
 // ---------------------------------------------------------------------------
@@ -174,6 +175,151 @@ test("TX-track standard exam draft resolves questions from the TX pool", () => {
   assert.deepEqual(restored.questions.map((q: any) => q.id), snapshot.questionIds);
   assert.equal((restored.questions[0] as any).question, TX_EXAM_QUESTIONS[0].question);
   assert.equal(restored.timeRemaining, 120 * 60 - 60);
+});
+
+// --- PS exam: variation seed round-trip -------------------------------------
+
+test("PS exam resume re-applies the exact same question variants (variation seed round-trip)", () => {
+  // Start a PS exam the way startExam does: quiz-pool questions with
+  // `quiz-${i}` ids, run through the variation system with a session seed.
+  const pickedIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  const questionsWithIds = pickedIndices.map((i) => ({ ...QUIZ_QUESTIONS[i], id: `quiz-${i}` }));
+  const variationSeed = 2026071503; // date-based getSessionSeed() shape; fits int32
+  assert.ok(variationSeed <= INT32_MAX, "variation seed must fit the int32 column");
+  const startVaried = getVariedQuizQuestions(questionsWithIds, variationSeed);
+
+  // Sanity: with this seed at least one question is actually varied, so the
+  // test genuinely exercises variant restoration (not a pass-through).
+  const somethingVaried = startVaried.some(
+    (q, i) =>
+      q.question !== questionsWithIds[i].question ||
+      JSON.stringify(q.options) !== JSON.stringify(questionsWithIds[i].options),
+  );
+  assert.ok(somethingVaried, "seed must produce at least one varied question");
+
+  const seedBase = newSeed();
+  const startMap = createExamShuffledOptionsMap(startVaried, seedBase);
+
+  // Answer Q0 with its (varied) correct answer, stored as an ORIGINAL index.
+  const q0Correct = startVaried[0].correctAnswer;
+  const snapshot = {
+    examTrack: "ps",
+    examMode: "standard",
+    questionIds: startVaried.map((q) => q.id),
+    currentQuestionIndex: 1,
+    userAnswers: { 0: q0Correct } as Record<number, number>,
+    timeSpentSeconds: 120,
+    timeSpentMinutes: 2,
+    shuffleSeed: seedBase,
+    variationSeed,
+  };
+
+  // Leave (sendBeacon JSON) -> server validation with the new column.
+  const saved = leaveAndReload(snapshot);
+  const parsed = insertExamDraftSchema.safeParse({ ...saved, userId: "u" });
+  assert.ok(
+    parsed.success,
+    `PS draft with variationSeed must pass server validation: ${JSON.stringify(parsed.success ? [] : parsed.error.issues)}`,
+  );
+
+  // Resume next session/day: reconstruct from the stored draft.
+  const restored = reconstructExamSession(
+    saved,
+    {
+      examQuestions: EXAM_QUESTIONS,
+      quizQuestions: QUIZ_QUESTIONS,
+      txExamQuestions: TX_EXAM_QUESTIONS,
+      nceesQuestions: NCEES_STYLE_QUESTIONS,
+    },
+    360,
+  );
+
+  // Byte-identical variants: same wording, same option order, same answer key.
+  restored.questions.forEach((q: any, i) => {
+    assert.equal(q.id, startVaried[i].id, `id at ${i}`);
+    assert.equal(q.question, startVaried[i].question, `varied question text at ${i}`);
+    assert.deepEqual(q.options, startVaried[i].options, `varied options at ${i}`);
+    assert.equal(q.correctAnswer, startVaried[i].correctAnswer, `varied answer key at ${i}`);
+  });
+
+  // Option shuffling reproduced against the varied questions, so the user's
+  // saved answer still grades correct against the restored variant.
+  Object.keys(startMap).forEach((k) => {
+    const i = Number(k);
+    assert.deepEqual(restored.shuffledOptionsMap[i].options, startMap[i].options, `shuffled options at ${i}`);
+    assert.deepEqual(restored.shuffledOptionsMap[i].shuffledToOriginal, startMap[i].shuffledToOriginal);
+  });
+  assert.equal(restored.answers[0], q0Correct);
+  assert.equal(
+    (restored.questions[0] as any).correctAnswer,
+    restored.answers[0],
+    "saved answer must still be the correct answer of the restored variant",
+  );
+});
+
+test("legacy PS draft without variationSeed falls back to base questions (no crash)", () => {
+  // Drafts saved before the variation_seed column existed have no seed; the
+  // best we can do is show the base questions — resume must not break.
+  const questionsWithIds = [0, 1].map((i) => ({ ...QUIZ_QUESTIONS[i], id: `quiz-${i}` }));
+  const snapshot = {
+    examTrack: "ps",
+    examMode: "standard",
+    questionIds: questionsWithIds.map((q) => q.id),
+    currentQuestionIndex: 0,
+    userAnswers: {},
+    timeSpentSeconds: 10,
+    timeSpentMinutes: 0,
+    shuffleSeed: newSeed(),
+    variationSeed: null,
+  };
+  const restored = reconstructExamSession(
+    leaveAndReload(snapshot),
+    {
+      examQuestions: EXAM_QUESTIONS,
+      quizQuestions: QUIZ_QUESTIONS,
+      txExamQuestions: TX_EXAM_QUESTIONS,
+      nceesQuestions: NCEES_STYLE_QUESTIONS,
+    },
+    360,
+  );
+  assert.equal((restored.questions[0] as any).question, QUIZ_QUESTIONS[0].question);
+  assert.deepEqual((restored.questions[1] as any).options, QUIZ_QUESTIONS[1].options);
+});
+
+test("PS NCEES-style branch (quiz-pool ids) resumes with variants re-applied", () => {
+  // PS 'ncees-style' exams still draw from the quiz pool with quiz-N ids;
+  // resume must resolve them (not the NCEES pool) and re-apply variation.
+  const questionsWithIds = [0, 1, 2, 3, 4, 5].map((i) => ({ ...QUIZ_QUESTIONS[i], id: `quiz-${i}` }));
+  const variationSeed = 2026071508;
+  const startVaried = getVariedQuizQuestions(questionsWithIds, variationSeed);
+
+  const snapshot = {
+    examTrack: "ps",
+    examMode: "ncees-style",
+    questionIds: startVaried.map((q) => q.id),
+    currentQuestionIndex: 2,
+    userAnswers: { 0: startVaried[0].correctAnswer },
+    timeSpentSeconds: 90,
+    timeSpentMinutes: 1,
+    shuffleSeed: newSeed(),
+    variationSeed,
+  };
+  const restored = reconstructExamSession(
+    leaveAndReload(snapshot),
+    {
+      examQuestions: EXAM_QUESTIONS,
+      quizQuestions: QUIZ_QUESTIONS,
+      txExamQuestions: TX_EXAM_QUESTIONS,
+      nceesQuestions: NCEES_STYLE_QUESTIONS,
+    },
+    360,
+  );
+  assert.equal(restored.questions.length, startVaried.length, "all quiz-pool ids must resolve in ncees mode");
+  restored.questions.forEach((q: any, i) => {
+    assert.equal(q.question, startVaried[i].question, `varied question text at ${i}`);
+    assert.deepEqual(q.options, startVaried[i].options, `varied options at ${i}`);
+    assert.equal(q.correctAnswer, startVaried[i].correctAnswer, `varied answer key at ${i}`);
+  });
 });
 
 // --- NCEES-style exam: select-all and priority-ranking answers -------------

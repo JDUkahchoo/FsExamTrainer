@@ -823,6 +823,10 @@ export const examDrafts = pgTable("exam_drafts", {
   examTrack: text("exam_track").notNull().default('fs'),
   examMode: text("exam_mode").notNull().default('standard'),
   shuffleSeed: integer("shuffle_seed").notNull().default(0),
+  // Seed used by the quiz variation system when the exam started (PS-track
+  // exams only). Null means no variation was applied (FS/TX/NCEES) or the
+  // draft predates this column. Must fit int32.
+  variationSeed: integer("variation_seed"),
   startedAt: timestamp("started_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

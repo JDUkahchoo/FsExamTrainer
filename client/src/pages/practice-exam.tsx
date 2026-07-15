@@ -45,6 +45,7 @@ type ExamDraftPayload = {
   examMode: ExamMode;
   examTrack: string;
   shuffleSeed: number;
+  variationSeed: number | null;
 };
 
 // Get PS exam questions from quiz questions pool
@@ -69,6 +70,8 @@ export default function PracticeExamPage() {
   const [shuffledOptionsMap, setShuffledOptionsMap] = useState<Record<number, { options: string[]; shuffledToOriginal: number[] }>>({});
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const [shuffleSeedBase, setShuffleSeedBase] = useState<number>(0);
+  // Variation seed used at exam start (PS-track only); null = no variation.
+  const [variationSeedBase, setVariationSeedBase] = useState<number | null>(null);
   const { logActivity } = useActivityLogger();
 
   // Always-fresh snapshot of the draft payload so leave-time saves never use a stale closure.
@@ -170,8 +173,9 @@ export default function PracticeExamPage() {
       examMode,
       examTrack,
       shuffleSeed: shuffleSeedBase,
+      variationSeed: variationSeedBase,
     };
-  }, [examState, examQuestions, currentQuestionIndex, answers, timeRemaining, examMode, examTrack, shuffleSeedBase, EXAM_DURATION_MINUTES]);
+  }, [examState, examQuestions, currentQuestionIndex, answers, timeRemaining, examMode, examTrack, shuffleSeedBase, variationSeedBase, EXAM_DURATION_MINUTES]);
 
   // Save the current draft (all modes) using the freshest snapshot.
   // `beaconFallback` marks saves that ran because navigator.sendBeacon failed,
@@ -234,6 +238,7 @@ export default function PracticeExamPage() {
 
     // Restore state
     setShuffleSeedBase(restored.shuffleSeed);
+    setVariationSeedBase(draftData.variationSeed ?? null);
     setExamMode(restored.examMode as ExamMode);
     setShuffledOptionsMap(restored.shuffledOptionsMap);
     setExamQuestions(restored.questions as Array<(typeof EXAM_QUESTIONS[0] & { id: string }) | NCEESQuestion>);
@@ -266,6 +271,10 @@ export default function PracticeExamPage() {
     // so a raw Date.now() would fail validation and silently break resume saves.
     const seedBase = Date.now() % 2147483647;
     setShuffleSeedBase(seedBase);
+    // PS-track exams run questions through the variation system; persist the
+    // exact seed so a resumed draft can re-apply the same variants.
+    const variationSeed = examTrack === 'ps' ? getSessionSeed() : null;
+    setVariationSeedBase(variationSeed);
     
     if (mode === 'standard') {
       const questionPool = examTrack === 'ps' ? PS_EXAM_QUESTIONS : examTrack === 'tx' ? TX_EXAM_QUESTIONS : EXAM_QUESTIONS;
@@ -281,8 +290,8 @@ export default function PracticeExamPage() {
             : `exam-${EXAM_QUESTIONS.indexOf(q)}`
       }));
       
-      const variedQuestions = examTrack === 'ps' 
-        ? getVariedQuizQuestions(questionsWithIds, getSessionSeed())
+      const variedQuestions = examTrack === 'ps' && variationSeed != null
+        ? getVariedQuizQuestions(questionsWithIds, variationSeed)
         : questionsWithIds;
       
       setExamQuestions(variedQuestions);
@@ -295,7 +304,7 @@ export default function PracticeExamPage() {
           ...q,
           id: `quiz-${QUIZ_QUESTIONS.indexOf(q)}`
         }));
-        const variedQuestions = getVariedQuizQuestions(questionsWithIds, getSessionSeed());
+        const variedQuestions = getVariedQuizQuestions(questionsWithIds, variationSeed ?? getSessionSeed());
         setExamQuestions(variedQuestions);
         setShuffledOptionsMap(createShuffledOptionsMap(variedQuestions, seedBase));
       } else {
