@@ -225,6 +225,9 @@ export const weekProgress = pgTable("week_progress", {
   focusCompleted: text("focus_completed").array().notNull().default(sql`'{}'::text[]`),
   applyCompleted: text("apply_completed").array().notNull().default(sql`'{}'::text[]`),
   reinforceCompleted: text("reinforce_completed").array().notNull().default(sql`'{}'::text[]`),
+  // Domain signature of the plan week this progress was recorded against. Used to keep
+  // completions attached to their topics when the plan resizes (week numbers reshuffle).
+  domains: text("domains").array(),
   coverageCelebrated: boolean("coverage_celebrated").notNull().default(false),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (table) => ({

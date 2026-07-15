@@ -613,6 +613,10 @@ export default function StudyPlan() {
     return coverage;
   }, [completedFlashcardSessions, baseStudyPlan]);
 
+  // Latest generated plan layout (week -> domains); populated after the allWeeks memo below.
+  // Used so progress saves record which topics the week covered at save time.
+  const allWeeksRef = useRef<Array<{ week: number; domains: string[] }>>([]);
+
   // Mutation to save week progress
   const saveProgressMutation = useMutation({
     mutationFn: async ({ week, completed, domainKey }: { week: number; completed: Set<string>; domainKey?: string }) => {
@@ -634,6 +638,7 @@ export default function StudyPlan() {
         }
       });
       
+      const planWeek = allWeeksRef.current.find(w => w.week === week);
       return apiRequest('POST', '/api/progress/weeks', {
         week,
         examTrack,
@@ -641,7 +646,8 @@ export default function StudyPlan() {
         readCompleted,
         focusCompleted,
         applyCompleted,
-        reinforceCompleted
+        reinforceCompleted,
+        ...(planWeek?.domains?.length ? { domains: planWeek.domains } : {}),
       });
     },
     onSuccess: () => {
@@ -1125,6 +1131,12 @@ export default function StudyPlan() {
     (week: number) => weekAttachment.mismatchedHealth.has(week),
     [weekAttachment]
   );
+
+  // Keep the ref used by saveProgressMutation in sync with the generated plan so progress
+  // saves record which topics the week covered at save time.
+  useEffect(() => {
+    allWeeksRef.current = allWeeks.map(w => ({ week: w.week, domains: (w.domains || []) as string[] }));
+  }, [allWeeks]);
 
   // Auto-record week completions when they hit 100% for the first time
   // NOTE: placed here — after allWeeks, weekAttachment, weekCompleteMutation are all declared
@@ -1705,7 +1717,7 @@ export default function StudyPlan() {
                             <div className="flex items-start gap-2">
                               <Info className="h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-700 dark:text-amber-300" />
                               <span className="text-xs text-amber-800 dark:text-amber-200">
-                                These topics changed when your plan resized, so your earlier completion of Week {plan.week} was for different content. Reset this week to track its current topics from scratch.
+                                Your earlier completion of Week {plan.week} was for topics that no longer appear in your resized plan, so it couldn't be moved automatically. Reset this week to track its current topics from scratch.
                               </span>
                             </div>
                             <button
