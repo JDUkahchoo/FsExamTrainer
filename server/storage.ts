@@ -129,7 +129,7 @@ import {
   DOMAINS
 } from "@shared/schema";
 import type { ExamTrackSettings, InsertExamTrackSettings } from "@shared/schema";
-import { eq, and, desc, gte, lte, lt, sql, inArray } from "drizzle-orm";
+import { eq, and, desc, gte, lte, lt, sql, inArray, isNull } from "drizzle-orm";
 
 /**
  * Get today's midnight and tomorrow's midnight in the user's timezone.
@@ -461,12 +461,12 @@ export interface IStorage {
 
   // Week Memory Health methods
   getWeekMemoryHealth(userId: string, examTrack: string): Promise<WeekMemoryHealth[]>;
-  upsertWeekCompletion(userId: string, examTrack: string, weekNumber: number, domains: string[]): Promise<WeekMemoryHealth>;
-  deleteWeekCompletion(userId: string, examTrack: string, weekNumber: number): Promise<void>;
-  recordWeekReview(userId: string, examTrack: string, weekNumber: number): Promise<WeekMemoryHealth>;
+  upsertWeekCompletion(userId: string, examTrack: string, weekNumber: number, domains: string[], domainKey?: string): Promise<WeekMemoryHealth>;
+  deleteWeekCompletion(userId: string, examTrack: string, weekNumber: number, domainKey?: string): Promise<void>;
+  recordWeekReview(userId: string, examTrack: string, weekNumber: number, domainKey?: string): Promise<WeekMemoryHealth>;
 
   // Week restart
-  resetWeekProgress(userId: string, weekNumber: number, examTrack: string): Promise<void>;
+  resetWeekProgress(userId: string, weekNumber: number, examTrack: string, domainKey?: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -530,17 +530,46 @@ export class DatabaseStorage implements IStorage {
 
   async upsertWeekProgress(progress: InsertWeekProgress): Promise<WeekProgress> {
     const trackFilter = progress.examTrack || 'fs';
+
+    // Content-first matching: if a stable domainKey is provided, update the row that
+    // tracks this content — even if the plan resized and the content moved to a
+    // different week number. Falls back to legacy week-number matching (and stamps
+    // the key on that row) when no keyed row exists yet.
+    if (progress.domainKey) {
+      const [keyed] = await db
+        .select()
+        .from(weekProgress)
+        .where(and(
+          eq(weekProgress.userId, progress.userId),
+          eq(weekProgress.examTrack, trackFilter),
+          eq(weekProgress.domainKey, progress.domainKey)
+        ));
+      if (keyed) {
+        const [updated] = await db
+          .update(weekProgress)
+          .set({ ...progress, examTrack: trackFilter, updatedAt: new Date() })
+          .where(eq(weekProgress.id, keyed.id))
+          .returning();
+        return updated;
+      }
+    }
+
     const existing = await this.getWeekProgress(progress.userId, progress.week, trackFilter);
-    
+
     if (existing) {
+      // Don't hijack a row that belongs to different content: if the row at this week
+      // number is already keyed to another domain set, create a fresh row instead.
+      if (existing.domainKey && progress.domainKey && existing.domainKey !== progress.domainKey) {
+        const [created] = await db
+          .insert(weekProgress)
+          .values({ ...progress, examTrack: trackFilter, updatedAt: new Date() })
+          .returning();
+        return created;
+      }
       const [updated] = await db
         .update(weekProgress)
         .set({ ...progress, updatedAt: new Date() })
-        .where(and(
-          eq(weekProgress.userId, progress.userId),
-          eq(weekProgress.week, progress.week),
-          eq(weekProgress.examTrack, trackFilter)
-        ))
+        .where(eq(weekProgress.id, existing.id))
         .returning();
       return updated;
     } else {
@@ -4357,31 +4386,81 @@ export class DatabaseStorage implements IStorage {
     ).orderBy(weekMemoryHealth.weekNumber);
   }
 
-  async upsertWeekCompletion(userId: string, examTrack: string, weekNumber: number, domains: string[]): Promise<WeekMemoryHealth> {
-    const existing = await db.select().from(weekMemoryHealth).where(
-      and(
-        eq(weekMemoryHealth.userId, userId),
-        eq(weekMemoryHealth.examTrack, examTrack),
-        eq(weekMemoryHealth.weekNumber, weekNumber)
-      )
-    );
+  async upsertWeekCompletion(userId: string, examTrack: string, weekNumber: number, domains: string[], domainKey?: string): Promise<WeekMemoryHealth> {
+    const normSet = (arr: string[]) => [...(arr || [])].map(String).sort().join('|');
 
-    if (existing.length > 0) {
-      return existing[0];
+    // 1) Content-first: an existing record for this domainKey follows its content —
+    //    update its week number (and domains) to the current plan position.
+    if (domainKey) {
+      const [keyed] = await db.select().from(weekMemoryHealth).where(
+        and(
+          eq(weekMemoryHealth.userId, userId),
+          eq(weekMemoryHealth.examTrack, examTrack),
+          eq(weekMemoryHealth.domainKey, domainKey)
+        )
+      );
+      if (keyed) {
+        if (keyed.weekNumber !== weekNumber || normSet(keyed.domains) !== normSet(domains)) {
+          const [moved] = await db.update(weekMemoryHealth)
+            .set({ weekNumber, domains })
+            .where(eq(weekMemoryHealth.id, keyed.id))
+            .returning();
+          return moved;
+        }
+        return keyed;
+      }
     }
 
+    // 2) Legacy (un-keyed) row covering the same domains: stamp the key and move it to
+    //    the current week position, preserving its completedAt/review history. Prefer a
+    //    row already at this week number; otherwise take the earliest matching row.
+    const allRows = await db.select().from(weekMemoryHealth).where(
+      and(
+        eq(weekMemoryHealth.userId, userId),
+        eq(weekMemoryHealth.examTrack, examTrack)
+      )
+    );
+    const legacyCandidates = allRows
+      .filter(r => !r.domainKey && normSet(r.domains) === normSet(domains))
+      .sort((a, b) => a.weekNumber - b.weekNumber);
+    const legacyMatch = legacyCandidates.find(r => r.weekNumber === weekNumber) ?? legacyCandidates[0];
+    if (legacyMatch && domainKey) {
+      const [stamped] = await db.update(weekMemoryHealth)
+        .set({ domainKey, weekNumber, domains })
+        .where(eq(weekMemoryHealth.id, legacyMatch.id))
+        .returning();
+      return stamped;
+    }
+    // Without a key, preserve the old behavior: one record per week number.
+    if (!domainKey) {
+      const atWeek = allRows.filter(r => r.weekNumber === weekNumber);
+      if (atWeek.length > 0) return atWeek[0];
+    }
+
+    // 3) New completion for this content.
     const [record] = await db.insert(weekMemoryHealth).values({
       userId,
       examTrack,
       weekNumber,
       domains,
+      domainKey: domainKey ?? null,
       completedAt: new Date(),
       reviewCount: 0,
     }).returning();
     return record;
   }
 
-  async deleteWeekCompletion(userId: string, examTrack: string, weekNumber: number): Promise<void> {
+  async deleteWeekCompletion(userId: string, examTrack: string, weekNumber: number, domainKey?: string): Promise<void> {
+    if (domainKey) {
+      await db.delete(weekMemoryHealth).where(
+        and(
+          eq(weekMemoryHealth.userId, userId),
+          eq(weekMemoryHealth.examTrack, examTrack),
+          eq(weekMemoryHealth.domainKey, domainKey)
+        )
+      );
+      return;
+    }
     await db.delete(weekMemoryHealth).where(
       and(
         eq(weekMemoryHealth.userId, userId),
@@ -4391,7 +4470,27 @@ export class DatabaseStorage implements IStorage {
     );
   }
 
-  async recordWeekReview(userId: string, examTrack: string, weekNumber: number): Promise<WeekMemoryHealth> {
+  async recordWeekReview(userId: string, examTrack: string, weekNumber: number, domainKey?: string): Promise<WeekMemoryHealth> {
+    if (domainKey) {
+      const [keyed] = await db.select().from(weekMemoryHealth).where(
+        and(
+          eq(weekMemoryHealth.userId, userId),
+          eq(weekMemoryHealth.examTrack, examTrack),
+          eq(weekMemoryHealth.domainKey, domainKey)
+        )
+      );
+      if (keyed) {
+        const [updated] = await db.update(weekMemoryHealth)
+          .set({
+            lastReviewedAt: new Date(),
+            reviewCount: (keyed.reviewCount || 0) + 1,
+          })
+          .where(eq(weekMemoryHealth.id, keyed.id))
+          .returning();
+        return updated;
+      }
+    }
+
     const existing = await db.select().from(weekMemoryHealth).where(
       and(
         eq(weekMemoryHealth.userId, userId),
@@ -4429,16 +4528,65 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async resetWeekProgress(userId: string, weekNumber: number, examTrack: string): Promise<void> {
+  async resetWeekProgress(userId: string, weekNumber: number, examTrack: string, domainKey?: string): Promise<void> {
+    const cleared = {
+      readCompleted: [] as string[],
+      focusCompleted: [] as string[],
+      applyCompleted: [] as string[],
+      reinforceCompleted: [] as string[],
+      updatedAt: new Date(),
+    };
+
+    if (domainKey) {
+      // Content-aware restart: only touch the row keyed to this content, plus any legacy
+      // (un-keyed) row sitting at this week number. Never clear rows keyed to OTHER
+      // content that may transiently share the same week number after a plan resize.
+      await db
+        .update(weekProgress)
+        .set(cleared)
+        .where(
+          and(
+            eq(weekProgress.userId, userId),
+            eq(weekProgress.examTrack, examTrack),
+            eq(weekProgress.domainKey, domainKey)
+          )
+        );
+      await db
+        .update(weekProgress)
+        .set(cleared)
+        .where(
+          and(
+            eq(weekProgress.userId, userId),
+            eq(weekProgress.examTrack, examTrack),
+            eq(weekProgress.week, weekNumber),
+            isNull(weekProgress.domainKey)
+          )
+        );
+      await db
+        .delete(weekMemoryHealth)
+        .where(
+          and(
+            eq(weekMemoryHealth.userId, userId),
+            eq(weekMemoryHealth.examTrack, examTrack),
+            eq(weekMemoryHealth.domainKey, domainKey)
+          )
+        );
+      await db
+        .delete(weekMemoryHealth)
+        .where(
+          and(
+            eq(weekMemoryHealth.userId, userId),
+            eq(weekMemoryHealth.examTrack, examTrack),
+            eq(weekMemoryHealth.weekNumber, weekNumber),
+            isNull(weekMemoryHealth.domainKey)
+          )
+        );
+      return;
+    }
+
     await db
       .update(weekProgress)
-      .set({
-        readCompleted: [],
-        focusCompleted: [],
-        applyCompleted: [],
-        reinforceCompleted: [],
-        updatedAt: new Date(),
-      })
+      .set(cleared)
       .where(
         and(
           eq(weekProgress.userId, userId),

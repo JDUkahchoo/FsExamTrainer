@@ -3,6 +3,7 @@
 - [Design system — Field Book to Point Cloud](design-system.md) — paper content + dark instrument-panel sidebar; never text-muted-foreground on the dark rail.
 - [Flashcard session domainBreakdown contract](flashcard-domain-breakdown-contract.md) — jsonb unenforced; keep client emit + server readers in sync.
 - [Topic worked-solution drills](topic-drills.md) — per-topic drill registry; filter quiz questions by `topic` ONLY (topic tags are FS-only, track-safe).
+- [Week domainKey re-attachment](week-domain-key.md) — week records follow content keys, not week numbers; any weekNumber-scoped mutation must be content-aware (collisions are legal).
 - [Draft int32 seed trap](draft-int32-seed.md) — client values saved to integer columns must fit int32; raw Date.now() seeds silently 400'd draft saves.
 - [SRM 7th Edition chapter map](srm-7th-edition-chapters.md) — authoritative Topic/chapter numbering for all Surveyor Reference Manual citations; never cite bare chapter numbers.
 - [Route remount trap](route-remount-trap.md) — route wrappers in App.tsx must have stable identity (cached), or pages unmount on every Router re-render and wipe results screens.

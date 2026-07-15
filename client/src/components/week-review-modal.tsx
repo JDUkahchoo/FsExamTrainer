@@ -15,6 +15,8 @@ interface Props {
   weekTitle: string;
   domains: string[];
   examTrack: string;
+  /** Stable content key so the review targets the right record after a plan resize */
+  domainKey?: string | null;
   open: boolean;
   onClose: () => void;
 }
@@ -31,7 +33,7 @@ function seededRandom(seed: number) {
   };
 }
 
-export function WeekReviewModal({ weekNumber, weekTitle, domains, examTrack, open, onClose }: Props) {
+export function WeekReviewModal({ weekNumber, weekTitle, domains, examTrack, domainKey, open, onClose }: Props) {
   const { toast } = useToast();
   const [step, setStep] = useState<ReviewStep>('intro');
   const [currentQ, setCurrentQ] = useState(0);
@@ -51,7 +53,7 @@ export function WeekReviewModal({ weekNumber, weekTitle, domains, examTrack, ope
   }, [weekNumber, domains, examTrack]);
 
   const reviewMutation = useMutation({
-    mutationFn: () => apiRequest('POST', `/api/plan/week-review/${weekNumber}`, { examTrack }),
+    mutationFn: () => apiRequest('POST', `/api/plan/week-review/${weekNumber}`, { examTrack, domainKey: domainKey || undefined }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/plan/memory-health', examTrack] });
       toast({ title: '+10 XP', description: 'Review session complete — memory health restored!' });

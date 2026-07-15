@@ -3143,13 +3143,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const weekNumber = parseInt(req.params.weekNumber);
-      const { examTrack = 'fs', domains = [] } = req.body;
+      const { examTrack = 'fs', domains = [], domainKey } = req.body;
 
       if (isNaN(weekNumber) || weekNumber < 1) {
         return res.status(400).json({ error: "Invalid week number" });
       }
 
-      const record = await storage.upsertWeekCompletion(userId, examTrack, weekNumber, domains);
+      const record = await storage.upsertWeekCompletion(
+        userId, examTrack, weekNumber, domains,
+        typeof domainKey === 'string' && domainKey.length > 0 ? domainKey : undefined
+      );
 
       const refDate = record.lastReviewedAt ?? record.completedAt;
       const daysSince = (Date.now() - new Date(refDate).getTime()) / (1000 * 60 * 60 * 24);
@@ -3169,12 +3172,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const weekNumber = parseInt(req.params.weekNumber);
       const examTrack = (req.query.examTrack as string) || (req.body?.examTrack) || 'fs';
+      const domainKeyRaw = (req.query.domainKey as string) || (req.body?.domainKey);
 
       if (isNaN(weekNumber) || weekNumber < 1) {
         return res.status(400).json({ error: "Invalid week number" });
       }
 
-      await storage.deleteWeekCompletion(userId, examTrack, weekNumber);
+      await storage.deleteWeekCompletion(
+        userId, examTrack, weekNumber,
+        typeof domainKeyRaw === 'string' && domainKeyRaw.length > 0 ? domainKeyRaw : undefined
+      );
       res.json({ success: true });
     } catch (error) {
       console.error("Error clearing week completion:", error);
@@ -3186,13 +3193,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const weekNumber = parseInt(req.params.weekNumber);
-      const { examTrack = 'fs' } = req.body;
+      const { examTrack = 'fs', domainKey } = req.body;
 
       if (isNaN(weekNumber) || weekNumber < 1) {
         return res.status(400).json({ error: "Invalid week number" });
       }
 
-      const record = await storage.recordWeekReview(userId, examTrack, weekNumber);
+      const record = await storage.recordWeekReview(
+        userId, examTrack, weekNumber,
+        typeof domainKey === 'string' && domainKey.length > 0 ? domainKey : undefined
+      );
 
       await storage.awardXp(userId, 10, `week-review:${examTrack}:${weekNumber}:${new Date().toDateString()}`);
 
@@ -3213,13 +3223,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const weekNumber = parseInt(req.params.weekNumber);
-      const { examTrack = 'fs' } = req.body;
+      const { examTrack = 'fs', domainKey } = req.body;
 
       if (isNaN(weekNumber) || weekNumber < 1) {
         return res.status(400).json({ error: "Invalid week number" });
       }
 
-      await storage.resetWeekProgress(userId, weekNumber, examTrack);
+      await storage.resetWeekProgress(
+        userId, weekNumber, examTrack,
+        typeof domainKey === 'string' && domainKey.length > 0 ? domainKey : undefined
+      );
       res.json({ success: true, week: weekNumber });
     } catch (error) {
       console.error("Error restarting week:", error);

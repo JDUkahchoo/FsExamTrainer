@@ -217,6 +217,10 @@ export const weekProgress = pgTable("week_progress", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   week: integer("week").notNull(),
   examTrack: varchar("exam_track").notNull().default('fs'),
+  // Stable content identity (sorted domains + occurrence, see shared/lib/weekKey.ts).
+  // Null on legacy rows; stamped lazily on the next save so progress can follow its
+  // topics when the plan resizes. The week column remains the display position.
+  domainKey: text("domain_key"),
   readCompleted: text("read_completed").array().notNull().default(sql`'{}'::text[]`),
   focusCompleted: text("focus_completed").array().notNull().default(sql`'{}'::text[]`),
   applyCompleted: text("apply_completed").array().notNull().default(sql`'{}'::text[]`),
@@ -1682,11 +1686,16 @@ export const weekMemoryHealth = pgTable("week_memory_health", {
   examTrack: varchar("exam_track").notNull().default('fs'),
   weekNumber: integer("week_number").notNull(),
   domains: text("domains").array().notNull().default(sql`'{}'::text[]`),
+  // Stable content identity (see shared/lib/weekKey.ts). Null on legacy rows; stamped
+  // lazily so completions follow their topics when the plan resizes. Uniqueness is
+  // enforced in storage upsert logic (a resize can transiently leave two records on
+  // the same week number, so a hard unique index on weekNumber no longer applies).
+  domainKey: text("domain_key"),
   completedAt: timestamp("completed_at").notNull().defaultNow(),
   lastReviewedAt: timestamp("last_reviewed_at"),
   reviewCount: integer("review_count").notNull().default(0),
 }, (table) => ({
-  uniqueUserWeek: uniqueIndex("week_memory_health_user_week_unique").on(table.userId, table.examTrack, table.weekNumber),
+  userTrackIdx: index("week_memory_health_user_track_idx").on(table.userId, table.examTrack),
 }));
 
 export const weekMemoryHealthRelations = relations(weekMemoryHealth, ({ one }) => ({

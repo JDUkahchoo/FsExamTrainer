@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { ChevronDown, ChevronRight, CheckCircle2, BookOpen, Target, Loader2, Plus, Trash2, AlertCircle, Calendar, Edit2, Clock, Crown, XCircle, Play, ExternalLink, Layers, Construction, Brain, RefreshCw, Flame, Trophy, Info, ShieldCheck } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -52,6 +52,7 @@ import { DOMAINS } from '@shared/schema';
 import type { WeekPlan, WeekProgress, CustomWeek, Domain, UserPreferences, PretestResult, DailyLog, ReadingProgress, ApplyChallengeAttempt, FlashcardReviewSession, QuizSession } from '@shared/schema';
 import { getWeeklyLessonsByMode, generateCustomWeekPlans } from '@/lib/study-plan-logic';
 import { computeFsCarryoverScores, hasFsHistory, type FsDomainMasteryLike } from '@shared/lib/fsCarryover';
+import { computeWeekKeys, domainSetKey } from '@shared/lib/weekKey';
 import { CustomPlanBuilder } from '@/components/custom-plan-builder';
 import { ReadCheckpoint } from '@/components/read-checkpoint';
 import { FocusWeaknessScanner } from '@/components/focus-weakness-scanner';
@@ -90,7 +91,7 @@ export default function StudyPlan() {
   const [newTimeSpent, setNewTimeSpent] = useState('');
   const [newDomain, setNewDomain] = useState<Domain | ''>('');
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
-  const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[] } | null>(null);
+  const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[]; domainKey?: string } | null>(null);
   const [expandedLessonId, setExpandedLessonId] = useState<string | null>(null);
   const { toast } = useToast();
   const { logActivity } = useActivityLogger();
@@ -227,6 +228,7 @@ export default function StudyPlan() {
 
   // Fetch week memory health records
   const { data: memoryHealthData = [] } = useQuery<Array<{
+    id: number;
     weekNumber: number;
     completedAt: string;
     lastReviewedAt: string | null;
@@ -234,6 +236,7 @@ export default function StudyPlan() {
     health: number;
     status: 'fresh' | 'fading' | 'stale';
     domains: string[];
+    domainKey?: string | null;
   }>>({
     queryKey: ['/api/plan/memory-health', examTrack],
     queryFn: async () => {
@@ -244,29 +247,10 @@ export default function StudyPlan() {
     refetchInterval: 5 * 60 * 1000,
   });
 
-  const memoryHealthMap = useMemo(() => {
-    const map = new Map<number, typeof memoryHealthData[0]>();
-    memoryHealthData.forEach(r => map.set(r.weekNumber, r));
-    return map;
-  }, [memoryHealthData]);
-
-  // Plan-resize safeguard. week_progress and week_memory_health are keyed by absolute week
-  // number, but a resize (e.g. moving the exam date) can make that week number cover different
-  // domains than when it was completed. We can't tell which legacy completions still apply, so a
-  // week is "remapped" when its recorded memory-health domains no longer match its current domains.
-  // Remapped weeks are shown in a reconcile state (progress reset, items unchecked) instead of
-  // displaying stale completions against the wrong content.
-  const isWeekRemapped = useCallback((week: number, planDomains: string[]) => {
-    const health = memoryHealthMap.get(week);
-    if (!health) return false;
-    const norm = (arr: string[]) => [...(arr || [])].map(d => String(d)).sort().join('|');
-    return norm(health.domains) !== norm(planDomains);
-  }, [memoryHealthMap]);
-
   // Mutation to record week completion
   const weekCompleteMutation = useMutation({
-    mutationFn: ({ weekNumber, domains }: { weekNumber: number; domains: string[] }) =>
-      apiRequest('POST', `/api/plan/week-complete/${weekNumber}`, { examTrack, domains }),
+    mutationFn: ({ weekNumber, domains, domainKey }: { weekNumber: number; domains: string[]; domainKey?: string }) =>
+      apiRequest('POST', `/api/plan/week-complete/${weekNumber}`, { examTrack, domains, domainKey }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/plan/memory-health', examTrack] });
     },
@@ -274,8 +258,8 @@ export default function StudyPlan() {
 
   // Mutation to clear a week's recorded completion (used when reconciling a remapped week)
   const clearWeekMemoryMutation = useMutation({
-    mutationFn: ({ weekNumber }: { weekNumber: number }) =>
-      apiRequest('DELETE', `/api/plan/week-complete/${weekNumber}?examTrack=${examTrack}`),
+    mutationFn: ({ weekNumber, domainKey }: { weekNumber: number; domainKey?: string | null }) =>
+      apiRequest('DELETE', `/api/plan/week-complete/${weekNumber}?examTrack=${examTrack}${domainKey ? `&domainKey=${encodeURIComponent(domainKey)}` : ''}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/plan/memory-health', examTrack] });
     },
@@ -631,7 +615,7 @@ export default function StudyPlan() {
 
   // Mutation to save week progress
   const saveProgressMutation = useMutation({
-    mutationFn: async ({ week, completed }: { week: number; completed: Set<string> }) => {
+    mutationFn: async ({ week, completed, domainKey }: { week: number; completed: Set<string>; domainKey?: string }) => {
       // Convert Set back to database format
       const readCompleted: number[] = [];
       const focusCompleted: number[] = [];
@@ -653,6 +637,7 @@ export default function StudyPlan() {
       return apiRequest('POST', '/api/progress/weeks', {
         week,
         examTrack,
+        domainKey,
         readCompleted,
         focusCompleted,
         applyCompleted,
@@ -669,8 +654,12 @@ export default function StudyPlan() {
   // Reconcile a remapped week: clear the legacy completion items and the stale completion record so
   // the week leaves the reconcile state and can be tracked fresh against its current topics.
   const reconcileWeek = (week: number) => {
-    saveProgressMutation.mutate({ week, completed: new Set<string>() });
-    clearWeekMemoryMutation.mutate({ weekNumber: week });
+    const staleRecord = weekAttachment.mismatchedHealth.get(week);
+    saveProgressMutation.mutate({ week, completed: new Set<string>(), domainKey: planWeekKeys.get(week) });
+    clearWeekMemoryMutation.mutate({
+      weekNumber: staleRecord?.weekNumber ?? week,
+      domainKey: staleRecord?.domainKey ?? undefined,
+    });
   };
 
   // Mutation to create custom week
@@ -717,7 +706,7 @@ export default function StudyPlan() {
   const [weekToRestart, setWeekToRestart] = useState<number | null>(null);
   const restartWeekMutation = useMutation({
     mutationFn: async (weekNumber: number) =>
-      apiRequest('POST', `/api/plan/week-restart/${weekNumber}`, { examTrack }),
+      apiRequest('POST', `/api/plan/week-restart/${weekNumber}`, { examTrack, domainKey: planWeekKeys.get(weekNumber) }),
     onSuccess: (_, weekNumber) => {
       queryClient.invalidateQueries({ queryKey: ['/api/progress/weeks', examTrack] });
       queryClient.invalidateQueries({ queryKey: ['/api/plan/memory-health', examTrack] });
@@ -880,9 +869,28 @@ export default function StudyPlan() {
     });
   };
 
+  // Manual completion set for a plan week, following the row's content (domain key)
+  // rather than its stored week number when the plan has been resized.
+  const manualSetForWeek = (week: number): Set<string> => {
+    const wp = weekAttachment.resolvedProgress.get(week);
+    if (!wp) return new Set<string>();
+    return completedItems[`week-${wp.week}`] || new Set<string>();
+  };
+
+  // Auto-detected completions for a plan week. Activity data (readings, apply attempts,
+  // flashcard sessions) is recorded against week numbers, so when a saved progress row
+  // moved here from a different week number, include that old week's auto signals too.
+  const autoSetForWeek = (week: number): Set<string> => {
+    const merged = new Set<string>(autoCompletedItems[`week-${week}`] || []);
+    const wp = weekAttachment.resolvedProgress.get(week);
+    if (wp && wp.week !== week) {
+      (autoCompletedItems[`week-${wp.week}`] || new Set<string>()).forEach(i => merged.add(i));
+    }
+    return merged;
+  };
+
   const toggleItem = (week: number, itemId: string) => {
-    const weekKey = `week-${week}`;
-    const current = completedItems[weekKey] || new Set();
+    const current = manualSetForWeek(week);
     const next = new Set(current);
     
     const wasChecked = next.has(itemId);
@@ -895,16 +903,15 @@ export default function StudyPlan() {
     }
     
     // Save to database
-    saveProgressMutation.mutate({ week, completed: next });
+    saveProgressMutation.mutate({ week, completed: next, domainKey: planWeekKeys.get(week) });
   };
 
   const calculateWeekProgress = (week: number, plan: WeekPlan) => {
     // Remapped weeks (plan resized so this week now covers different content) are reset to a
     // reconcile state — legacy completions can't be trusted against the new topics.
-    if (isWeekRemapped(week, plan.domains as string[])) return 0;
-    const weekKey = `week-${week}`;
-    const manualCompleted = completedItems[weekKey] || new Set();
-    const autoCompleted = autoCompletedItems[weekKey] || new Set();
+    if (isWeekRemapped(week)) return 0;
+    const manualCompleted = manualSetForWeek(week);
+    const autoCompleted = autoSetForWeek(week);
     const merged = new Set([...manualCompleted, ...autoCompleted]);
 
     // Count completed items per checklist category (matching what the user sees)
@@ -1031,17 +1038,132 @@ export default function StudyPlan() {
     return { allWeeks: [...baseWeeks, ...customWeeks.map(cw => ({ week: cw.weekNumber, title: cw.title, domains: cw.domain ? [cw.domain as Domain] : [], read: cw.readItems || [], focus: cw.focusItems || [], apply: cw.applyItems || [], reinforce: cw.reinforceItems || [], isCustom: true as const, customId: cw.id }))], adaptiveMeta: meta };
   }, [preferences?.studyMode, preferences?.customWeeklyDomains, preferences?.customTimeline, preferences?.examDate, preferences?.weeklyHoursGoal, customWeeks, examTrack, baseStudyPlan, domainScores, fsCarryoverScores]);
 
+  // Stable content keys for every week in the current plan (see shared/lib/weekKey.ts)
+  const planWeekKeys = useMemo(
+    () => computeWeekKeys(allWeeks.map(w => ({ week: w.week, domains: (w.domains || []) as string[] }))),
+    [allWeeks]
+  );
+
+  // Attach saved records (week progress + memory health) to the plan weeks that cover the
+  // same CONTENT, not just the same week number. Keyed records attach via their stored
+  // domainKey; legacy (un-keyed) records attach by matching domain set — preferring their
+  // original week number, else a unique candidate. A record stuck at a current plan week
+  // whose content no longer matches puts that week in the "remapped" reconcile state.
+  const weekAttachment = useMemo(() => {
+    const keyToWeek = new Map<string, number>();
+    planWeekKeys.forEach((key, week) => keyToWeek.set(key, week));
+    const planWeekSet = new Set(allWeeks.map(w => w.week));
+
+    type HealthRecord = typeof memoryHealthData[0];
+    const resolvedHealth = new Map<number, HealthRecord>();
+    const mismatchedHealth = new Map<number, HealthRecord>();
+    const attachedHealthIds = new Set<number>();
+    const legacyHealth: HealthRecord[] = [];
+
+    // Pass 1: keyed records claim their content's current week.
+    memoryHealthData.forEach(r => {
+      const key = r.domainKey;
+      if (key && keyToWeek.has(key)) {
+        const wk = keyToWeek.get(key)!;
+        if (!resolvedHealth.has(wk)) {
+          resolvedHealth.set(wk, r);
+          attachedHealthIds.add(r.id);
+          return;
+        }
+      }
+      legacyHealth.push(r);
+    });
+
+    // Pass 2: legacy records match by domain set.
+    legacyHealth.forEach(r => {
+      const recordSet = domainSetKey(r.domains || []);
+      const candidates = allWeeks
+        .filter(w => !resolvedHealth.has(w.week) && domainSetKey((w.domains || []) as string[]) === recordSet)
+        .map(w => w.week);
+      let target: number | null = null;
+      if (candidates.includes(r.weekNumber)) target = r.weekNumber;
+      else if (candidates.length === 1) target = candidates[0];
+      if (target !== null) {
+        resolvedHealth.set(target, r);
+        attachedHealthIds.add(r.id);
+      } else if (planWeekSet.has(r.weekNumber) && !resolvedHealth.has(r.weekNumber)) {
+        // Stale record occupying a current week with different content → reconcile state.
+        mismatchedHealth.set(r.weekNumber, r);
+      }
+    });
+
+    // Week progress rows: keyed rows follow their content; legacy rows stay at their week.
+    const resolvedProgress = new Map<number, WeekProgress>();
+    const attachedProgressIds = new Set<string>();
+    const trackRows = (weekProgressData || []).filter(wp => wp.examTrack === examTrack);
+    trackRows.forEach(wp => {
+      const key = wp.domainKey;
+      if (key && keyToWeek.has(key)) {
+        const wk = keyToWeek.get(key)!;
+        if (!resolvedProgress.has(wk)) {
+          resolvedProgress.set(wk, wp);
+          attachedProgressIds.add(wp.id);
+        }
+      }
+    });
+    trackRows.forEach(wp => {
+      if (attachedProgressIds.has(wp.id)) return;
+      if (wp.domainKey && keyToWeek.has(wp.domainKey)) return; // keyed but slot already taken
+      if (wp.domainKey) return; // keyed to content not in the current plan → orphaned
+      if (planWeekSet.has(wp.week) && !resolvedProgress.has(wp.week)) {
+        resolvedProgress.set(wp.week, wp);
+        attachedProgressIds.add(wp.id);
+      }
+    });
+
+    return { resolvedHealth, mismatchedHealth, resolvedProgress, attachedHealthIds, attachedProgressIds };
+  }, [allWeeks, planWeekKeys, memoryHealthData, weekProgressData, examTrack]);
+
+  // Plan-resize safeguard: a week is "remapped" when a stale completion record sits at this
+  // week number but its content no longer matches (and couldn't be re-attached elsewhere).
+  const isWeekRemapped = useCallback(
+    (week: number) => weekAttachment.mismatchedHealth.has(week),
+    [weekAttachment]
+  );
+
   // Auto-record week completions when they hit 100% for the first time
-  // NOTE: placed here — after allWeeks, memoryHealthMap, weekCompleteMutation are all declared
+  // NOTE: placed here — after allWeeks, weekAttachment, weekCompleteMutation are all declared
   useEffect(() => {
     if (!weekProgressData || weekCompleteMutation.isPending) return;
     allWeeks.forEach(plan => {
-      const progress = weekProgressData.find(wp => wp.week === plan.week && wp.examTrack === examTrack);
-      if (progress && calculateWeekProgress(plan.week, plan) === 100 && !memoryHealthMap.has(plan.week)) {
-        weekCompleteMutation.mutate({ weekNumber: plan.week, domains: plan.domains as string[] });
+      const progress = weekAttachment.resolvedProgress.get(plan.week);
+      const hasHealth = weekAttachment.resolvedHealth.has(plan.week) || weekAttachment.mismatchedHealth.has(plan.week);
+      if (progress && calculateWeekProgress(plan.week, plan) === 100 && !hasHealth) {
+        weekCompleteMutation.mutate({
+          weekNumber: plan.week,
+          domains: plan.domains as string[],
+          domainKey: planWeekKeys.get(plan.week),
+        });
       }
     });
-  }, [weekProgressData, memoryHealthMap]);
+  }, [weekProgressData, weekAttachment]);
+
+  // Lazy migration: re-stamp attached completion records whose stored key or week number is
+  // stale (legacy rows, or rows whose content moved after a plan resize). The server matches
+  // by key / domain set and moves the existing record, preserving its review history.
+  const restampedRef = useRef(new Set<string>());
+  useEffect(() => {
+    weekAttachment.resolvedHealth.forEach((record, week) => {
+      const key = planWeekKeys.get(week);
+      if (!key) return;
+      const stale = record.domainKey !== key || record.weekNumber !== week;
+      const guard = `${examTrack}:${key}`;
+      if (stale && !restampedRef.current.has(guard)) {
+        restampedRef.current.add(guard);
+        const plan = allWeeks.find(w => w.week === week);
+        weekCompleteMutation.mutate({
+          weekNumber: week,
+          domains: (plan?.domains || []) as string[],
+          domainKey: key,
+        });
+      }
+    });
+  }, [weekAttachment, planWeekKeys, examTrack, allWeeks]);
 
   if (isLoading) {
     return (
@@ -1214,13 +1336,17 @@ export default function StudyPlan() {
               length are no longer rendered. Surface them so finished work isn't silently hidden. */}
           {(() => {
             const planWeekNumbers = new Set(allWeeks.map(w => w.week));
-            // Surface ANY saved progress for week numbers outside the current (resized) plan, from
-            // both memory-health records and week_progress, so a shorter plan never silently hides
-            // finished or in-progress work.
+            // Surface saved progress that couldn't be attached to any week in the current
+            // (resized) plan — records that followed their content are NOT orphaned even if
+            // their stored week number falls outside the plan.
             const orphanedWeeks = new Set<number>();
-            memoryHealthData.forEach(r => { if (!planWeekNumbers.has(r.weekNumber)) orphanedWeeks.add(r.weekNumber); });
+            memoryHealthData.forEach(r => {
+              if (weekAttachment.attachedHealthIds.has(r.id)) return;
+              if (!planWeekNumbers.has(r.weekNumber)) orphanedWeeks.add(r.weekNumber);
+            });
             (weekProgressData || []).forEach(wp => {
               if (wp.examTrack !== examTrack) return;
+              if (weekAttachment.attachedProgressIds.has(wp.id)) return;
               const hasProgress = wp.readCompleted.length + wp.focusCompleted.length + wp.applyCompleted.length + wp.reinforceCompleted.length > 0;
               if (hasProgress && !planWeekNumbers.has(wp.week)) orphanedWeeks.add(wp.week);
             });
@@ -1452,9 +1578,9 @@ export default function StudyPlan() {
           const isExpanded = expandedWeek === plan.week;
           // When a week is remapped by a plan resize, hide its legacy completions so checkmarks
           // never appear against content the user hasn't actually completed under the new plan.
-          const weekRemapped = isWeekRemapped(plan.week, plan.domains as string[]);
-          const weekCompletedSet: Set<string> = weekRemapped ? new Set<string>() : (completedItems[`week-${plan.week}`] || new Set<string>());
-          const weekAutoSet: Set<string> = weekRemapped ? new Set<string>() : (autoCompletedItems[`week-${plan.week}`] || new Set<string>());
+          const weekRemapped = isWeekRemapped(plan.week);
+          const weekCompletedSet: Set<string> = weekRemapped ? new Set<string>() : manualSetForWeek(plan.week);
+          const weekAutoSet: Set<string> = weekRemapped ? new Set<string>() : autoSetForWeek(plan.week);
 
           const ltPhases = 'longTermPhases' in adaptiveMeta ? adaptiveMeta.longTermPhases : undefined;
           const phaseInfo = adaptiveMeta.planType === 'long-term' ? getLongTermPhaseInfo(plan.week, ltPhases) : null;
@@ -1569,13 +1695,11 @@ export default function StudyPlan() {
                   <div className="mt-4 space-y-2">
                     <Progress value={progress} className="h-2" />
                     {(() => {
-                      const health = memoryHealthMap.get(plan.week);
-                      if (!health) return null;
-                      // Guard against plan-resize remapping: a memory-health record is keyed by
-                      // absolute week number, so after the plan length changes this week number can
-                      // now cover different domains than when it was completed. If so, show a
-                      // reconcile note instead of a misleading memory bar against the wrong content.
-                      if (isWeekRemapped(plan.week, plan.domains as string[])) {
+                      const health = weekAttachment.resolvedHealth.get(plan.week);
+                      // Guard against plan-resize remapping: if a stale completion record sits at
+                      // this week number but its content no longer matches, show a reconcile note
+                      // instead of a misleading memory bar against the wrong content.
+                      if (isWeekRemapped(plan.week)) {
                         return (
                           <div className="rounded-md px-2 py-1.5 bg-amber-100 dark:bg-amber-900/30 space-y-1.5" data-testid={`note-week-remapped-${plan.week}`}>
                             <div className="flex items-start gap-2">
@@ -1599,6 +1723,7 @@ export default function StudyPlan() {
                           </div>
                         );
                       }
+                      if (!health) return null;
                       const healthColor = health.status === 'fresh' ? 'bg-green-500' : health.status === 'fading' ? 'bg-yellow-500' : 'bg-red-500';
                       const healthBg = health.status === 'fresh' ? 'bg-green-100 dark:bg-green-950' : health.status === 'fading' ? 'bg-yellow-100 dark:bg-yellow-950' : 'bg-red-100 dark:bg-red-950';
                       const healthText = health.status === 'fresh' ? 'text-green-700 dark:text-green-300' : health.status === 'fading' ? 'text-yellow-700 dark:text-yellow-300' : 'text-red-700 dark:text-red-300';
@@ -1615,7 +1740,7 @@ export default function StudyPlan() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setReviewWeekInfo({ week: plan.week, title: plan.title, domains: plan.domains as string[] });
+                                setReviewWeekInfo({ week: plan.week, title: plan.title, domains: plan.domains as string[], domainKey: planWeekKeys.get(plan.week) });
                               }}
                               className={`text-xs font-medium px-2 py-0.5 rounded border ${health.status === 'stale' ? 'border-red-400 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 animate-pulse' : 'border-yellow-400 text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20'}`}
                               data-testid={`button-review-week-${plan.week}`}
@@ -2306,6 +2431,7 @@ export default function StudyPlan() {
           weekTitle={reviewWeekInfo.title}
           domains={reviewWeekInfo.domains}
           examTrack={examTrack}
+          domainKey={reviewWeekInfo.domainKey}
           open={!!reviewWeekInfo}
           onClose={() => setReviewWeekInfo(null)}
         />

@@ -110,7 +110,7 @@ export default function ExamDashboard() {
     queryKey: ['/api/preferences', examTrack],
   });
 
-  const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[] } | null>(null);
+  const [reviewWeekInfo, setReviewWeekInfo] = useState<{ week: number; title: string; domains: string[]; domainKey?: string | null } | null>(null);
 
   const { data: memoryHealth } = useQuery<Array<{
     weekNumber: number; domains: string[]; health: number; status: 'fresh' | 'fading' | 'stale';
@@ -661,7 +661,7 @@ export default function ExamDashboard() {
                             size="sm"
                             variant="outline"
                             className={`shrink-0 text-xs gap-1 ${h.status === 'stale' ? 'border-red-400 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20' : 'border-yellow-400 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20'}`}
-                            onClick={() => setReviewWeekInfo({ week: h.weekNumber, title: `Week ${h.weekNumber}`, domains: h.domains })}
+                            onClick={() => setReviewWeekInfo({ week: h.weekNumber, title: `Week ${h.weekNumber}`, domains: h.domains, domainKey: (h as any).domainKey })}
                             data-testid={`button-review-health-week-${h.weekNumber}`}
                           >
                             <RefreshCw className="h-3 w-3" />
@@ -694,6 +694,7 @@ export default function ExamDashboard() {
               weekTitle={reviewWeekInfo.title}
               domains={reviewWeekInfo.domains}
               examTrack={examTrack}
+              domainKey={reviewWeekInfo.domainKey}
               open={!!reviewWeekInfo}
               onClose={() => setReviewWeekInfo(null)}
             />
