@@ -57,6 +57,9 @@ export default function FlashcardsPage() {
   const cardInit = cardFromUrl ? parseCardId(cardFromUrl) : null;
   // Holds the deep-linked cardId until we successfully position to it (once).
   const pendingCardId = useRef<string | null>(cardFromUrl);
+  // Tracks which deep-linked cardId we've already shown a "couldn't find that
+  // card" notice for, so a single failed link only toasts once.
+  const notifiedMissingCardId = useRef<string | null>(null);
   // When arriving from a Daily Coaching Review Alert, this is the alert's id so
   // we can auto-mark it done once the user rates the linked card (fire-once).
   const reviewIdFromUrl = urlParams.get('reviewId');
@@ -461,8 +464,34 @@ export default function FlashcardsPage() {
         filteredCards,
       );
       targetIndex = resolution.targetIndex;
+      const failedCardId = pendingCardId.current;
       if (resolution.status !== 'unresolved') {
         pendingCardId.current = null;
+      } else {
+        // The re-arm effect resets deck + filters so a retry can succeed. If
+        // we're already at that widest state (deck matches, no domain filters)
+        // and the deck has loaded, the card simply doesn't exist anymore.
+        const parsed = parseCardId(failedCardId);
+        const settled =
+          parsed !== null &&
+          parsed.deck === selectedDeck &&
+          selectedDomain === 'all' &&
+          selectedDomains.length === 0 &&
+          activeFlashcards.length > 0;
+        if (!settled) {
+          // Keep the deep-link pending so a later deck/filter change can retry.
+          setCurrentIndex(targetIndex);
+          setIsFlipped(false);
+          return;
+        }
+        pendingCardId.current = null;
+      }
+      if (resolution.status !== 'positioned' && notifiedMissingCardId.current !== failedCardId) {
+        notifiedMissingCardId.current = failedCardId;
+        toast({
+          title: "Couldn't find that exact card",
+          description: 'The deck may have changed since your review was saved. Starting from the top.',
+        });
       }
     }
 
