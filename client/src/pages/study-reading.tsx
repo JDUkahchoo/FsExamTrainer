@@ -278,10 +278,12 @@ function KnowledgeCheckSection({
   section,
   completed,
   onMarkRead,
+  onContinue,
 }: {
   section: ReadingSection;
   completed: boolean;
   onMarkRead: () => void;
+  onContinue?: () => void;
 }) {
   const check = section.knowledgeCheck!;
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -389,6 +391,13 @@ function KnowledgeCheckSection({
         {isIncorrect && (
           <Button variant="outline" size="sm" onClick={handleRetry} data-testid={`button-retry-${section.id}`}>
             Try Again
+          </Button>
+        )}
+
+        {isCorrect && onContinue && (
+          <Button size="sm" onClick={onContinue} data-testid={`button-continue-${section.id}`}>
+            Continue
+            <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         )}
       </CardContent>
@@ -704,11 +713,14 @@ export default function StudyReadingPage() {
     const isKnowledgeCheck = section.type === 'knowledge_check';
     const handleMarkRead = () => {
       markSectionRead(section.id);
-      if (index < sections.length - 1) {
-        const delay = isKnowledgeCheck ? 1200 : 400;
-        advanceTimerRef.current = setTimeout(() => goToSection(index + 1), delay);
+      // Knowledge checks do NOT auto-advance: the user needs time to read the
+      // explanation. They advance via the explicit Continue button instead.
+      if (!isKnowledgeCheck && index < sections.length - 1) {
+        advanceTimerRef.current = setTimeout(() => goToSection(index + 1), 400);
       }
     };
+    const handleContinue =
+      index < sections.length - 1 ? () => goToSection(index + 1) : undefined;
 
     switch (section.type) {
       case "concept":
@@ -741,6 +753,7 @@ export default function StudyReadingPage() {
             section={section}
             completed={isCompleted}
             onMarkRead={handleMarkRead}
+            onContinue={handleContinue}
           />
         );
       case "further_reading":
