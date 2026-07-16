@@ -941,6 +941,11 @@ export default function PracticeQuizPage() {
             <ProblemSolvingLoop
               key={`loop-${currentQuestionIndex}`}
               isVisible={!answeredQuestions[currentQuestionIndex]}
+              question={currentQuestion ? {
+                question: currentQuestion.question,
+                domain: currentQuestion.domain,
+                topic: (currentQuestion as { topic?: string }).topic,
+              } : undefined}
             />
             <Button
               onClick={() => {

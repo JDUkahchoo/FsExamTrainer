@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { 
@@ -11,9 +11,15 @@ import {
   CheckCircle2,
   Lightbulb
 } from 'lucide-react';
+import { findBreakdown, type ProblemBreakdown } from '@/lib/problem-breakdowns';
 
 interface ProblemSolvingLoopProps {
   isVisible: boolean;
+  question?: {
+    question: string;
+    domain?: string;
+    topic?: string;
+  };
 }
 
 interface StepState {
@@ -73,8 +79,12 @@ const STEPS = [
   },
 ];
 
-export function ProblemSolvingLoop({ isVisible }: ProblemSolvingLoopProps) {
+export function ProblemSolvingLoop({ isVisible, question }: ProblemSolvingLoopProps) {
   const [expanded, setExpanded] = useState(false);
+  const breakdown: ProblemBreakdown | null = useMemo(
+    () => (question ? findBreakdown(question) : null),
+    [question],
+  );
   const [steps, setSteps] = useState<Record<string, StepState>>(() => {
     const initial: Record<string, StepState> = {};
     STEPS.forEach(step => {
@@ -116,7 +126,12 @@ export function ProblemSolvingLoop({ isVisible }: ProblemSolvingLoopProps) {
         data-testid="button-toggle-loop"
       >
         <Lightbulb className="w-4 h-4" />
-        <span>Stuck? Try the 4-step breakdown</span>
+        <span>
+          Stuck? Try the 4-step breakdown
+          {breakdown && (
+            <span className="text-primary font-medium"> — {breakdown.label}</span>
+          )}
+        </span>
         {confirmedCount > 0 && (
           <span className="text-xs text-success">({confirmedCount}/4)</span>
         )}
@@ -160,10 +175,10 @@ export function ProblemSolvingLoop({ isVisible }: ProblemSolvingLoopProps) {
                 {state.expanded && !state.confirmed && (
                   <div className="ml-11 pb-2 space-y-2">
                     <p className="text-xs text-muted-foreground">
-                      {step.description}
+                      {(breakdown?.[step.id as keyof Pick<ProblemBreakdown, 'understand' | 'formula' | 'units' | 'sense'>]?.description) ?? step.description}
                     </p>
                     <div className="space-y-1">
-                      {step.prompts.map((prompt, i) => (
+                      {((breakdown?.[step.id as keyof Pick<ProblemBreakdown, 'understand' | 'formula' | 'units' | 'sense'>]?.prompts) ?? step.prompts).map((prompt, i) => (
                         <div key={i} className="flex items-start gap-1.5 text-xs text-muted-foreground">
                           <span className="mt-0.5">&#8226;</span>
                           <span>{prompt}</span>
