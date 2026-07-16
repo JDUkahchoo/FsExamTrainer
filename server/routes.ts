@@ -1007,12 +1007,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Telemetry: counts leave-time draft saves that had to fall back from
   // navigator.sendBeacon (beacon returned false or threw on the client).
   // A rising count signals that beacon saves are failing in the wild.
-  const beaconFallbackCounts = { quiz: 0, exam: 0 };
-  const recordBeaconFallback = (kind: "quiz" | "exam", req: any) => {
+  const beaconFallbackCounts = { quiz: 0, exam: 0, flashcardState: 0, flashcardComplete: 0 };
+  const recordBeaconFallback = (kind: keyof typeof beaconFallbackCounts, req: any) => {
     if (req.query.beaconFallback === "1") {
       beaconFallbackCounts[kind]++;
       console.warn(
-        `[beacon-fallback] ${kind} draft saved via fetch fallback (user=${req.user?.claims?.sub}, totals: quiz=${beaconFallbackCounts.quiz}, exam=${beaconFallbackCounts.exam})`
+        `[beacon-fallback] ${kind} saved via fetch fallback (user=${req.user?.claims?.sub}, totals: quiz=${beaconFallbackCounts.quiz}, exam=${beaconFallbackCounts.exam}, flashcardState=${beaconFallbackCounts.flashcardState}, flashcardComplete=${beaconFallbackCounts.flashcardComplete})`
       );
     }
   };
@@ -1436,6 +1436,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update session state (for resume persistence) - supports both PATCH and POST for sendBeacon
   const updateSessionState = async (req: any, res: any) => {
     try {
+      recordBeaconFallback("flashcardState", req);
       const { sessionId } = req.params;
       const userState = req.body;
       
@@ -1513,6 +1514,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/flashcards/sessions/:sessionId/complete", isAuthenticated, async (req: any, res) => {
     try {
+      recordBeaconFallback("flashcardComplete", req);
       const userId = req.user.claims.sub;
       const { sessionId } = req.params;
       const { cardsReviewed, avgMasteryRating, domainBreakdown, timeSpentSeconds, weekNumber } = req.body;

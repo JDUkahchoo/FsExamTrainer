@@ -275,6 +275,31 @@ export default function FlashcardsPage() {
 
   // Complete session on page unload/visibility change
   useEffect(() => {
+    // Leave-time save helper: try navigator.sendBeacon first; if the browser
+    // rejects it (returns false) or throws, fall back to a keepalive fetch
+    // marked with ?beaconFallback=1 so the server's [beacon-fallback]
+    // telemetry can count how often beacons fail in the wild.
+    const sendBeaconWithFallback = (url: string, blob: Blob) => {
+      let ok = false;
+      try {
+        ok = navigator.sendBeacon(url, blob);
+      } catch {
+        ok = false;
+      }
+      if (!ok) {
+        console.warn(`[beacon-fallback] sendBeacon rejected ${url}; falling back to keepalive fetch`);
+        fetch(`${url}?beaconFallback=1`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: blob,
+          credentials: 'include',
+          keepalive: true,
+        }).catch(() => {
+          // Best-effort: page is unloading, nothing more we can do.
+        });
+      }
+    };
+
     const sendCompleteBeacon = () => {
       if (currentSessionId) {
         const stats = sessionStatsRef.current;
@@ -296,7 +321,7 @@ export default function FlashcardsPage() {
             ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
           })], { type: 'application/json' });
           
-          navigator.sendBeacon(
+          sendBeaconWithFallback(
             `/api/flashcards/sessions/${currentSessionId}/state`,
             stateBlob
           );
@@ -312,7 +337,7 @@ export default function FlashcardsPage() {
             ...(weekFromUrl != null ? { weekNumber: weekFromUrl } : {}),
           })], { type: 'application/json' });
           
-          navigator.sendBeacon(
+          sendBeaconWithFallback(
             `/api/flashcards/sessions/${currentSessionId}/complete`,
             completeBlob
           );
