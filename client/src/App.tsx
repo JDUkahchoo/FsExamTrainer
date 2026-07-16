@@ -206,9 +206,24 @@ export default function App() {
 }
 
 function AppContent() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+
+  // If a different account signs in on this device (e.g. shared computer or
+  // account switch), wipe every cached server response so one user's data can
+  // never bleed into another user's session.
+  useEffect(() => {
+    const uid = (user as { id?: string } | undefined)?.id;
+    if (!uid) return;
+    const prev = localStorage.getItem('last-auth-user-id');
+    if (prev && prev !== String(uid)) {
+      queryClient.removeQueries({
+        predicate: (q) => q.queryKey[0] !== '/api/auth/user',
+      });
+    }
+    localStorage.setItem('last-auth-user-id', String(uid));
+  }, [user]);
 
   const handleSessionExpired = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });

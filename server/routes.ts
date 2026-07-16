@@ -571,10 +571,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Review not found" });
       }
       
-      // Verify ownership - user can only update their own reviews
+      // Verify ownership - user can only update their own reviews.
+      // Respond 404 (not 403) so we don't confirm the existence of another
+      // user's review id to the caller.
       if (review.userId !== userId) {
         console.log('[RETENTION PATCH] User mismatch! requestUserId:', userId, 'reviewUserId:', review.userId);
-        return res.status(403).json({ error: "Not authorized to update this review" });
+        return res.status(404).json({ error: "Review not found" });
       }
 
       // SM-2 algorithm

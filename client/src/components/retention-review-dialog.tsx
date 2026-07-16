@@ -47,7 +47,7 @@ export function RetentionReviewDialog({ examTrack, open, onClose }: RetentionRev
   });
 
   // All currently-due retention items for the active track (no week filter)
-  const { data: dueReviews = [], isLoading: dueLoading, refetch: refetchDue } = useQuery<RetentionReview[]>({
+  const { data: dueReviews = [], isLoading: dueLoading, isFetching: dueFetching, refetch: refetchDue } = useQuery<RetentionReview[]>({
     queryKey: ['/api/retention/due', 'all', examTrack],
     queryFn: async () => {
       const res = await fetch(`/api/retention/due?examTrack=${examTrack}`, { credentials: 'include' });
@@ -60,7 +60,7 @@ export function RetentionReviewDialog({ examTrack, open, onClose }: RetentionRev
   });
 
   // All retention items for the track — used to top up with upcoming concepts
-  const { data: allReviews = [], isLoading: allLoading, refetch: refetchAll } = useQuery<RetentionReview[]>({
+  const { data: allReviews = [], isLoading: allLoading, isFetching: allFetching, refetch: refetchAll } = useQuery<RetentionReview[]>({
     queryKey: ['/api/retention/reviews', 'all', examTrack],
     queryFn: async () => {
       const res = await fetch(`/api/retention/reviews?examTrack=${examTrack}`, { credentials: 'include' });
@@ -72,7 +72,9 @@ export function RetentionReviewDialog({ examTrack, open, onClose }: RetentionRev
     refetchOnMount: 'always',
   });
 
-  const isLoading = dueLoading || allLoading;
+  // Wait for the in-flight refetch too (not just first load) so a session can
+  // never be started from stale cached data.
+  const isLoading = dueLoading || allLoading || ((dueFetching || allFetching) && !sessionStarted);
   const dailyCap = getDailySessionCap(preferences?.studyMode ?? undefined, preferences?.examDate ?? null, 1);
 
   const buildSession = useCallback((): RetentionReview[] => {
@@ -119,11 +121,20 @@ export function RetentionReviewDialog({ examTrack, open, onClose }: RetentionRev
       const response = await apiRequest('PATCH', `/api/retention/reviews/${id}`, { quality });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to update review (${response.status})`);
+        const err = new Error(errorData.error || `Failed to update review (${response.status})`) as Error & { status?: number };
+        err.status = response.status;
+        throw err;
       }
       return response.json();
     },
-    onError: (error: Error) => {
+    onError: (error: Error & { status?: number }) => {
+      if (error.status === 403 || error.status === 404) {
+        toast({
+          title: 'Card skipped',
+          description: "That card isn't available anymore, so we skipped it.",
+        });
+        return;
+      }
       toast({
         title: 'Review Failed',
         description: error.message || 'Could not save your rating. Please try again.',
@@ -175,12 +186,31 @@ export function RetentionReviewDialog({ examTrack, open, onClose }: RetentionRev
         setSessionDone(true);
         await invalidateRetentionData();
       }
-    } catch {
-      // error toast handled by mutation onError
+    } catch (err) {
+      // Toasts are handled by the mutation's onError. If this card no longer
+      // exists (or belongs to stale cached data), drop it and move on instead
+      // of blocking the whole session.
+      const status = (err as { status?: number })?.status;
+      if (status === 403 || status === 404) {
+        const remaining = sessionCards.filter((_, i) => i !== currentIndex);
+        setSessionCards(remaining);
+        setIsFlipped(false);
+        if (remaining.length === 0 || currentIndex >= remaining.length) {
+          const ratedAny = Object.values(ratingCounts).some(c => c > 0);
+          if (remaining.length > 0 || ratedAny) {
+            setSessionDone(true);
+          } else {
+            // Nothing valid left and nothing rated — back to the preview with fresh data
+            setSessionStarted(false);
+            setCurrentIndex(0);
+          }
+          await invalidateRetentionData();
+        }
+      }
     } finally {
       setActiveRating(null);
     }
-  }, [currentIndex, sessionCards, updateReviewMutation, awardXpMutation, invalidateRetentionData]);
+  }, [currentIndex, sessionCards, ratingCounts, updateReviewMutation, awardXpMutation, invalidateRetentionData]);
 
   const handleClose = () => {
     // If the user rated any cards but closed before finishing, still refresh

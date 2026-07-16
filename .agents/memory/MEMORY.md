@@ -7,3 +7,4 @@
 - [Draft int32 seed trap](draft-int32-seed.md) — client values saved to integer columns must fit int32; raw Date.now() seeds silently 400'd draft saves.
 - [SRM 7th Edition chapter map](srm-7th-edition-chapters.md) — authoritative Topic/chapter numbering for all Surveyor Reference Manual citations; never cite bare chapter numbers.
 - [Route remount trap](route-remount-trap.md) — route wrappers in App.tsx must have stable identity (cached), or pages unmount on every Router re-render and wipe results screens.
+- [Cross-account cache isolation](cross-account-cache-isolation.md) — clear query cache on auth user-id change (shared devices leaked user A's cards into user B's session); ownership mismatch → 404, not 403.
